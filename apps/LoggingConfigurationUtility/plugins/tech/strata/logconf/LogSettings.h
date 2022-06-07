@@ -35,7 +35,4 @@ public:
 
     Q_INVOKABLE void removekey(const QString &key);
     Q_INVOKABLE void setvalue(const QString &key, const QString &value);
-
-signals:
-    void paramValueChanged();
 };

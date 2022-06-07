@@ -49,10 +49,8 @@ GridLayout {
         model: ["debug", "info", "warning", "error", "critical", "off"]
         enabled: currentIndex !== -1 //disable if log level value doesnt exist OR if INI files was not found
         placeholderText: "no value"
-        onActivated: {
-            console.info(currentText)
-            logSettings.setvalue("level",currentText)
-        }
+        onActivated: logSettings.setvalue("level",currentText)
+
         Component.onCompleted: {
             currentIndex = find(logSettings.getvalue("level"))
         }
