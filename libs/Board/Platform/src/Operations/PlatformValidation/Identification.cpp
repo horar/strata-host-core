@@ -44,13 +44,20 @@ bool Identification::getFirmwareInfoCheck()
     QVector<const char*> jsonPath({JSON_NOTIFICATION, JSON_PAYLOAD});  // successfuly checked JSON path
 
     // check "api_version"
-    if (checkKey(payload, JSON_API_VERSION, KeyType::String, jsonPath) == false) {
-         return false;
-    }
-    if (platform_->apiVersion() != Platform::ApiVersion::v2_0) {
-        QString message = QStringLiteral("Unknown API version: '") + payload[JSON_API_VERSION].GetString() + '\'';
-        qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Info, message);
+    if (payload.HasMember(JSON_API_VERSION)) {
+        if (checkKey(payload, JSON_API_VERSION, KeyType::String, jsonPath) == false) {
+            return false;
+        }
+        if (platform_->apiVersion() != Platform::ApiVersion::v2_0) {
+            QString message = QStringLiteral("Unknown API version: '") + payload[JSON_API_VERSION].GetString() + '\'';
+            qCInfo(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Info, message);
+        }
+    } else {  // API v1
+        QString message = missingKey(joinKeys(jsonPath, JSON_API_VERSION)) + QStringLiteral(" - legacy API version 1'");
+        qCWarning(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Warning, message);
+        return false;
     }
 
     bool inBootloader = false;
