@@ -23,6 +23,11 @@ GridLayout {
     property int infoButtonSize: 15
     property bool maxNoFilesEnabled: false
     property bool maxFileSizeEnabled: false
+    property string maxFileSizeSetting: "maxFileSize"
+    property string maxNoFilesSetting: "maxNoFiles"
+    property string qtFilterRulesSetting: "qtFilterRules"
+    property string qtMsgPatternSetting: "qtMessagePattern"
+    property string spdlogMsgPatternSetting: "spdlogMessagePattern"
 
     columns: 4
     columnSpacing: innerSpacing
@@ -49,7 +54,7 @@ GridLayout {
         enabled: maxFileSizeEnabled
         //disable if file size is out of min/max value OR if no ini files were found or selected
         onValueModified: {
-            logSettings.setvalue("maxFileSize", value)
+            logSettings.setvalue(maxFileSizeSetting, value)
             textInputFileSize.text = maxFileSizeSpinBox.value
         }
 
@@ -78,10 +83,10 @@ GridLayout {
 
         valueFromText: function(text, locale) {
             if (Number.fromLocaleString(locale, text) > maxFileSizeSpinBox.to) {
-                logSettings.setvalue("maxFileSize", maxFileSizeSpinBox.to)
+                logSettings.setvalue(maxFileSizeSetting, maxFileSizeSpinBox.to)
                 return maxFileSizeSpinBox.to
             } else if (Number.fromLocaleString(locale, text) < maxFileSizeSpinBox.from) {
-                logSettings.setvalue("maxFileSize", maxFileSizeSpinBox.from)
+                logSettings.setvalue(maxFileSizeSetting, maxFileSizeSpinBox.from)
                 return maxFileSizeSpinBox.from
             } else {
                 return Number.fromLocaleString(locale, text)
@@ -92,14 +97,13 @@ GridLayout {
         }
 
         Component.onCompleted: {
-            if (logSettings.getvalue("maxFileSize") === "") {
+            if (logSettings.getvalue(maxFileSizeSetting) === "") {
                 maxFileSizeEnabled = false
             } else {
-                textInputFileSize.text = logSettings.getvalue("maxFileSize")
+                textInputFileSize.text = logSettings.getvalue(maxFileSizeSetting)
                 maxFileSizeSpinBox.value = textInputFileSize.text
                 maxFileSizeEnabled = true
             }
-
         }
     }
 
@@ -109,11 +113,11 @@ GridLayout {
         text: maxFileSizeSpinBox.enabled ? "Unset" : "Set"
         onClicked: {
             if (text === "Unset") {
-                logSettings.removekey("maxFileSize")
+                logSettings.removekey(maxFileSizeSetting)
                 maxFileSizeEnabled = false
             } else { //set to default value
-                logSettings.setvalue("maxFileSize", 1024 * 1024 * 5)
-                textInputFileSize.text = logSettings.getvalue("maxFileSize")
+                logSettings.setvalue(maxFileSizeSetting, logSettings.maxSizeDefault)
+                textInputFileSize.text = logSettings.getvalue(maxFileSizeSetting)
                 maxFileSizeSpinBox.value = textInputFileSize.text
                 maxFileSizeEnabled = true
             }
@@ -137,7 +141,7 @@ GridLayout {
         enabled: maxNoFilesEnabled
         //disable if no.of files is out of min/max value OR if no ini files were found or selected
         onValueModified: {
-            logSettings.setvalue("maxNoFiles",value)
+            logSettings.setvalue(maxNoFilesSetting,value)
             textInputNoFiles.text = maxNoFilesSpinBox.value
         }
 
@@ -180,10 +184,10 @@ GridLayout {
         }
 
         Component.onCompleted: {
-            if (logSettings.getvalue("maxNoFiles") === "") {
+            if (logSettings.getvalue(maxNoFilesSetting) === "") {
                 maxNoFilesEnabled = false
             } else {
-                textInputNoFiles.text = logSettings.getvalue("maxNoFiles")
+                textInputNoFiles.text = logSettings.getvalue(maxNoFilesSetting)
                 maxNoFilesSpinBox.value = textInputNoFiles.text
                 maxNoFilesEnabled = true
             }
@@ -194,14 +198,13 @@ GridLayout {
         id: maxNoFilesButton
         Layout.maximumWidth: height
         text: maxNoFilesSpinBox.enabled ? "Unset" : "Set"
-        enabled : true //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
-                logSettings.removekey("maxNoFiles")
+                logSettings.removekey(maxNoFilesSetting)
                 maxNoFilesEnabled = false
             } else { //set to default value
-                logSettings.setvalue("maxNoFiles", 5)
-                textInputNoFiles.text = logSettings.getvalue("maxNoFiles")
+                logSettings.setvalue(maxNoFilesSetting, logSettings.maxCountDefault)
+                textInputNoFiles.text = logSettings.getvalue(maxNoFilesSetting)
                 maxNoFilesSpinBox.value = textInputNoFiles.text
                 maxNoFilesEnabled = true
             }
@@ -221,10 +224,10 @@ GridLayout {
         placeholderText: "no qt filter rules"
         enabled: text !== ""
         //disable if no. of files is out of min/max value OR if no ini files were found or selected
-        onTextEdited: logSettings.setvalue("qtFilterRules", text)
+        onTextEdited: logSettings.setvalue(qtFilterRulesSetting, text)
 
         Component.onCompleted: {
-            qtFilterRulesTextField.text = logSettings.getvalue("qtFilterRules")
+            qtFilterRulesTextField.text = logSettings.getvalue(qtFilterRulesSetting)
         }
     }
 
@@ -232,14 +235,13 @@ GridLayout {
         id: qtFilterRulesButton
         Layout.maximumWidth: height
         text: qtFilterRulesTextField.enabled ? "Unset" : "Set"
-        enabled : true //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
-                logSettings.removekey("qtFilterRules")
+                logSettings.removekey(qtFilterRulesSetting)
             } else { //set to default value
-                logSettings.setvalue("qtFilterRules","strata.*=true")
+                logSettings.setvalue(qtFilterRulesSetting,logSettings.filterRulesDefault)
             }
-            qtFilterRulesTextField.text = logSettings.getvalue("qtFilterRules")
+            qtFilterRulesTextField.text = logSettings.getvalue(qtFilterRulesSetting)
         }
     }
 
@@ -263,10 +265,10 @@ GridLayout {
        placeholderText: "no qt msg pattern"
        enabled: text !== ""
        //disable is message pattern value doesn't exist OR if no ini files were found or selected
-       onTextEdited: logSettings.setvalue("qtMessagePattern", text)
+       onTextEdited: logSettings.setvalue(qtMsgPatternSetting, text)
 
        Component.onCompleted: {
-           qtMsgPatternTextField.text = logSettings.getvalue("qtMessagePattern")
+           qtMsgPatternTextField.text = logSettings.getvalue(qtMsgPatternSetting)
        }
     }
 
@@ -274,14 +276,13 @@ GridLayout {
         id: qtMsgPatternButton
         Layout.maximumWidth: height
         text: qtMsgPatternTextField.enabled ? "Unset" : "Set"
-        enabled : true //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
-                logSettings.removekey("qtMessagePattern")
+                logSettings.removekey(qtMsgPatternSetting)
             } else { //set to default value
-                logSettings.setvalue("qtMessagePattern","%{if-category}%{category}: %{endif}%{if-debug}%{function}%{endif}%{if-info}%{function}%{endif}%{if-warning}%{function}%{endif}%{if-critical}%{function}%{endif}%{if-fatal}%{function}%{endif} - %{message}")
+                logSettings.setvalue(qtMsgPatternSetting, logSettings.qtMsgDefault)
             }
-            qtMsgPatternTextField.text = logSettings.getvalue("qtMessagePattern")
+            qtMsgPatternTextField.text = logSettings.getvalue(qtMsgPatternSetting)
         }
     }
 
@@ -305,24 +306,24 @@ GridLayout {
         placeholderText: "no spdlog msg pattern"
         enabled: text !== ""
         //disable is message pattern value doesn't exist OR if no ini files were found or selected
-        onTextEdited: logSettings.setvalue("spdlogMessagePattern", text)
+        onTextEdited: logSettings.setvalue(spdlogMsgPatternSetting, text)
 
         Component.onCompleted: {
-            spdlogMsgPatternTextField.text = logSettings.getvalue("spdlogMessagePattern")
+            spdlogMsgPatternTextField.text = logSettings.getvalue(spdlogMsgPatternSetting)
         }
     }
+
     SGWidgets.SGButton {
         id: spdlogMsgPatternButton
         Layout.maximumWidth: height
         text: spdlogMsgPatternTextField.enabled ? "Unset" : "Set"
-        enabled : true //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
-                logSettings.removekey("spdlogMessagePattern")
+                logSettings.removekey(spdlogMsgPatternSetting)
             } else { //set to default value
-                logSettings.setvalue("spdlogMessagePattern", "%T.%e %^[%=7l]%$ %v")
+                logSettings.setvalue(spdlogMsgPatternSetting, logSettings.spdMsgDefault)
             }
-            spdlogMsgPatternTextField.text = logSettings.getvalue("spdlogMessagePattern")
+            spdlogMsgPatternTextField.text = logSettings.getvalue(spdlogMsgPatternSetting)
         }
     }
 }

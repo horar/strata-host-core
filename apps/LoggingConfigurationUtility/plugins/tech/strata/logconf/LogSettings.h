@@ -15,12 +15,25 @@ class LogSettings : public QSettings
     Q_OBJECT
     Q_DISABLE_COPY(LogSettings)
 
+    Q_PROPERTY(int maxSizeDefault READ maxSizeDefault)
+    Q_PROPERTY(int maxCountDefault READ maxCountDefault )
+    Q_PROPERTY(QString filterRulesDefault READ filterRulesDefault)
+    Q_PROPERTY(QString qtMsgDefault READ qtMsgDefault )
+    Q_PROPERTY(QString spdMsgDefault READ spdMsgDefault )
+
 public:
     LogSettings(QObject *parent = nullptr);
-    Q_INVOKABLE QString filename();
-    Q_INVOKABLE void removekey(const QString &key);
 
+    int maxSizeDefault() const;
+    int maxCountDefault() const;
+    QString filterRulesDefault() const;
+    QString qtMsgDefault() const;
+    QString spdMsgDefault() const;
+
+    Q_INVOKABLE QString filename();
     Q_INVOKABLE QString getvalue(QString key);
+
+    Q_INVOKABLE void removekey(const QString &key);
     Q_INVOKABLE void setvalue(const QString &key, const QString &value);
 
 signals:
