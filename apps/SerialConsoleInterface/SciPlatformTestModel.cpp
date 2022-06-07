@@ -23,10 +23,11 @@ SciPlatformTestModel::SciPlatformTestModel(
     : QAbstractListModel(parent),
       messageModel_(messageModel),
       platformRef_(platform),
-      running_(false)
+      isRunning_(false)
 {
     data_.append(new SciPlatformValidation(SciPlatformValidation::Type::Identification, platformRef_, this));
-    data_.at(0)->setEnabled(true);
+
+    setEnabled(0, true);  // enable first validation - identification
 }
 
 SciPlatformTestModel::~SciPlatformTestModel()
@@ -77,19 +78,18 @@ void SciPlatformTestModel::setEnabled(int row, bool enabled)
 
 void SciPlatformTestModel::runTests()
 {
-    if (running_ == false) {
-        running_ = true;
-        emit isRunningChanged();
+    if (isRunning_ == false) {
+        setIsRunning(true);
 
         messageModel_->clear();
         activeTestIndex_ = 0;  // first test
-        runNextTest();
+        runActiveTest();
     }
 }
 
 bool SciPlatformTestModel::isRunning() const
 {
-    return running_;
+    return isRunning_;
 }
 
 QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
@@ -109,7 +109,7 @@ void SciPlatformTestModel::finishedHandler(bool success)
     messageModel_->addMessage(SciPlatformTestMessageModel::Plain, "");
 
     ++activeTestIndex_;  // move to next test
-    runNextTest();
+    runActiveTest();
 }
 
 void SciPlatformTestModel::statusHandler(validation::Status status, QString text)
@@ -137,7 +137,7 @@ void SciPlatformTestModel::statusHandler(validation::Status status, QString text
     messageModel_->addMessage(msgType, text);
 }
 
-void SciPlatformTestModel::runNextTest()
+void SciPlatformTestModel::runActiveTest()
 {
     while (activeTestIndex_ < data_.length()) {
         if (data_.at(activeTestIndex_)->enabled()) {
@@ -147,15 +147,24 @@ void SciPlatformTestModel::runNextTest()
             data_.at(activeTestIndex_)->run();
 
             return;
-        } else {
+        } else {  // current test is not enabled, move to next test
             ++activeTestIndex_;
         }
     }
 
     if (activeTestIndex_ == data_.length()) {
-        running_ = false;
-        emit isRunningChanged();
+        setIsRunning(false);
     }
+}
+
+void SciPlatformTestModel::setIsRunning(bool isRunning)
+{
+    if (isRunning_ == isRunning) {
+        return;
+    }
+
+    isRunning_ = isRunning;
+    emit isRunningChanged();
 }
 
 SciPlatformValidation::SciPlatformValidation(Type type,

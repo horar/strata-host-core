@@ -23,9 +23,7 @@ public:
         Info,
         Warning,
         Error,
-        Success,
-        TestEndSuccess,
-        TestEndError,
+        Success
     };
     Q_ENUM(MessageType)
 

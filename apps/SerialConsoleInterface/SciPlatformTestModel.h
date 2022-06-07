@@ -54,7 +54,8 @@ private slots:
     void finishedHandler(bool success);
 
 private:
-    void runNextTest();
+    void runActiveTest();
+    void setIsRunning(bool isRunning);
 
     SciPlatformTestMessageModel *messageModel_;
 
@@ -66,7 +67,7 @@ private:
 
     int activeTestIndex_;
 
-    bool running_;
+    bool isRunning_;
 };
 
 class SciPlatformValidation: public QObject
