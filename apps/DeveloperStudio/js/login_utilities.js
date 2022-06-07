@@ -80,9 +80,7 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
-    if (response.hasOwnProperty("consent_privacy_policy") && response.consent_privacy_policy == true ) {
-        Rest.consent_privacy_policy = response.consent_privacy_policy;
-    } else {
+    if (response.hasOwnProperty("privacy_policy_changed") && response.privacy_policy_changed == true ) {
         console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
         SignalsModule.Signals.privacyPolicyUpdate()
     }
