@@ -9,8 +9,6 @@
 import QtQuick 2.12
 import QtQml 2.12
 
-import "qrc:/js/navigation_control.js" as NavigationControl
-
 import tech.strata.commoncpp 1.0
 import tech.strata.notifications 1.0
 

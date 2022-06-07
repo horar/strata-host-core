@@ -12,7 +12,7 @@ import QtQuick.Layouts 1.12
 import QtQml 2.12
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/platform_filters.js" as Filters
+import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/help_layout_manager.js" as Help
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -34,12 +34,8 @@ Item {
     property bool platformLoaded: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
     Component.onCompleted: {
-        // Restore previously set filters
-        if (Filters.keywordFilter !== "") {
-            filter.text = Filters.keywordFilter
-        }
-        if (Filters.activeFilters.length > 0) {
-            Filters.utility.activeFiltersChanged()
+        if (PlatformFilters.activeFilters.length > 0) {
+            PlatformFilters.utility.activeFiltersChanged()
         }
 
         Help.registerTarget(textFilterContainer, "Type here to filter platforms by keyword.", 0, "selectorHelp")
@@ -56,7 +52,6 @@ Item {
         invokeCustomLessThan: true
 
         property bool activeFilters: false
-        property bool filteringText: false
         readonly property string timeFormat: "yyyy-MM-ddThh:mm:ss.zzzZ"
 
         // Custom filtering functions
@@ -97,10 +92,9 @@ Item {
             if (activeFilters){
                 // ensure item fulfills all active filters
                 mainLoop: // label for continuing from nested loop
-                for (let i = 0; i < Filters.activeFilters.length; i++){
-
-                    if (Filters.activeFilters[i].startsWith("status-")) {
-                        switch (Filters.activeFilters[i]) {
+                for (let i = 0; i < PlatformFilters.activeFilters.length; i++){
+                    if (PlatformFilters.activeFilters[i].startsWith("status-")) {
+                        switch (PlatformFilters.activeFilters[i]) {
                         case "status-connected":
                             if (item.connected) {
                                 continue mainLoop
@@ -123,7 +117,7 @@ Item {
                     }
 
                     for (let j = 0; j < item.filters.count; j++){
-                        if (Filters.activeFilters[i] === item.filters.get(j).filterName) {
+                        if (PlatformFilters.activeFilters[i] === item.filters.get(j).filterName) {
                             continue mainLoop
                         }
 
@@ -137,43 +131,24 @@ Item {
         }
 
         function contains_text(item) {
-            if (filteringText && (searchCategoryText.checked || searchCategoryPartsList.checked)){
-                let found = false
-
-                if (searchCategoryText.checked === true) {
-                    let replaceIdx = item.description.toLowerCase().indexOf(filter.lowerCaseText)
-                    if (replaceIdx > -1) {
-                        found = true;
+            if (filter.lowerCaseText.length && (searchCategoryText.checked || searchCategoryPartsList.checked)) {
+                if (searchCategoryText.checked) {
+                    if (item.description.toLowerCase().indexOf(filter.lowerCaseText) >= 0
+                            || item.opn.toLowerCase().indexOf(filter.lowerCaseText) >= 0
+                            || item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText) >= 0) {
+                        return true
                     }
-
-                    item.desc_matching_index = replaceIdx
-
-                    replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
-                    if (replaceIdx > -1) {
-                        found = true
-                    }
-                    item.opn_matching_index = replaceIdx
-
-                    replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
-                    if (replaceIdx > -1) {
-                        found = true
-                    }
-                    item.name_matching_index = replaceIdx
                 }
 
-                if (searchCategoryPartsList.checked === true) {
+                if (searchCategoryPartsList.checked) {
                     for (let i = 0; i < item.parts_list.count; i++) {
-                        let idxMatched = item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText);
-                        if (idxMatched !== -1) {
-                            found = true
+                        if (item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText) >= 0) {
+                            return true
                         }
-                        item.parts_list.set(i, {
-                            opn: item.parts_list.get(i).opn,
-                            matchingIndex: idxMatched
-                        });
                     }
                 }
-                return found
+
+                return false
             } else {
                 return true
             }
@@ -193,18 +168,14 @@ Item {
     }
 
     Connections {
-        target: Filters.utility
+        target: PlatformFilters.utility
         onActiveFiltersChanged: {
-            if (Filters.activeFilters.length === 0) {
+            if (PlatformFilters.activeFilters.length === 0) {
                 filteredPlatformSelectorModel.activeFilters = false
             } else {
                 filteredPlatformSelectorModel.activeFilters = true
             }
-            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
-        }
-
-        onKeywordFilterChanged: {
-            platformSelectorListView.filterText = ""
+            filteredPlatformSelectorModel.invalidateFilter()
         }
     }
 
@@ -359,14 +330,8 @@ Item {
                         property string lowerCaseText: text.toLowerCase()
 
                         onLowerCaseTextChanged: {
-                            Filters.keywordFilter = lowerCaseText
                             searchCategoriesDropdown.close()
-                            if (lowerCaseText === "") {
-                                filteredPlatformSelectorModel.filteringText = false
-                            } else {
-                                filteredPlatformSelectorModel.filteringText = true
-                            }
-                            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                            filteredPlatformSelectorModel.invalidateFilter()
                         }
 
                         onActiveFocusChanged: {
@@ -495,7 +460,7 @@ Item {
                                     enabled: searchCategoryPartsList.checked
 
                                     onCheckedChanged: {
-                                        filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                        filteredPlatformSelectorModel.invalidateFilter()
                                     }
                                 }
 
@@ -512,7 +477,7 @@ Item {
                                     enabled: searchCategoryText.checked
 
                                     onCheckedChanged: {
-                                        filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                                        filteredPlatformSelectorModel.invalidateFilter()
                                     }
                                 }
 
@@ -567,7 +532,7 @@ Item {
                         id: segmentFilterMouse
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        enabled: Filters.filterModel.count > 0
+                        enabled: PlatformFilters.filterModel.count > 0
                         anchors {
                             fill: segmentFilterContainer
                         }
@@ -670,7 +635,7 @@ Item {
                                     Repeater {
                                         id: segmentFilterRepeater
                                         model: SGSortFilterProxyModel {
-                                            sourceModel: Filters.filterModel
+                                            sourceModel: PlatformFilters.filterModel
                                             invokeCustomFilter: true
 
                                             function filterAcceptsRow(index) {
@@ -710,7 +675,7 @@ Item {
                                     Repeater {
                                         id: categoryFilterRepeater
                                         model: SGSortFilterProxyModel {
-                                            sourceModel: Filters.filterModel
+                                            sourceModel: PlatformFilters.filterModel
                                             invokeCustomFilter: true
 
                                             function filterAcceptsRow(index) {
@@ -757,7 +722,7 @@ Item {
                 Repeater {
                     id: activeFilterRepeater
                     model: SGSortFilterProxyModel {
-                        sourceModel: Filters.filterModel
+                        sourceModel: PlatformFilters.filterModel
                         invokeCustomFilter: true
 
                         function filterAcceptsRow (index) {
@@ -800,7 +765,7 @@ Item {
                                     cursorShape: Qt.PointingHandCursor
 
                                     onClicked:  {
-                                        Filters.setFilterActive(model.filterName, false)
+                                        PlatformFilters.setFilterActive(model.filterName, false)
                                     }
                                 }
                             }
@@ -822,6 +787,7 @@ Item {
                 maximumFlickVelocity: 1200 // Limit scroll speed on Windows trackpads: https://bugreports.qt.io/browse/QTBUG-56075
                 clip: true
                 highlightFollowsCurrentItem: false
+                boundsBehavior: Flickable.StopAtBounds
                 model: filteredPlatformSelectorModel
 
                 property real delegateHeight: 160
@@ -830,6 +796,11 @@ Item {
                     implicitHeight: listview.delegateHeight
                     implicitWidth: listview.width - (listview.ScrollBar.vertical.width + 2)
                     isCurrentItem: ListView.isCurrentItem
+                    highlightPattern: filter.lowerCaseText
+                    matchName: highlightPattern.length && searchCategoryText.checked
+                    matchDescription: matchName
+                    matchOpn: matchName
+                    matchPartList: highlightPattern.length && searchCategoryPartsList.checked
                 }
 
                 highlight: Rectangle {

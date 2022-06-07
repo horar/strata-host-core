@@ -12,8 +12,6 @@ import QtQml 2.12
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.12
 
-import "qrc:/js/navigation_control.js" as NavigationControl
-
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
 import tech.strata.theme 1.0

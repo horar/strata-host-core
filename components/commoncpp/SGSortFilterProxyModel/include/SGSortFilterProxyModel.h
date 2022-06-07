@@ -78,6 +78,7 @@ public:
     Q_INVOKABLE int mapIndexToSource(int i);
     Q_INVOKABLE int mapIndexFromSource(int i);
     Q_INVOKABLE bool matches(const QString &text) const;
+    Q_INVOKABLE void invalidateFilter();
 
 signals:
     void countChanged();

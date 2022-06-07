@@ -12,9 +12,6 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 
-import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/platform_filters.js" as PlatformFilters
-
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0

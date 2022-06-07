@@ -499,6 +499,7 @@ Module {
             type: "bool"
             Parameter { name: "text"; type: "string" }
         }
+        Method { name: "invalidateFilter" }
     }
     Component {
         name: "SGTextHighlighter"

@@ -161,7 +161,6 @@ function createPlatformSelectorModelItem(base_data) {
 
     platform.first_normal_published_timestamp = base_data.first_normal_published_timestamp
     platform.image = base_data.image
-    platform.last_published_timestamp = base_data.last_published_timestamp
     platform.opn = base_data.opn
 
     if (base_data.hasOwnProperty("parts_list")) {
@@ -172,9 +171,6 @@ function createPlatformSelectorModelItem(base_data) {
 
     platform.verbose_name = base_data.verbose_name
     platform.version = base_data.version
-    platform.desc_matching_index = -1
-    platform.opn_matching_index = -1
-    platform.name_matching_index = -1
     platform.error = false
     platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)
     platform.device_id = Constants.NULL_DEVICE_ID

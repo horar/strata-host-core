@@ -21,7 +21,6 @@ import tech.strata.notifications 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/constants.js" as Constants
-import "qrc:/js/platform_selection.js" as PlatformSelection
 
 Item {
     id: root

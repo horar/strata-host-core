@@ -231,7 +231,6 @@ var mapping = {
 
 
 var activeFilters = []
-var keywordFilter = ""
 
 var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal activeFiltersChanged(); signal keywordFilterChanged();}', Qt.application, 'FiltersUtility');
 
@@ -273,9 +272,7 @@ function initialize () {
 
 function clearActiveFilters () {
     activeFilters = []
-    keywordFilter = ""
     utility.activeFiltersChanged()
-    utility.keywordFilterChanged()
 }
 
 function setFilterActive(filterName, active) {
