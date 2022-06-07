@@ -37,7 +37,8 @@ enum class Status : int {
     Plain,
     Info,
     Warning,
-    Error
+    Error,
+    Success
 };
 Q_ENUM_NS(Status)
 
@@ -52,7 +53,7 @@ protected:
      * \param platform platform which will be used for platform validation
      * \param type type of validation (value from Type enum)
      */
-    BaseValidation(const PlatformPtr& platform, Type type);
+    BaseValidation(const PlatformPtr& platform, Type type, const QString& name);
 
 public:
     /*!
@@ -70,6 +71,12 @@ public:
      * \return validation type (value from enum Type)
      */
     virtual Type type() const final;
+
+    /*!
+     * Get validation name.
+     * \return validation name
+     */
+    virtual QString name() const final;
 
 signals:
     /*!
@@ -99,6 +106,7 @@ private:
 
 protected:
     PlatformPtr platform_;
+    const QString name_;
 
     PlatformMessage lastPlatformNotification_;
 

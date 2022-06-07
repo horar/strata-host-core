@@ -183,9 +183,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             if (ackOk_) {
                 if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
                     if (result == CommandResult::Failure) {
-                        QByteArray rawJson = message.raw();
-                        if (rawJson.endsWith('\n')) { rawJson.chop(1); }
-                        QString warning = "Received faulty notification: '" + rawJson + "'.";
+                        QString warning = "Received faulty notification: '" + message.raw() + '\'';
                         qCWarning(lcPlatformCommand) << platform_ << warning;
                         emitValidationFailure(warning, true);
                     }
@@ -204,9 +202,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             }
         } else {
             // some platforms send periodic notifications, it is not an error if we receive it, ignore it
-            QByteArray rawJson = message.raw();
-            if (rawJson.endsWith('\n')) { rawJson.chop(1); }
-            QString warning = "Received invalid notification for command '" + cmdName_ + "': '" + rawJson + "'.";
+            QString warning = "Received invalid notification for command '" + cmdName_ + "': '" + message.raw() + '\'';
             qCDebug(lcPlatformCommand) << platform_ << warning;
             emitValidationFailure(warning, false);
         }

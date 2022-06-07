@@ -10,6 +10,8 @@
 #include <Commands/PlatformCommands.h>
 #include <Commands/PlatformCommandConstants.h>
 
+#include "logging/LoggingQtCategories.h"
+
 #include <QLatin1String>
 
 #include <array>
@@ -17,7 +19,7 @@
 namespace strata::platform::validation {
 
 Identification::Identification(const PlatformPtr& platform)
-    : BaseValidation(platform, Type::Identification)
+    : BaseValidation(platform, Type::Identification, QStringLiteral("Identification"))
 {
     commandList_.reserve(2);
 
@@ -46,7 +48,9 @@ bool Identification::getFirmwareInfoCheck()
          return false;
     }
     if (platform_->apiVersion() != Platform::ApiVersion::v2_0) {
-        emit validationStatus(Status::Info, QStringLiteral("Unknown API version: '") + payload[JSON_API_VERSION].GetString() + QStringLiteral("'."));
+        QString message = QStringLiteral("Unknown API version: '") + payload[JSON_API_VERSION].GetString() + '\'';
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Info, message);
     }
 
     bool inBootloader = false;
@@ -59,7 +63,9 @@ bool Identification::getFirmwareInfoCheck()
         if (activeStr == CSTR_BOOTLOADER) {
             inBootloader = true;
         } else if (activeStr != CSTR_APPLICATION) {
-            emit validationStatus(Status::Error, unsupportedValue(joinKeys(jsonPath, JSON_ACTIVE), activeStr));
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_ACTIVE), activeStr);
+            qCWarning(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Error, message);
             return false;
         }
     }
@@ -81,7 +87,9 @@ bool Identification::getFirmwareInfoCheck()
             const rapidjson::Value& value = bootloader[key];
             QLatin1String valueStr(value.GetString(), value.GetStringLength());
             if (valueStr.isEmpty()) {
-                emit validationStatus(Status::Warning, unsupportedValue(joinKeys(jsonPath, key), valueStr));
+                QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr);
+                qCWarning(lcPlatformValidation) << platform_ << message;
+                emit validationStatus(Status::Warning, message);
             }
         }
 
@@ -106,7 +114,9 @@ bool Identification::getFirmwareInfoCheck()
                 const rapidjson::Value& value = application[key];
                 QLatin1String valueStr(value.GetString(), value.GetStringLength());
                 if (valueStr.isEmpty()) {
-                    emit validationStatus(Status::Warning, unsupportedValue(joinKeys(jsonPath, key), valueStr));
+                    QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr);
+                    qCWarning(lcPlatformValidation) << platform_ << message;
+                    emit validationStatus(Status::Warning, message);
                 }
             }
         }
@@ -144,14 +154,20 @@ bool Identification::requestPlatformIdCheck()
         }
         controller = payload[JSON_CONTROLLER_TYPE].GetUint64();
         if (controller == 0) {
-            emit validationStatus(Status::Warning, JSON_CONTROLLER_TYPE + QStringLiteral(" not set, continuing as EMBEDDED."));
+            QString message = JSON_CONTROLLER_TYPE + QStringLiteral(" not set, continuing as EMBEDDED");
+            qCWarning(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Warning, message);
             controller = EMBEDDED;
         }
         if ((controller != EMBEDDED) && (controller != ASSISTED)) {
-            emit validationStatus(Status::Error, unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller)));
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller));
+            qCWarning(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Error, message);
             return false;
         }
-        emit validationStatus(Status::Info, (controller == EMBEDDED) ? QStringLiteral("Embedded board.") : QStringLiteral("Assisted controller."));
+        QString message = (controller == EMBEDDED) ? QStringLiteral("Recognized embedded board") : QStringLiteral("Recognized assisted controller");
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Info, message);
     }
 
     {  // check "platform_id", "class_id", "board_count", "controller_platform_id",
@@ -197,7 +213,9 @@ bool Identification::requestPlatformIdCheck()
         // keys mandatory for assisted
         if (controller == ASSISTED) {
             if (keysBothCount == 0) {  // only dongle connected
-                emit validationStatus(Status::Info, QStringLiteral("Assisted board not connected."));
+                QString message = QStringLiteral("Assisted board not connected");
+                qCInfo(lcPlatformValidation) << platform_ << message;
+                emit validationStatus(Status::Info, message);
             }
             for (size_t i = 0; i < keysAssist.size(); ++i) {
                 if (checkKey(payload, keysAssist[i].key, keysAssist[i].type, jsonPath) == false) {
@@ -209,7 +227,9 @@ bool Identification::requestPlatformIdCheck()
         if (controller == EMBEDDED) {
             for (size_t i = 0; i < keysAssist.size(); ++i) {
                 if (keysAssist[i].present) {
-                    emit validationStatus(Status::Error, QStringLiteral("Unexpected key '") + joinKeys(jsonPath, keysAssist[i].key) + QStringLiteral("'."));
+                    QString message = QStringLiteral("Unexpected key '") + joinKeys(jsonPath, keysAssist[i].key) + '\'';
+                    qCWarning(lcPlatformValidation) << platform_ << message;
+                    emit validationStatus(Status::Error, message);
                     return false;
                 }
             }

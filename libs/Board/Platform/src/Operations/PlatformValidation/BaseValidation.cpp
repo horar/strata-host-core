@@ -21,11 +21,12 @@ namespace strata::platform::validation {
 using command::BasePlatformCommand;
 using command::CommandResult;
 
-BaseValidation::BaseValidation(const PlatformPtr& platform, Type type):
+BaseValidation::BaseValidation(const PlatformPtr& platform, Type type, const QString &name):
     type_(type),
     running_(false),
     fatalFailure_(false),
-    platform_(platform)
+    platform_(platform),
+    name_(name)
 { }
 
 BaseValidation::~BaseValidation()
@@ -37,7 +38,7 @@ BaseValidation::~BaseValidation()
 void BaseValidation::run()
 {
     if (platform_.get() == nullptr) {
-        QString errStr(QStringLiteral("Device is not set."));
+        QString errStr(QStringLiteral("Device is not set"));
         qCWarning(lcPlatformValidation) << errStr;
         emit validationStatus(Status::Error, errStr);
         finishValidation(false);
@@ -45,7 +46,7 @@ void BaseValidation::run()
     }
 
     if (platform_->deviceConnected() == false) {
-        QString errStr(QStringLiteral("Cannot run validation, device is not connected."));
+        QString errStr(QStringLiteral("Cannot run validation, device is not connected"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
         finishValidation(false);
@@ -53,7 +54,7 @@ void BaseValidation::run()
     }
 
     if (running_) {
-        QString errStr(QStringLiteral("The validation is already running."));
+        QString errStr(QStringLiteral("The validation is already running"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
         finishValidation(false);
@@ -72,15 +73,25 @@ void BaseValidation::run()
         it->notificationReceived = false;
     }
     currentCommand_ = commandList_.begin();
-    fatalFailure_ = false;
-    running_ = true;
 
+    fatalFailure_ = false;
+
+    QString message = name_ + QStringLiteral(" is about to start");
+    qCInfo(lcPlatformValidation) << platform_ << message;
+    emit validationStatus(Status::Plain, message);
+
+    running_ = true;
     QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
 }
 
 Type BaseValidation::type() const
 {
     return type_;
+}
+
+QString BaseValidation::name() const
+{
+    return name_;
 }
 
 // This is only first iteration of command validation, as more validations (and functionality)
@@ -114,7 +125,9 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
         break;
     case CommandResult::Timeout :  // Expected notification was not received (or received notification was not OK).
         if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
-            emit validationStatus(Status::Plain, QStringLiteral("Checking last received notification."));
+            QString message(QStringLiteral("Checking last received notification"));
+            qCInfo(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Plain, message);
             currentCommand_->notificationCheck();
         }
         finishValidation(false);
@@ -131,6 +144,7 @@ void BaseValidation::handleValidationFailure(QString error, bool fatal) {
         fatalFailure_ = true;
         status = Status::Error;
     }
+    qCWarning(lcPlatformValidation) << platform_ << error;
     emit validationStatus(status, error);
 }
 
@@ -145,7 +159,9 @@ void BaseValidation::handlePlatformNotification(PlatformMessage message)
 void BaseValidation::sendCommand()
 {
     if (currentCommand_ != commandList_.end()) {
-        emit validationStatus(Status::Plain, QStringLiteral("Validating '") + currentCommand_->command->name() + QStringLiteral("'."));
+        QString message(QStringLiteral("Validating '") + currentCommand_->command->name() + '\'');
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Plain, message);
         // TODO: if there will be need for "lock" use 'reinterpret_cast<quintptr>(this)' as sendCommand parameter
         currentCommand_->command->sendCommand(0);
     }
@@ -162,7 +178,20 @@ void BaseValidation::finishValidation(bool success)
 
     running_ = false;
 
-    emit finished((fatalFailure_) ? false : success);
+    bool result = (fatalFailure_) ? false : success;
+
+    QString message = name_;
+    if (result) {
+        message += QStringLiteral(" PASS");
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Success, message);
+    } else {
+        message += QStringLiteral(" FAIL");
+        qCWarning(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Error, message);
+    }
+
+    emit finished(result);
 }
 
 BaseValidation::CommandTest::CommandTest(CommandPtr&& platformCommand, const std::function<bool()>& notificationCheckFn)
@@ -188,7 +217,7 @@ QString BaseValidation::joinKeys(const QVector<const char*>& keys, const char* k
 
 QString BaseValidation::missingKey(const QString& key) const
 {
-    return QStringLiteral("Missing '") + key + QStringLiteral("' key.");
+    return QStringLiteral("Missing '") + key + QStringLiteral("' key");
 }
 
 QString BaseValidation::badKeyType(const QString& key, KeyType type) const
@@ -196,16 +225,16 @@ QString BaseValidation::badKeyType(const QString& key, KeyType type) const
     QString result = QStringLiteral("Key '") + key + QStringLiteral("' is not ");
     switch (type) {
     case KeyType::Object :
-        result += QStringLiteral("an object.");
+        result += QStringLiteral("an object");
         break;
     case KeyType::String :
-        result += QStringLiteral("a string.");
+        result += QStringLiteral("a string");
         break;
     case KeyType::Integer :
-        result += QStringLiteral("an integer.");
+        result += QStringLiteral("an integer");
         break;
     case KeyType::Unsigned :
-        result += QStringLiteral("an unsigned integer.");
+        result += QStringLiteral("an unsigned integer");
         break;
     }
     return result;
@@ -214,9 +243,9 @@ QString BaseValidation::badKeyType(const QString& key, KeyType type) const
 QString BaseValidation::unsupportedValue(const QString& key, const QString& value) const
 {
     QString result = QStringLiteral("Unsupported value of '") + key
-                     + QStringLiteral("' key: '") + value + QStringLiteral("'.");
+                     + QStringLiteral("' key: '") + value + '\'';
     if (value.isEmpty()) {
-        result += QStringLiteral(" Value is empty.");
+        result += QStringLiteral(" Value is empty");
     }
     return result;
 }
@@ -224,7 +253,9 @@ QString BaseValidation::unsupportedValue(const QString& key, const QString& valu
 bool BaseValidation::checkKey(const rapidjson::Value& jsonObject, const char* key, KeyType type, const QVector<const char*>& jsonPath)
 {
     if (jsonObject.HasMember(key) == false) {
-        emit validationStatus(Status::Error, missingKey(joinKeys(jsonPath, key)));
+        QString errStr = missingKey(joinKeys(jsonPath, key));
+        qCWarning(lcPlatformValidation) << platform_ << errStr;
+        emit validationStatus(Status::Error, errStr);
         return false;
     }
 
@@ -255,7 +286,9 @@ bool BaseValidation::checkKey(const rapidjson::Value& jsonObject, const char* ke
     }
 
     if (typeOk == false) {
-        emit validationStatus(Status::Error, badKeyType(joinKeys(jsonPath, key), type));
+        QString errStr = badKeyType(joinKeys(jsonPath, key), type);
+        qCWarning(lcPlatformValidation) << platform_ << errStr;
+        emit validationStatus(Status::Error, errStr);
         return false;
     }
 
@@ -282,9 +315,10 @@ bool BaseValidation::generalNotificationCheck(const rapidjson::Document& json, c
         const rapidjson::Value& value = notification[JSON_VALUE];
         QLatin1String notificationCommandName(value.GetString(), value.GetStringLength());
         if (notificationCommandName != commandName) {
-            QString msg = QStringLiteral("Other command name (") + notificationCommandName
-                          + QStringLiteral(") than expected (") + commandName + QStringLiteral(").");
-            emit validationStatus(Status::Error, msg);
+            QString errStr = QStringLiteral("Other command name (") + notificationCommandName
+                             + QStringLiteral(") than expected (") + commandName + ')';
+            qCWarning(lcPlatformValidation) << platform_ << errStr;
+            emit validationStatus(Status::Error, errStr);
             return false;
         }
     }

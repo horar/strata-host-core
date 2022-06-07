@@ -102,13 +102,9 @@ QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
 
 void SciPlatformTestModel::finishedHandler(bool success)
 {
-    disconnect(data_.at(activeTestIndex_), nullptr, this, nullptr);
+    Q_UNUSED(success)
 
-    if (success) {
-        messageModel_->addMessage(SciPlatformTestMessageModel::Success, data_.at(activeTestIndex_)->name() + QStringLiteral(" PASSED."));
-    } else {
-        messageModel_->addMessage(SciPlatformTestMessageModel::Error, data_.at(activeTestIndex_)->name() + QStringLiteral(" FAILED."));
-    }
+    disconnect(data_.at(activeTestIndex_), nullptr, this, nullptr);
 
     messageModel_->addMessage(SciPlatformTestMessageModel::Plain, "");
 
@@ -133,6 +129,9 @@ void SciPlatformTestModel::statusHandler(validation::Status status, QString text
     case validation::Status::Error :
         msgType = SciPlatformTestMessageModel::Error;
         break;
+    case validation::Status::Success :
+        msgType = SciPlatformTestMessageModel::Success;
+        break;
     }
 
     messageModel_->addMessage(msgType, text);
@@ -142,8 +141,6 @@ void SciPlatformTestModel::runNextTest()
 {
     while (activeTestIndex_ < data_.length()) {
         if (data_.at(activeTestIndex_)->enabled()) {
-            messageModel_->addMessage(SciPlatformTestMessageModel::Plain, data_.at(activeTestIndex_)->name() + QStringLiteral(" is about to start."));
-
             connect(data_.at(activeTestIndex_), &SciPlatformValidation::status, this, &SciPlatformTestModel::statusHandler);
             connect(data_.at(activeTestIndex_), &SciPlatformValidation::finished, this, &SciPlatformTestModel::finishedHandler);
 
