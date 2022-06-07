@@ -39,10 +39,13 @@ public:
     Q_INVOKABLE void runTests();
 
     Q_PROPERTY(bool isRunning READ isRunning NOTIFY isRunningChanged)
+    Q_PROPERTY(bool testsSelected READ testsSelected NOTIFY testsSelectedChanged)
     bool isRunning() const;
+    bool testsSelected() const;
 
 signals:
     void isRunningChanged();
+    void testsSelectedChanged();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
@@ -54,6 +57,7 @@ private slots:
 private:
     void runActiveTest();
     void setIsRunning(bool isRunning);
+    void setTestsSelected(bool testsSelected);
 
     SciPlatformTestMessageModel *messageModel_;
 
@@ -66,4 +70,5 @@ private:
     int activeTestIndex_;
 
     bool isRunning_;
+    bool testsSelected_;  // indicates if at least one test in 'data_' is enabled
 };

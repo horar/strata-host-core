@@ -20,7 +20,8 @@ SciPlatformTestModel::SciPlatformTestModel(
     : QAbstractListModel(parent),
       messageModel_(messageModel),
       platformRef_(platform),
-      isRunning_(false)
+      isRunning_(false),
+      testsSelected_(false)
 {
     data_.append(new IdentificationTest(platformRef_, this));
 
@@ -71,6 +72,14 @@ void SciPlatformTestModel::setEnabled(int row, bool enabled)
     data_.at(row)->setEnabled(enabled);
 
     emit dataChanged(createIndex(row, 0), createIndex(row, 0), {EnabledRole});
+
+    unsigned enabledCount = 0;
+    for (int i = 0; i < data_.size(); ++i) {
+        if (data_.at(i)->enabled()) {
+            ++enabledCount;
+        }
+    }
+    setTestsSelected(enabledCount > 0);
 }
 
 void SciPlatformTestModel::runTests()
@@ -87,6 +96,11 @@ void SciPlatformTestModel::runTests()
 bool SciPlatformTestModel::isRunning() const
 {
     return isRunning_;
+}
+
+bool SciPlatformTestModel::testsSelected() const
+{
+    return testsSelected_;
 }
 
 QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
@@ -162,4 +176,14 @@ void SciPlatformTestModel::setIsRunning(bool isRunning)
 
     isRunning_ = isRunning;
     emit isRunningChanged();
+}
+
+void SciPlatformTestModel::setTestsSelected(bool testsSelected)
+{
+    if (testsSelected_ == testsSelected) {
+        return;
+    }
+
+    testsSelected_ = testsSelected;
+    emit testsSelectedChanged();
 }

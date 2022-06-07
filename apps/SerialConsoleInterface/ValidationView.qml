@@ -86,7 +86,7 @@ FocusScope {
 
             SGWidgets.SGButton {
                 text: "Run tests"
-                enabled: !platformTestModel.isRunning
+                enabled: !platformTestModel.isRunning && platformTestModel.testsSelected
 
                 onClicked: {
                     platformTestModel.runTests()
