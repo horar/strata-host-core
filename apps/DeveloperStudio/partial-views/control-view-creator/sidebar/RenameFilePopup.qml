@@ -99,7 +99,7 @@ SGStrataPopup {
                 }
 
                 const newFileName = newFilenameInfobox.text + (fileExtension === "" ? "" : ("." + fileExtension))
-                const url = SGUtilsCpp.joinFilePath(parentDir, newFileName)
+                const url = SGUtilsCpp.pathToUrl(SGUtilsCpp.joinFilePath(parentDir, newFileName))
 
                 treeModel.stopWatchingPath(parentDir)
 
