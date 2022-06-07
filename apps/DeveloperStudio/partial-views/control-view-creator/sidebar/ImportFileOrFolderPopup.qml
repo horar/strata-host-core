@@ -12,6 +12,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/partial-views"
 
@@ -100,6 +101,7 @@ SGStrataPopup {
                     enabled: true
                     contextMenuEnabled: true
                     placeholderText: importFileOrFolderPopup.viewState + " Name"
+                    selectionColor: Theme.palette.onsemiOrange
 
                     onAccepted: {
                         if (importButton.enabled) {
@@ -113,6 +115,7 @@ SGStrataPopup {
                 id: addToQrcCheckbox
                 text: qsTr("Add selected " + (importFileOrFolderPopup.viewState == "File" ? "file(s)" : "folder") + " to project QRC")
                 checked: false
+                palette.highlight: Theme.palette.onsemiOrange
             }
 
             SGText {

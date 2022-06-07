@@ -91,6 +91,7 @@ Rectangle {
                 selectByMouse: true
                 persistentSelection: true // must deselect manually
                 placeholderText: commandColumn.isNoti ? "Notification name" : "Command name"
+                palette.highlight: Theme.palette.onsemiOrange
 
                 validator: RegExpValidator {
                     regExp: /^[a-z_][a-zA-Z0-9_]*/
@@ -99,15 +100,16 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            return Theme.palette.onsemiOrange
+                            return Theme.palette.error
                         } else if (cmdNotifName.activeFocus) {
-                            return palette.highlight
+                            return Theme.palette.onsemiOrange
                         } else {
-                            return "lightgrey"
+                            return Theme.palette.lightGray
                         }
                     }
 
                     border.width: (!model.valid || cmdNotifName.activeFocus) ? 2 : 1
+                    color: model.valid ? Theme.palette.white : Qt.lighter(Theme.palette.error, 2.35)
                 }
 
                 Component.onCompleted: {
@@ -236,6 +238,7 @@ Rectangle {
                         height: parent.height
                         selectByMouse: true
                         persistentSelection: true // must deselect manually
+                        palette.highlight: Theme.palette.onsemiOrange
                     }
 
                     SGSwitch {
@@ -246,6 +249,7 @@ Rectangle {
                         visible: enabled
                         checkedLabel: "True"
                         uncheckedLabel: "False"
+                        grooveFillColor: Theme.palette.highlight
                     }
                 }
             }

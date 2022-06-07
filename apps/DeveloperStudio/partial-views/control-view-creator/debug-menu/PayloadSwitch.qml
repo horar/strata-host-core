@@ -10,6 +10,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 Item {
     width: parent.width
@@ -40,6 +41,7 @@ Item {
             uncheckedLabel: "false"
             Layout.preferredWidth: 100
             Layout.preferredHeight: 35
+            grooveFillColor: Theme.palette.highlight
         }
 
         Item {

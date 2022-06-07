@@ -80,6 +80,7 @@ GenericPopup {
             selectByMouse: true
             focus: true
             persistentSelection: true
+            palette.highlight: Theme.palette.onsemiOrange
 
             onAccepted: {
                 if (okButton.enabled) {

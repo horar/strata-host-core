@@ -339,6 +339,7 @@ Item {
                     placeholderText: "Output Folder Location"
                     contextMenuEnabled: true
                     readOnly: true
+                    palette.highlight: Theme.palette.onsemiOrange
                 }
             }
         }

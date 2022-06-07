@@ -76,6 +76,7 @@ SGStrataPopup {
                 readOnly: false
                 enabled: true
                 contextMenuEnabled: true
+                selectionColor: Theme.palette.onsemiOrange
 
                 onAccepted: {
                     if (renameFileButton.enabled) {
