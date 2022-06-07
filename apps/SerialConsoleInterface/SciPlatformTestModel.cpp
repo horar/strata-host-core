@@ -8,11 +8,8 @@
  */
 
 #include "SciPlatformTestModel.h"
-
-#include <QDebug>
 #include "SciPlatformTestMessageModel.h"
-
-#include <Operations/PlatformValidation/Identification.h>
+#include "SciPlatformTests.h"
 
 namespace validation = strata::platform::validation;
 
@@ -25,7 +22,7 @@ SciPlatformTestModel::SciPlatformTestModel(
       platformRef_(platform),
       isRunning_(false)
 {
-    data_.append(new SciPlatformValidation(SciPlatformValidation::Type::Identification, platformRef_, this));
+    data_.append(new IdentificationTest(platformRef_, this));
 
     setEnabled(0, true);  // enable first validation - identification
 }
@@ -41,7 +38,7 @@ QVariant SciPlatformTestModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    SciPlatformValidation *item = data_.at(row);
+    SciPlatformBaseTest *item = data_.at(row);
 
     switch (role) {
     case Qt::DisplayRole:
@@ -141,8 +138,8 @@ void SciPlatformTestModel::runActiveTest()
 {
     while (activeTestIndex_ < data_.length()) {
         if (data_.at(activeTestIndex_)->enabled()) {
-            connect(data_.at(activeTestIndex_), &SciPlatformValidation::status, this, &SciPlatformTestModel::statusHandler);
-            connect(data_.at(activeTestIndex_), &SciPlatformValidation::finished, this, &SciPlatformTestModel::finishedHandler);
+            connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::status, this, &SciPlatformTestModel::statusHandler);
+            connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::finished, this, &SciPlatformTestModel::finishedHandler);
 
             data_.at(activeTestIndex_)->run();
 
@@ -165,53 +162,4 @@ void SciPlatformTestModel::setIsRunning(bool isRunning)
 
     isRunning_ = isRunning;
     emit isRunningChanged();
-}
-
-SciPlatformValidation::SciPlatformValidation(Type type,
-                                              const strata::platform::PlatformPtr& platformRef,
-                                              QObject *parent)
-    : QObject(parent),
-      type_(type),
-      platformRef_(platformRef),
-      enabled_(false),
-      validation_(nullptr, nullptr)
-{ }
-
-void SciPlatformValidation::run()
-{
-    if (validation_.get() == nullptr) {
-        switch (type_) {
-        case Type::Identification :
-            validation_ = ValidationPtr(new validation::Identification(platformRef_), validationDeleter);
-            break;
-        }
-        connect(validation_.get(), &validation::BaseValidation::finished, this, &SciPlatformValidation::finished);
-        connect(validation_.get(), &validation::BaseValidation::validationStatus, this, &SciPlatformValidation::status);
-    }
-    validation_->run();
-}
-
-QString SciPlatformValidation::name()
-{
-    switch (type_) {
-    case Type::Identification :
-        return QStringLiteral("Identification");
-    }
-
-    return "-";
-}
-
-void SciPlatformValidation::setEnabled(bool enabled)
-{
-    enabled_ = enabled;
-}
-
-bool SciPlatformValidation::enabled()
-{
-    return enabled_;
-}
-
-void SciPlatformValidation::validationDeleter(validation::BaseValidation* validation)
-{
-    validation->deleteLater();
 }

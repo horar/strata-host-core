@@ -51,6 +51,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciFilterScrollbackModel.cpp
     SciSearchScrollbackModel.cpp
     SciMessageQueueModel.cpp
+    SciPlatformTests.cpp
     SciPlatformTestModel.cpp
     SciPlatformTestMessageModel.cpp
     qml.qrc

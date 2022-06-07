@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include <memory>
-
 #include <QObject>
 #include <QAbstractListModel>
 
@@ -18,7 +16,7 @@
 #include <Operations/PlatformValidation/BaseValidation.h>
 
 class SciPlatformTestMessageModel;
-class SciPlatformValidation;
+class SciPlatformBaseTest;
 
 class SciPlatformTestModel: public QAbstractListModel
 {
@@ -63,42 +61,9 @@ private:
     // It refers to platform_ in SciPlatfrom class (we need reference to obtain its current value).
     const strata::platform::PlatformPtr& platformRef_;
 
-    QList<SciPlatformValidation*> data_;
+    QList<SciPlatformBaseTest*> data_;
 
     int activeTestIndex_;
 
     bool isRunning_;
-};
-
-class SciPlatformValidation: public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(SciPlatformValidation)
-
-public:
-    enum class Type {
-        Identification
-    };
-
-    SciPlatformValidation(Type type,
-                          const strata::platform::PlatformPtr& platformRef,
-                          QObject *parent);
-    void run();
-    QString name();
-    void setEnabled(bool enabled);
-    bool enabled();
-
-signals:
-    void finished(bool success);
-    void status(strata::platform::validation::Status status, QString text);
-
-private:
-    const Type type_;
-    const strata::platform::PlatformPtr& platformRef_;
-    bool enabled_;
-    typedef std::unique_ptr<strata::platform::validation::BaseValidation,
-                            void(*)(strata::platform::validation::BaseValidation*)> ValidationPtr;
-    ValidationPtr validation_;
-    // deleter for validation_ unique pointer
-    static void validationDeleter(strata::platform::validation::BaseValidation* validation);
 };
