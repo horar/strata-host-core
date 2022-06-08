@@ -31,15 +31,15 @@ public:
 private:
     /*!
      * Checks notification from 'get_firmware_info' commnad.
-     * \return true if 'get_firmware_info' notification is OK, otherwise false
+     * \return 'Passed' if 'get_firmware_info' notification is OK
      */
-    bool getFirmwareInfoCheck();
+    ValidationResult getFirmwareInfoCheck();
 
     /*!
      * Checks notification from 'request_platform_id' commnad.
-     * \return true if 'request_platform_id' notification is OK, otherwise false
+     * \return 'Passed' if 'request_platform_id' notification is OK
      */
-    bool requestPlatformIdCheck();
+    ValidationResult requestPlatformIdCheck();
 };
 
 }  // namespace

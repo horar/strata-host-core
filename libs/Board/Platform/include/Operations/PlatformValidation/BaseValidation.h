@@ -55,6 +55,12 @@ protected:
      */
     BaseValidation(const PlatformPtr& platform, Type type, const QString& name);
 
+    enum class ValidationResult : int {
+        Passed,
+        Incomplete,
+        Failed
+    };
+
 public:
     /*!
      * BaseValidation destructor.
@@ -81,9 +87,8 @@ public:
 signals:
     /*!
      * This signal is emitted when platform validation finishes.
-     * \param success - true if validation was successful, otherwise false
      */
-    void finished(bool success);
+    void finished();
 
     /*!
      * This signal is emitted when some warning occurs during platform validation.
@@ -98,7 +103,7 @@ private slots:
 
 private:
     void sendCommand();
-    void finishValidation(bool success);
+    void finishValidation(ValidationResult result);
 
     const Type type_;
     bool running_;
@@ -113,9 +118,9 @@ protected:
     typedef std::unique_ptr<command::BasePlatformCommand> CommandPtr;
 
     struct CommandTest {
-        CommandTest(CommandPtr&& platformCommand, const std::function<bool()>& notificationCheckFn);
+        CommandTest(CommandPtr&& platformCommand, const std::function<ValidationResult()>& notificationCheckFn);
         CommandPtr command;
-        std::function<bool()> notificationCheck;
+        std::function<ValidationResult()> notificationCheck;
         bool notificationReceived;
     };
 

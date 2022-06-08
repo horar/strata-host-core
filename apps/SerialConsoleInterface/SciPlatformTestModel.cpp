@@ -111,10 +111,8 @@ QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
     return roles;
 }
 
-void SciPlatformTestModel::finishedHandler(bool success)
+void SciPlatformTestModel::finishedHandler()
 {
-    Q_UNUSED(success)
-
     disconnect(data_.at(activeTestIndex_), nullptr, this, nullptr);
 
     messageModel_->addMessage(SciPlatformTestMessageModel::Plain, "");

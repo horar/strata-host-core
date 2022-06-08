@@ -37,13 +37,13 @@ bool SciPlatformBaseTest::enabled() const
     return enabled_;
 }
 
-void SciPlatformBaseTest::finishedHandler(bool success)
+void SciPlatformBaseTest::finishedHandler()
 {
     if (validation_) {
         disconnect(validation_.get(), nullptr, this, nullptr);
         validation_.reset();
     }
-    emit finished(success);
+    emit finished();
 }
 
 void SciPlatformBaseTest::validationDeleter(validation::BaseValidation* validation)

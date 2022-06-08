@@ -41,7 +41,7 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("Device is not set"));
         qCWarning(lcPlatformValidation) << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -49,7 +49,7 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("Cannot run validation, device is not connected"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -57,7 +57,7 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("The validation is already running"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -110,16 +110,16 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
     switch (result) {
     case CommandResult::Done :  // OK
         {
-            bool success = currentCommand_->notificationCheck ? currentCommand_->notificationCheck() : true;
-            if (success) {
+            ValidationResult outcome = currentCommand_->notificationCheck ? currentCommand_->notificationCheck() : ValidationResult::Passed;
+            if (outcome == ValidationResult::Passed) {
                 ++currentCommand_;  // move to next command
                 if (currentCommand_ == commandList_.end()) {  // end of command list - finish validation
-                    finishValidation(success);
+                    finishValidation(ValidationResult::Passed);
                 } else {
                     QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
                 }
             } else {
-                finishValidation(false);
+                finishValidation(outcome);
             }
         }
         break;
@@ -130,10 +130,10 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
             emit validationStatus(Status::Plain, message);
             currentCommand_->notificationCheck();
         }
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         break;
     default :  // other results are failure
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         break;
     }
 }
@@ -167,7 +167,7 @@ void BaseValidation::sendCommand()
     }
 }
 
-void BaseValidation::finishValidation(bool success)
+void BaseValidation::finishValidation(ValidationResult result)
 {
     for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
         disconnect((*it).command.get(), nullptr, this, nullptr);
@@ -178,23 +178,30 @@ void BaseValidation::finishValidation(bool success)
 
     running_ = false;
 
-    bool result = (fatalFailure_) ? false : success;
-
-    QString message = name_;
-    if (result) {
-        message += QStringLiteral(" PASS");
-        qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Success, message);
-    } else {
-        message += QStringLiteral(" FAIL");
-        qCWarning(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Error, message);
+    if (fatalFailure_) {
+        result = ValidationResult::Failed;
     }
 
-    emit finished(result);
+    QString message = name_;
+    switch (result) {
+    case ValidationResult::Passed :
+        message += QStringLiteral(" PASS");
+        emit validationStatus(Status::Success, message);
+        break;
+    case ValidationResult::Incomplete :
+        message += QStringLiteral(" INCOMPLETE");
+        emit validationStatus(Status::Warning, message);
+        break;
+    case ValidationResult::Failed :
+        message += QStringLiteral(" FAIL");
+        emit validationStatus(Status::Error, message);
+        break;
+    }
+
+    emit finished();
 }
 
-BaseValidation::CommandTest::CommandTest(CommandPtr&& platformCommand, const std::function<bool()>& notificationCheckFn)
+BaseValidation::CommandTest::CommandTest(CommandPtr&& platformCommand, const std::function<ValidationResult()>& notificationCheckFn)
     : command(std::move(platformCommand)),
       notificationCheck(notificationCheckFn),
       notificationReceived(false)

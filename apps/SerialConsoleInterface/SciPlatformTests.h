@@ -33,14 +33,14 @@ public:
     bool enabled() const;
 
 signals:
-    void finished(bool success);
+    void finished();
     void status(strata::platform::validation::Status status, QString text);
 
 private:
     bool enabled_;
 
 protected slots:
-    void finishedHandler(bool success);
+    void finishedHandler();
 
 protected:
     QString name_;

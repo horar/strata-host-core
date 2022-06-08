@@ -52,7 +52,7 @@ protected:
 
 private slots:
     void statusHandler(strata::platform::validation::Status status, QString text);
-    void finishedHandler(bool success);
+    void finishedHandler();
 
 private:
     void runNextTest();
