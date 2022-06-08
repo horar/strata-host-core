@@ -69,4 +69,35 @@ GridLayout {
             logLevelComboBox.currentIndex = logLevelComboBox.find(logSettings.getvalue("level"))
         }
     }
+
+    Connections {
+        target: logSettings
+        onCorruptedFile: {
+            showCorruptedFileDialog(param, errorString)
+        }
+    }
+
+    function showCorruptedFileDialog(parameter, string) {
+        var dialog = SGDialogJS.createDialog(
+                    logLevelGrid,
+                    "qrc:/CorruptedFileDialog.qml", {
+                        "corruptedString": string,
+                        "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")
+                    })
+
+        dialog.accepted.connect(function() { //set to default
+            console.log("Set " + parameter + " to default")
+            logSettings.setvalue(parameter, "debug")
+            logLevelComboBox.currentIndex = 0
+            dialog.destroy()
+        })
+
+        dialog.rejected.connect(function() { //remove parameter
+            console.log("Removed " + parameter)
+            logSettings.removekey(parameter)
+            logLevelComboBox.currentIndex = -1
+            dialog.destroy()
+        })
+        dialog.open()
+    }
 }

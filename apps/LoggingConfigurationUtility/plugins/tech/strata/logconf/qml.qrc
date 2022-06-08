@@ -3,5 +3,6 @@
         <file>LcuMain.qml</file>
         <file>LogLevel.qml</file>
         <file>LogDetails.qml</file>
+        <file>CorruptedFileDialog.qml</file>
     </qresource>
 </RCC>

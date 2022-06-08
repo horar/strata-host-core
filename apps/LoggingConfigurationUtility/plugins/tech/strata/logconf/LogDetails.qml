@@ -97,10 +97,10 @@ GridLayout {
         }
 
         Component.onCompleted: {
-            if (logSettings.getvalue(maxFileSizeSetting) === "") {
+            textInputFileSize.text = logSettings.getvalue(maxFileSizeSetting)
+            if (textInputFileSize.text === "") {
                 maxFileSizeEnabled = false
             } else {
-                textInputFileSize.text = logSettings.getvalue(maxFileSizeSetting)
                 maxFileSizeSpinBox.value = textInputFileSize.text
                 maxFileSizeEnabled = true
             }
@@ -117,7 +117,7 @@ GridLayout {
                 maxFileSizeEnabled = false
             } else { //set to default value
                 logSettings.setvalue(maxFileSizeSetting, logSettings.maxSizeDefault)
-                textInputFileSize.text = logSettings.getvalue(maxFileSizeSetting)
+                textInputFileSize.text = logSettings.maxSizeDefault
                 maxFileSizeSpinBox.value = textInputFileSize.text
                 maxFileSizeEnabled = true
             }
@@ -184,10 +184,10 @@ GridLayout {
         }
 
         Component.onCompleted: {
-            if (logSettings.getvalue(maxNoFilesSetting) === "") {
+            textInputNoFiles.text = logSettings.getvalue(maxNoFilesSetting)
+            if (textInputNoFiles.text === "") {
                 maxNoFilesEnabled = false
             } else {
-                textInputNoFiles.text = logSettings.getvalue(maxNoFilesSetting)
                 maxNoFilesSpinBox.value = textInputNoFiles.text
                 maxNoFilesEnabled = true
             }
@@ -325,5 +325,66 @@ GridLayout {
             }
             spdlogMsgPatternTextField.text = logSettings.getvalue(spdlogMsgPatternSetting)
         }
+    }
+
+    Connections {
+        target: logSettings
+        onCorruptedFile: {
+            showCorruptedFileDialog(param, errorString)
+        }
+    }
+
+    function showCorruptedFileDialog(parameter, string) {
+        var dialog = SGDialogJS.createDialog(
+                    logDetailsGrid,
+                    "qrc:/CorruptedFileDialog.qml", {
+                        "corruptedString": string,
+                        "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")
+                    })
+
+        dialog.accepted.connect(function() { //set to default
+            console.log("Set " + parameter + " to default")
+            if (parameter === "maxFileSize") {
+                logSettings.setvalue(parameter, logSettings.maxSizeDefault)
+                textInputFileSize.text = logSettings.maxSizeDefault
+                maxFileSizeSpinBox.value = textInputFileSize.text
+                maxFileSizeEnabled = true
+            } else if (parameter === "maxNoFiles") {
+                logSettings.setvalue(parameter, logSettings.maxCountDefault)
+                textInputNoFiles.text = logSettings.maxCountDefault
+                maxNoFilesSpinBox.value = textInputNoFiles.text
+                maxNoFilesEnabled = true
+            } else if (parameter === "qtFilterRules") {
+                logSettings.setvalue(parameter, logSettings.filterRulesDefault)
+                qtFilterRulesTextField.text = logSettings.filterRulesDefault
+            } else if (parameter === "qtMessagePattern") {
+                logSettings.setvalue(parameter, logSettings.qtMsgDefault)
+                qtMsgPatternTextField.text = logSettings.qtMsgDefault
+            } else {
+                logSettings.setvalue(parameter, logSettings.spdMsgDefault)
+                spdlogMsgPatternTextField.text = logSettings.spdMsgDefault
+            }
+            dialog.destroy()
+        })
+
+        dialog.rejected.connect(function() { //remove parameter
+            console.log("Removed " + parameter)
+            logSettings.removekey(parameter)
+            if (parameter === "maxFileSize") {
+                textInputFileSize.text = "no value"
+                maxFileSizeEnabled = false
+            } else if (parameter === "maxNoFiles") {
+                textInputNoFiles.text = "no value"
+                maxNoFilesEnabled = false
+            } else if (parameter === "qtFilterRules") {
+                qtFilterRulesTextField.text = ""
+            } else if (parameter === "qtMessagePattern") {
+                qtMsgPatternTextField.text = ""
+            } else {
+                spdlogMsgPatternTextField.text = ""
+            }
+            dialog.destroy()
+        })
+        dialog.open()
     }
 }

@@ -49,25 +49,24 @@ SGWidgets.SGMainWindow {
         color: "#eeeeee"
     }
 
-/*
-    LcuPlugin.LcuMain {
--        anchors {
--            fill: parent
--            margins: 4
--        }
--    }
-*/
+    /*
+   LcuPlugin.LcuMain {
+        anchors {
+            fill: parent
+            margins: 4
+        }
+    }
+    */
 
     ColumnLayout {
         property int outerSpacing: 10
-        property int innerSpacing: 5
+
         anchors {
             fill: parent
-            topMargin: 10
-            leftMargin: 10
-            rightMargin: 10
+            topMargin: outerSpacing
+            leftMargin: outerSpacing
+            rightMargin: outerSpacing
         }
-        spacing: innerSpacing
 
         LcuPlugin.LogLevel {
             id: logLevel

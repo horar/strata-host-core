@@ -30,9 +30,15 @@ public:
     QString qtMsgDefault() const;
     QString spdMsgDefault() const;
 
+    bool checkValue(QString key);
+
     Q_INVOKABLE QString filename();
     Q_INVOKABLE QString getvalue(QString key);
 
     Q_INVOKABLE void removekey(const QString &key);
     Q_INVOKABLE void setvalue(const QString &key, const QString &value);
+
+signals:
+    void corruptedFile(QString param, QString errorString) const;
+
 };
