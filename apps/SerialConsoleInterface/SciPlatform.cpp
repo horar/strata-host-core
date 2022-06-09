@@ -46,10 +46,7 @@ SciPlatform::SciPlatform(
     messageQueueModel_ = new SciMessageQueueModel(this);
 
     platformTestMessageModel_ = new SciPlatformTestMessageModel(this);
-    platformTestModel_ = new SciPlatformTestModel(platformTestMessageModel_, this);
-
-
-    platformValidation_ = new SciPlatformValidation(platform_, this);
+    platformTestModel_ = new SciPlatformTestModel(platformTestMessageModel_, platform_, this);
 }
 
 SciPlatform::~SciPlatform()
@@ -61,7 +58,7 @@ SciPlatform::~SciPlatform()
     filterScrollbackModel_->deleteLater();
     searchScrollbackModel_->deleteLater();
     messageQueueModel_->deleteLater();
-    platformValidation_->deleteLater();
+
 }
 
 QByteArray SciPlatform::deviceId() const
@@ -217,11 +214,6 @@ SciPlatformTestModel *SciPlatform::platformTestModel() const
 SciPlatformTestMessageModel *SciPlatform::platformTestMessageModel() const
 {
     return platformTestMessageModel_;
-}
-
-SciPlatformValidation *SciPlatform::platformValidation() const
-{
-    return platformValidation_;
 }
 
 QString SciPlatform::errorString() const

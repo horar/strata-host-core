@@ -34,10 +34,11 @@ enum class Type : int {
 };
 
 enum class Status : int {
-    State,
+    Plain,
     Info,
     Warning,
-    Error
+    Error,
+    Success
 };
 Q_ENUM_NS(Status)
 
@@ -52,7 +53,7 @@ protected:
      * \param platform platform which will be used for platform validation
      * \param type type of validation (value from Type enum)
      */
-    BaseValidation(const PlatformPtr& platform, Type type);
+    BaseValidation(const PlatformPtr& platform, Type type, const QString& name);
 
 public:
     /*!
@@ -71,6 +72,12 @@ public:
      */
     virtual Type type() const final;
 
+    /*!
+     * Get validation name.
+     * \return validation name
+     */
+    virtual QString name() const final;
+
 signals:
     /*!
      * This signal is emitted when platform validation finishes.
@@ -86,7 +93,7 @@ signals:
 
 private slots:
     void handleCommandFinished(command::CommandResult result, int status);
-    void handleValidationFailure(QString error);
+    void handleValidationFailure(QString error, bool fatal);
     void handlePlatformNotification(strata::platform::PlatformMessage message);
 
 private:
@@ -95,11 +102,11 @@ private:
 
     const Type type_;
     bool running_;
+    bool fatalFailure_;
 
 protected:
-    void initCommandList();
-
     PlatformPtr platform_;
+    const QString name_;
 
     PlatformMessage lastPlatformNotification_;
 

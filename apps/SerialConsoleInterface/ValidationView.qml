@@ -14,7 +14,6 @@ import QtQuick.Dialogs 1.3
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.fonts 1.0
 import tech.strata.theme 1.0
-import tech.strata.platform.validation 1.0
 import tech.strata.sci 1.0 as Sci
 
 FocusScope {
@@ -34,56 +33,43 @@ FocusScope {
 
         focus: true
 
-        Connections {
-            target: model.platform.platformValidation
-
-            onValidationFinished: {
-                let validationResult = success ? "succeeded" : "failed"
-                textArea1.text = textArea1.text + "Validation " + validationResult + '\n'
+        SGWidgets.SGText {
+            id: title
+            anchors {
+                left: parent.left
             }
 
-            onValidationStatus: {
-                let prefix = ""
-                switch (status) {
-                case PlatformValidation.Info :
-                    prefix = "I: "
-                    break;
-                case PlatformValidation.Warning :
-                    prefix = "W: "
-                    break;
-                case PlatformValidation.Error :
-                    prefix = "E: "
-                    break;
-                }
-                textArea1.text = textArea1.text + prefix + description + '\n'
-            }
+            text: "Validate platform"
+            fontSizeMultiplier: 2.0
+            font.bold: true
         }
 
         Column {
             id: testViewWrapper
             anchors {
-                top: parent.top
+                top: title.bottom
+                topMargin: baseSpacing
                 left: parent.left
             }
 
+            spacing: baseSpacing
+
             SGWidgets.SGText {
-                text: "tests:"
+                text: "Platform tests:"
+                fontSizeMultiplier: 1.3
             }
 
-            ListView {
-                id: testView
+            Column {
+                spacing: baseSpacing
 
-                model: platformTestModel
-                width: 200
-                height: 200
+                Repeater {
+                    model: platformTestModel
 
-                delegate: Row {
-
-                    spacing: 10
-
-                    SGWidgets.SGCheckBox {
+                    delegate: SGWidgets.SGCheckBox {
                         id: enabledCheckbox
-                        text: ""
+                        text: model.name
+                        enabled: !platformTestModel.isRunning
+                        padding: 0
 
                         onCheckedChanged : {
                             platformTestModel.setEnabled(index, checked)
@@ -95,38 +81,35 @@ FocusScope {
                             value: model.enabled
                         }
                     }
-
-                    SGWidgets.SGText {
-                        text: model.name
-                    }
                 }
             }
 
             SGWidgets.SGButton {
                 text: "Run tests"
+                enabled: !platformTestModel.isRunning && !platformTestModel.allTestsDisabled
+
                 onClicked: {
                     platformTestModel.runTests()
                 }
             }
-
         }
-
 
         Item {
             id: validationListWrapper
             anchors {
                 left: testViewWrapper.right
-                leftMargin: 10
-
+                leftMargin: baseSpacing
+                right: parent.right
+                top: title.bottom
+                topMargin: baseSpacing
+                bottom: backButton.top
+                bottomMargin: baseSpacing
             }
-
-            width: 400
-            height: 200
 
             Rectangle {
                 id: listViewBg
                 anchors {
-                    fill: validationListView
+                    fill: parent
                     margins: -border.width
                 }
                 color: "white"
@@ -136,13 +119,11 @@ FocusScope {
                 }
             }
 
-
             ListView {
                 id: validationListView
                 anchors {
-
-                    fill: parent
-                    margins: listViewBg.border.width
+                    fill: listViewBg
+                    margins: listViewBg.border.width + 4
                 }
 
                 model: platformTestMessageModel
@@ -167,7 +148,7 @@ FocusScope {
 
                 delegate: Item {
 
-                    height: Math.max(delegateIcon.height, delegateIcon.height)
+                    height: Math.max(delegateIcon.height, delegateText.height)
                     width: validationListWrapper.width
 
                     SGWidgets.SGIcon {
@@ -176,6 +157,9 @@ FocusScope {
                         height: width
 
                         source: {
+                            if (model.type === Sci.SciPlatformTestMessageModel.Info) {
+                                return "qrc:/sgimages/info-circle.svg"
+                            }
                             if (model.type === Sci.SciPlatformTestMessageModel.Warning) {
                                 return "qrc:/sgimages/exclamation-triangle.svg"
                             }
@@ -190,19 +174,20 @@ FocusScope {
                         }
 
                         iconColor: {
+                            if (model.type === Sci.SciPlatformTestMessageModel.Info) {
+                                return TangoTheme.palette.skyBlue1
+                            }
                             if (model.type === Sci.SciPlatformTestMessageModel.Warning) {
                                 return TangoTheme.palette.warning
                             }
                             if (model.type === Sci.SciPlatformTestMessageModel.Error) {
                                 return TangoTheme.palette.error
                             }
-
                             if (model.type === Sci.SciPlatformTestMessageModel.Success) {
                                 return TangoTheme.palette.success
                             }
 
                             return "black"
-
                         }
                     }
 
@@ -216,48 +201,14 @@ FocusScope {
                         }
 
                         text: model.text
+                        wrapMode: Text.Wrap
                     }
                 }
-            }
-
-        }
-
-
-        //old stuff
-        Column {
-            id: validationWrapper
-            anchors {
-                top: testViewWrapper.bottom
-                topMargin: 50
-            }
-
-            spacing: baseSpacing
-
-            SGWidgets.SGText {
-                text: "Platform Validation"
-                fontSizeMultiplier: 2.0
-                font.bold: true
-            }
-
-            SGWidgets.SGButton {
-                text: "Run identification"
-                enabled: !model.platform.platformValidation.isRunning
-                onClicked: {
-                    textArea1.text = ""
-                    model.platform.platformValidation.runIdentification()
-                }
-            }
-
-            SGWidgets.SGTextArea {
-                id: textArea1
-                focus: false
-                width: 600
-                height: 200
-                readOnly: true
             }
         }
 
         SGWidgets.SGButton {
+            id: backButton
             anchors {
                 left: parent.left
                 bottom: parent.bottom

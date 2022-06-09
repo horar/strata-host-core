@@ -6,41 +6,44 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
+
 #pragma once
 
-#include <QObject>
-
 #include <memory>
+
+#include <QObject>
 
 #include <Platform.h>
 #include <Operations/PlatformValidation/BaseValidation.h>
 
-class SciPlatformValidation : public QObject
+// *** base class ***
+
+class SciPlatformBaseTest: public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SciPlatformValidation)
+    Q_DISABLE_COPY(SciPlatformBaseTest)
 
 public:
-    Q_PROPERTY(bool isRunning READ isRunning NOTIFY isRunningChanged)
+    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+    virtual ~SciPlatformBaseTest();
 
-    SciPlatformValidation(const strata::platform::PlatformPtr& platform, QObject *parent = nullptr);
-    ~SciPlatformValidation();
-
-    bool isRunning() const;
-
-    Q_INVOKABLE void runIdentification();
+    virtual void run() = 0;
+    QString name() const;
+    void setEnabled(bool enabled);
+    bool enabled() const;
 
 signals:
-    void validationFinished(bool success);
-    void validationStatus(strata::platform::validation::Status status, QString description);
-    void isRunningChanged();
-
-private slots:
-    void finishedHandler(bool success);
+    void finished(bool success);
+    void status(strata::platform::validation::Status status, QString text);
 
 private:
-    // platformRef_ must be reference!
-    // It refers to platform_ in SciPlatfrom class (we need reference to obtain its current value).
+    bool enabled_;
+
+protected slots:
+    void finishedHandler(bool success);
+
+protected:
+    QString name_;
     const strata::platform::PlatformPtr& platformRef_;
 
     typedef std::unique_ptr<strata::platform::validation::BaseValidation,
@@ -48,7 +51,17 @@ private:
     ValidationPtr validation_;
     // deleter for validation_ unique pointer
     static void validationDeleter(strata::platform::validation::BaseValidation* validation);
+};
 
-    bool running_;
 
+// *** Identification ***
+
+class IdentificationTest: public SciPlatformBaseTest {
+    Q_OBJECT
+    Q_DISABLE_COPY(IdentificationTest)
+
+public:
+    IdentificationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+
+    void run() override;
 };
