@@ -25,8 +25,12 @@ Identification::Identification(const PlatformPtr& platform)
 
     // BaseValidation member platform_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
+                              nullptr,
+                              nullptr,
                               std::bind(&Identification::getFirmwareInfoCheck, this));
     commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(platform_),
+                              nullptr,
+                              nullptr,
                               std::bind(&Identification::requestPlatformIdCheck, this));
 }
 
@@ -131,6 +135,11 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
         jsonPath.removeLast();  // remove JSON_APPLICATION from path
     }
 
+    {
+        QString message = currentCommand_->command->name() + QStringLiteral(" OK");
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Success, message);
+    }
     return ValidationResult::Passed;
 }
 
@@ -243,6 +252,11 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
         }
     }
 
+    {
+        QString message = currentCommand_->command->name() + QStringLiteral(" OK");
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Success, message);
+    }
     return ValidationResult::Passed;
 }
 

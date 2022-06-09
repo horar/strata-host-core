@@ -9,13 +9,17 @@
 
 #include "SciPlatformTests.h"
 #include <Operations/PlatformValidation/Identification.h>
+#include <Operations/PlatformValidation/BtldrAppPresence.h>
 
 namespace validation = strata::platform::validation;
 
-SciPlatformBaseTest::SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
+// *** base class ***
+
+SciPlatformBaseTest::SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, const QString& name, QObject *parent)
     : QObject(parent),
       enabled_(false),
       platformRef_(platformRef),
+      name_(name),
       validation_(nullptr, nullptr)
 { }
 
@@ -46,23 +50,43 @@ void SciPlatformBaseTest::finishedHandler()
     emit finished();
 }
 
+void SciPlatformBaseTest::connectAndRun()
+{
+    connect(validation_.get(), &validation::BaseValidation::finished, this, &SciPlatformBaseTest::finishedHandler);
+    connect(validation_.get(), &validation::BaseValidation::validationStatus, this, &SciPlatformBaseTest::status);
+
+    validation_->run();
+}
+
 void SciPlatformBaseTest::validationDeleter(validation::BaseValidation* validation)
 {
     validation->deleteLater();
 }
 
+
+// *** Identification ***
+
 IdentificationTest::IdentificationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, parent)
-{
-    name_ = QStringLiteral("Identification");
-};
+    : SciPlatformBaseTest(platformRef, QStringLiteral("Identification"), parent)
+{ }
 
 void IdentificationTest::run()
 {
     validation_ = ValidationPtr(new validation::Identification(platformRef_), validationDeleter);
 
-    connect(validation_.get(), &validation::BaseValidation::finished, this, &IdentificationTest::finishedHandler);
-    connect(validation_.get(), &validation::BaseValidation::validationStatus, this, &SciPlatformBaseTest::status);
+    connectAndRun();
+}
 
-    validation_->run();
+
+// *** Bootloader & Application Presence ***
+
+BtldrAppPresenceTest::BtldrAppPresenceTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
+    : SciPlatformBaseTest(platformRef, QStringLiteral("Bootloader & Application"), parent)
+{ }
+
+void BtldrAppPresenceTest::run()
+{
+    validation_ = ValidationPtr(new validation::BtldrAppPresence(platformRef_), validationDeleter);
+
+    connectAndRun();
 }
