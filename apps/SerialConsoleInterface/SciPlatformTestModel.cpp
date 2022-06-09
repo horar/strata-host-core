@@ -21,7 +21,7 @@ SciPlatformTestModel::SciPlatformTestModel(
       messageModel_(messageModel),
       platformRef_(platform),
       isRunning_(false),
-      allTestsDisabled_(false)
+      allTestsDisabled_(true)
 {
     data_.append(new IdentificationTest(platformRef_, this));
 
