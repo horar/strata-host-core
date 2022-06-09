@@ -73,6 +73,7 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 selectByMouse: true
                 leftPadding: 10
+                selectionColor: Theme.palette.onsemiOrange
             }
         }
 

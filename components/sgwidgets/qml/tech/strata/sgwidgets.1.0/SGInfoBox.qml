@@ -43,6 +43,7 @@ FocusScope {
     property alias mouseAreaObject: mouseArea
     property alias placeholderObject: placeholder
     property alias unitObject: unit
+    property alias selectionColor: infoText.selectionColor
 
     signal accepted(string text)
     signal editingFinished(string text)

@@ -11,6 +11,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "console-messages"
 
@@ -24,6 +25,7 @@ Item {
     TextEdit {
         id: copyHelp // Use TextEdit functions to copy and select all in the console log.
         visible: false
+        selectionColor: Theme.palette.onsemiOrange
     }
 
     SGAbstractContextMenu {

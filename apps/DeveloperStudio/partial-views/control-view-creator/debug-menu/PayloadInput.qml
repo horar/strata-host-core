@@ -62,6 +62,7 @@ Item {
                 focus: true
                 selectByMouse: true
                 contextMenuEnabled: true
+                selectionColor: Theme.palette.onsemiOrange
                 validator: switch(type) {
                     case "int": return intValid
                     case "double": return doubleValid

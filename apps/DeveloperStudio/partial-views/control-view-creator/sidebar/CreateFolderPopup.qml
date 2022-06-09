@@ -59,6 +59,7 @@ SGStrataPopup {
                     enabled: true
                     contextMenuEnabled: true
                     placeholderText: "Folder Name"
+                    selectionColor: Theme.palette.onsemiOrange
 
                     onAccepted: {
                         if (createFolderButton.enabled) {

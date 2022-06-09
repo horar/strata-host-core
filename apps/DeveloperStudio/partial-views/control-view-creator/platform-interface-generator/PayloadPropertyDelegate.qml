@@ -129,6 +129,7 @@ Rectangle {
                 selectByMouse: true
                 persistentSelection: true // must deselect manually
                 placeholderText: "Property key"
+                palette.highlight: Theme.palette.onsemiOrange
 
                 validator: RegExpValidator {
                     regExp: /^[a-z_][a-zA-Z0-9_]*/
@@ -137,17 +138,17 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            return Theme.palette.onsemiOrange
+                            return Theme.palette.error
                         } else if (propertyKey.activeFocus) {
-                            return palette.highlight
+                            return Theme.palette.onsemiOrange
                         } else {
-                            return "lightgrey"
+                            return Theme.palette.lightGray
                         }
                     }
 
                     border.width: (!model.valid || propertyKey.activeFocus) ? 2 : 1
+                    color: model.valid ? Theme.palette.white : Qt.lighter(Theme.palette.error, 2.35)
                 }
-
                 Component.onCompleted: {
                     text = model.name
                     if (!text) {

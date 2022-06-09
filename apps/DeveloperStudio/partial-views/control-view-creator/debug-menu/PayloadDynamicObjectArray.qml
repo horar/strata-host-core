@@ -185,6 +185,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.rightMargin: 10
                     Layout.preferredHeight: 30
+                    grooveFillColor: Theme.palette.highlight
 
                     onCheckedChanged: {
                         model.value = checked.toString()

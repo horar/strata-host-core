@@ -104,6 +104,7 @@ SGStrataPopup {
                     enabled: true
                     contextMenuEnabled: true
                     placeholderText: "File Name"
+                    selectionColor: Theme.palette.onsemiOrange
 
                     onAccepted: {
                         if (createFileButton.enabled) {
@@ -118,6 +119,7 @@ SGStrataPopup {
                 text: qsTr("Start with Visual Editor Enabled QML file")
                 visible: createFilePopup.viewState === "QML"
                 checked: false
+                palette.highlight: Theme.palette.onsemiOrange
             }
 
             SGText {
