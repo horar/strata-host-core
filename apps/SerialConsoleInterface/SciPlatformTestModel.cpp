@@ -21,7 +21,7 @@ SciPlatformTestModel::SciPlatformTestModel(
       messageModel_(messageModel),
       platformRef_(platform),
       isRunning_(false),
-      testsSelected_(false)
+      allTestsDisabled_(false)
 {
     data_.append(new IdentificationTest(platformRef_, this));
 
@@ -79,7 +79,7 @@ void SciPlatformTestModel::setEnabled(int row, bool enabled)
             ++enabledCount;
         }
     }
-    setTestsSelected(enabledCount > 0);
+    setAllTestsDisabled(enabledCount == 0);
 }
 
 void SciPlatformTestModel::runTests()
@@ -88,8 +88,8 @@ void SciPlatformTestModel::runTests()
         setIsRunning(true);
 
         messageModel_->clear();
-        activeTestIndex_ = 0;  // first test
-        runActiveTest();
+        activeTestIndex_ = -1;  // index before first test
+        runNextTest();
     }
 }
 
@@ -98,9 +98,9 @@ bool SciPlatformTestModel::isRunning() const
     return isRunning_;
 }
 
-bool SciPlatformTestModel::testsSelected() const
+bool SciPlatformTestModel::allTestsDisabled() const
 {
-    return testsSelected_;
+    return allTestsDisabled_;
 }
 
 QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
@@ -119,8 +119,7 @@ void SciPlatformTestModel::finishedHandler(bool success)
 
     messageModel_->addMessage(SciPlatformTestMessageModel::Plain, "");
 
-    ++activeTestIndex_;  // move to next test
-    runActiveTest();
+    runNextTest();
 }
 
 void SciPlatformTestModel::statusHandler(validation::Status status, QString text)
@@ -148,8 +147,10 @@ void SciPlatformTestModel::statusHandler(validation::Status status, QString text
     messageModel_->addMessage(msgType, text);
 }
 
-void SciPlatformTestModel::runActiveTest()
+void SciPlatformTestModel::runNextTest()
 {
+    ++activeTestIndex_;
+
     while (activeTestIndex_ < data_.length()) {
         if (data_.at(activeTestIndex_)->enabled()) {
             connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::status, this, &SciPlatformTestModel::statusHandler);
@@ -163,7 +164,7 @@ void SciPlatformTestModel::runActiveTest()
         }
     }
 
-    if (activeTestIndex_ == data_.length()) {
+    if (activeTestIndex_ >= data_.length()) {
         setIsRunning(false);
     }
 }
@@ -178,12 +179,12 @@ void SciPlatformTestModel::setIsRunning(bool isRunning)
     emit isRunningChanged();
 }
 
-void SciPlatformTestModel::setTestsSelected(bool testsSelected)
+void SciPlatformTestModel::setAllTestsDisabled(bool allTestsDisabled)
 {
-    if (testsSelected_ == testsSelected) {
+    if (allTestsDisabled_ == allTestsDisabled) {
         return;
     }
 
-    testsSelected_ = testsSelected;
-    emit testsSelectedChanged();
+    allTestsDisabled_ = allTestsDisabled;
+    emit allTestsDisabledChanged();
 }
