@@ -120,7 +120,7 @@ function startHelpTour(tourName, device_id) {
             device_id = platformView.device_id
         } else {
             if (control_view_creator) {
-                device_id = control_view_creator.debugPlatform.device_id
+                device_id = control_view_creator.visualEditorOpen ? "VisualEditor" : control_view_creator.debugPlatform.device_id
             } else {
                 console.error("Help tour started from nonstandard location")
                 return

@@ -15,6 +15,8 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.commoncpp 1.0
 
+import "qrc:/js/help_layout_manager.js" as Help
+
 QtObject {
     id: functions
 
@@ -74,6 +76,7 @@ QtObject {
 
     function unload(reload = false) {
         loader.setSource("")
+        Help.resetDeviceIdTour("VisualEditor")
         overlayContainer.rowCount = 0
         overlayContainer.columnCount = 0
         for (let i = 0; i < overlayObjects.length; i++) {
@@ -85,6 +88,7 @@ QtObject {
     }
 
     function load() {
+        Help.setDeviceId("VisualEditor")
         fileContents = readFileContents(visualEditor.file)
         sdsModel.qtLogger.visualEditorReloading = true
         loader.setSource(visualEditor.file)

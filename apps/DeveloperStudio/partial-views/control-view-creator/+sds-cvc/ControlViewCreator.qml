@@ -34,6 +34,7 @@ Rectangle {
     property bool debugMenuWindow: false
     property bool recompileRequested: false
     property bool projectInitialization: false
+    property bool visualEditorOpen: viewStack.currentIndex === 1
     property string previousCompiledRccFilePath: ""
     property string previousCompiledRccFileUniquePrefix: ""
     property var debugPlatform: ({
@@ -81,6 +82,7 @@ Rectangle {
                 id: viewStack
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                currentIndex: 0
 
                 Start {
                     id: startContainer
