@@ -29,13 +29,7 @@
     <DisableAuthorizationFallback>true</DisableAuthorizationFallback>
     <ControlScript>installscript.qs</ControlScript>
     <StyleSheet>style.qss</StyleSheet>
-    <RemoteRepositories>
-        <Repository>
-            <Url>@STRATA_OTA_REPOSITORY@</Url>
-            <Enabled>@STRATA_OTA_REPOSITORY_ENABLED@</Enabled>
-            <DisplayName>Strata Repository</DisplayName>
-        </Repository>
-    </RemoteRepositories>
+    @STRATA_OTA_REPOSITORIES@
     <ProductImages>
         <Image>onsemi-banner-1.png</Image>
         <Image>onsemi-banner-2.png</Image>
