@@ -27,7 +27,8 @@ BaseValidation::BaseValidation(const PlatformPtr& platform, Type type, const QSt
     platform_(platform),
     name_(name),
     fatalFailure_(false),
-    incomplete_(false)
+    incomplete_(false),
+    ignoreCmdRejected_(false)
 { }
 
 BaseValidation::~BaseValidation()
@@ -77,6 +78,7 @@ void BaseValidation::run()
 
     fatalFailure_ = false;
     incomplete_ = false;
+    ignoreCmdRejected_ = false;
 
     QString message = name_ + QStringLiteral(" is about to start");
     qCInfo(lcPlatformValidation) << platform_ << message;
@@ -153,12 +155,24 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
     }
 }
 
-void BaseValidation::handleValidationFailure(QString error, bool fatal) {
+void BaseValidation::handleValidationFailure(QString error, command::ValidationFailure failure) {
+    if (ignoreCmdRejected_ && (failure == command::ValidationFailure::CmdRejected)) {
+        return;
+    }
+
     Status status = Status::Warning;
-    if (fatal) {
+
+    switch (failure) {
+    case command::ValidationFailure::Warning :
+        status = Status::Warning;
+        break;
+    case command::ValidationFailure::CmdRejected :
+    case command::ValidationFailure::Fatal :
         fatalFailure_ = true;
         status = Status::Error;
+        break;
     }
+
     qCWarning(lcPlatformValidation) << platform_ << error;
     emit validationStatus(status, error);
 }

@@ -29,12 +29,10 @@ public:
     ~BtldrAppPresence() = default;
 
 private:
-    void copyFatalFailure();
-    void editCommandResult(command::CommandResult& result, int& status);
+    void beforeStartCmd();
+    void afterStartCmd(command::CommandResult& result, int& status);
     ValidationResult startCheck();
     ValidationResult getFirmwareInfoCheck(bool bootloaderActive);
-
-    bool copiedFatalFailure_;
 };
 
 }  // namespace

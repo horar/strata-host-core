@@ -23,16 +23,16 @@ BtldrAppPresence::BtldrAppPresence(const PlatformPtr& platform)
 
     // BaseValidation member platform_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<command::CmdStartBootloader>(platform_),
-                              std::bind(&BtldrAppPresence::copyFatalFailure, this),
-                              std::bind(&BtldrAppPresence::editCommandResult, this, std::placeholders::_1, std::placeholders::_2),
+                              std::bind(&BtldrAppPresence::beforeStartCmd, this),
+                              std::bind(&BtldrAppPresence::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BtldrAppPresence::startCheck, this));
     commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
                               nullptr,
                               nullptr,
                               std::bind(&BtldrAppPresence::getFirmwareInfoCheck, this, true));
     commandList_.emplace_back(std::make_unique<command::CmdStartApplication>(platform_),
-                              std::bind(&BtldrAppPresence::copyFatalFailure, this),
-                              std::bind(&BtldrAppPresence::editCommandResult, this, std::placeholders::_1, std::placeholders::_2),
+                              std::bind(&BtldrAppPresence::beforeStartCmd, this),
+                              std::bind(&BtldrAppPresence::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BtldrAppPresence::startCheck, this));
     commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
                               nullptr,
@@ -40,24 +40,25 @@ BtldrAppPresence::BtldrAppPresence(const PlatformPtr& platform)
                               std::bind(&BtldrAppPresence::getFirmwareInfoCheck, this, false));
 }
 
-void BtldrAppPresence::copyFatalFailure()
+void BtldrAppPresence::beforeStartCmd()
 {
-    copiedFatalFailure_ = fatalFailure_;
+    ignoreCmdRejected_ = true;
 }
 
-void BtldrAppPresence::editCommandResult(command::CommandResult& result, int& status)
+void BtldrAppPresence::afterStartCmd(command::CommandResult& result, int& status)
 {
     Q_UNUSED(status)
+
+    ignoreCmdRejected_ = false;  // this was set to 'true' in 'beforeStartCmd', returning it back
 
     switch (result) {
     case command::CommandResult::Reject :  // Command was not found.
         // If command is not found act as everything is OK.
         result = command::CommandResult::Done;
-        fatalFailure_ = copiedFatalFailure_;
         {
             QString message(QStringLiteral("Command was not found, ignoring it"));
-            qCWarning(lcPlatformValidation) << platform_ << message;
-            emit validationStatus(Status::Warning, message);
+            qCInfo(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Info, message);
         }
         break;
     case command::CommandResult::Failure :  // "start_bootloader" failed.

@@ -22,6 +22,7 @@ namespace strata::platform::command {
 
 class BasePlatformCommand;
 enum class CommandResult : int;
+enum class ValidationFailure : int;
 
 }
 
@@ -99,7 +100,7 @@ signals:
 
 private slots:
     void handleCommandFinished(command::CommandResult result, int status);
-    void handleValidationFailure(QString error, bool fatal);
+    void handleValidationFailure(QString error, command::ValidationFailure failure);
     void handlePlatformNotification(strata::platform::PlatformMessage message);
 
 private:
@@ -116,6 +117,8 @@ protected:
     // helper variables for determining the validation result
     bool fatalFailure_;  // if set to true, validation failed
     bool incomplete_;    // if set to true, validation is incomplete
+
+    bool ignoreCmdRejected_;
 
     PlatformMessage lastPlatformNotification_;
 
