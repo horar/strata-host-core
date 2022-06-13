@@ -10,6 +10,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.sci 1.0 as Sci
+import tech.strata.logconf 1.0 as LcuPlugin
 
 SGWidgets.SGDialog {
     id: dialog
@@ -168,15 +169,6 @@ SGWidgets.SGDialog {
             }
 
             SGWidgets.SGText {
-                text: "Log level:"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            SGWidgets.SGLogLevelSelector {
-                Layout.alignment: Qt.AlignLeft
-            }
-
-            SGWidgets.SGText {
                 text: "Release port of unrecognized device"
                 Layout.alignment: Qt.AlignRight
             }
@@ -221,6 +213,24 @@ SGWidgets.SGDialog {
                 onValueChanged: {
                     Sci.Settings.messageQueueSendDelay = value
                 }
+            }
+
+            SGWidgets.SGText {
+                text: "Logging Configuration"
+                fontSizeMultiplier: 1.1
+                font.bold: true
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignLeft
+            }
+
+            LcuPlugin.LogLevel {
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+            }
+
+            LcuPlugin.LogDetails {
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
             }
 
             SGWidgets.SGText {
