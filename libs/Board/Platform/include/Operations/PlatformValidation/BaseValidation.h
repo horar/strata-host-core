@@ -30,12 +30,7 @@ namespace strata::platform::validation {
 
 Q_NAMESPACE
 
-enum class Type : int {
-    Identification,
-    BtldrAppPresence
-};
-
-enum class Status : int {
+enum class Status : short {
     Plain,
     Info,
     Warning,
@@ -53,11 +48,10 @@ protected:
     /*!
      * BaseValidation constructor.
      * \param platform platform which will be used for platform validation
-     * \param type type of validation (value from Type enum)
      */
-    BaseValidation(const PlatformPtr& platform, Type type, const QString& name);
+    BaseValidation(const PlatformPtr& platform, const QString& name);
 
-    enum class ValidationResult : int {
+    enum class ValidationResult : short {
         Passed,
         Incomplete,
         Failed
@@ -73,12 +67,6 @@ public:
      * Run validation.
      */
     virtual void run();
-
-    /*!
-     * Get type of validation.
-     * \return validation type (value from enum Type)
-     */
-    virtual Type type() const final;
 
     /*!
      * Get validation name.
@@ -107,7 +95,6 @@ private:
     void sendCommand();
     void finishValidation(ValidationResult result);
 
-    const Type type_;
     bool running_;
 
 protected:

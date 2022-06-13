@@ -19,7 +19,7 @@
 namespace strata::platform::validation {
 
 Identification::Identification(const PlatformPtr& platform)
-    : BaseValidation(platform, Type::Identification, QStringLiteral("Identification"))
+    : BaseValidation(platform, QStringLiteral("Identification"))
 {
     commandList_.reserve(2);
 

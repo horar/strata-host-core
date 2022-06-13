@@ -21,8 +21,7 @@ namespace strata::platform::validation {
 using command::BasePlatformCommand;
 using command::CommandResult;
 
-BaseValidation::BaseValidation(const PlatformPtr& platform, Type type, const QString &name):
-    type_(type),
+BaseValidation::BaseValidation(const PlatformPtr& platform, const QString &name):
     running_(false),
     platform_(platform),
     name_(name),
@@ -88,11 +87,6 @@ void BaseValidation::run()
 
     running_ = true;
     QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
-}
-
-Type BaseValidation::type() const
-{
-    return type_;
 }
 
 QString BaseValidation::name() const
