@@ -493,7 +493,7 @@ Item {
 
         dialog.accepted.connect(function() { //set to default
             console.log("Set " + parameter + " to default")
-            if(parameter === "log/level") {
+            if (parameter === "log/level") {
                 configFileSettings.logLevel = "debug"
             } else if (parameter === "log/maxFileSize") {
                 configFileSettings.maxFileSize = configFileSettings.maxSizeDefault
@@ -513,7 +513,7 @@ Item {
 
         dialog.rejected.connect(function() { //remove parameter
             console.log("Removed " + parameter)
-            if(parameter === "log/level") {
+            if (parameter === "log/level") {
                 configFileSettings.logLevel = ""
             } else if (parameter === "log/maxFileSize") {
                 configFileSettings.maxFileSize = 0

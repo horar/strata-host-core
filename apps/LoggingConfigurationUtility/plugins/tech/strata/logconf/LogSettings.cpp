@@ -58,7 +58,7 @@ bool LogSettings::checkValue(QString key)
            bool ok = false;
            int logMaxFileSize = value.toInt(&ok);
 
-           if(ok) {
+           if (ok) {
                if (logMaxFileSize >= 2147483647 || logMaxFileSize <= 1000) {
                    qCWarning(lcLcu) << "Max file size out of range :" << value;
                    return false;
@@ -74,7 +74,7 @@ bool LogSettings::checkValue(QString key)
         bool ok = false;
         int logMaxNoFiles = value.toInt(&ok);
 
-        if(ok) {
+        if (ok) {
             if (logMaxNoFiles >= 100000 || logMaxNoFiles <= 1) {
                 qCWarning(lcLcu) << "Max number of files out of range :" << value;
                 return false;
@@ -108,7 +108,7 @@ QString LogSettings::getvalue(QString key)
 
     QString value = this->value(key).toString();
 
-    if(checkValue(key)) {
+    if (checkValue(key)) {
         return value;
     } else {
         emit corruptedFile(key, value);
