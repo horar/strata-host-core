@@ -49,7 +49,7 @@ bool LogSettings::checkValue(QString key)
         QStringList logLevels = {"debug", "info", "warning", "error", "critical", "off"};
 
         if (logLevels.contains(value) == false) {
-            qCWarning(lcLcu) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
+            qCWarning(lcLogConf) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
             return false;
         }
         return true;
@@ -60,13 +60,13 @@ bool LogSettings::checkValue(QString key)
 
            if (ok) {
                if (logMaxFileSize >= 2147483647 || logMaxFileSize <= 1000) {
-                   qCWarning(lcLcu) << "Max file size out of range :" << value;
+                   qCWarning(lcLogConf) << "Max file size out of range :" << value;
                    return false;
                } else {
                    return true;
                }
            } else {
-               qCWarning(lcLcu) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
+               qCWarning(lcLogConf) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
                return false;
            }
 
@@ -76,19 +76,19 @@ bool LogSettings::checkValue(QString key)
 
         if (ok) {
             if (logMaxNoFiles >= 100000 || logMaxNoFiles <= 1) {
-                qCWarning(lcLcu) << "Max number of files out of range :" << value;
+                qCWarning(lcLogConf) << "Max number of files out of range :" << value;
                 return false;
             } else {
                 return true;
             }
         } else {
-            qCWarning(lcLcu) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
+            qCWarning(lcLogConf) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
             return false;
         }
 
     } else {
         if (value.isEmpty() == true) {
-            qCWarning(lcLcu) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
+            qCWarning(lcLogConf) << "Parameter" << key << "is set to" << value << ", which is not a valid value.";
             return false;
         }
         return true;
