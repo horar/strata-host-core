@@ -24,7 +24,6 @@ add_library(${PROJECT_NAME} MODULE
     LogSettings.cpp
     logconf_plugin.cpp
     qml.qrc
-    images/images.qrc
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
