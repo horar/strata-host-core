@@ -24,7 +24,7 @@ SciPlatformTestModel::SciPlatformTestModel(
       allTestsDisabled_(true)
 {
     data_.append(new IdentificationTest(platformRef_, this));
-    data_.append(new BtldrAppPresenceTest(platformRef_, this));
+    data_.append(new BootloaderApplicationTest(platformRef_, this));
 
     setEnabled(0, true);  // enable first validation - identification
 }

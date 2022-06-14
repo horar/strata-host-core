@@ -6,7 +6,7 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include <Operations/PlatformValidation/BtldrAppPresence.h>
+#include <Operations/PlatformValidation/BootloaderApplication.h>
 #include <Commands/PlatformCommands.h>
 #include <Commands/PlatformCommandConstants.h>
 
@@ -16,36 +16,36 @@
 
 namespace strata::platform::validation {
 
-BtldrAppPresence::BtldrAppPresence(const PlatformPtr& platform)
+BootloaderApplication::BootloaderApplication(const PlatformPtr& platform)
     : BaseValidation(platform, Type::BtldrAppPresence, QStringLiteral("Bootloader & Application presence"))
 {
     commandList_.reserve(4);
 
     // BaseValidation member platform_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<command::CmdStartBootloader>(platform_),
-                              std::bind(&BtldrAppPresence::beforeStartCmd, this),
-                              std::bind(&BtldrAppPresence::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
-                              std::bind(&BtldrAppPresence::startCheck, this));
+                              std::bind(&BootloaderApplication::beforeStartCmd, this),
+                              std::bind(&BootloaderApplication::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
+                              std::bind(&BootloaderApplication::startCheck, this));
     commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
                               nullptr,
                               nullptr,
-                              std::bind(&BtldrAppPresence::getFirmwareInfoCheck, this, true));
+                              std::bind(&BootloaderApplication::getFirmwareInfoCheck, this, true));
     commandList_.emplace_back(std::make_unique<command::CmdStartApplication>(platform_),
-                              std::bind(&BtldrAppPresence::beforeStartCmd, this),
-                              std::bind(&BtldrAppPresence::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
-                              std::bind(&BtldrAppPresence::startCheck, this));
+                              std::bind(&BootloaderApplication::beforeStartCmd, this),
+                              std::bind(&BootloaderApplication::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
+                              std::bind(&BootloaderApplication::startCheck, this));
     commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
                               nullptr,
                               nullptr,
-                              std::bind(&BtldrAppPresence::getFirmwareInfoCheck, this, false));
+                              std::bind(&BootloaderApplication::getFirmwareInfoCheck, this, false));
 }
 
-void BtldrAppPresence::beforeStartCmd()
+void BootloaderApplication::beforeStartCmd()
 {
     ignoreCmdRejected_ = true;
 }
 
-void BtldrAppPresence::afterStartCmd(command::CommandResult& result, int& status)
+void BootloaderApplication::afterStartCmd(command::CommandResult& result, int& status)
 {
     Q_UNUSED(status)
 
@@ -73,7 +73,7 @@ void BtldrAppPresence::afterStartCmd(command::CommandResult& result, int& status
     }
 }
 
-BaseValidation::ValidationResult BtldrAppPresence::startCheck()
+BaseValidation::ValidationResult BootloaderApplication::startCheck()
 {
     using namespace strata::platform::command;
 
@@ -103,7 +103,7 @@ BaseValidation::ValidationResult BtldrAppPresence::startCheck()
     return ValidationResult::Passed;
 }
 
-BaseValidation::ValidationResult BtldrAppPresence::getFirmwareInfoCheck(bool bootloaderActive)
+BaseValidation::ValidationResult BootloaderApplication::getFirmwareInfoCheck(bool bootloaderActive)
 {
     using namespace strata::platform::command;
 

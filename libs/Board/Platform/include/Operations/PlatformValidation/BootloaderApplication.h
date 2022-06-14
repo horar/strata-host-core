@@ -12,21 +12,21 @@
 
 namespace strata::platform::validation {
 
-class BtldrAppPresence : public BaseValidation {
+class BootloaderApplication : public BaseValidation {
     Q_OBJECT
-    Q_DISABLE_COPY(BtldrAppPresence)
+    Q_DISABLE_COPY(BootloaderApplication)
 
 public:
     /*!
-     * BtldrAppPresence constructor.
+     * BootloaderApplication constructor.
      * \param platform platform which will be used for validation
      */
-    BtldrAppPresence(const PlatformPtr& platform);
+    BootloaderApplication(const PlatformPtr& platform);
 
     /*!
-     * BtldrAppPresence destructor.
+     * BootloaderApplication destructor.
      */
-    ~BtldrAppPresence() = default;
+    ~BootloaderApplication() = default;
 
 private:
     void beforeStartCmd();

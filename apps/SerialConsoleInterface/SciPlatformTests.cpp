@@ -9,7 +9,7 @@
 
 #include "SciPlatformTests.h"
 #include <Operations/PlatformValidation/Identification.h>
-#include <Operations/PlatformValidation/BtldrAppPresence.h>
+#include <Operations/PlatformValidation/BootloaderApplication.h>
 
 namespace validation = strata::platform::validation;
 
@@ -80,13 +80,13 @@ void IdentificationTest::run()
 
 // *** Bootloader & Application Presence ***
 
-BtldrAppPresenceTest::BtldrAppPresenceTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
+BootloaderApplicationTest::BootloaderApplicationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
     : SciPlatformBaseTest(platformRef, QStringLiteral("Bootloader & Application"), parent)
 { }
 
-void BtldrAppPresenceTest::run()
+void BootloaderApplicationTest::run()
 {
-    validation_ = ValidationPtr(new validation::BtldrAppPresence(platformRef_), validationDeleter);
+    validation_ = ValidationPtr(new validation::BootloaderApplication(platformRef_), validationDeleter);
 
     connectAndRun();
 }

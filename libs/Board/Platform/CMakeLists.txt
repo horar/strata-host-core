@@ -71,7 +71,7 @@ add_library(${PROJECT_NAME}
 
     src/Operations/PlatformValidation/BaseValidation.cpp
     src/Operations/PlatformValidation/Identification.cpp
-    src/Operations/PlatformValidation/BtldrAppPresence.cpp
+    src/Operations/PlatformValidation/BootloaderApplication.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/Device.h
@@ -87,7 +87,7 @@ add_library(${PROJECT_NAME}
     include/Operations/PlatformOperations.h
     include/Operations/PlatformValidation/BaseValidation.h
     include/Operations/PlatformValidation/Identification.h
-    include/Operations/PlatformValidation/BtldrAppPresence.h
+    include/Operations/PlatformValidation/BootloaderApplication.h
 
     ${BLUETOOTH_SOURCES}
 )

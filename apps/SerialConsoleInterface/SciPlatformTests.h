@@ -71,12 +71,12 @@ public:
 
 // *** Bootloader & Application Presence ***
 
-class BtldrAppPresenceTest: public SciPlatformBaseTest {
+class BootloaderApplicationTest: public SciPlatformBaseTest {
     Q_OBJECT
-    Q_DISABLE_COPY(BtldrAppPresenceTest)
+    Q_DISABLE_COPY(BootloaderApplicationTest)
 
 public:
-    BtldrAppPresenceTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+    BootloaderApplicationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
     void run() override;
 };
