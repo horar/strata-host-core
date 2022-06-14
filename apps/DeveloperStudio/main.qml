@@ -369,7 +369,6 @@ SGWidgets.SGMainWindow {
     }
 
     onLogout: {
-        console.log(Logger.devStudioCategory, "logging out")
         sdsModel.coreInterface.unregisterClient();
         controlViewCreatorLoader.active = false
         Signals.logout()
