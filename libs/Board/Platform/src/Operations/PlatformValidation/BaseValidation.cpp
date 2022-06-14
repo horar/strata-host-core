@@ -28,7 +28,8 @@ BaseValidation::BaseValidation(const PlatformPtr& platform, const QString &name)
     fatalFailure_(false),
     incomplete_(false),
     ignoreCmdRejected_(false),
-    ignoreTimeout_(false)
+    ignoreTimeout_(false),
+    ignoreFaultyNotification_(false)
 { }
 
 BaseValidation::~BaseValidation()
@@ -80,6 +81,7 @@ void BaseValidation::run()
     incomplete_ = false;
     ignoreCmdRejected_ = false;
     ignoreTimeout_ = false;
+    ignoreFaultyNotification_ = false;
 
     QString message = name_ + QStringLiteral(" is about to start");
     qCInfo(lcPlatformValidation) << platform_ << message;
@@ -169,19 +171,15 @@ void BaseValidation::handleValidationFailure(QString error, command::ValidationF
     if (ignoreTimeout_ && (failure == command::ValidationFailure::Timeout)) {
         return;
     }
+    if (ignoreFaultyNotification_ && (failure == command::ValidationFailure::FaultyNotification)) {
+        return;
+    }
 
     Status status = Status::Warning;
-
-    switch (failure) {
-    case command::ValidationFailure::Warning :
-        status = Status::Warning;
-        break;
-    case command::ValidationFailure::CmdRejected :
-    case command::ValidationFailure::Timeout :
-    case command::ValidationFailure::Fatal :
+    if (failure != command::ValidationFailure::Warning) {
+        // all validation failures except 'Warning' are fatal
         fatalFailure_ = true;
         status = Status::Error;
-        break;
     }
 
     qCWarning(lcPlatformValidation) << platform_ << error;
@@ -293,10 +291,16 @@ QString BaseValidation::badKeyType(const QString& key, KeyType type) const
         result += QStringLiteral("a string");
         break;
     case KeyType::Integer :
-        result += QStringLiteral("an integer");
+        result += QStringLiteral("an 32-bit integer");
+        break;
+    case KeyType::Integer64 :
+        result += QStringLiteral("an 64-bit integer");
         break;
     case KeyType::Unsigned :
-        result += QStringLiteral("an unsigned integer");
+        result += QStringLiteral("an 32-bit unsigned integer");
+        break;
+    case KeyType::Unsigned64 :
+        result += QStringLiteral("an 64-bit unsigned integer");
         break;
     }
     return result;
@@ -336,11 +340,21 @@ bool BaseValidation::checkKey(const rapidjson::Value& jsonObject, const char* ke
         }
         break;
     case KeyType::Integer :
+        if (value.IsInt()) {
+            typeOk = true;
+        }
+        break;
+    case KeyType::Integer64 :
         if (value.IsInt64()) {
             typeOk = true;
         }
         break;
     case KeyType::Unsigned :
+        if (value.IsUint()) {
+            typeOk = true;
+        }
+        break;
+    case KeyType::Unsigned64 :
         if (value.IsUint64()) {
             typeOk = true;
         }
@@ -377,8 +391,8 @@ bool BaseValidation::generalNotificationCheck(const rapidjson::Document& json, c
         const rapidjson::Value& value = notification[JSON_VALUE];
         QLatin1String notificationCommandName(value.GetString(), value.GetStringLength());
         if (notificationCommandName != commandName) {
-            QString errStr = QStringLiteral("Other command name (") + notificationCommandName
-                             + QStringLiteral(") than expected (") + commandName + ')';
+            QString errStr = QStringLiteral("Other command name: '") + notificationCommandName
+                             + QStringLiteral("' than expected: '") + commandName + '\'';
             qCWarning(lcPlatformValidation) << platform_ << errStr;
             emit validationStatus(Status::Error, errStr);
             return false;

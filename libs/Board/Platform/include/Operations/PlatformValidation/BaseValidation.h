@@ -107,6 +107,7 @@ protected:
 
     bool ignoreCmdRejected_;
     bool ignoreTimeout_;
+    bool ignoreFaultyNotification_;
 
     PlatformMessage lastPlatformNotification_;
 
@@ -132,7 +133,9 @@ protected:
         Object,
         String,
         Integer,
-        Unsigned
+        Integer64,
+        Unsigned,
+        Unsigned64
     };
     /*!
      * Joins keys to string as "/key1/key2/key3".

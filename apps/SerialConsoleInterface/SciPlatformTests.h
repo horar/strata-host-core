@@ -80,3 +80,16 @@ public:
 
     void run() override;
 };
+
+
+// *** Embedded board registration ***
+
+class EmbeddedRegistrationTest: public SciPlatformBaseTest {
+    Q_OBJECT
+    Q_DISABLE_COPY(EmbeddedRegistrationTest)
+
+public:
+    EmbeddedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+
+    void run() override;
+};

@@ -17,6 +17,7 @@ constexpr std::chrono::milliseconds NOTIFICATION_TIMEOUT(2000);
 
 constexpr unsigned int MAX_CHUNK_RETRIES(1);
 
+constexpr int CONTROLLER_TYPE_UNSET(0);
 constexpr int CONTROLLER_TYPE_EMBEDDED(1);
 constexpr int CONTROLLER_TYPE_ASSISTED(2);
 
