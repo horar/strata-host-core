@@ -639,7 +639,7 @@ Rectangle {
 
                 SGMenuItem {
                     text: qsTr("Control View Creator")
-                    visible: cvcButton.state === "debug"
+                    visible: cvcButton.state === "enabled"
                     width: profileMenu.width
 
                     onClicked: {
