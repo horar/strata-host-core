@@ -51,6 +51,7 @@ constexpr const char* const JSON_DATE = "date";
 constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_FAILED = "failed";
+constexpr const char* const JSON_NOT_SUPPORTED = "not_supported";
 constexpr const char* const JSON_ALREADY_INITIALIZED = "already_initialized";
 constexpr const char* const JSON_BOARD_NOT_CONNECTED = "board_not_connected";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";

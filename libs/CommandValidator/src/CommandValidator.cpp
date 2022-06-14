@@ -315,7 +315,7 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
             "properties": {
                 "status": {
                     "type": "string",
-                    "enum": ["ok", "failed", "already_initialized"]
+                    "enum": ["ok", "failed", "already_initialized", "not_supported"]
                 }
             },
             "required": [ "status" ]
@@ -332,7 +332,7 @@ const rapidjson::SchemaDocument CommandValidator::setAssistedPlatformId_nps_(
             "properties": {
                 "status": {
                     "type": "string",
-                    "enum": ["ok", "failed", "already_initialized", "board_not_connected"]
+                    "enum": ["ok", "failed", "already_initialized", "board_not_connected", "not_supported"]
                 }
             },
             "required": [ "status" ]
