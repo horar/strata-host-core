@@ -81,8 +81,7 @@ SGWidgets.SGDialog {
                     hoverEnabled: true
 
                     onClicked: {
-                        logout()
-                        policyDialog.accept()
+                        policyDialog.reject()
                     }
                 }
             }
@@ -118,13 +117,5 @@ SGWidgets.SGDialog {
                 }
             }
         }
-    }
-
-    function logout() {
-        sdsModel.coreInterface.unregisterClient();
-        Signals.logout()
-        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-        LoginUtils.logout()
-        PlatformSelection.logout()
     }
 }

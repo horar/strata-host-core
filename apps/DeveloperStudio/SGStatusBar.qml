@@ -702,7 +702,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
                         if (!controlViewCreatorLoader.active || !controlViewCreatorLoader.item.blockWindowClose(logout)) {
-                            logout()
+                            mainWindow.logout()
                         }
                     }
                     width: profileMenu.width
@@ -796,16 +796,6 @@ Rectangle {
     function showConnectBleDeviceDialog() {
         var dialog = SGDialogJS.createDialog(ApplicationWindow.window, "qrc:/partial-views/BleScanDialog.qml")
         dialog.open()
-    }
-
-    function logout() {
-        sdsModel.coreInterface.unregisterClient();
-        controlViewCreatorLoader.active = false
-        Signals.logout()
-        PlatformFilters.clearActiveFilters()
-        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-        LoginUtils.logout()
-        PlatformSelection.logout()
     }
 
     Timer {

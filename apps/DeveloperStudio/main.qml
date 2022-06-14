@@ -37,6 +37,7 @@ import tech.strata.signals 1.0
 SGWidgets.SGMainWindow {
     id: mainWindow
 
+    property alias mainWindow: mainWindow
     readonly property int defaultWidth: 1024
     readonly property int defaultHeight: 768-40 // -40 for Win10 taskbar height
 
@@ -48,10 +49,10 @@ SGWidgets.SGMainWindow {
     title: Qt.application.displayName
 
     property alias notificationsInbox: notificationsInbox
-
     signal initialized()
+    signal logout()
     property bool hcsReconnecting: false
-    property variant privacyPolicyDialog: null
+    property var privacyPolicyDialog: null
 
     function resetWindowSize()
     {
@@ -355,7 +356,27 @@ SGWidgets.SGMainWindow {
         }
 
         privacyPolicyDialog = SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/SGPolicyUpdateDialog.qml")
+        privacyPolicyDialog.accepted.connect(function() {
+            privacyPolicyDialog.destroy()
+        })
+
+        privacyPolicyDialog.rejected.connect(function() {
+            logout()
+            privacyPolicyDialog.destroy()
+        })
+
         privacyPolicyDialog.open()
+    }
+
+    onLogout: {
+        console.log(Logger.devStudioCategory, "logging out")
+        sdsModel.coreInterface.unregisterClient();
+        controlViewCreatorLoader.active = false
+        Signals.logout()
+        PlatformFilters.clearActiveFilters()
+        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+        LoginUtils.logout()
+        PlatformSelection.logout()
     }
 
     SGDebugBar {
