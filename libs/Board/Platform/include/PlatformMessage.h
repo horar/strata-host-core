@@ -57,6 +57,12 @@ public:
     const QByteArray& raw() const;
 
     /**
+     * Getter for raw message without newline character at end (if any).
+     * @return raw message received from device without newline character at end
+     */
+    const QByteArray rawNoNewlineEnd() const;
+
+    /**
      * Getter for JSON.
      * @return JSON parsed from raw message
      */

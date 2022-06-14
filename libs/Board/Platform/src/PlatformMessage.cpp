@@ -39,6 +39,15 @@ const QByteArray& PlatformMessage::raw() const
     return data_->raw_;
 }
 
+const QByteArray PlatformMessage::rawNoNewlineEnd() const
+{
+    if (data_->raw_.endsWith('\n')) {
+        return data_->raw_.chopped(1);
+    } else {
+        return data_->raw_;
+    }
+}
+
 const rapidjson::Document& PlatformMessage::json() const
 {
     return data_->json_;

@@ -161,7 +161,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
         } else {
             QString warning = CommandValidator::lastValidationError();
             if (warning.isEmpty()) {
-                warning = "Received invalid ACK: '" + message.raw() + "'.";
+                warning = "Received invalid ACK: '" + message.rawNoNewlineEnd() + "'.";
             }
             qCWarning(lcPlatformCommand) << platform_ << warning;
             emitValidationFailure(warning, ValidationFailure::Fatal);
@@ -183,7 +183,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             if (ackOk_) {
                 if (result == CommandResult::FinaliseOperation || result == CommandResult::Failure) {
                     if (result == CommandResult::Failure) {
-                        QString warning = "Received faulty notification: '" + message.raw() + '\'';
+                        QString warning = "Received faulty notification: '" + message.rawNoNewlineEnd() + '\'';
                         qCWarning(lcPlatformCommand) << platform_ << warning;
                         emitValidationFailure(warning, ValidationFailure::Fatal);
                     }
@@ -202,7 +202,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             }
         } else {
             // some platforms send periodic notifications, it is not an error if we receive it, ignore it
-            QString warning = "Received invalid notification for command '" + cmdName_ + "': '" + message.raw() + '\'';
+            QString warning = "Received invalid notification for command '" + cmdName_ + "': '" + message.rawNoNewlineEnd() + '\'';
             qCDebug(lcPlatformCommand) << platform_ << warning;
             emitValidationFailure(warning, ValidationFailure::Warning);
         }
@@ -281,7 +281,7 @@ QString BasePlatformCommand::generateWrongResponseError(const PlatformMessage& r
         prefix = QStringLiteral("Invalid response. Error at offset ") + QString::number(response.jsonErrorOffset())
                  + QStringLiteral(": '") + errorString + QStringLiteral("' Invalid JSON: '");
     }
-    return prefix + response.raw() + QStringLiteral("'.");
+    return prefix + response.rawNoNewlineEnd() + QStringLiteral("'.");
 }
 
 void BasePlatformCommand::emitValidationFailure(QString warning, ValidationFailure failure)
