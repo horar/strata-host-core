@@ -50,7 +50,7 @@ SGWidgets.SGMainWindow {
 
     property alias notificationsInbox: notificationsInbox
     signal initialized()
-    signal logout()
+
     property bool hcsReconnecting: false
     property var privacyPolicyDialog: null
 
@@ -368,7 +368,7 @@ SGWidgets.SGMainWindow {
         privacyPolicyDialog.open()
     }
 
-    onLogout: {
+    function logout() {
         sdsModel.coreInterface.unregisterClient();
         controlViewCreatorLoader.active = false
         Signals.logout()
