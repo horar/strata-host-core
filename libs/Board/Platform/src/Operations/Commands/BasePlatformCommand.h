@@ -56,6 +56,7 @@ enum class CommandType : int {
 enum class ValidationFailure : int {
     Warning,
     CmdRejected,
+    Timeout,
     Fatal
 };
 Q_ENUM_NS(ValidationFailure)

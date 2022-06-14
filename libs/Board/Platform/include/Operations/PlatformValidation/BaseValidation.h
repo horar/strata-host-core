@@ -119,6 +119,7 @@ protected:
     bool incomplete_;    // if set to true, validation is incomplete
 
     bool ignoreCmdRejected_;
+    bool ignoreTimeout_;
 
     PlatformMessage lastPlatformNotification_;
 

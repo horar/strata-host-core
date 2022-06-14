@@ -222,7 +222,7 @@ void BasePlatformCommand::handleResponseTimeout()
     if (cmdType_ != CommandType::Wait) {
         QString warning = "Command '" + cmdName_ + "' timed out.";
         qCWarning(lcPlatformCommand) << platform_ << warning;
-        emitValidationFailure(warning, ValidationFailure::Fatal);
+        emitValidationFailure(warning, ValidationFailure::Timeout);
     }
     finishCommand(this->onTimeout());
 }

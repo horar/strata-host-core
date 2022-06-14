@@ -19,24 +19,43 @@ namespace strata::platform::validation {
 BootloaderApplication::BootloaderApplication(const PlatformPtr& platform)
     : BaseValidation(platform, Type::BtldrAppPresence, QStringLiteral("Bootloader & Application presence"))
 {
-    commandList_.reserve(4);
+    commandList_.reserve(6);
+
+    // There may be delay between switching bootloader and application, so wait for a while
+    // and also set retries count for "get_firmware_info" (to be sure).
+    std::chrono::milliseconds bootDelay(500);
+    constexpr uint maxRetries(3);
 
     // BaseValidation member platform_ must be used as a parameter for commands!
+
     commandList_.emplace_back(std::make_unique<command::CmdStartBootloader>(platform_),
                               std::bind(&BootloaderApplication::beforeStartCmd, this),
                               std::bind(&BootloaderApplication::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BootloaderApplication::startCheck, this));
-    commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
+
+    commandList_.emplace_back(std::make_unique<command::CmdWait>(platform_, bootDelay, QStringLiteral("Waiting for bootloader to start")),
                               nullptr,
                               nullptr,
+                              nullptr);
+
+    commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, maxRetries),
+                              std::bind(&BootloaderApplication::beforeGetFwInfo, this),
+                              std::bind(&BootloaderApplication::afterGetFwInfo, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BootloaderApplication::getFirmwareInfoCheck, this, true));
+
     commandList_.emplace_back(std::make_unique<command::CmdStartApplication>(platform_),
                               std::bind(&BootloaderApplication::beforeStartCmd, this),
                               std::bind(&BootloaderApplication::afterStartCmd, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BootloaderApplication::startCheck, this));
-    commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, 0),
+
+    commandList_.emplace_back(std::make_unique<command::CmdWait>(platform_, bootDelay, QStringLiteral("Waiting for application to start")),
                               nullptr,
                               nullptr,
+                              nullptr);
+
+    commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(platform_, true, maxRetries),
+                              std::bind(&BootloaderApplication::beforeGetFwInfo, this),
+                              std::bind(&BootloaderApplication::afterGetFwInfo, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BootloaderApplication::getFirmwareInfoCheck, this, false));
 }
 
@@ -101,6 +120,25 @@ BaseValidation::ValidationResult BootloaderApplication::startCheck()
     }
 
     return ValidationResult::Passed;
+}
+
+void BootloaderApplication::beforeGetFwInfo()
+{
+    ignoreTimeout_ = true;
+}
+
+void BootloaderApplication::afterGetFwInfo(command::CommandResult& result, int& status)
+{
+    Q_UNUSED(status)
+
+    ignoreTimeout_ = false;
+
+    if (result == command::CommandResult::Timeout) {
+        fatalFailure_ = true;
+        QString message = QStringLiteral("Command '") + currentCommand_->command->name() + QStringLiteral("' timed out");
+        qCWarning(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Error, message);
+    }
 }
 
 BaseValidation::ValidationResult BootloaderApplication::getFirmwareInfoCheck(bool bootloaderActive)

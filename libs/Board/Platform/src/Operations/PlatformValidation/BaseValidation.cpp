@@ -28,7 +28,8 @@ BaseValidation::BaseValidation(const PlatformPtr& platform, Type type, const QSt
     name_(name),
     fatalFailure_(false),
     incomplete_(false),
-    ignoreCmdRejected_(false)
+    ignoreCmdRejected_(false),
+    ignoreTimeout_(false)
 { }
 
 BaseValidation::~BaseValidation()
@@ -79,6 +80,7 @@ void BaseValidation::run()
     fatalFailure_ = false;
     incomplete_ = false;
     ignoreCmdRejected_ = false;
+    ignoreTimeout_ = false;
 
     QString message = name_ + QStringLiteral(" is about to start");
     qCInfo(lcPlatformValidation) << platform_ << message;
@@ -136,6 +138,17 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
         }
         break;
 
+    // Retry
+    case CommandResult::Retry :
+        {
+            QString message = QStringLiteral("No response to '") + currentCommand_->command->name()
+                              + QStringLiteral("' (board is probably not ready yet), sending it again");
+            qCInfo(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Info, message);
+        }
+        QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);  // send same command again
+        break;
+
     // Expected notification was not received (or received notification was not OK).
     default :
         if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
@@ -159,6 +172,9 @@ void BaseValidation::handleValidationFailure(QString error, command::ValidationF
     if (ignoreCmdRejected_ && (failure == command::ValidationFailure::CmdRejected)) {
         return;
     }
+    if (ignoreTimeout_ && (failure == command::ValidationFailure::Timeout)) {
+        return;
+    }
 
     Status status = Status::Warning;
 
@@ -167,6 +183,7 @@ void BaseValidation::handleValidationFailure(QString error, command::ValidationF
         status = Status::Warning;
         break;
     case command::ValidationFailure::CmdRejected :
+    case command::ValidationFailure::Timeout :
     case command::ValidationFailure::Fatal :
         fatalFailure_ = true;
         status = Status::Error;
@@ -188,9 +205,11 @@ void BaseValidation::handlePlatformNotification(PlatformMessage message)
 void BaseValidation::sendCommand()
 {
     if (currentCommand_ != commandList_.end()) {
-        QString message(QStringLiteral("Validating '") + currentCommand_->command->name() + '\'');
-        qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Plain, message);
+        if (currentCommand_->command->type() != command::CommandType::Wait) {
+            QString message(QStringLiteral("Validating '") + currentCommand_->command->name() + '\'');
+            qCInfo(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Plain, message);
+        }
 
         if (currentCommand_->beforeAction) {
             currentCommand_->beforeAction();

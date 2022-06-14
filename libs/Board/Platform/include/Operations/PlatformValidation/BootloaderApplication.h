@@ -31,6 +31,8 @@ public:
 private:
     void beforeStartCmd();
     void afterStartCmd(command::CommandResult& result, int& status);
+    void beforeGetFwInfo();
+    void afterGetFwInfo(command::CommandResult& result, int& status);
     ValidationResult startCheck();
     ValidationResult getFirmwareInfoCheck(bool bootloaderActive);
 };
