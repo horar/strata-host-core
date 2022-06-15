@@ -10,14 +10,9 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
-import tech.strata.signals 1.0
-import tech.strata.theme 1.0
 
 import "../"
 import "../general/"
-import "../login"
-import "qrc:/js/login_utilities.js" as LoginUtils
-import "qrc:/js/navigation_control.js" as NavigationControl
 
 SGStrataPopup {
     id: root
