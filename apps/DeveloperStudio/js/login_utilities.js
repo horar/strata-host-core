@@ -80,6 +80,10 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
+    if (response.hasOwnProperty("privacy_policy_changed") && response.privacy_policy_changed == true ) {
+        console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
+        SignalsModule.Signals.privacyPolicyUpdate()
+    }
     var result = {
         "response":"Connected",
         "jwt": response.token,
@@ -454,6 +458,8 @@ function update_profile(username, updated_properties) {
 
     if (updated_properties.hasOwnProperty("password")) {
        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result)
+    } else if(updated_properties.hasOwnProperty("consent_privacy_policy")) {
+        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     } else {
        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     }
@@ -572,6 +578,12 @@ function validation_result (response) {
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
         SignalsModule.Signals.validationResult("Current token is valid")
+
+        if (response.hasOwnProperty("privacy_policy_changed") && response.privacy_policy_changed == true ) {
+            console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
+            SignalsModule.Signals.privacyPolicyUpdate()
+        }
+
     } else {
         Rest.jwt = ""
         if (response.message === "No connection") {
@@ -642,4 +654,3 @@ function set_token (token) {
 function getNextId() {
    return Rest.getNextRequestId();
 }
-
