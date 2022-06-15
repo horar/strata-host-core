@@ -9,6 +9,7 @@
 #pragma once
 
 #include <Operations/PlatformValidation/BaseValidation.h>
+#include <PlatformOperationsData.h>
 
 namespace strata::platform::validation {
 
@@ -37,8 +38,12 @@ private:
     void afterSetIdFailure(command::CommandResult& result, int& status);
     void afterStartApplication(command::CommandResult& result, int& status);
 
-    const QString fakeUuid4_;
-    const quint64 fakeBoardCount_;
+    void logAndEmitUnexpectedValue(const QVector<const char*>& path,
+                                   const char* key,
+                                   const QString& current,
+                                   const QString& expected);
+
+    command::CmdSetPlatformIdData data_;
 };
 
 }  // namespace

@@ -94,10 +94,10 @@ void BootloaderApplicationTest::run()
 }
 
 
-// *** Embedded board registration ***
+// *** Embedded platform registration ***
 
 EmbeddedRegistrationTest::EmbeddedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Embedded board registration"), parent)
+    : SciPlatformBaseTest(platformRef, QStringLiteral("Embedded platform registration"), parent)
 { }
 
 void EmbeddedRegistrationTest::run()
@@ -108,10 +108,10 @@ void EmbeddedRegistrationTest::run()
 }
 
 
-// *** Assisted board registration ***
+// *** Assisted platform registration ***
 
 AssistedRegistrationTest::AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Assisted board registration"), parent)
+    : SciPlatformBaseTest(platformRef, QStringLiteral("Assisted platform registration"), parent)
 { }
 
 void AssistedRegistrationTest::run()

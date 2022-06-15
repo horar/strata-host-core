@@ -10,7 +10,6 @@
 #include <Commands/PlatformCommands.h>
 #include <Commands/PlatformCommandConstants.h>
 #include <PlatformOperationsStatus.h>
-#include <PlatformOperationsData.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -21,14 +20,11 @@
 namespace strata::platform::validation {
 
 EmbeddedRegistration::EmbeddedRegistration(const PlatformPtr& platform)
-    : BaseValidation(platform, QStringLiteral("Embedded board registration")),
-      fakeUuid4_("00000000-0000-4000-8000-000000000000"),
-      fakeBoardCount_(1)
+    : BaseValidation(platform, QStringLiteral("Embedded platform registration"))
 {
-    command::CmdSetPlatformIdData data;
-    data.classId = fakeUuid4_;
-    data.platformId = fakeUuid4_;
-    data.boardCount = fakeBoardCount_;
+    data_.classId = QStringLiteral("00000000-0000-4000-8000-100000000000");
+    data_.platformId = QStringLiteral("00000000-0000-4000-8000-200000000000");
+    data_.boardCount = 3210;
 
     commandList_.reserve(11);
 
@@ -49,25 +45,29 @@ EmbeddedRegistration::EmbeddedRegistration(const PlatformPtr& platform)
                               nullptr,
                               nullptr);
 
-    commandList_.emplace_back(std::make_unique<command::CmdSetPlatformId>(platform_, data),
+    // Set class ID + platform ID.
+    commandList_.emplace_back(std::make_unique<command::CmdSetPlatformId>(platform_, data_),
                               nullptr,
                               nullptr,
                               std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, false, false));
 
-    commandList_.emplace_back(std::make_unique<command::CmdSetPlatformId>(platform_, data),
+    // This command is expected to fail. Set class ID + platform ID.
+    commandList_.emplace_back(std::make_unique<command::CmdSetPlatformId>(platform_, data_),
                               std::bind(&EmbeddedRegistration::beforeSetIdFailure, this),
                               std::bind(&EmbeddedRegistration::afterSetIdFailure, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, true, false));
 
-    std::unique_ptr<command::CmdSetAssistedPlatformId> cmdSetAssistPlatfId1 = std::make_unique<command::CmdSetAssistedPlatformId>(platform_);
-    cmdSetAssistPlatfId1->setAckTimeout(std::chrono::milliseconds(2000));  // special case, firmware takes too long to send ACK (see CS-1722)
-    cmdSetAssistPlatfId1->setBaseData(data);
-    cmdSetAssistPlatfId1->setControllerData(data);
-    cmdSetAssistPlatfId1->setFwClassId(fakeUuid4_);
-    commandList_.emplace_back(std::move(cmdSetAssistPlatfId1),
-                              std::bind(&EmbeddedRegistration::beforeSetIdFailure, this),
-                              std::bind(&EmbeddedRegistration::afterSetIdFailure, this, std::placeholders::_1, std::placeholders::_2),
-                              std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, true, true));
+    {  // This command is expected to fail. Set class ID + platform ID + controller class ID + controller platform ID + FW class ID
+        std::unique_ptr<command::CmdSetAssistedPlatformId> cmdSetAssistPlatfId = std::make_unique<command::CmdSetAssistedPlatformId>(platform_);
+        cmdSetAssistPlatfId->setAckTimeout(std::chrono::milliseconds(2000));  // special case, firmware takes too long to send ACK (see CS-1722)
+        cmdSetAssistPlatfId->setBaseData(data_);
+        cmdSetAssistPlatfId->setControllerData(data_);
+        cmdSetAssistPlatfId->setFwClassId(data_.classId);
+        commandList_.emplace_back(std::move(cmdSetAssistPlatfId),
+                                  std::bind(&EmbeddedRegistration::beforeSetIdFailure, this),
+                                  std::bind(&EmbeddedRegistration::afterSetIdFailure, this, std::placeholders::_1, std::placeholders::_2),
+                                  std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, true, true));
+    }
 
     commandList_.emplace_back(std::make_unique<command::CmdStartApplication>(platform_),
                               nullptr,
@@ -79,20 +79,23 @@ EmbeddedRegistration::EmbeddedRegistration(const PlatformPtr& platform)
                               nullptr,
                               nullptr);
 
-    commandList_.emplace_back(std::make_unique<command::CmdSetPlatformId>(platform_, data),
+    // This command is expected to fail. Set class ID + platform ID.
+    commandList_.emplace_back(std::make_unique<command::CmdSetPlatformId>(platform_, data_),
                               std::bind(&EmbeddedRegistration::beforeSetIdFailure, this),
                               std::bind(&EmbeddedRegistration::afterSetIdFailure, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, true, false));
 
-    std::unique_ptr<command::CmdSetAssistedPlatformId> cmdSetAssistPlatfId2 = std::make_unique<command::CmdSetAssistedPlatformId>(platform_);
-    cmdSetAssistPlatfId2->setAckTimeout(std::chrono::milliseconds(2000));  // special case, firmware takes too long to send ACK (see CS-1722)
-    cmdSetAssistPlatfId2->setBaseData(data);
-    cmdSetAssistPlatfId2->setControllerData(data);
-    cmdSetAssistPlatfId2->setFwClassId(fakeUuid4_);
-    commandList_.emplace_back(std::move(cmdSetAssistPlatfId2),
-                              std::bind(&EmbeddedRegistration::beforeSetIdFailure, this),
-                              std::bind(&EmbeddedRegistration::afterSetIdFailure, this, std::placeholders::_1, std::placeholders::_2),
-                              std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, true, true));
+    {  // This command is expected to fail. Set class ID + platform ID + controller class ID + controller platform ID + FW class ID
+        std::unique_ptr<command::CmdSetAssistedPlatformId> cmdSetAssistPlatfId = std::make_unique<command::CmdSetAssistedPlatformId>(platform_);
+        cmdSetAssistPlatfId->setAckTimeout(std::chrono::milliseconds(2000));  // special case, firmware takes too long to send ACK (see CS-1722)
+        cmdSetAssistPlatfId->setBaseData(data_);
+        cmdSetAssistPlatfId->setControllerData(data_);
+        cmdSetAssistPlatfId->setFwClassId(data_.classId);
+        commandList_.emplace_back(std::move(cmdSetAssistPlatfId),
+                                  std::bind(&EmbeddedRegistration::beforeSetIdFailure, this),
+                                  std::bind(&EmbeddedRegistration::afterSetIdFailure, this, std::placeholders::_1, std::placeholders::_2),
+                                  std::bind(&EmbeddedRegistration::setPlatformIdCheck, this, true, true));
+    }
 
     commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(platform_),
                               nullptr,
@@ -114,71 +117,72 @@ BaseValidation::ValidationResult EmbeddedRegistration::requestPlatformIdCheck(bo
     const rapidjson::Value& payload = json[JSON_NOTIFICATION][JSON_PAYLOAD];
     QVector<const char*> jsonPath({JSON_NOTIFICATION, JSON_PAYLOAD});  // successfuly checked JSON path
 
-    // check "controller_type"
     if (checkKey(payload, JSON_CONTROLLER_TYPE, KeyType::Integer, jsonPath) == false) {
         return ValidationResult::Failed;
     }
+    const int controller = payload[JSON_CONTROLLER_TYPE].GetInt();
 
-    // check "platform_id"
     if (checkKey(payload, JSON_PLATFORM_ID, KeyType::String, jsonPath) == false) {
         return ValidationResult::Failed;
     }
+    const rapidjson::Value& platformId = payload[JSON_PLATFORM_ID];
+    const QLatin1String platformIdStr(platformId.GetString(), platformId.GetStringLength());
 
-    // check "class_id"
     if (checkKey(payload, JSON_CLASS_ID, KeyType::String, jsonPath) == false) {
         return ValidationResult::Failed;
     }
+    const rapidjson::Value& classId = payload[JSON_CLASS_ID];
+    const QLatin1String classIdStr(classId.GetString(), classId.GetStringLength());
 
-    // check "board_count"
     if (checkKey(payload, JSON_BOARD_COUNT, KeyType::Unsigned64, jsonPath) == false) {
         return ValidationResult::Failed;
     }
-
-    const QString notCorrect(QStringLiteral(" is not set correctly"));
-    {  // check values of "platform_id" and "class_id"
-        const std::array<const char*, 2> ids = {JSON_PLATFORM_ID, JSON_CLASS_ID};
-        for (size_t i = 0; i < ids.size(); ++i) {
-            const rapidjson::Value& id = payload[ids[i]];
-            const QLatin1String idStr(id.GetString(), id.GetStringLength());
-            if (unsetId) {
-                if (idStr.isEmpty() == false) {
-                    QString message = ids[i] + QStringLiteral(" is already set");
-                    qCWarning(lcPlatformValidation) << platform_ << message;
-                    emit validationStatus(Status::Error, message);
-                    return ValidationResult::Failed;
-                }
-            } else {
-                if (idStr != fakeUuid4_) {
-                    QString message = ids[i] + notCorrect;
-                    qCWarning(lcPlatformValidation) << platform_ << message;
-                    emit validationStatus(Status::Error, message);
-                    return ValidationResult::Failed;
-                }
-            }
-        }
-    }
-
-    const int controller = payload[JSON_CONTROLLER_TYPE].GetInt();
     const quint64 boardCount = payload[JSON_BOARD_COUNT].GetUint64();
 
     if (unsetId) {
+        // check "controller_type"
         if ((controller != CONTROLLER_TYPE_UNSET) && (controller != CONTROLLER_TYPE_EMBEDDED)) {
             QString message = JSON_CONTROLLER_TYPE + (QStringLiteral(" already set to unexpected value"));
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;
         }
+        // check "platform_id", "class_id"
+        struct KeyInfo {
+            const char* key;
+            const QLatin1String& value;
+        };
+        std::array<KeyInfo, 2> keys = {{
+            {JSON_PLATFORM_ID, platformIdStr},
+            {JSON_CLASS_ID,    classIdStr}
+        }};
+        for (size_t i = 0; i < keys.size(); ++i) {
+            if (keys[i].value.isEmpty() == false) {
+                QString message = keys[i].key + QStringLiteral(" is already set");
+                qCWarning(lcPlatformValidation) << platform_ << message;
+                emit validationStatus(Status::Error, message);
+                return ValidationResult::Failed;
+            }
+        }
     } else {
+        // check "controller_type"
         if (controller != CONTROLLER_TYPE_EMBEDDED) {
-            QString message = JSON_CONTROLLER_TYPE + notCorrect;
-            qCWarning(lcPlatformValidation) << platform_ << message;
-            emit validationStatus(Status::Error, message);
+            logAndEmitUnexpectedValue(jsonPath, JSON_CONTROLLER_TYPE, QString::number(controller), QString::number(CONTROLLER_TYPE_EMBEDDED));
             return ValidationResult::Failed;
         }
-        if (boardCount != fakeBoardCount_) {
-            QString message = JSON_BOARD_COUNT + notCorrect;
-            qCWarning(lcPlatformValidation) << platform_ << message;
-            emit validationStatus(Status::Error, message);
+        // check "platform_id"
+        if (platformIdStr != data_.platformId) {
+            logAndEmitUnexpectedValue(jsonPath, JSON_PLATFORM_ID, platformIdStr, data_.platformId);
+            return ValidationResult::Failed;
+        }
+        // check "class_id"
+        if (classIdStr != data_.classId) {
+            logAndEmitUnexpectedValue(jsonPath, JSON_CLASS_ID, classIdStr, data_.classId);
+            return ValidationResult::Failed;
+        }
+        // check "board_count"
+        if (boardCount != static_cast<quint64>(data_.boardCount)) {
+            logAndEmitUnexpectedValue(jsonPath, JSON_BOARD_COUNT, QString::number(boardCount), QString::number(data_.boardCount));
             return ValidationResult::Failed;
         }
     }
@@ -278,6 +282,17 @@ void EmbeddedRegistration::afterStartApplication(command::CommandResult& result,
         qCInfo(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Warning, message);
     }
+}
+
+void EmbeddedRegistration::logAndEmitUnexpectedValue(const QVector<const char *> &path,
+                                                     const char *key,
+                                                     const QString& current,
+                                                     const QString& expected)
+{
+    QString message = unsupportedValue(joinKeys(path, key), current, true)
+                  + QStringLiteral(" Expected '") + expected + '\'';
+    qCWarning(lcPlatformValidation) << platform_ << message;
+    emit validationStatus(Status::Error, message);
 }
 
 }  // namespace
