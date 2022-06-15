@@ -607,6 +607,7 @@ bool SGQrcTreeModel::createQmlFile(const QString &filepath, const bool isFileVEE
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream stream(&file);
+        stream << licenseQML_;
         stream << (isFileVEEnabled ? veQMLFile_ : baseQMLFile_);
         file.close();
         return true;
