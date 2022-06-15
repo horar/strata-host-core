@@ -22,7 +22,7 @@ public:
      * EmbeddedRegistration constructor.
      * \param platform platform which will be used for validation
      */
-    EmbeddedRegistration(const PlatformPtr& platform);
+    EmbeddedRegistration(const PlatformPtr& platform, const QString& name);
 
     /*!
      * EmbeddedRegistration destructor.

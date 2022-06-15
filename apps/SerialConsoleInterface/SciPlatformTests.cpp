@@ -74,7 +74,7 @@ IdentificationTest::IdentificationTest(const strata::platform::PlatformPtr& plat
 
 void IdentificationTest::run()
 {
-    validation_ = ValidationPtr(new validation::Identification(platformRef_), validationDeleter);
+    validation_ = ValidationPtr(new validation::Identification(platformRef_, name_), validationDeleter);
 
     connectAndRun();
 }
@@ -88,7 +88,7 @@ BootloaderApplicationTest::BootloaderApplicationTest(const strata::platform::Pla
 
 void BootloaderApplicationTest::run()
 {
-    validation_ = ValidationPtr(new validation::BootloaderApplication(platformRef_), validationDeleter);
+    validation_ = ValidationPtr(new validation::BootloaderApplication(platformRef_, name_), validationDeleter);
 
     connectAndRun();
 }
@@ -102,7 +102,7 @@ EmbeddedRegistrationTest::EmbeddedRegistrationTest(const strata::platform::Platf
 
 void EmbeddedRegistrationTest::run()
 {
-    validation_ = ValidationPtr(new validation::EmbeddedRegistration(platformRef_), validationDeleter);
+    validation_ = ValidationPtr(new validation::EmbeddedRegistration(platformRef_, name_), validationDeleter);
 
     connectAndRun();
 }
@@ -116,7 +116,7 @@ AssistedRegistrationTest::AssistedRegistrationTest(const strata::platform::Platf
 
 void AssistedRegistrationTest::run()
 {
-    validation_ = ValidationPtr(new validation::AssistedRegistration(platformRef_), validationDeleter);
+    validation_ = ValidationPtr(new validation::AssistedRegistration(platformRef_, name_), validationDeleter);
 
     connectAndRun();
 }

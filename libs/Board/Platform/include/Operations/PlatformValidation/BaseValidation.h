@@ -68,12 +68,6 @@ public:
      */
     virtual void run();
 
-    /*!
-     * Get validation name.
-     * \return validation name
-     */
-    virtual QString name() const final;
-
 signals:
     /*!
      * This signal is emitted when platform validation finishes.

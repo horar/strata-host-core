@@ -16,8 +16,8 @@
 
 namespace strata::platform::validation {
 
-BootloaderApplication::BootloaderApplication(const PlatformPtr& platform)
-    : BaseValidation(platform, QStringLiteral("Bootloader & Application presence"))
+BootloaderApplication::BootloaderApplication(const PlatformPtr& platform, const QString& name)
+    : BaseValidation(platform, name)
 {
     commandList_.reserve(6);
 

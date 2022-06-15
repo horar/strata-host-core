@@ -23,7 +23,7 @@ public:
      * AssistedRegistration constructor.
      * \param platform platform which will be used for validation
      */
-    AssistedRegistration(const PlatformPtr& platform);
+    AssistedRegistration(const PlatformPtr& platform, const QString& name);
 
     /*!
      * AssistedRegistration destructor.

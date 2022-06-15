@@ -21,8 +21,8 @@
 
 namespace strata::platform::validation {
 
-AssistedRegistration::AssistedRegistration(const PlatformPtr& platform)
-    : BaseValidation(platform, QStringLiteral("Assisted platform registration")),
+AssistedRegistration::AssistedRegistration(const PlatformPtr& platform, const QString& name)
+    : BaseValidation(platform, name),
       assistedBoardConnected_(false)
 {
     data_.classId = QStringLiteral("00000000-0000-4000-8000-000000000001");

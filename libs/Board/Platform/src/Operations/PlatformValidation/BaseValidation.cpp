@@ -21,7 +21,7 @@ namespace strata::platform::validation {
 using command::BasePlatformCommand;
 using command::CommandResult;
 
-BaseValidation::BaseValidation(const PlatformPtr& platform, const QString &name):
+BaseValidation::BaseValidation(const PlatformPtr& platform, const QString& name):
     running_(false),
     platform_(platform),
     name_(name),
@@ -96,13 +96,8 @@ void BaseValidation::run()
     }
 }
 
-QString BaseValidation::name() const
-{
-    return name_;
-}
-
-// This is only first iteration of command validation, as more validations (and functionality)
-// will be required, add here more logic from 'BasePlatformOperation::handleCommandFinished' method.
+// When more validations (and functionality) will be required,
+// add here more logic from 'BasePlatformOperation::handleCommandFinished' method.
 void BaseValidation::handleCommandFinished(CommandResult result, int status)
 {
     Q_UNUSED(status)
