@@ -19,15 +19,14 @@ import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-// Temporary button in the SGStatusBar that opens control view creator.
-// If this is removed, remove CVCButtonFake as well.
+// real Control View Creator button in the SGStatusBar that opens Control View Creator
 
 Rectangle {
     id: controlViewCreatorContainer
     height: container.height
     width: controlViewCreatorRow.implicitWidth
     color: controlViewCreatorMouse.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.15) : NavigationControl.stack_container_.currentIndex === NavigationControl.stack_container_.count-1 ? Theme.palette.onsemiOrange : "#444"
-    state: "debug"
+    state: "enabled"
 
     MouseArea {
         id: controlViewCreatorMouse
