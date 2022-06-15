@@ -88,7 +88,12 @@ void BaseValidation::run()
     emit validationStatus(Status::Plain, message);
 
     running_ = true;
-    QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
+
+    if (commandList_.size() > 0) {
+        QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
+    } else {
+        finishValidation(ValidationResult::Incomplete);
+    }
 }
 
 QString BaseValidation::name() const
@@ -306,10 +311,10 @@ QString BaseValidation::badKeyType(const QString& key, KeyType type) const
     return result;
 }
 
-QString BaseValidation::unsupportedValue(const QString& key, const QString& value) const
+QString BaseValidation::unsupportedValue(const QString& key, const QString& value, bool unexpected) const
 {
-    QString result = QStringLiteral("Unsupported value of '") + key
-                     + QStringLiteral("' key: '") + value + '\'';
+    QString result = (unexpected) ? QStringLiteral("Unexpected") : QStringLiteral("Unsupported");
+    result += QStringLiteral(" value of '") + key + QStringLiteral("' key: '") + value + '\'';
     if (value.isEmpty()) {
         result += QStringLiteral(" Value is empty");
     }

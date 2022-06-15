@@ -158,9 +158,10 @@ protected:
     /*!
      * \param key - JSON document key (use 'joinKeys' method to create it)
      * \param value - actual value of key (converted to string)
-     * \return string with message about unsuported value for key
+     * \param unexpected - if true returned message will contain "unexpected", otherwise it will contain "unsupported"
+     * \return string with message about unsupported/unexpected value for key
      */
-    QString unsupportedValue(const QString& key, const QString& value) const;
+    QString unsupportedValue(const QString& key, const QString& value, bool unexpected) const;
     /*!
      * Check if given key exists and has correct type.
      * \param jsonObject - JSON object where the key should be located

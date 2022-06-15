@@ -93,3 +93,16 @@ public:
 
     void run() override;
 };
+
+
+// *** Assisted board registration ***
+
+class AssistedRegistrationTest: public SciPlatformBaseTest {
+    Q_OBJECT
+    Q_DISABLE_COPY(AssistedRegistrationTest)
+
+public:
+    AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+
+    void run() override;
+};

@@ -11,6 +11,7 @@
 #include <Operations/PlatformValidation/Identification.h>
 #include <Operations/PlatformValidation/BootloaderApplication.h>
 #include <Operations/PlatformValidation/EmbeddedRegistration.h>
+#include <Operations/PlatformValidation/AssistedRegistration.h>
 
 namespace validation = strata::platform::validation;
 
@@ -102,6 +103,20 @@ EmbeddedRegistrationTest::EmbeddedRegistrationTest(const strata::platform::Platf
 void EmbeddedRegistrationTest::run()
 {
     validation_ = ValidationPtr(new validation::EmbeddedRegistration(platformRef_), validationDeleter);
+
+    connectAndRun();
+}
+
+
+// *** Assisted board registration ***
+
+AssistedRegistrationTest::AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
+    : SciPlatformBaseTest(platformRef, QStringLiteral("Assisted board registration"), parent)
+{ }
+
+void AssistedRegistrationTest::run()
+{
+    validation_ = ValidationPtr(new validation::AssistedRegistration(platformRef_), validationDeleter);
 
     connectAndRun();
 }

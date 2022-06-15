@@ -136,7 +136,7 @@ BaseValidation::ValidationResult EmbeddedRegistration::requestPlatformIdCheck(bo
 
     const QString notCorrect(QStringLiteral(" is not set correctly"));
     {  // check values of "platform_id" and "class_id"
-        std::array<const char*, 2> ids = {JSON_PLATFORM_ID, JSON_CLASS_ID};
+        const std::array<const char*, 2> ids = {JSON_PLATFORM_ID, JSON_CLASS_ID};
         for (size_t i = 0; i < ids.size(); ++i) {
             const rapidjson::Value& id = payload[ids[i]];
             const QLatin1String idStr(id.GetString(), id.GetStringLength());
@@ -238,7 +238,7 @@ BaseValidation::ValidationResult EmbeddedRegistration::setPlatformIdCheck(bool e
             }
         }
         if (badValue) {
-            QString message = unsupportedValue(joinKeys(jsonPath, JSON_STATUS), statusStr);
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_STATUS), statusStr, true);
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;

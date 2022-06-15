@@ -74,7 +74,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
         if (activeStr == CSTR_BOOTLOADER) {
             inBootloader = true;
         } else if (activeStr != CSTR_APPLICATION) {
-            QString message = unsupportedValue(joinKeys(jsonPath, JSON_ACTIVE), activeStr);
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_ACTIVE), activeStr, false);
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;
@@ -98,7 +98,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
             const rapidjson::Value& value = bootloader[key];
             QLatin1String valueStr(value.GetString(), value.GetStringLength());
             if (valueStr.isEmpty()) {
-                QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr);
+                QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr, false);
                 qCWarning(lcPlatformValidation) << platform_ << message;
                 emit validationStatus(Status::Warning, message);
             }
@@ -125,7 +125,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
                 const rapidjson::Value& value = application[key];
                 QLatin1String valueStr(value.GetString(), value.GetStringLength());
                 if (valueStr.isEmpty()) {
-                    QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr);
+                    QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr, false);
                     qCWarning(lcPlatformValidation) << platform_ << message;
                     emit validationStatus(Status::Warning, message);
                 }
@@ -174,7 +174,7 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
             controller = CONTROLLER_TYPE_EMBEDDED;
         }
         if ((controller != CONTROLLER_TYPE_EMBEDDED) && (controller != CONTROLLER_TYPE_ASSISTED)) {
-            QString message = unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller));
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller), false);
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;
