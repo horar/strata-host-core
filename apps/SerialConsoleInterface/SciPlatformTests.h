@@ -14,7 +14,7 @@
 #include <QObject>
 
 #include <Platform.h>
-#include <Operations/PlatformValidation/BaseValidation.h>
+#include <BaseValidation.h>
 
 // *** base class ***
 

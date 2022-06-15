@@ -6,12 +6,12 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include <Operations/PlatformValidation/EmbeddedRegistration.h>
-#include <Commands/PlatformCommands.h>
-#include <Commands/PlatformCommandConstants.h>
-#include <PlatformOperationsStatus.h>
-
+#include "EmbeddedRegistration.h"
 #include "logging/LoggingQtCategories.h"
+
+#include <PlatformCommands.h>
+#include <PlatformCommandConstants.h>
+#include <PlatformOperationsStatus.h>
 
 #include <QLatin1String>
 

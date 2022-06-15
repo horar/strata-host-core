@@ -7,14 +7,13 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 
-#include <Operations/PlatformValidation/BaseValidation.h>
+#include "BaseValidation.h"
+#include "logging/LoggingQtCategories.h"
 
-#include <Commands/PlatformCommands.h>
-#include <Commands/PlatformCommandConstants.h>
+#include <PlatformCommands.h>
+#include <PlatformCommandConstants.h>
 
 #include <QLatin1String>
-
-#include "logging/LoggingQtCategories.h"
 
 namespace strata::platform::validation {
 

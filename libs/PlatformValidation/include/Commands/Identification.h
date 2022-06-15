@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <Operations/PlatformValidation/BaseValidation.h>
+#include "BaseValidation.h"
 
 namespace strata::platform::validation {
 

@@ -8,10 +8,10 @@
  */
 
 #include "SciPlatformTests.h"
-#include <Operations/PlatformValidation/Identification.h>
-#include <Operations/PlatformValidation/BootloaderApplication.h>
-#include <Operations/PlatformValidation/EmbeddedRegistration.h>
-#include <Operations/PlatformValidation/AssistedRegistration.h>
+#include <Identification.h>
+#include <BootloaderApplication.h>
+#include <EmbeddedRegistration.h>
+#include <AssistedRegistration.h>
 
 namespace validation = strata::platform::validation;
 
