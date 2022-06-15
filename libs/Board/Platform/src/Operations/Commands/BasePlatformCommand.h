@@ -18,6 +18,8 @@
 
 namespace strata::platform::command {
 
+Q_NAMESPACE
+
 enum class CommandResult : int {
     Done,               // command done, move to next command and send it
     DoneAndWait,        // command done, move to next command but do not send it yet
@@ -33,6 +35,7 @@ enum class CommandResult : int {
     DeviceDisconnected, // device unexpectedly disconnected (unplugged)
     DeviceError         // unexpected device error has occured
 };
+Q_ENUM_NS(CommandResult)
 
 enum class CommandType : int {
     BackupFirmware,
@@ -49,6 +52,14 @@ enum class CommandType : int {
     StartFlashFirmware,
     Wait
 };
+
+enum class ValidationFailure : int {
+    Warning,
+    CmdRejected,
+    Timeout,
+    Fatal
+};
+Q_ENUM_NS(ValidationFailure)
 
 class BasePlatformCommand : public QObject
 {
@@ -130,9 +141,9 @@ signals:
      * Emitted when some issue occurs during processing message from device.
      * This signal is emitted only if it was enabled by 'setValidationSignals' method.
      * \param error description of what goes wrong during message processing
-     * \param fatal if set to 'true' failure was fatal - validation cannot be succesful anymore
+     * \param state value from ValidationFailure enum
      */
-    void validationFailure(QString error, bool fatal);
+    void validationFailure(QString error, ValidationFailure failure);
 
     /*!
      * Emitted when notification from platfom was received.
@@ -200,7 +211,7 @@ protected:
 private:
     void finishCommand(CommandResult result);
     QString generateWrongResponseError(const PlatformMessage& response) const;
-    inline void emitValidationFailure(QString warning, bool fatal);
+    inline void emitValidationFailure(QString warning, ValidationFailure failure);
     std::chrono::milliseconds ackTimeout_;
     std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;

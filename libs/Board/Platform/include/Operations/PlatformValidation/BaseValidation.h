@@ -22,6 +22,7 @@ namespace strata::platform::command {
 
 class BasePlatformCommand;
 enum class CommandResult : int;
+enum class ValidationFailure : int;
 
 }
 
@@ -30,7 +31,8 @@ namespace strata::platform::validation {
 Q_NAMESPACE
 
 enum class Type : int {
-    Identification
+    Identification,
+    BtldrAppPresence
 };
 
 enum class Status : int {
@@ -54,6 +56,12 @@ protected:
      * \param type type of validation (value from Type enum)
      */
     BaseValidation(const PlatformPtr& platform, Type type, const QString& name);
+
+    enum class ValidationResult : int {
+        Passed,
+        Incomplete,
+        Failed
+    };
 
 public:
     /*!
@@ -81,9 +89,8 @@ public:
 signals:
     /*!
      * This signal is emitted when platform validation finishes.
-     * \param success - true if validation was successful, otherwise false
      */
-    void finished(bool success);
+    void finished();
 
     /*!
      * This signal is emitted when some warning occurs during platform validation.
@@ -93,29 +100,40 @@ signals:
 
 private slots:
     void handleCommandFinished(command::CommandResult result, int status);
-    void handleValidationFailure(QString error, bool fatal);
+    void handleValidationFailure(QString error, command::ValidationFailure failure);
     void handlePlatformNotification(strata::platform::PlatformMessage message);
 
 private:
     void sendCommand();
-    void finishValidation(bool success);
+    void finishValidation(ValidationResult result);
 
     const Type type_;
     bool running_;
-    bool fatalFailure_;
 
 protected:
     PlatformPtr platform_;
     const QString name_;
+
+    // helper variables for determining the validation result
+    bool fatalFailure_;  // if set to true, validation failed
+    bool incomplete_;    // if set to true, validation is incomplete
+
+    bool ignoreCmdRejected_;
+    bool ignoreTimeout_;
 
     PlatformMessage lastPlatformNotification_;
 
     typedef std::unique_ptr<command::BasePlatformCommand> CommandPtr;
 
     struct CommandTest {
-        CommandTest(CommandPtr&& platformCommand, const std::function<bool()>& notificationCheckFn);
+        CommandTest(CommandPtr&& platformCommand,
+                    const std::function<void()>& beforeFn,
+                    const std::function<void(command::CommandResult&, int&)>& afterFn,
+                    const std::function<ValidationResult()>& notificationCheckFn);
         CommandPtr command;
-        std::function<bool()> notificationCheck;
+        std::function<void()> beforeAction;
+        std::function<void(command::CommandResult&, int&)> afterAction;
+        std::function<ValidationResult()> notificationCheck;
         bool notificationReceived;
     };
 

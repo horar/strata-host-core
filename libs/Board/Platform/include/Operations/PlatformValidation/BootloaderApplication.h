@@ -12,34 +12,29 @@
 
 namespace strata::platform::validation {
 
-class Identification : public BaseValidation {
+class BootloaderApplication : public BaseValidation {
     Q_OBJECT
-    Q_DISABLE_COPY(Identification)
+    Q_DISABLE_COPY(BootloaderApplication)
 
 public:
     /*!
-     * Identification constructor.
+     * BootloaderApplication constructor.
      * \param platform platform which will be used for validation
      */
-    Identification(const PlatformPtr& platform);
+    BootloaderApplication(const PlatformPtr& platform);
 
     /*!
-     * Identification destructor.
+     * BootloaderApplication destructor.
      */
-    ~Identification() = default;
+    ~BootloaderApplication() = default;
 
 private:
-    /*!
-     * Checks notification from 'get_firmware_info' commnad.
-     * \return 'Passed' if 'get_firmware_info' notification is OK
-     */
-    ValidationResult getFirmwareInfoCheck();
-
-    /*!
-     * Checks notification from 'request_platform_id' commnad.
-     * \return 'Passed' if 'request_platform_id' notification is OK
-     */
-    ValidationResult requestPlatformIdCheck();
+    void beforeStartCmd();
+    void afterStartCmd(command::CommandResult& result, int& status);
+    void beforeGetFwInfo();
+    void afterGetFwInfo(command::CommandResult& result, int& status);
+    ValidationResult startCheck();
+    ValidationResult getFirmwareInfoCheck(bool bootloaderActive);
 };
 
 }  // namespace

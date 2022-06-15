@@ -24,9 +24,12 @@ using command::CommandResult;
 BaseValidation::BaseValidation(const PlatformPtr& platform, Type type, const QString &name):
     type_(type),
     running_(false),
-    fatalFailure_(false),
     platform_(platform),
-    name_(name)
+    name_(name),
+    fatalFailure_(false),
+    incomplete_(false),
+    ignoreCmdRejected_(false),
+    ignoreTimeout_(false)
 { }
 
 BaseValidation::~BaseValidation()
@@ -41,7 +44,7 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("Device is not set"));
         qCWarning(lcPlatformValidation) << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -49,7 +52,7 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("Cannot run validation, device is not connected"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -57,7 +60,7 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("The validation is already running"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(false);
+        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -75,6 +78,9 @@ void BaseValidation::run()
     currentCommand_ = commandList_.begin();
 
     fatalFailure_ = false;
+    incomplete_ = false;
+    ignoreCmdRejected_ = false;
+    ignoreTimeout_ = false;
 
     QString message = name_ + QStringLiteral(" is about to start");
     qCInfo(lcPlatformValidation) << platform_ << message;
@@ -107,43 +113,83 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
         return;
     }
 
+    if (currentCommand_->afterAction) {
+        currentCommand_->afterAction(result, status);  // this can modify result and status
+    }
+
     switch (result) {
-    case CommandResult::Done :  // OK
+    // OK
+    case CommandResult::Done :
         {
-            bool success = currentCommand_->notificationCheck ? currentCommand_->notificationCheck() : true;
-            if (success) {
+            ValidationResult outcome = ValidationResult::Passed;
+            if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
+                outcome = currentCommand_->notificationCheck();
+            }
+            if (outcome == ValidationResult::Passed) {
                 ++currentCommand_;  // move to next command
                 if (currentCommand_ == commandList_.end()) {  // end of command list - finish validation
-                    finishValidation(success);
+                    finishValidation(ValidationResult::Passed);
                 } else {
                     QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);
                 }
             } else {
-                finishValidation(false);
+                finishValidation(outcome);
             }
         }
         break;
-    case CommandResult::Timeout :  // Expected notification was not received (or received notification was not OK).
-        if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
-            QString message(QStringLiteral("Checking last received notification"));
+
+    // Retry
+    case CommandResult::Retry :
+        {
+            QString message = QStringLiteral("No response to '") + currentCommand_->command->name()
+                              + QStringLiteral("' (board is probably not ready yet), sending it again");
             qCInfo(lcPlatformValidation) << platform_ << message;
-            emit validationStatus(Status::Plain, message);
-            currentCommand_->notificationCheck();
+            emit validationStatus(Status::Info, message);
         }
-        finishValidation(false);
+        QMetaObject::invokeMethod(this, &BaseValidation::sendCommand, Qt::QueuedConnection);  // send same command again
         break;
-    default :  // other results are failure
-        finishValidation(false);
+
+    // Expected notification was not received (or received notification was not OK).
+    default :
+        if (currentCommand_->notificationReceived && currentCommand_->notificationCheck) {
+            if (result == CommandResult::Timeout) {
+                QString message(QStringLiteral("Checking last received notification"));
+                qCInfo(lcPlatformValidation) << platform_ << message;
+                emit validationStatus(Status::Plain, message);
+            }
+            currentCommand_->notificationCheck();
+        } else {
+            QString message = currentCommand_->command->name() + QStringLiteral(" failed");
+            qCWarning(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Error, message);
+        }
+        finishValidation(ValidationResult::Failed);
         break;
     }
 }
 
-void BaseValidation::handleValidationFailure(QString error, bool fatal) {
+void BaseValidation::handleValidationFailure(QString error, command::ValidationFailure failure) {
+    if (ignoreCmdRejected_ && (failure == command::ValidationFailure::CmdRejected)) {
+        return;
+    }
+    if (ignoreTimeout_ && (failure == command::ValidationFailure::Timeout)) {
+        return;
+    }
+
     Status status = Status::Warning;
-    if (fatal) {
+
+    switch (failure) {
+    case command::ValidationFailure::Warning :
+        status = Status::Warning;
+        break;
+    case command::ValidationFailure::CmdRejected :
+    case command::ValidationFailure::Timeout :
+    case command::ValidationFailure::Fatal :
         fatalFailure_ = true;
         status = Status::Error;
+        break;
     }
+
     qCWarning(lcPlatformValidation) << platform_ << error;
     emit validationStatus(status, error);
 }
@@ -159,15 +205,21 @@ void BaseValidation::handlePlatformNotification(PlatformMessage message)
 void BaseValidation::sendCommand()
 {
     if (currentCommand_ != commandList_.end()) {
-        QString message(QStringLiteral("Validating '") + currentCommand_->command->name() + '\'');
-        qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Plain, message);
+        if (currentCommand_->command->type() != command::CommandType::Wait) {
+            QString message(QStringLiteral("Validating '") + currentCommand_->command->name() + '\'');
+            qCInfo(lcPlatformValidation) << platform_ << message;
+            emit validationStatus(Status::Plain, message);
+        }
+
+        if (currentCommand_->beforeAction) {
+            currentCommand_->beforeAction();
+        }
         // TODO: if there will be need for "lock" use 'reinterpret_cast<quintptr>(this)' as sendCommand parameter
         currentCommand_->command->sendCommand(0);
     }
 }
 
-void BaseValidation::finishValidation(bool success)
+void BaseValidation::finishValidation(ValidationResult result)
 {
     for (auto it = commandList_.begin(); it != commandList_.end(); ++it) {
         disconnect((*it).command.get(), nullptr, this, nullptr);
@@ -178,24 +230,40 @@ void BaseValidation::finishValidation(bool success)
 
     running_ = false;
 
-    bool result = (fatalFailure_) ? false : success;
-
-    QString message = name_;
-    if (result) {
-        message += QStringLiteral(" PASS");
-        qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Success, message);
-    } else {
-        message += QStringLiteral(" FAIL");
-        qCWarning(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Error, message);
+    if (result != ValidationResult::Failed) {
+        if (fatalFailure_) {
+            result = ValidationResult::Failed;
+        } else if (incomplete_) {
+            result = ValidationResult::Incomplete;
+        }
     }
 
-    emit finished(result);
+    QString message = name_;
+    switch (result) {
+    case ValidationResult::Passed :
+        message += QStringLiteral(" PASS");
+        emit validationStatus(Status::Success, message);
+        break;
+    case ValidationResult::Incomplete :
+        message += QStringLiteral(" INCOMPLETE");
+        emit validationStatus(Status::Warning, message);
+        break;
+    case ValidationResult::Failed :
+        message += QStringLiteral(" FAIL");
+        emit validationStatus(Status::Error, message);
+        break;
+    }
+
+    emit finished();
 }
 
-BaseValidation::CommandTest::CommandTest(CommandPtr&& platformCommand, const std::function<bool()>& notificationCheckFn)
+BaseValidation::CommandTest::CommandTest(CommandPtr&& platformCommand,
+                                         const std::function<void()>& beforeFn,
+                                         const std::function<void(command::CommandResult&, int&)>& afterFn,
+                                         const std::function<ValidationResult()>& notificationCheckFn)
     : command(std::move(platformCommand)),
+      beforeAction(beforeFn),
+      afterAction(afterFn),
       notificationCheck(notificationCheckFn),
       notificationReceived(false)
 { }

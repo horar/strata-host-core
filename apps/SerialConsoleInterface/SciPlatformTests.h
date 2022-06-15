@@ -24,7 +24,7 @@ class SciPlatformBaseTest: public QObject
     Q_DISABLE_COPY(SciPlatformBaseTest)
 
 public:
-    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, const QString& name, QObject *parent);
     virtual ~SciPlatformBaseTest();
 
     virtual void run() = 0;
@@ -33,18 +33,20 @@ public:
     bool enabled() const;
 
 signals:
-    void finished(bool success);
+    void finished();
     void status(strata::platform::validation::Status status, QString text);
 
 private:
     bool enabled_;
 
-protected slots:
-    void finishedHandler(bool success);
+private slots:
+    void finishedHandler();
 
 protected:
-    QString name_;
+    void connectAndRun();
+
     const strata::platform::PlatformPtr& platformRef_;
+    const QString name_;
 
     typedef std::unique_ptr<strata::platform::validation::BaseValidation,
                             void(*)(strata::platform::validation::BaseValidation*)> ValidationPtr;
@@ -62,6 +64,19 @@ class IdentificationTest: public SciPlatformBaseTest {
 
 public:
     IdentificationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+
+    void run() override;
+};
+
+
+// *** Bootloader & Application Presence ***
+
+class BootloaderApplicationTest: public SciPlatformBaseTest {
+    Q_OBJECT
+    Q_DISABLE_COPY(BootloaderApplicationTest)
+
+public:
+    BootloaderApplicationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
     void run() override;
 };
