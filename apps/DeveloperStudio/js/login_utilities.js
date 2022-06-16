@@ -30,7 +30,6 @@ function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
     userSettings.user = login_info.user
-    const anonymousSettings = userSettings.readFile("general-settings.json")
 
     let headers = {
         "app": "strata",
@@ -534,7 +533,6 @@ function validate_token()
 {
     if (Rest.jwt !== "" && settings.user !== ""){
         userSettings.user = settings.user
-        const anonymousSettings = userSettings.readFile("general-settings.json")
 
         let headers = {
             "app": "strata",

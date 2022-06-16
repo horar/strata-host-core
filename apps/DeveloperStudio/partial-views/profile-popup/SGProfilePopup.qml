@@ -511,25 +511,27 @@ SGStrataPopup {
             RowLayout {
                 spacing: 8
                 Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.columnSpan: 3
 
                 SGSwitch {
-                    id: fullScreenSwitch
+                    id: dataCollectionSwitch
                     checked: root.consentDataCollection
-                    grooveFillColor: Theme.palette.highlight
+                    grooveFillColor: Theme.palette.onsemiOrange
 
                     onToggled: {
                         let data = {
-                            "consent_data_collection": checked
+                            "consent_data_collection": !checked
                         };
                         LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     }
                 }
 
                 SGText {
-                    id: fullScreenLabel
-                    text: qsTr("Opt-out Data Collection")
+                    id: dataCollectionText
+                    text: qsTr("Opt-out Data Collection (change will take effect after logout or app close)")
                 }
-            }
+           }
 
             Rectangle {
                 height: 8
