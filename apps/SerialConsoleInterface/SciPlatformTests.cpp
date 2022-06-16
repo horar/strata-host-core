@@ -8,10 +8,12 @@
  */
 
 #include "SciPlatformTests.h"
+#include <BaseValidation.h>
 #include <Identification.h>
 #include <BootloaderApplication.h>
 #include <EmbeddedRegistration.h>
 #include <AssistedRegistration.h>
+#include <FirmwareFlashing.h>
 
 namespace validation = strata::platform::validation;
 
@@ -119,4 +121,39 @@ void AssistedRegistrationTest::run()
     validation_ = ValidationPtr(new validation::AssistedRegistration(platformRef_, name_), validationDeleter);
 
     connectAndRun();
+}
+
+
+// *** Firmware flashing ***
+
+FirmwareFlashingTest::FirmwareFlashingTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
+    : SciPlatformBaseTest(platformRef, QStringLiteral("Firmware flashing"), parent),
+      fwFlashing_(nullptr, nullptr)
+{ }
+
+void FirmwareFlashingTest::run()
+{
+    firmwarePath_ = "dummy_file.bin";
+
+    fwFlashing_ = FwFlashingPtr(new validation::FirmwareFlashing(platformRef_, name_, firmwarePath_), fwFlashingDeleter);
+
+    connect(fwFlashing_.get(), &validation::FirmwareFlashing::finished, this, &FirmwareFlashingTest::flashingFinishedHandler);
+    connect(fwFlashing_.get(), &validation::FirmwareFlashing::validationStatus, this, &SciPlatformBaseTest::status);
+
+    fwFlashing_->run();
+}
+
+void FirmwareFlashingTest::flashingFinishedHandler()
+{
+    if (fwFlashing_) {
+        disconnect(fwFlashing_.get(), nullptr, this, nullptr);
+        fwFlashing_.reset();
+    }
+    emit finished();
+}
+
+
+void FirmwareFlashingTest::fwFlashingDeleter(validation::FirmwareFlashing* fwFlashing)
+{
+    fwFlashing->deleteLater();
 }

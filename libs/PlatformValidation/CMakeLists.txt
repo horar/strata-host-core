@@ -17,13 +17,13 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME}
+    src/logging/LoggingQtCategories.cpp
     src/Commands/BaseValidation.cpp
     src/Commands/Identification.cpp
     src/Commands/BootloaderApplication.cpp
     src/Commands/EmbeddedRegistration.cpp
     src/Commands/AssistedRegistration.cpp
-
-    src/logging/LoggingQtCategories.cpp
+    src/Flashing/FirmwareFlashing.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/ValidationStatus.h
@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME}
     include/Commands/BootloaderApplication.h
     include/Commands/EmbeddedRegistration.h
     include/Commands/AssistedRegistration.h
+    include/Flashing/FirmwareFlashing.h
 )
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -52,6 +53,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC rapidjson::rapidjson
     PUBLIC strata::QtLogger
     PUBLIC strata::Platform
+    PUBLIC strata::Flasher
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

@@ -14,7 +14,12 @@
 #include <QObject>
 
 #include <Platform.h>
-#include <BaseValidation.h>
+#include <ValidationStatus.h>
+
+namespace strata::platform::validation {
+class BaseValidation;
+class FirmwareFlashing;
+}
 
 // *** base class ***
 
@@ -105,4 +110,29 @@ public:
     AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
     void run() override;
+};
+
+
+// *** Firmware flashing ***
+
+class FirmwareFlashingTest: public SciPlatformBaseTest {
+    Q_OBJECT
+    Q_DISABLE_COPY(FirmwareFlashingTest)
+
+public:
+    FirmwareFlashingTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
+
+    void run() override;
+
+private slots:
+    void flashingFinishedHandler();
+
+private:
+    QString firmwarePath_;
+
+    typedef std::unique_ptr<strata::platform::validation::FirmwareFlashing,
+                            void(*)(strata::platform::validation::FirmwareFlashing*)> FwFlashingPtr;
+    FwFlashingPtr fwFlashing_;
+    // deleter for fwFlashing_ unique pointer
+    static void fwFlashingDeleter(strata::platform::validation::FirmwareFlashing* fwFlashing);
 };
