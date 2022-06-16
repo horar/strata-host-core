@@ -6,18 +6,19 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include <Operations/PlatformValidation/BootloaderApplication.h>
-#include <Commands/PlatformCommands.h>
-#include <Commands/PlatformCommandConstants.h>
-
+#include "BootloaderApplication.h"
+#include "ValidationStatus.h"
 #include "logging/LoggingQtCategories.h"
+
+#include <PlatformCommands.h>
+#include <PlatformCommandConstants.h>
 
 #include <QLatin1String>
 
 namespace strata::platform::validation {
 
-BootloaderApplication::BootloaderApplication(const PlatformPtr& platform)
-    : BaseValidation(platform, QStringLiteral("Bootloader & Application presence"))
+BootloaderApplication::BootloaderApplication(const PlatformPtr& platform, const QString& name)
+    : BaseValidation(platform, name)
 {
     commandList_.reserve(6);
 

@@ -6,11 +6,12 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include <Operations/PlatformValidation/Identification.h>
-#include <Commands/PlatformCommands.h>
-#include <Commands/PlatformCommandConstants.h>
-
+#include "Identification.h"
+#include "ValidationStatus.h"
 #include "logging/LoggingQtCategories.h"
+
+#include <PlatformCommands.h>
+#include <PlatformCommandConstants.h>
 
 #include <QLatin1String>
 
@@ -18,8 +19,8 @@
 
 namespace strata::platform::validation {
 
-Identification::Identification(const PlatformPtr& platform)
-    : BaseValidation(platform, QStringLiteral("Identification"))
+Identification::Identification(const PlatformPtr& platform, const QString& name)
+    : BaseValidation(platform, name)
 {
     commandList_.reserve(2);
 

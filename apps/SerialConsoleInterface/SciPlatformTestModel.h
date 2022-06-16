@@ -13,10 +13,13 @@
 #include <QAbstractListModel>
 
 #include <Platform.h>
-#include <Operations/PlatformValidation/BaseValidation.h>
 
 class SciPlatformTestMessageModel;
 class SciPlatformBaseTest;
+
+namespace strata::platform::validation {
+enum class Status : short;
+}
 
 class SciPlatformTestModel: public QAbstractListModel
 {

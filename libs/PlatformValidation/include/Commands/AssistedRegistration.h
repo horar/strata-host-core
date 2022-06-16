@@ -8,26 +8,27 @@
  */
 #pragma once
 
-#include <Operations/PlatformValidation/BaseValidation.h>
+#include "BaseValidation.h"
+
 #include <PlatformOperationsData.h>
 
 namespace strata::platform::validation {
 
-class EmbeddedRegistration : public BaseValidation {
+class AssistedRegistration : public BaseValidation {
     Q_OBJECT
-    Q_DISABLE_COPY(EmbeddedRegistration)
+    Q_DISABLE_COPY(AssistedRegistration)
 
 public:
     /*!
-     * EmbeddedRegistration constructor.
+     * AssistedRegistration constructor.
      * \param platform platform which will be used for validation
      */
-    EmbeddedRegistration(const PlatformPtr& platform);
+    AssistedRegistration(const PlatformPtr& platform, const QString& name);
 
     /*!
-     * EmbeddedRegistration destructor.
+     * AssistedRegistration destructor.
      */
-    ~EmbeddedRegistration() = default;
+    ~AssistedRegistration() = default;
 
 private:
     ValidationResult requestPlatformIdCheck(bool unsetId);
@@ -36,14 +37,16 @@ private:
     ValidationResult setPlatformIdCheck(bool expectFailure, bool assisted);
     void beforeSetIdFailure();
     void afterSetIdFailure(command::CommandResult& result, int& status);
+    void afterAssistedConnectedCheck(command::CommandResult& result, int& status);
     void afterStartApplication(command::CommandResult& result, int& status);
 
-    void logAndEmitUnexpectedValue(const QVector<const char*>& path,
-                                   const char* key,
-                                   const QString& current,
-                                   const QString& expected);
+    void skipNextCommand();
 
     command::CmdSetPlatformIdData data_;
+    command::CmdSetPlatformIdData controllerData_;
+    QString fwClassId1_;
+    QString fwClassId2_;
+    bool assistedBoardConnected_;
 };
 
 }  // namespace

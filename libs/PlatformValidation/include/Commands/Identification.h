@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <Operations/PlatformValidation/BaseValidation.h>
+#include "BaseValidation.h"
 
 namespace strata::platform::validation {
 
@@ -21,7 +21,7 @@ public:
      * Identification constructor.
      * \param platform platform which will be used for validation
      */
-    Identification(const PlatformPtr& platform);
+    Identification(const PlatformPtr& platform, const QString& name);
 
     /*!
      * Identification destructor.

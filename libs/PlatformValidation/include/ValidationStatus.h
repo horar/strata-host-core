@@ -8,13 +8,19 @@
  */
 #pragma once
 
-#include <QLoggingCategory>
+#include <QObject>
 
-Q_DECLARE_LOGGING_CATEGORY(lcDeviceSerial)
-Q_DECLARE_LOGGING_CATEGORY(lcDeviceMock)
-Q_DECLARE_LOGGING_CATEGORY(lcDeviceTcp)
-Q_DECLARE_LOGGING_CATEGORY(lcDeviceBLE)
-Q_DECLARE_LOGGING_CATEGORY(lcPlatform)
-Q_DECLARE_LOGGING_CATEGORY(lcPlatformOperation)
-Q_DECLARE_LOGGING_CATEGORY(lcPlatformCommand)
-Q_DECLARE_LOGGING_CATEGORY(lcPlatformMessage)
+namespace strata::platform::validation {
+
+Q_NAMESPACE
+
+enum class Status : short {
+    Plain,
+    Info,
+    Warning,
+    Error,
+    Success
+};
+Q_ENUM_NS(Status)
+
+}  // namespace

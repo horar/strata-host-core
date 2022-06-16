@@ -28,16 +28,7 @@ enum class ValidationFailure : int;
 
 namespace strata::platform::validation {
 
-Q_NAMESPACE
-
-enum class Status : short {
-    Plain,
-    Info,
-    Warning,
-    Error,
-    Success
-};
-Q_ENUM_NS(Status)
+enum class Status : short;
 
 class BaseValidation : public QObject
 {
@@ -67,12 +58,6 @@ public:
      * Run validation.
      */
     virtual void run();
-
-    /*!
-     * Get validation name.
-     * \return validation name
-     */
-    virtual QString name() const final;
 
 signals:
     /*!

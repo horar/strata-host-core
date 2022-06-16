@@ -6,12 +6,13 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#include <Operations/PlatformValidation/EmbeddedRegistration.h>
-#include <Commands/PlatformCommands.h>
-#include <Commands/PlatformCommandConstants.h>
-#include <PlatformOperationsStatus.h>
-
+#include "EmbeddedRegistration.h"
+#include "ValidationStatus.h"
 #include "logging/LoggingQtCategories.h"
+
+#include <PlatformCommands.h>
+#include <PlatformCommandConstants.h>
+#include <PlatformOperationsStatus.h>
 
 #include <QLatin1String>
 
@@ -19,8 +20,8 @@
 
 namespace strata::platform::validation {
 
-EmbeddedRegistration::EmbeddedRegistration(const PlatformPtr& platform)
-    : BaseValidation(platform, QStringLiteral("Embedded platform registration"))
+EmbeddedRegistration::EmbeddedRegistration(const PlatformPtr& platform, const QString& name)
+    : BaseValidation(platform, name)
 {
     data_.classId = QStringLiteral("00000000-0000-4000-8000-100000000000");
     data_.platformId = QStringLiteral("00000000-0000-4000-8000-200000000000");
