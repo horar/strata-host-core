@@ -22,6 +22,7 @@ import "visual-editor"
 ColumnLayout {
     id: visualEditor
     spacing: 0
+    enabled: fileValid
 
     property bool fileValid: false
     property bool hasErrors: false
@@ -147,7 +148,7 @@ ColumnLayout {
 
     Connections {
         target: treeModel
-        enabled: cvcUserSettings.reloadViewExternalChanges
+        enabled: cvcUserSettings.reloadViewExternalChanges && visualEditor.fileValid
 
         onFileChanged: {
             if (path == visualEditor.file) {
@@ -158,6 +159,7 @@ ColumnLayout {
 
     Connections {
         target: sdsModel.visualEditorUndoStack
+        enabled: visualEditor.fileValid
 
         onUndoCommand: {
             if (visualEditor.file == file) {
@@ -192,6 +194,7 @@ ColumnLayout {
 
     Connections {
         target: fileContainerRoot
+        enabled: visualEditor.fileValid
 
         onTextEditorSavedFile: {
             console.log("Visual Editor undo/redo reset: detected saved changes in Text Editor to " + SGUtilsCpp.urlToLocalFile(visualEditor.file))
@@ -201,6 +204,7 @@ ColumnLayout {
 
     Connections {
         target: treeModel
+        enabled: visualEditor.fileValid
 
         onFileChanged: {
             if (path == visualEditor.file) {
