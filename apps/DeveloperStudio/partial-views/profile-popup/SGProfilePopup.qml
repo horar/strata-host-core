@@ -516,7 +516,7 @@ SGStrataPopup {
 
                 SGSwitch {
                     id: dataCollectionSwitch
-                    checked: root.consentDataCollection
+                    checked: !root.consentDataCollection
                     grooveFillColor: Theme.palette.onsemiOrange
 
                     onToggled: {
