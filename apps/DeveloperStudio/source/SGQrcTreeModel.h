@@ -19,6 +19,7 @@
 #include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QPair>
+#include <QDate>
 
 class SGQrcTreeModel : public QAbstractItemModel
 {
@@ -376,6 +377,16 @@ private:
     QModelIndex rootIndex_;
     QUrl debugMenuSource_;
     bool needsCleaning_;
+
+    // String literal for creating a license in QML file
+    const QString licenseQML_ = "/*\n * Copyright (c) 2018-" + QString::number(QDate::currentDate().year()) + R"licenseQML( onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
+)licenseQML";
 
     // String literal for creating a base QML file
     const QString baseQMLFile_ = R"baseQMLFile(import QtQuick 2.12
