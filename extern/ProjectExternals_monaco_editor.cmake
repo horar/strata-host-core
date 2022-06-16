@@ -32,6 +32,11 @@ file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/utils/helper.js
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/utils/
 )
 
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} apply --verbose --ignore-space-change --ignore-whitespace extern/patches/monaco/adjust-uuid-search.patch
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
 ExternalProject_Add(monaco-editor-${MONACO_TAG}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
     INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/monaco-editor-${MONACO_TAG}
