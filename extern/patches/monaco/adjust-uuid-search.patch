@@ -1,0 +1,11 @@
+--- a/components/monaco/qml/tech/strata/monaco/minified/qtQuick.js
++++ b/components/monaco/qml/tech/strata/monaco/minified/qtQuick.js
+@@ -277,7 +277,7 @@
+ function searchForUUID(uuid){
+     const model = editor.getModel()
+     const range = model.getFullModelRange()
+-    const uuidMatch = model.findNextMatch(uuid,{lineNumber: range.startLineNumber, column: range.startColumn})
++    const uuidMatch = model.findNextMatch(`start_${uuid}`,{lineNumber: range.startLineNumber, column: range.startColumn})
+     const endUUidMatch = model.findNextMatch(`end_${uuid}`,{lineNumber: range.startLineNumber, column: range.startColumn})
+     if (uuidMatch !== null && endUUidMatch !== null) {
+         editor.revealLineInCenter(uuidMatch.range.startLineNumber)
