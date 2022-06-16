@@ -25,6 +25,8 @@ SciPlatformTestModel::SciPlatformTestModel(
 {
     data_.append(new IdentificationTest(platformRef_, this));
     data_.append(new BootloaderApplicationTest(platformRef_, this));
+    data_.append(new EmbeddedRegistrationTest(platformRef_, this));
+    data_.append(new AssistedRegistrationTest(platformRef_, this));
 
     setEnabled(0, true);  // enable first validation - identification
 }

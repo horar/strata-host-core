@@ -19,7 +19,7 @@
 namespace strata::platform::validation {
 
 Identification::Identification(const PlatformPtr& platform)
-    : BaseValidation(platform, Type::Identification, QStringLiteral("Identification"))
+    : BaseValidation(platform, QStringLiteral("Identification"))
 {
     commandList_.reserve(2);
 
@@ -74,7 +74,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
         if (activeStr == CSTR_BOOTLOADER) {
             inBootloader = true;
         } else if (activeStr != CSTR_APPLICATION) {
-            QString message = unsupportedValue(joinKeys(jsonPath, JSON_ACTIVE), activeStr);
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_ACTIVE), activeStr, false);
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;
@@ -98,7 +98,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
             const rapidjson::Value& value = bootloader[key];
             QLatin1String valueStr(value.GetString(), value.GetStringLength());
             if (valueStr.isEmpty()) {
-                QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr);
+                QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr, false);
                 qCWarning(lcPlatformValidation) << platform_ << message;
                 emit validationStatus(Status::Warning, message);
             }
@@ -125,7 +125,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
                 const rapidjson::Value& value = application[key];
                 QLatin1String valueStr(value.GetString(), value.GetStringLength());
                 if (valueStr.isEmpty()) {
-                    QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr);
+                    QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr, false);
                     qCWarning(lcPlatformValidation) << platform_ << message;
                     emit validationStatus(Status::Warning, message);
                 }
@@ -161,27 +161,25 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
         return ValidationResult::Failed;
     }
 
-    constexpr quint64 EMBEDDED = static_cast<quint64>(CONTROLLER_TYPE_EMBEDDED);
-    constexpr quint64 ASSISTED = static_cast<quint64>(CONTROLLER_TYPE_ASSISTED);
-    quint64 controller;
+    int controller;
     {  // check "controller_type"
-        if (checkKey(payload, JSON_CONTROLLER_TYPE, KeyType::Unsigned, jsonPath) == false) {
+        if (checkKey(payload, JSON_CONTROLLER_TYPE, KeyType::Integer, jsonPath) == false) {
             return ValidationResult::Failed;
         }
-        controller = payload[JSON_CONTROLLER_TYPE].GetUint64();
-        if (controller == 0) {
+        controller = payload[JSON_CONTROLLER_TYPE].GetInt();
+        if (controller == CONTROLLER_TYPE_UNSET) {
             QString message = JSON_CONTROLLER_TYPE + QStringLiteral(" not set, continuing as EMBEDDED");
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Warning, message);
-            controller = EMBEDDED;
+            controller = CONTROLLER_TYPE_EMBEDDED;
         }
-        if ((controller != EMBEDDED) && (controller != ASSISTED)) {
-            QString message = unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller));
+        if ((controller != CONTROLLER_TYPE_EMBEDDED) && (controller != CONTROLLER_TYPE_ASSISTED)) {
+            QString message = unsupportedValue(joinKeys(jsonPath, JSON_CONTROLLER_TYPE), QString::number(controller), false);
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;
         }
-        QString message = (controller == EMBEDDED) ? QStringLiteral("Recognized embedded board") : QStringLiteral("Recognized assisted controller");
+        QString message = (controller == CONTROLLER_TYPE_EMBEDDED) ? QStringLiteral("Recognized embedded board") : QStringLiteral("Recognized assisted controller");
         qCInfo(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Info, message);
     }
@@ -195,16 +193,16 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
         };
         // keys for embedded board and for complete assisted (dongle + platfom) board
         std::array<KeyInfo, 3> keysBoth = {{
-            {JSON_PLATFORM_ID, KeyType::String,   false},
-            {JSON_CLASS_ID,    KeyType::String,   false},
-            {JSON_BOARD_COUNT, KeyType::Unsigned, false}
+            {JSON_PLATFORM_ID, KeyType::String,     false},
+            {JSON_CLASS_ID,    KeyType::String,     false},
+            {JSON_BOARD_COUNT, KeyType::Unsigned64, false}
         }};
         // keys for assisted board (with or without dongle)
         std::array<KeyInfo, 4> keysAssist = {{
-            {JSON_CNTRL_PLATFORM_ID, KeyType::String,   false},
-            {JSON_CNTRL_CLASS_ID,    KeyType::String,   false},
-            {JSON_CNTRL_BOARD_COUNT, KeyType::Unsigned, false},
-            {JSON_FW_CLASS_ID,       KeyType::String,   false}
+            {JSON_CNTRL_PLATFORM_ID, KeyType::String,     false},
+            {JSON_CNTRL_CLASS_ID,    KeyType::String,     false},
+            {JSON_CNTRL_BOARD_COUNT, KeyType::Unsigned64, false},
+            {JSON_FW_CLASS_ID,       KeyType::String,     false}
         }};
         unsigned int keysBothCount = 0;
         for (size_t i = 0; i < keysBoth.size(); ++i) {
@@ -219,7 +217,7 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
             }
         }
         // keys mandatory for embedded and complete assisted (dongle + platfom)
-        if ( (controller == EMBEDDED) || (keysBothCount > 0) ) {
+        if ( (controller == CONTROLLER_TYPE_EMBEDDED) || (keysBothCount > 0) ) {
             for (size_t i = 0; i < keysBoth.size(); ++i) {
                 if (checkKey(payload, keysBoth[i].key, keysBoth[i].type, jsonPath) == false) {
                     return ValidationResult::Failed;
@@ -227,7 +225,7 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
             }
         }
         // keys mandatory for assisted
-        if (controller == ASSISTED) {
+        if (controller == CONTROLLER_TYPE_ASSISTED) {
             if (keysBothCount == 0) {  // only dongle connected
                 QString message = QStringLiteral("Assisted board not connected");
                 qCInfo(lcPlatformValidation) << platform_ << message;
@@ -240,7 +238,7 @@ BaseValidation::ValidationResult Identification::requestPlatformIdCheck()
             }
         }
         // check if there are some assisted keys for embedded platform
-        if (controller == EMBEDDED) {
+        if (controller == CONTROLLER_TYPE_EMBEDDED) {
             for (size_t i = 0; i < keysAssist.size(); ++i) {
                 if (keysAssist[i].present) {
                     QString message = QStringLiteral("Unexpected key '") + joinKeys(jsonPath, keysAssist[i].key) + '\'';

@@ -30,12 +30,7 @@ namespace strata::platform::validation {
 
 Q_NAMESPACE
 
-enum class Type : int {
-    Identification,
-    BtldrAppPresence
-};
-
-enum class Status : int {
+enum class Status : short {
     Plain,
     Info,
     Warning,
@@ -53,11 +48,10 @@ protected:
     /*!
      * BaseValidation constructor.
      * \param platform platform which will be used for platform validation
-     * \param type type of validation (value from Type enum)
      */
-    BaseValidation(const PlatformPtr& platform, Type type, const QString& name);
+    BaseValidation(const PlatformPtr& platform, const QString& name);
 
-    enum class ValidationResult : int {
+    enum class ValidationResult : short {
         Passed,
         Incomplete,
         Failed
@@ -73,12 +67,6 @@ public:
      * Run validation.
      */
     virtual void run();
-
-    /*!
-     * Get type of validation.
-     * \return validation type (value from enum Type)
-     */
-    virtual Type type() const final;
 
     /*!
      * Get validation name.
@@ -107,7 +95,6 @@ private:
     void sendCommand();
     void finishValidation(ValidationResult result);
 
-    const Type type_;
     bool running_;
 
 protected:
@@ -120,6 +107,7 @@ protected:
 
     bool ignoreCmdRejected_;
     bool ignoreTimeout_;
+    bool ignoreFaultyNotification_;
 
     PlatformMessage lastPlatformNotification_;
 
@@ -145,7 +133,9 @@ protected:
         Object,
         String,
         Integer,
-        Unsigned
+        Integer64,
+        Unsigned,
+        Unsigned64
     };
     /*!
      * Joins keys to string as "/key1/key2/key3".
@@ -168,9 +158,10 @@ protected:
     /*!
      * \param key - JSON document key (use 'joinKeys' method to create it)
      * \param value - actual value of key (converted to string)
-     * \return string with message about unsuported value for key
+     * \param unexpected - if true returned message will contain "unexpected", otherwise it will contain "unsupported"
+     * \return string with message about unsupported/unexpected value for key
      */
-    QString unsupportedValue(const QString& key, const QString& value) const;
+    QString unsupportedValue(const QString& key, const QString& value, bool unexpected) const;
     /*!
      * Check if given key exists and has correct type.
      * \param jsonObject - JSON object where the key should be located

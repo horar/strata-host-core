@@ -430,8 +430,10 @@ void PrtModel::setAssistedPlatformId(const QVariantMap &data)
             emit setAssistedPlatformIdFinished("failed");
         } else if (status == strata::platform::operation::PLATFORM_ID_ALREADY_SET) {
             emit setAssistedPlatformIdFinished("already_initialized");
-        } else if(status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
+        } else if (status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
             emit setAssistedPlatformIdFinished("device_not_connected");
+        } else if (status == strata::platform::operation::COMMAND_NOT_SUPPORTED) {
+            emit setAssistedPlatformIdFinished("not_supported");
         } else if (result != Result::Success) {
             emit setAssistedPlatformIdFinished(errorString);
         } else{

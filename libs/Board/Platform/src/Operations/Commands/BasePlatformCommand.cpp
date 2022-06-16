@@ -185,7 +185,7 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
                     if (result == CommandResult::Failure) {
                         QString warning = "Received faulty notification: '" + message.rawNoNewlineEnd() + '\'';
                         qCWarning(lcPlatformCommand) << platform_ << warning;
-                        emitValidationFailure(warning, ValidationFailure::Fatal);
+                        emitValidationFailure(warning, ValidationFailure::FaultyNotification);
                     }
 
                     const QByteArray status = CommandValidator::notificationStatus(json);
