@@ -531,18 +531,28 @@ QtObject {
             alertToast.textColor = "white"
             alertToast.color = Theme.palette.error
             alertToast.interval = 0
-        } else if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
-            alertToast.text = "Generation Succeeded, but with warnings: " + sdsModel.platformInterfaceGenerator.lastError
-            alertToast.textColor = "black"
-            alertToast.color = Theme.palette.warning
-            alertToast.interval = 0
-            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
+            console.error("Unable to generate file", outputFileText.text + "/PlatformInterface.qml")
         } else {
-            alertToast.text = "Successfully generated PlatformInterface.qml"
-            alertToast.textColor = "white"
-            alertToast.color = Theme.palette.success
-            alertToast.interval = 4000
-            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
+            if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
+                alertToast.text = "Generation Succeeded, but with warnings: " + sdsModel.platformInterfaceGenerator.lastError
+                alertToast.textColor = "black"
+                alertToast.color = Theme.palette.warning
+                alertToast.interval = 0
+                console.warn("There were warnings when generating", outputFileText.text + "/PlatformInterface.qml")
+            } else {
+                alertToast.text = "Successfully generated PlatformInterface.qml"
+                alertToast.textColor = "white"
+                alertToast.color = Theme.palette.success
+                alertToast.interval = 4000
+                console.log("Successfully generated", outputFileText.text + "/PlatformInterface.qml")
+            }
+
+            const success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
+            if (success) {
+                console.log("Successfully saved", jsonInputFilePath)
+            } else {
+                console.error("Unable to save file", jsonInputFilePath)
+            }
         }
         alertToast.show()
 
