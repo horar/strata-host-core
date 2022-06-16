@@ -11,6 +11,8 @@
 #include "SciPlatformTestMessageModel.h"
 #include "SciPlatformTests.h"
 
+#include <ValidationStatus.h>
+
 namespace validation = strata::platform::validation;
 
 SciPlatformTestModel::SciPlatformTestModel(

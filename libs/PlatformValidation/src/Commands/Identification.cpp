@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "Identification.h"
+#include "ValidationStatus.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <PlatformCommands.h>

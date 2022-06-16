@@ -8,6 +8,7 @@
  */
 
 #include "BaseValidation.h"
+#include "ValidationStatus.h"
 #include "logging/LoggingQtCategories.h"
 
 #include <PlatformCommands.h>

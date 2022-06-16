@@ -26,6 +26,7 @@ add_library(${PROJECT_NAME}
     src/logging/LoggingQtCategories.cpp
 
     #AUTOMOC wont find header if it is in different directory
+    include/ValidationStatus.h
     include/Commands/BaseValidation.h
     include/Commands/Identification.h
     include/Commands/BootloaderApplication.h
@@ -35,6 +36,7 @@ add_library(${PROJECT_NAME}
 add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/Commands
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/Flashing
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
