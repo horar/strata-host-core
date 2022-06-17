@@ -67,6 +67,7 @@ signals:
 
     /*!
      * This signal is emitted when some warning occurs during platform validation.
+     * \param status - value from validation::Status enum
      * \param description - contains description of had happened during validation
      */
     void validationStatus(strata::platform::validation::Status status, QString description);

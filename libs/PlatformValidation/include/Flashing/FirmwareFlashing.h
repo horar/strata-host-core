@@ -49,9 +49,11 @@ signals:
 
     /*!
      * This signal is emitted when some warning occurs during flashing validation.
+     * \param status - value from validation::Status enum
      * \param description - contains description of had happened during validation
+     * \param rewriteLast - if set to true, last shown status should be rewritten by this one
      */
-    void validationStatus(strata::platform::validation::Status status, QString description);
+    void validationStatus(strata::platform::validation::Status status, QString description, bool rewriteLast = false);
 
 private slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString errorString);
@@ -78,6 +80,7 @@ private:
     const QString firmwarePath_;
     QString tmpBackupFilePath_;
     Action currentAction_;
+    bool rewriteLastStatus_;
 };
 
 }  // namespace

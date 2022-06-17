@@ -54,10 +54,15 @@ void SciPlatformBaseTest::finishedHandler()
     emit finished();
 }
 
+void SciPlatformBaseTest::statusHandler(validation::Status validationStatus, QString text)
+{
+    emit status(validationStatus, text, false);
+}
+
 void SciPlatformBaseTest::connectAndRun()
 {
     connect(validation_.get(), &validation::BaseValidation::finished, this, &SciPlatformBaseTest::finishedHandler);
-    connect(validation_.get(), &validation::BaseValidation::validationStatus, this, &SciPlatformBaseTest::status);
+    connect(validation_.get(), &validation::BaseValidation::validationStatus, this, &SciPlatformBaseTest::statusHandler);
 
     validation_->run();
 }
@@ -151,7 +156,6 @@ void FirmwareFlashingTest::flashingFinishedHandler()
     }
     emit finished();
 }
-
 
 void FirmwareFlashingTest::fwFlashingDeleter(validation::FirmwareFlashing* fwFlashing)
 {

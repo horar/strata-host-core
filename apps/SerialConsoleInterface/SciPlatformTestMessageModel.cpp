@@ -61,11 +61,25 @@ void SciPlatformTestMessageModel::addMessage(MessageType type, QString text)
     endInsertRows();
 }
 
+void SciPlatformTestMessageModel::changeLastMessage(MessageType type, QString text)
+{
+    if (data_.isEmpty()) {
+        addMessage(type, text);
+        return;
+    }
+
+    data_.last().type = type;
+    data_.last().text = text;
+
+    int row = data_.length() - 1;
+    emit dataChanged(createIndex(row, 0), createIndex(row, 0), {TypeRole, TextRole});
+}
+
 QHash<int, QByteArray> SciPlatformTestMessageModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[TextRole] = "text";
     roles[TypeRole] = "type";
+    roles[TextRole] = "text";
 
     return roles;
 }

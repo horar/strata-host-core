@@ -54,8 +54,8 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void statusHandler(strata::platform::validation::Status status, QString text);
     void finishedHandler();
+    void statusHandler(strata::platform::validation::Status status, QString text, bool rewriteLast);
 
 private:
     void runNextTest();

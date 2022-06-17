@@ -39,13 +39,14 @@ public:
 
 signals:
     void finished();
-    void status(strata::platform::validation::Status status, QString text);
+    void status(strata::platform::validation::Status validationStatus, QString text, bool rewriteLast);
 
 private:
     bool enabled_;
 
 private slots:
     void finishedHandler();
+    void statusHandler(strata::platform::validation::Status validationStatus, QString text);
 
 protected:
     void connectAndRun();
