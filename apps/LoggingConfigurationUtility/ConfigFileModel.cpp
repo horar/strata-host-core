@@ -33,14 +33,14 @@ void ConfigFileModel::reload()
     QSettings settings;
     QFileInfo fileInfo(settings.fileName());
     QDir directory(fileInfo.absolutePath());
-    qCDebug(lcLogConf) << "Reading files from: " + fileInfo.absolutePath();
+    qCDebug(lcLcu) << "Reading files from: " + fileInfo.absolutePath();
 
     beginResetModel();
     iniFiles_ = directory.entryInfoList({"*.ini"},QDir::Files);
     endResetModel();
 
     if (iniFiles_.empty()) {
-        qCWarning(lcLogConf) << "No ini files were found.";
+        qCWarning(lcLcu) << "No ini files were found.";
     }
 
     //TODO in different ticket - when list of files is reloaded and its count changes, set current index on the file which was opened before reloading. If the file doesn't exist any more, set index to 0.
@@ -50,7 +50,10 @@ void ConfigFileModel::reload()
 QVariantMap ConfigFileModel::get(int index)
 {
     if (index < 0 || index >= iniFiles_.count()) {
-        return QVariantMap();
+        QVariantMap map;
+        map.insert("fileName", "");
+        map.insert("filePath", "");
+        return map;
     }
 
     QFileInfo item = iniFiles_.at(index);
@@ -70,7 +73,7 @@ QVariant ConfigFileModel::data(const QModelIndex & index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= iniFiles_.count()) {
-        qCCritical(lcLogConf) << "Index out of range";
+        qCCritical(lcLcu) << "Index out of range";
         return QVariant();
     }
 

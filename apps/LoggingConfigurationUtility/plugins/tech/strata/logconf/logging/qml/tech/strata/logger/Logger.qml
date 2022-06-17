@@ -12,7 +12,7 @@ import QtQml 2.8
 
 QtObject {
     id: root
-    property LoggingCategory lcuCategory: LoggingCategory {
-        name: "strata.lcu"
+    property LoggingCategory logconfCategory: LoggingCategory {
+        name: "strata.logconf"
     }
 }

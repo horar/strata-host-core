@@ -12,6 +12,5 @@ module tech.strata.logconf
 plugin lcuPlugin
 typeinfo plugins.qmltypes
 
-LcuMain 1.0 qrc:///LcuMain.qml
 LogLevel 1.0 qrc:///LogLevel.qml
 LogDetails 1.0 qrc:///LogDetails.qml

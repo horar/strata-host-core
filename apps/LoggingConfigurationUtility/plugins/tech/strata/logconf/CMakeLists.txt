@@ -19,9 +19,7 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME} MODULE
-    ConfigFileModel.cpp
     ConfigFileSettings.cpp
-    LogSettings.cpp
     logconf_plugin.cpp
     qml.qrc
 

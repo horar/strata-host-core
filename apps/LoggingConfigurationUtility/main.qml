@@ -7,9 +7,9 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick 2.12
+import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
-import tech.strata.logconf 1.0
 
 SGWidgets.SGMainWindow {
     id: root

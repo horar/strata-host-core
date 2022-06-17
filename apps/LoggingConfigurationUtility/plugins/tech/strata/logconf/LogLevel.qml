@@ -11,12 +11,13 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.theme 1.0
-import tech.strata.lcu 1.0
+import tech.strata.logconf 1.0
+import tech.strata.logger 1.0
 
 GridLayout {
     id: logLevelGrid
 
+    property alias fileName: configFileSettings.filePath
     property int innerSpacing: 5
     property int shortEdit: 180
 
@@ -24,8 +25,8 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
 
-    LogSettings {
-        id: logSettings
+    ConfigFileSettings {
+        id: configFileSettings
     }
 
     SGWidgets.SGText {
@@ -47,12 +48,23 @@ GridLayout {
         Layout.preferredWidth: shortEdit
         Layout.alignment: Qt.AlignRight
         model: ["debug", "info", "warning", "error", "critical", "off"]
-        enabled: currentIndex !== -1 //disable if log level value doesnt exist OR if INI files was not found
+        enabled: currentIndex != -1
+        //disable if log level value doesnt exist OR if no INI file was found
         placeholderText: "no value"
-        onActivated: logSettings.setvalue("level",currentText)
+        onActivated: configFileSettings.logLevel = currentText
+
+        Connections {
+            target: configFileSettings
+            onLogLevelChanged: {
+                logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
+            }
+            onFilePathChanged: {
+                logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
+            }
+        }
 
         Component.onCompleted: {
-            currentIndex = find(logSettings.getvalue("level"))
+            currentIndex = find(configFileSettings.logLevel)
         }
     }
 
@@ -60,18 +72,18 @@ GridLayout {
         id: setLogLevelButton
         Layout.maximumWidth: height
         text: logLevelComboBox.enabled ? "Unset" : "Set"
+        enabled: configFileSettings.filePath !== ""
         onClicked: {
             if (text === "Unset") {
-                logSettings.removekey("level")
+                configFileSettings.logLevel = ""
             } else { //set to default value
-                logSettings.setvalue("level","debug")
+                configFileSettings.logLevel = "debug"
             }
-            logLevelComboBox.currentIndex = logLevelComboBox.find(logSettings.getvalue("level"))
         }
     }
 
     Connections {
-        target: logSettings
+        target: configFileSettings
         onCorruptedFile: {
             showCorruptedFileDialog(param, errorString)
         }
@@ -86,16 +98,14 @@ GridLayout {
                     })
 
         dialog.accepted.connect(function() { //set to default
-            console.log("Set " + parameter + " to default")
-            logSettings.setvalue(parameter, "debug")
-            logLevelComboBox.currentIndex = 0
+            console.log(Logger.logconfCategory, "Set " + parameter + " to default")
+            configFileSettings.logLevel = "debug"
             dialog.destroy()
         })
 
         dialog.rejected.connect(function() { //remove parameter
-            console.log("Removed " + parameter)
-            logSettings.removekey(parameter)
-            logLevelComboBox.currentIndex = -1
+            console.log(Logger.logconfCategory, "Removed " + parameter)
+            configFileSettings.logLevel = ""
             dialog.destroy()
         })
         dialog.open()

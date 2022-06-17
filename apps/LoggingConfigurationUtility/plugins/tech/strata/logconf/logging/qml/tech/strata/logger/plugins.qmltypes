@@ -14,7 +14,7 @@ Module {
         isCreatable: false
         isSingleton: true
         Property {
-            name: "lcuCategory"
+            name: "logconfCategory"
             type: "QQmlLoggingCategory"
             isPointer: true
         }
