@@ -70,7 +70,7 @@ function generatePlatformSelectorModel(platform_list_json) {
 
     // Parse JSON
     try {
-        platform_list = JSON.parse(platform_list_json).list
+        platform_list = JSON.parse(platform_list_json)
     } catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing platform list:", err.toString())
         platformSelectorModel.platformListStatus = "error"
@@ -117,7 +117,7 @@ function generatePlatformSelectorModel(platform_list_json) {
         platformSelectorModel.append(modelItem)
     }
 
-    parseConnectedPlatforms(coreInterface.connectedPlatformList_)
+    parseConnectedPlatforms(coreInterface.connectedPlatformList)
     platformSelectorModel.platformListStatus = "loaded"
 }
 
@@ -217,7 +217,7 @@ function createPlatformSelectorModelItem(base_data) {
 function parseConnectedPlatforms (connected_platform_list_json) {
     let currentlyConnected
     try {
-        currentlyConnected = JSON.parse(connected_platform_list_json).list
+        currentlyConnected = JSON.parse(connected_platform_list_json)
     } catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing connected platforms list:", err.toString())
         return

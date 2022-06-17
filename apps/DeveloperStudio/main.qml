@@ -319,7 +319,7 @@ SGWidgets.SGMainWindow {
         onPlatformListChanged: {
             //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", platformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.generatePlatformSelectorModel(platformList)
+                PlatformSelection.generatePlatformSelectorModel(sdsModel.coreInterface.platformList)
             }
         }
 
@@ -327,7 +327,7 @@ SGWidgets.SGMainWindow {
             //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", connectedPlatformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
-                PlatformSelection.parseConnectedPlatforms(connectedPlatformList)
+                PlatformSelection.parseConnectedPlatforms(sdsModel.coreInterface.connectedPlatformList)
             }
         }
 
