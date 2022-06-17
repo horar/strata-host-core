@@ -56,6 +56,7 @@ SGStrataPopup {
 
         SGNotificationToast {
             id: alertToast
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: mainColumn.width
         }
 

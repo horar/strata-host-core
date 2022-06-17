@@ -46,6 +46,7 @@ Item {
 
         SGNotificationToast {
             id: alertMessage
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width * 0.7
             interval: 0
             color: Theme.palette.error

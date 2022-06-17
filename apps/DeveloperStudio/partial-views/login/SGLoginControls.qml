@@ -140,6 +140,7 @@ Item {
 
         SGNotificationToast {
             id: loginErrorRect
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: usernameField.width
         }
 

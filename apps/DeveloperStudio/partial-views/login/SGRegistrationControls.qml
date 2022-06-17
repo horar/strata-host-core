@@ -41,6 +41,7 @@ Item {
 
         SGNotificationToast {
             id: alertRect
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: fieldGrid.width
         }
 
