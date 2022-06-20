@@ -29,6 +29,7 @@ SciPlatformTestModel::SciPlatformTestModel(
     data_.append(new BootloaderApplicationTest(platformRef_, this));
     data_.append(new EmbeddedRegistrationTest(platformRef_, this));
     data_.append(new AssistedRegistrationTest(platformRef_, this));
+    data_.append(new FirmwareFlashingTest(platformRef_, this));
 
     setEnabled(0, true);  // enable first validation - identification
 }
@@ -125,7 +126,7 @@ void SciPlatformTestModel::finishedHandler()
     runNextTest();
 }
 
-void SciPlatformTestModel::statusHandler(validation::Status status, QString text)
+void SciPlatformTestModel::statusHandler(validation::Status status, QString text, bool rewriteLast)
 {
     SciPlatformTestMessageModel::MessageType msgType;
 
@@ -147,7 +148,11 @@ void SciPlatformTestModel::statusHandler(validation::Status status, QString text
         break;
     }
 
-    messageModel_->addMessage(msgType, text);
+    if (rewriteLast) {
+        messageModel_->changeLastMessage(msgType, text);
+    } else {
+        messageModel_->addMessage(msgType, text);
+    }
 }
 
 void SciPlatformTestModel::runNextTest()
@@ -159,7 +164,12 @@ void SciPlatformTestModel::runNextTest()
             connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::status, this, &SciPlatformTestModel::statusHandler);
             connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::finished, this, &SciPlatformTestModel::finishedHandler);
 
-            data_.at(activeTestIndex_)->run();
+            QVariant testData;
+            if (data_.at(activeTestIndex_)->type() == SciPlatformBaseTest::Type::FirmwareFlashing) {
+                testData = QString("dummy_file.bin");
+            }
+
+            data_.at(activeTestIndex_)->run(testData);
 
             return;
         } else {  // current test is not enabled, move to next test

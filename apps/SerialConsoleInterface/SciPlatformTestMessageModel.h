@@ -28,8 +28,8 @@ public:
     Q_ENUM(MessageType)
 
     enum ModelRole {
-        TextRole = Qt::UserRole + 1,
-        TypeRole,
+        TypeRole = Qt::UserRole + 1,
+        TextRole,
     };
 
     SciPlatformTestMessageModel(QObject *parent = nullptr);
@@ -40,6 +40,7 @@ public:
 
     void clear();
     void addMessage(MessageType type, QString text);
+    void changeLastMessage(MessageType type, QString text);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

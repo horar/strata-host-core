@@ -60,7 +60,6 @@ void BaseValidation::run()
         QString errStr(QStringLiteral("The validation is already running"));
         qCWarning(lcPlatformValidation) << platform_ << errStr;
         emit validationStatus(Status::Error, errStr);
-        finishValidation(ValidationResult::Failed);
         return;
     }
 
@@ -234,14 +233,17 @@ void BaseValidation::finishValidation(ValidationResult result)
     switch (result) {
     case ValidationResult::Passed :
         message += QStringLiteral(" PASS");
+        qCInfo(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Success, message);
         break;
     case ValidationResult::Incomplete :
         message += QStringLiteral(" INCOMPLETE");
+        qCWarning(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Warning, message);
         break;
     case ValidationResult::Failed :
         message += QStringLiteral(" FAIL");
+        qCWarning(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Error, message);
         break;
     }
