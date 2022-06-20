@@ -101,7 +101,6 @@ FocusScope {
             onClicked: {
                 if (activeFocusOnPress) {
                     edit.forceActiveFocus()
-                    edit.cursorPosition = edit.text.length
                 }
             }
             onReleased: {
