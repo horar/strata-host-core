@@ -57,7 +57,7 @@ void FirmwareFlashing::run()
         return;
     }
 
-    QString message = name_ + QStringLiteral(" is about to start");
+    QString message = name_ + QStringLiteral(" is about to start with firmware file '") + firmwarePath_ + '\'';
     qCInfo(lcPlatformValidation) << platform_ << message;
     emit validationStatus(Status::Plain, message);
 

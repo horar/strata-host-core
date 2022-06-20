@@ -164,7 +164,12 @@ void SciPlatformTestModel::runNextTest()
             connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::status, this, &SciPlatformTestModel::statusHandler);
             connect(data_.at(activeTestIndex_), &SciPlatformBaseTest::finished, this, &SciPlatformTestModel::finishedHandler);
 
-            data_.at(activeTestIndex_)->run();
+            QVariant testData;
+            if (data_.at(activeTestIndex_)->type() == SciPlatformBaseTest::Type::FirmwareFlashing) {
+                testData = QString("dummy_file.bin");
+            }
+
+            data_.at(activeTestIndex_)->run(testData);
 
             return;
         } else {  // current test is not enabled, move to next test

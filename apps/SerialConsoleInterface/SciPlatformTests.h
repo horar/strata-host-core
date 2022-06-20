@@ -12,6 +12,7 @@
 #include <memory>
 
 #include <QObject>
+#include <QVariant>
 
 #include <Platform.h>
 #include <ValidationStatus.h>
@@ -29,11 +30,20 @@ class SciPlatformBaseTest: public QObject
     Q_DISABLE_COPY(SciPlatformBaseTest)
 
 public:
-    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, const QString& name, QObject *parent);
+    enum class Type {
+        Identification,
+        BootloaderApplication,
+        EmbeddedRegistration,
+        AssistedRegistration,
+        FirmwareFlashing
+    };
+
+    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, Type type, const QString& name, QObject *parent);
     virtual ~SciPlatformBaseTest();
 
-    virtual void run() = 0;
+    virtual void run(const QVariant& testData) = 0;
     QString name() const;
+    Type type() const;
     void setEnabled(bool enabled);
     bool enabled() const;
 
@@ -42,6 +52,7 @@ signals:
     void status(strata::platform::validation::Status validationStatus, QString text, bool rewriteLast);
 
 private:
+    const Type type_;
     bool enabled_;
 
 private slots:
@@ -71,7 +82,7 @@ class IdentificationTest: public SciPlatformBaseTest {
 public:
     IdentificationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
-    void run() override;
+    void run(const QVariant& testData) override;
 };
 
 
@@ -84,7 +95,7 @@ class BootloaderApplicationTest: public SciPlatformBaseTest {
 public:
     BootloaderApplicationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
-    void run() override;
+    void run(const QVariant& testData) override;
 };
 
 
@@ -97,7 +108,7 @@ class EmbeddedRegistrationTest: public SciPlatformBaseTest {
 public:
     EmbeddedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
-    void run() override;
+    void run(const QVariant& testData) override;
 };
 
 
@@ -110,7 +121,7 @@ class AssistedRegistrationTest: public SciPlatformBaseTest {
 public:
     AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
-    void run() override;
+    void run(const QVariant& testData) override;
 };
 
 
@@ -123,14 +134,12 @@ class FirmwareFlashingTest: public SciPlatformBaseTest {
 public:
     FirmwareFlashingTest(const strata::platform::PlatformPtr& platformRef, QObject *parent);
 
-    void run() override;
+    void run(const QVariant& testData) override;
 
 private slots:
     void flashingFinishedHandler();
 
 private:
-    QString firmwarePath_;
-
     typedef std::unique_ptr<strata::platform::validation::FirmwareFlashing,
                             void(*)(strata::platform::validation::FirmwareFlashing*)> FwFlashingPtr;
     FwFlashingPtr fwFlashing_;

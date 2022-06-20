@@ -19,8 +19,9 @@ namespace validation = strata::platform::validation;
 
 // *** base class ***
 
-SciPlatformBaseTest::SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, const QString& name, QObject *parent)
+SciPlatformBaseTest::SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, Type type, const QString& name, QObject *parent)
     : QObject(parent),
+      type_(type),
       enabled_(false),
       platformRef_(platformRef),
       name_(name),
@@ -33,6 +34,11 @@ SciPlatformBaseTest::~SciPlatformBaseTest()
 QString SciPlatformBaseTest::name() const
 {
     return name_;
+}
+
+SciPlatformBaseTest::Type SciPlatformBaseTest::type() const
+{
+    return type_;
 }
 
 void SciPlatformBaseTest::setEnabled(bool enabled)
@@ -76,11 +82,13 @@ void SciPlatformBaseTest::validationDeleter(validation::BaseValidation* validati
 // *** Identification ***
 
 IdentificationTest::IdentificationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Identification"), parent)
+    : SciPlatformBaseTest(platformRef, Type::Identification, QStringLiteral("Identification"), parent)
 { }
 
-void IdentificationTest::run()
+void IdentificationTest::run(const QVariant& testData)
 {
+    Q_UNUSED(testData)
+
     validation_ = ValidationPtr(new validation::Identification(platformRef_, name_), validationDeleter);
 
     connectAndRun();
@@ -90,11 +98,13 @@ void IdentificationTest::run()
 // *** Bootloader & Application Presence ***
 
 BootloaderApplicationTest::BootloaderApplicationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Bootloader & Application"), parent)
+    : SciPlatformBaseTest(platformRef, Type::BootloaderApplication, QStringLiteral("Bootloader & Application"), parent)
 { }
 
-void BootloaderApplicationTest::run()
+void BootloaderApplicationTest::run(const QVariant& testData)
 {
+    Q_UNUSED(testData)
+
     validation_ = ValidationPtr(new validation::BootloaderApplication(platformRef_, name_), validationDeleter);
 
     connectAndRun();
@@ -104,11 +114,13 @@ void BootloaderApplicationTest::run()
 // *** Embedded platform registration ***
 
 EmbeddedRegistrationTest::EmbeddedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Embedded platform registration"), parent)
+    : SciPlatformBaseTest(platformRef, Type::EmbeddedRegistration, QStringLiteral("Embedded platform registration"), parent)
 { }
 
-void EmbeddedRegistrationTest::run()
+void EmbeddedRegistrationTest::run(const QVariant& testData)
 {
+    Q_UNUSED(testData)
+
     validation_ = ValidationPtr(new validation::EmbeddedRegistration(platformRef_, name_), validationDeleter);
 
     connectAndRun();
@@ -118,11 +130,13 @@ void EmbeddedRegistrationTest::run()
 // *** Assisted platform registration ***
 
 AssistedRegistrationTest::AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Assisted platform registration"), parent)
+    : SciPlatformBaseTest(platformRef, Type::AssistedRegistration, QStringLiteral("Assisted platform registration"), parent)
 { }
 
-void AssistedRegistrationTest::run()
+void AssistedRegistrationTest::run(const QVariant& testData)
 {
+    Q_UNUSED(testData)
+
     validation_ = ValidationPtr(new validation::AssistedRegistration(platformRef_, name_), validationDeleter);
 
     connectAndRun();
@@ -132,15 +146,15 @@ void AssistedRegistrationTest::run()
 // *** Firmware flashing ***
 
 FirmwareFlashingTest::FirmwareFlashingTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, QStringLiteral("Firmware flashing"), parent),
+    : SciPlatformBaseTest(platformRef, Type::FirmwareFlashing, QStringLiteral("Firmware flashing"), parent),
       fwFlashing_(nullptr, nullptr)
 { }
 
-void FirmwareFlashingTest::run()
+void FirmwareFlashingTest::run(const QVariant& testData)
 {
-    firmwarePath_ = "dummy_file.bin";
+    QString firmwarePath = testData.toString();
 
-    fwFlashing_ = FwFlashingPtr(new validation::FirmwareFlashing(platformRef_, name_, firmwarePath_), fwFlashingDeleter);
+    fwFlashing_ = FwFlashingPtr(new validation::FirmwareFlashing(platformRef_, name_, firmwarePath), fwFlashingDeleter);
 
     connect(fwFlashing_.get(), &validation::FirmwareFlashing::finished, this, &FirmwareFlashingTest::flashingFinishedHandler);
     connect(fwFlashing_.get(), &validation::FirmwareFlashing::validationStatus, this, &SciPlatformBaseTest::status);
