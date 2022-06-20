@@ -57,6 +57,7 @@ signals:
 
 private slots:
     void handleFlasherFinished(strata::Flasher::Result result, QString errorString);
+    void handleflasherState(strata::Flasher::State state, bool done);
     void handleFlashProgress(int chunk, int total);
     void handleBackupProgress(int chunk, int total);
 

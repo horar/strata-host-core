@@ -87,6 +87,39 @@ void FirmwareFlashing::handleFlasherFinished(Flasher::Result result, QString err
     }
 }
 
+void FirmwareFlashing::handleflasherState(Flasher::State state, bool done)
+{
+    QString message;
+
+    switch (state) {
+    case Flasher::State::FlashFirmware :
+        message = (done)
+                  ? QStringLiteral("Firmware flashed")
+                  : QStringLiteral("Starting to flash firmware '") + firmwarePath_ + '\'';
+        break;
+    case Flasher::State::BackupFirmware :
+        message = (done)
+                  ? QStringLiteral("Firmware backed up")
+                  : QStringLiteral("Starting to backup firmware");
+        break;
+    case Flasher::State::StartApplication :
+        message = (done)
+                  ? QStringLiteral("Application is running")
+                  : QStringLiteral("Starting application (firmware)");
+        break;
+    default :
+        return;
+        break;
+    }
+
+    qCInfo(lcPlatformValidation) << platform_ << message;
+    if (done) {
+        emit validationStatus(Status::Success, message);
+    } else {
+        emit validationStatus(Status::Plain, message);
+    }
+}
+
 void FirmwareFlashing::handleFlashProgress(int chunk, int total)
 {
     QString message = QStringLiteral("Flashing firmware: ") + computeProgress(chunk, total);
@@ -131,14 +164,11 @@ void FirmwareFlashing::flashFirmware()
 {
     currentAction_ = Action::Flash;
 
-    QString message = QStringLiteral("Starting to flash firmware '") + firmwarePath_ + '\'';
-    qCInfo(lcPlatformValidation) << platform_ << message;
-    emit validationStatus(Status::Plain, message);
-
     flasher_ = std::make_unique<Flasher>(platform_, firmwarePath_);
 
     // finished() signal must be connected through queued connection because flasher_ is being deleted in handleFlasherFinished()
     connect(flasher_.get(), &Flasher::finished, this, &FirmwareFlashing::handleFlasherFinished, Qt::QueuedConnection);
+    connect(flasher_.get(), &Flasher::flasherState, this, &FirmwareFlashing::handleflasherState);
     connect(flasher_.get(), &Flasher::flashFirmwareProgress, this, &FirmwareFlashing::handleFlashProgress);
 
     rewriteLastStatus_ = false;
@@ -149,11 +179,6 @@ void FirmwareFlashing::flashFirmware()
 void FirmwareFlashing::backupFirmware()
 {
     currentAction_ = Action::Backup;
-    {
-        QString message = QStringLiteral("Starting to backup firmware");
-        qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Plain, message);
-    }
 
     QTemporaryFile tmpBackupFile(QDir(QDir::tempPath()).filePath(QStringLiteral("test_fw_backup")));
     if (tmpBackupFile.open() == false) {
@@ -171,6 +196,7 @@ void FirmwareFlashing::backupFirmware()
 
     // finished() signal must be connected through queued connection because flasher_ is being deleted in handleFlasherFinished()
     connect(flasher_.get(), &Flasher::finished, this, &FirmwareFlashing::handleFlasherFinished, Qt::QueuedConnection);
+    connect(flasher_.get(), &Flasher::flasherState, this, &FirmwareFlashing::handleflasherState);
     connect(flasher_.get(), &Flasher::backupFirmwareProgress, this, &FirmwareFlashing::handleBackupProgress);
 
     rewriteLastStatus_ = false;
