@@ -13,7 +13,7 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.logconf 1.0
-import tech.strata.logger 1.0
+import tech.strata.pluginLogger 1.0
 
 GridLayout {
     id: logDetailsGrid
@@ -364,7 +364,7 @@ GridLayout {
                     })
 
         dialog.accepted.connect(function() { //set to default
-            console.log(Logger.logconfCategory, "Set " + parameter + " to default")
+            console.log(Logger.lcuCategory, "Set " + parameter + " to default")
             if (parameter === "log/maxFileSize") {
                 configFileSettings.maxFileSize = configFileSettings.maxSizeDefault
                 maxFileSizeEnabled = true
@@ -382,8 +382,7 @@ GridLayout {
         })
 
         dialog.rejected.connect(function() { //remove parameter
-            console.log(Logger.logconfCategory, "Removed " + parameter)
-            logSettings.removekey(parameter)
+            console.log(Logger.lcuCategory, "Removed " + parameter)
             if (parameter === "log/maxFileSize") {
                 configFileSettings.maxFileSize = 0
                 textInputFileSize.text = "no value"

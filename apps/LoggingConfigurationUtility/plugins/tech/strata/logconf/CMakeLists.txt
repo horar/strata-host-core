@@ -24,7 +24,7 @@ add_library(${PROJECT_NAME} MODULE
     qml.qrc
 
     logging/LoggingQtCategories.cpp
-    logging/qml/tech/strata/logger/qml.qrc
+    logging/qml/tech/strata/pluginLogger/qml.qrc
     qmldir
     plugins.qmltypes
 )

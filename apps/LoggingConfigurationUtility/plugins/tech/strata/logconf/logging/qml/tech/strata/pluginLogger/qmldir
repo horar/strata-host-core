@@ -7,7 +7,7 @@
 # Terms and Conditions of Sale, Section 8 Software”).
 #
 
-module tech.strata.logger
+module tech.strata.pluginLogger
 typeinfo plugins.qmltypes
 
 singleton Logger 1.0 Logger.qml
