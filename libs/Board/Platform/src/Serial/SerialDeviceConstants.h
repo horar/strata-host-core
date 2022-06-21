@@ -9,9 +9,12 @@
 #ifndef SERIAL_DEVICE_CONSTANTS_H
 #define SERIAL_DEVICE_CONSTANTS_H
 
+#include <chrono>
+
 namespace strata::device {
 
 constexpr unsigned READ_BUFFER_SIZE = 4096;
+constexpr std::chrono::milliseconds SERIAL_DEVICE_OPEN_RETRY_INTERVAL(1000);
 
 }  // namespace
 
