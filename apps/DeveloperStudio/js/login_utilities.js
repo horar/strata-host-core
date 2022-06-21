@@ -30,14 +30,10 @@ function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
     userSettings.user = login_info.user
-    const anonymousSettings = userSettings.readFile("general-settings.json")
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
-    }
-    if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
-        headers.anonymous = 1
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -89,7 +85,8 @@ function login_result(response)
         "jwt": response.token,
         "first_name": response.firstname,
         "last_name": response.lastname,
-        "user_id": response.user
+        "user_id": response.user,
+        "consent_data_collection": response.consent_data_collection
     }
 
     // [TODO][prasanth]: jwt will be created/received in the hcs
@@ -536,14 +533,10 @@ function validate_token()
 {
     if (Rest.jwt !== "" && settings.user !== ""){
         userSettings.user = settings.user
-        const anonymousSettings = userSettings.readFile("general-settings.json")
 
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
-        }
-        if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
-            headers.anonymous = 1
         }
 
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)

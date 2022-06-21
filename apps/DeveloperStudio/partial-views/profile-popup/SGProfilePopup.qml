@@ -21,7 +21,7 @@ import '../login/registration'
 import "../general"
 import '../login'
 import 'qrc:/js/login_utilities.js' as LoginUtils
-import 'qrc:/js/navigation_control.js' as NavigationControl
+import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/constants.js" as Constants
@@ -44,6 +44,7 @@ SGStrataPopup {
     property string company: "N/A"
     property string jobTitle: "N/A"
     property int offset: 50
+    property bool consentDataCollection: true
 
     onOpened: {
         basicInfoControls.editing = false
@@ -505,6 +506,37 @@ SGStrataPopup {
                 }
             }
 
+            ProfileSectionDivider {}
+
+            RowLayout {
+                spacing: 8
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.columnSpan: 3
+
+                SGSwitch {
+                    id: dataCollectionSwitch
+                    checked: !root.consentDataCollection
+                    grooveFillColor: Theme.palette.onsemiOrange
+
+                    onToggled: {
+                        let data = {
+                            "consent_data_collection": !checked
+                        };
+                        LoginUtils.update_profile(NavigationControl.context.user_id, data)
+                    }
+                }
+
+                SGText {
+                    id: dataCollectionText
+                    text: qsTr("Opt-out Data Collection (change will take effect after logout or app close)")
+                }
+           }
+
+            Rectangle {
+                height: 8
+            }
+
             ProfileSectionHeader {
                 text: "Close Account"
             }
@@ -633,6 +665,9 @@ SGStrataPopup {
                             case "title":
                                 root.jobTitle = value
                                 break;
+                            case "consent_data_collection":
+                                root.consentDataCollection = value
+                                break;
                             default:
                                 break;
                             }
@@ -703,6 +738,8 @@ SGStrataPopup {
 
                         root.company = user.company
                         root.jobTitle = user.title
+
+                        root.consentDataCollection = user.consent_data_collection
                     } else {
                         if (result === "No Connection") {
                             alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
