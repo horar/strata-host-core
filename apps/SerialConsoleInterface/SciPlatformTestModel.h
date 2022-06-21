@@ -26,6 +26,10 @@ class SciPlatformTestModel: public QAbstractListModel
     Q_OBJECT
     Q_DISABLE_COPY(SciPlatformTestModel)
 
+    Q_PROPERTY(bool isRunning READ isRunning NOTIFY isRunningChanged)
+    Q_PROPERTY(bool allTestsDisabled READ allTestsDisabled NOTIFY allTestsDisabledChanged)
+    Q_PROPERTY(QString firmwareFilePath READ firmwareFilePath WRITE setFirmwareFilePath NOTIFY firmwareFilePathChanged)
+
 public:
     enum ModelRole {
         NameRole = Qt::UserRole + 1,
@@ -41,14 +45,16 @@ public:
     Q_INVOKABLE void setEnabled(int row, bool enabled);
     Q_INVOKABLE void runTests();
 
-    Q_PROPERTY(bool isRunning READ isRunning NOTIFY isRunningChanged)
-    Q_PROPERTY(bool allTestsDisabled READ allTestsDisabled NOTIFY allTestsDisabledChanged)
     bool isRunning() const;
     bool allTestsDisabled() const;
+
+    QString firmwareFilePath();
+    void setFirmwareFilePath(const QString &firmwareFilePath);
 
 signals:
     void isRunningChanged();
     void allTestsDisabledChanged();
+    void firmwareFilePathChanged();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
@@ -74,4 +80,5 @@ private:
 
     bool isRunning_;
     bool allTestsDisabled_;
+    QString firmwareFilePath_;
 };

@@ -35,6 +35,9 @@ Button {
 
     property bool backgroundOnlyOnHovered: false
     property bool scaleToFit: false
+    property bool scaleToFitVertically: scaleToFit
+    property bool scaleToFitHorizontally: scaleToFit
+
     property alias hintText: tooltip.text
     property int iconSize: SGWidgets.SGSettings.fontPixelSize + 10
     property alias iconMirror: iconItem.mirror
@@ -160,8 +163,8 @@ Button {
     }
 
     background: Item {
-        implicitHeight: scaleToFit ? 0 : 40
-        implicitWidth: scaleToFit ? 0 : 100
+        implicitHeight: scaleToFitVertically ? 0 : 40
+        implicitWidth: scaleToFitHorizontally ? 0 : 100
         clip: true
 
         Rectangle {

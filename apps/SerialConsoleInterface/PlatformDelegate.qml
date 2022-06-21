@@ -382,6 +382,14 @@ FocusScope {
                         onClicked: showSaveFirmwareView()
                     }
 
+                    SGWidgets.SGIconButton {
+                        text: "Validator"
+                        hintText: qsTr("Validate platform interface")
+                        icon.source: "qrc:/images/list-check.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showValidationView()
+                    }
+
                     VerticalDivider {
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -407,18 +415,6 @@ FocusScope {
                         iconSize: toolButtonRow.iconHeight
                         visible: (model.platform.deviceType === Sci.SciPlatform.MockDevice)
                         onClicked: showMockSettingsView()
-                    }
-
-                    VerticalDivider {
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SGWidgets.SGIconButton {
-                        text: "Validator"
-                        hintText: qsTr("Validate Platform interface")
-                        icon.source: "qrc:/images/list-check.svg"
-                        iconSize: toolButtonRow.iconHeight
-                        onClicked: showValidationView()
                     }
                 }
 

@@ -109,6 +109,21 @@ bool SciPlatformTestModel::allTestsDisabled() const
     return allTestsDisabled_;
 }
 
+QString SciPlatformTestModel::firmwareFilePath()
+{
+    return firmwareFilePath_;
+}
+
+void SciPlatformTestModel::setFirmwareFilePath(const QString &firmwareFilePath)
+{
+    if (firmwareFilePath_ == firmwareFilePath) {
+        return;
+    }
+
+    firmwareFilePath_ = firmwareFilePath;
+    emit firmwareFilePathChanged();
+}
+
 QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
@@ -166,7 +181,7 @@ void SciPlatformTestModel::runNextTest()
 
             QVariant testData;
             if (data_.at(activeTestIndex_)->type() == SciPlatformBaseTest::Type::FirmwareFlashing) {
-                testData = QString("dummy_file.bin");
+                testData = firmwareFilePath_;
             }
 
             data_.at(activeTestIndex_)->run(testData);
