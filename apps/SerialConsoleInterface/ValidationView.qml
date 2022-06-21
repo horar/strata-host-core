@@ -20,6 +20,7 @@ FocusScope {
     id: validationView
 
     property int baseSpacing: 16
+    property int innerSpacing: 8
 
     property QtObject platformTestModel: model.platform.platformTestModel
     property QtObject platformTestMessageModel: model.platform.platformTestMessageModel
@@ -55,12 +56,13 @@ FocusScope {
             spacing: baseSpacing
 
             SGWidgets.SGText {
-                text: "Platform tests:"
+                text: "Tests:"
                 fontSizeMultiplier: 1.3
             }
 
             Column {
-                spacing: baseSpacing
+                id: testView
+                spacing: innerSpacing
 
                 Repeater {
                     model: platformTestModel
@@ -84,6 +86,35 @@ FocusScope {
                 }
             }
 
+            SGWidgets.SGText {
+                text: "Settings:"
+                fontSizeMultiplier: 1.3
+            }
+
+            SGWidgets.SGFilePicker {
+                width: testView.width
+
+                contextMenuEnabled: true
+                label: "Firmware data file"
+                enabled: platformTestModel.isRunning === false
+                selectButtonOnlyIcon: true
+
+                filePath: platformTestModel.firmwareFilePath
+
+                onFilePathChanged: {
+                    platformTestModel.firmwareFilePath = filePath
+                }
+
+                dialogLabel: "Select Firmware Binary"
+                dialogSelectExisting: true
+                dialogNameFilters: ["Binary files (*.bin)","All files (*)"]
+            }
+
+            Item {
+                width: 1
+                height: 1
+            }
+
             SGWidgets.SGButton {
                 text: "Run tests"
                 enabled: !platformTestModel.isRunning && !platformTestModel.allTestsDisabled
@@ -98,7 +129,7 @@ FocusScope {
             id: validationListWrapper
             anchors {
                 left: testViewWrapper.right
-                leftMargin: baseSpacing
+                leftMargin: innerSpacing
                 right: parent.right
                 top: title.bottom
                 topMargin: baseSpacing
