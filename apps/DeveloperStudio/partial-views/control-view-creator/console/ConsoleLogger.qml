@@ -24,6 +24,7 @@ Item {
 
     property double fontMultiplier: 1.0
     property string searchText: ""
+    property bool searchUseCase: false
 
     function validateSearchText() {
         consoleItems.invalidate()
@@ -39,6 +40,10 @@ Item {
     }
 
     onSearchTextChanged: {
+        validateSearchText()
+    }
+
+    onSearchUseCaseChanged: {
         validateSearchText()
     }
 
@@ -88,7 +93,7 @@ Item {
         function containsFilterText(item) {
             var searchMsg = item.time  + ` [ ${item.type} ] ` + item.msg
 
-            if (searchBox.useCase) {
+            if (searchUseCase) {
                 if (searchMsg.includes(searchText)) {
                     return true
                 } else {
