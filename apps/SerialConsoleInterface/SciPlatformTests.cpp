@@ -55,6 +55,11 @@ bool SciPlatformBaseTest::enabled() const
     return enabled_;
 }
 
+QString SciPlatformBaseTest::warningText()
+{
+    return warningText_;
+}
+
 void SciPlatformBaseTest::finishedHandler()
 {
     if (validation_) {
@@ -135,7 +140,9 @@ EmbeddedRegistrationTest::EmbeddedRegistrationTest(
                           Type::EmbeddedRegistration,
                           QStringLiteral("Embedded platform registration"),
                           parent)
-{ }
+{
+    warningText_ = "Registration is one-time operation. Platform memory must be erased with J-Link before repeating this test.";
+}
 
 void EmbeddedRegistrationTest::run(const QVariant& testData)
 {
@@ -156,6 +163,9 @@ AssistedRegistrationTest::AssistedRegistrationTest(
                           Type::AssistedRegistration,
                           QStringLiteral("Assisted platform registration"),
                           parent)
+{
+    warningText_ = "Registration is one-time operation. Platform memory must be erased with J-Link before repeating this test.";
+}
 
 void AssistedRegistrationTest::run(const QVariant& testData)
 {

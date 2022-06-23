@@ -34,6 +34,7 @@ public:
     enum ModelRole {
         NameRole = Qt::UserRole + 1,
         EnabledRole,
+        WarningTextRole,
     };
 
     explicit SciPlatformTestModel(

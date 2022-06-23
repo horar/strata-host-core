@@ -51,6 +51,7 @@ public:
     Type type() const;
     void setEnabled(bool enabled);
     bool enabled() const;
+    QString warningText();
 
 signals:
     void finished();
@@ -69,6 +70,7 @@ protected:
 
     const strata::platform::PlatformPtr& platformRef_;
     const QString name_;
+    QString warningText_;
 
     typedef std::unique_ptr<strata::platform::validation::BaseValidation,
                             void(*)(strata::platform::validation::BaseValidation*)> ValidationPtr;

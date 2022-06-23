@@ -69,12 +69,51 @@ FocusScope {
 
                     delegate: SGWidgets.SGCheckBox {
                         id: enabledCheckbox
+
                         text: model.name
                         enabled: !platformTestModel.isRunning
                         padding: 0
 
                         onCheckedChanged : {
                             platformTestModel.setEnabled(index, checked)
+                        }
+
+                        contentItem: Row {
+                            leftPadding: enabledCheckbox.indicator && !enabledCheckbox.mirrored ? enabledCheckbox.indicator.width + enabledCheckbox.spacing : 0
+                            rightPadding: enabledCheckbox.indicator && enabledCheckbox.mirrored ? enabledCheckbox.indicator.width + enabledCheckbox.spacing : 0
+                            spacing: 4
+
+                            SGWidgets.SGIcon {
+                                id: testIcon
+                                height: Math.floor(0.7 * enabledCheckbox.height)
+                                width: height
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                }
+
+                                source: "qrc:/sgimages/exclamation-triangle.svg"
+                                iconColor: Theme.palette.warning
+                                visible: model.warningText.length > 0
+                            }
+
+                            SGWidgets.SGText {
+                                id: testText
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                }
+
+                                text: enabledCheckbox.text
+                                fontSizeMultiplier: 1.1
+                            }
+                        }
+
+                        ToolTip {
+                            id: tooltip
+                            visible: model.warningText.length > 0 && enabledCheckbox.hovered
+                            delay: 500
+                            timeout: 4000
+                            font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+                            text: model.warningText
                         }
 
                         Binding {
