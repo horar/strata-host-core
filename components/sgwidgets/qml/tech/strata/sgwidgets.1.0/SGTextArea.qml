@@ -29,6 +29,7 @@ FocusScope {
     property bool contextMenuEnabled: false
     property alias palette: dummyControl.palette
     property alias activeFocusOnPress: edit.activeFocusOnPress
+    clip: true
 
     // This is to match look and feel of other controls
     Control {
