@@ -21,7 +21,7 @@ file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/qtQuick.js
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/
 )
 
-file(COPY  ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtItemModel.js
+file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtItemModel.js
     ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtQuickModel.js
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/model/
 )
@@ -34,8 +34,24 @@ file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/utils/helper.js
 
 execute_process(
     COMMAND ${GIT_EXECUTABLE} apply --verbose --ignore-space-change --ignore-whitespace extern/patches/monaco/adjust-uuid-search.patch
+    OUTPUT_VARIABLE MONACO_GIT_APPLY_STDOUT
+    ERROR_VARIABLE MONACO_GIT_APPLY_STDERR
+    RESULT_VARIABLE MONACO_GIT_APPLY_RESULT_CODE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+
+if( NOT MONACO_GIT_APPLY_STDOUT STREQUAL "" )
+    message(STATUS "${MONACO_GIT_APPLY_STDOUT}")
+endif()
+
+if( ${MONACO_GIT_APPLY_RESULT_CODE} EQUAL 0 )
+    if( NOT MONACO_GIT_APPLY_STDERR STREQUAL "" )
+        # git uses stderr for some reason for debug messages so they all end here, they can be diferentiated using error code
+        message( STATUS "${MONACO_GIT_APPLY_STDERR}")
+    endif()
+else()
+    message( FATAL_ERROR "Git apply failed with error code (${MONACO_GIT_APPLY_RESULT_CODE}) and error: ${MONACO_GIT_APPLY_STDERR}")
+endif()
 
 ExternalProject_Add(monaco-editor-${MONACO_TAG}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/package
