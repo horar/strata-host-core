@@ -26,9 +26,8 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
-    main.cpp
     ConfigFileModel.cpp
-    ConfigFileSettings.cpp
+    main.cpp
     qml.qrc
     images/images.qrc
 
@@ -62,6 +61,8 @@ if(APPLE)
     )
 endif()
 
+add_subdirectory(plugins)
+
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
@@ -70,6 +71,8 @@ target_link_libraries(${PROJECT_NAME}
     strata::QtLogger
     strata::SGCore
 )
+
+set(${PROJECT_NAME}_ENABLED_PLUGINS "")
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}

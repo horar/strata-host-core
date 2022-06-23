@@ -50,7 +50,10 @@ void ConfigFileModel::reload()
 QVariantMap ConfigFileModel::get(int index)
 {
     if (index < 0 || index >= iniFiles_.count()) {
-        return QVariantMap();
+        QVariantMap map;
+        map.insert("fileName", "");
+        map.insert("filePath", "");
+        return map;
     }
 
     QFileInfo item = iniFiles_.at(index);

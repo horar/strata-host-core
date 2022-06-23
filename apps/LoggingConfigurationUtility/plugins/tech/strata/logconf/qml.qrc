@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>LogLevel.qml</file>
+        <file>LogDetails.qml</file>
+        <file>CorruptedFileDialog.qml</file>
+    </qresource>
+</RCC>
