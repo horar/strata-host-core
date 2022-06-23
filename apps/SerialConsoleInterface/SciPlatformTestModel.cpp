@@ -53,6 +53,8 @@ QVariant SciPlatformTestModel::data(const QModelIndex &index, int role) const
         return item->name();
     case EnabledRole:
         return item->enabled();
+    case WarningTextRole:
+        return item->warningText();
     }
 
     return QVariant();
@@ -129,6 +131,7 @@ QHash<int, QByteArray> SciPlatformTestModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
     roles[EnabledRole] = "enabled";
+    roles[WarningTextRole] = "warningText";
     return roles;
 }
 
@@ -141,7 +144,10 @@ void SciPlatformTestModel::finishedHandler()
     runNextTest();
 }
 
-void SciPlatformTestModel::statusHandler(validation::Status status, QString text, bool rewriteLast)
+void SciPlatformTestModel::statusHandler(
+        validation::Status status,
+        QString text,
+        bool rewriteLast)
 {
     SciPlatformTestMessageModel::MessageType msgType;
 

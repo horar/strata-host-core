@@ -34,9 +34,14 @@ public:
     enum ModelRole {
         NameRole = Qt::UserRole + 1,
         EnabledRole,
+        WarningTextRole,
     };
 
-    explicit SciPlatformTestModel(SciPlatformTestMessageModel *messageModel, const strata::platform::PlatformPtr& platform, QObject *parent = nullptr);
+    explicit SciPlatformTestModel(
+            SciPlatformTestMessageModel *messageModel,
+            const strata::platform::PlatformPtr& platform,
+            QObject *parent = nullptr);
+
     virtual ~SciPlatformTestModel() override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -61,7 +66,10 @@ protected:
 
 private slots:
     void finishedHandler();
-    void statusHandler(strata::platform::validation::Status status, QString text, bool rewriteLast);
+    void statusHandler(
+            strata::platform::validation::Status status,
+            QString text,
+            bool rewriteLast);
 
 private:
     void runNextTest();

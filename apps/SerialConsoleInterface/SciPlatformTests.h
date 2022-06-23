@@ -38,7 +38,12 @@ public:
         FirmwareFlashing
     };
 
-    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, Type type, const QString& name, QObject *parent);
+    SciPlatformBaseTest(
+            const strata::platform::PlatformPtr &platformRef,
+            Type type,
+            const QString &name,
+            QObject *parent);
+
     virtual ~SciPlatformBaseTest();
 
     virtual void run(const QVariant& testData) = 0;
@@ -46,6 +51,7 @@ public:
     Type type() const;
     void setEnabled(bool enabled);
     bool enabled() const;
+    QString warningText();
 
 signals:
     void finished();
@@ -64,6 +70,7 @@ protected:
 
     const strata::platform::PlatformPtr& platformRef_;
     const QString name_;
+    QString warningText_;
 
     typedef std::unique_ptr<strata::platform::validation::BaseValidation,
                             void(*)(strata::platform::validation::BaseValidation*)> ValidationPtr;
