@@ -501,9 +501,11 @@ void SGQrcTreeModel::addToQrc(const QModelIndex &index, bool save)
     }
 
     if (qrcItems_.contains(node->filepath().toLocalFile())) {
+        qCDebug(lcControlViewCreator) << "File already in qrc:" << node->filepath().toLocalFile();
         return;
     }
 
+    qCDebug(lcControlViewCreator) << "Adding file to qrc:" << node->filepath().toLocalFile();
     QString relativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(node->filepath()));
     QDomElement qresource = qrcDoc_.elementsByTagName("qresource").at(0).toElement();
     QDomElement newItem = qrcDoc_.createElement("file");
@@ -532,9 +534,11 @@ void SGQrcTreeModel::removeFromQrc(const QModelIndex &index, bool save)
     }
 
     if (!qrcItems_.contains(node->filepath().toLocalFile())) {
+        qCDebug(lcControlViewCreator) << "File not present in qrc:" << node->filepath().toLocalFile();
         return;
     }
 
+    qCDebug(lcControlViewCreator) << "Removing file from qrc:" << node->filepath().toLocalFile();
     QString relativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(node->filepath()));
     QDomNodeList files = qrcDoc_.elementsByTagName("file");
 
@@ -666,14 +670,17 @@ bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFile
     setData(index, newUrl, FilepathRole);
     setData(index, newFilename, FilenameRole);
 
+    bool saveQrc = false;
     if (node->isDir()) {
-        renameAllChildren(index, newPath);
+        renameAllChildren(index, newPath, saveQrc);
     } else {
         setData(index, SGUtilsCpp::fileSuffix(newFilename), FileTypeRole);
     }
 
     if (wasInQrc) {
         addToQrc(index);
+    } else if (saveQrc) {
+        startSave();
     }
 
     if (wasWatchingOldPath) {
@@ -873,6 +880,7 @@ bool SGQrcTreeModel::createQrcXmlDocument(const QByteArray &fileText)
 
 void SGQrcTreeModel::reloadQrcModel()
 {
+    qCDebug(lcControlViewCreator) << "Reloading qrc file";
     createModel();
 }
 
@@ -930,7 +938,7 @@ void SGQrcTreeModel::setDebugMenuSource(const QUrl &path)
     }
 }
 
-void SGQrcTreeModel::renameAllChildren(const QModelIndex &parentIndex, const QString &newPath)
+void SGQrcTreeModel::renameAllChildren(const QModelIndex &parentIndex, const QString &newPath, bool &saveQrc)
 {
     QDir parentDir(newPath);
     SGQrcTreeNode *parentNode = getNode(parentIndex);
@@ -951,10 +959,11 @@ void SGQrcTreeModel::renameAllChildren(const QModelIndex &parentIndex, const QSt
         setData(childIndex, newFileUrl, FilepathRole);
 
         if (wasInQrc) {
+            saveQrc = true;
             addToQrc(childIndex, false);
         }
         if (child->isDir()) {
-            renameAllChildren(childIndex, newFilePath);
+            renameAllChildren(childIndex, newFilePath, saveQrc);
         }
     }
 }
@@ -982,6 +991,7 @@ QModelIndex SGQrcTreeModel::findNodeInTree(const QModelIndex &index, const QUrl 
 
 void SGQrcTreeModel::startSave()
 {
+    qCDebug(lcControlViewCreator) << "Saving updated qrc file" << url_;
     // Create a thread to write data to disk
     stopWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
     QThread *thread = QThread::create(std::bind(&SGQrcTreeModel::save, this));
