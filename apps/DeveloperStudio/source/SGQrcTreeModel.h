@@ -341,7 +341,7 @@ private:
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
     void setDebugMenuSource(const QUrl &path);
-    void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath);
+    void renameAllChildren(const QModelIndex &parentIndex, const QString &newPath, bool &saveQrc);
     QModelIndex findNodeInTree(const QModelIndex &index, const QUrl &path);
     void save();
     void setNeedsCleaning(const bool needsCleaning);
