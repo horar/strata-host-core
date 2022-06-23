@@ -141,7 +141,10 @@ void SciPlatformTestModel::finishedHandler()
     runNextTest();
 }
 
-void SciPlatformTestModel::statusHandler(validation::Status status, QString text, bool rewriteLast)
+void SciPlatformTestModel::statusHandler(
+        validation::Status status,
+        QString text,
+        bool rewriteLast)
 {
     SciPlatformTestMessageModel::MessageType msgType;
 

@@ -19,7 +19,11 @@ namespace validation = strata::platform::validation;
 
 // *** base class ***
 
-SciPlatformBaseTest::SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, Type type, const QString& name, QObject *parent)
+SciPlatformBaseTest::SciPlatformBaseTest(
+        const strata::platform::PlatformPtr &platformRef,
+        Type type,
+        const QString &name,
+        QObject *parent)
     : QObject(parent),
       type_(type),
       enabled_(false),
@@ -81,8 +85,13 @@ void SciPlatformBaseTest::validationDeleter(validation::BaseValidation* validati
 
 // *** Identification ***
 
-IdentificationTest::IdentificationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, Type::Identification, QStringLiteral("Identification"), parent)
+IdentificationTest::IdentificationTest(
+        const strata::platform::PlatformPtr& platformRef,
+        QObject *parent)
+    : SciPlatformBaseTest(platformRef,
+                          Type::Identification,
+                          QStringLiteral("Identification"),
+                          parent)
 { }
 
 void IdentificationTest::run(const QVariant& testData)
@@ -97,8 +106,14 @@ void IdentificationTest::run(const QVariant& testData)
 
 // *** Bootloader & Application Presence ***
 
-BootloaderApplicationTest::BootloaderApplicationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, Type::BootloaderApplication, QStringLiteral("Bootloader & Application"), parent)
+BootloaderApplicationTest::BootloaderApplicationTest(
+        const strata::platform::PlatformPtr&
+        platformRef,
+        QObject *parent)
+    : SciPlatformBaseTest(platformRef,
+                          Type::BootloaderApplication,
+                          QStringLiteral("Bootloader & Application"),
+                          parent)
 { }
 
 void BootloaderApplicationTest::run(const QVariant& testData)
@@ -113,8 +128,13 @@ void BootloaderApplicationTest::run(const QVariant& testData)
 
 // *** Embedded platform registration ***
 
-EmbeddedRegistrationTest::EmbeddedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, Type::EmbeddedRegistration, QStringLiteral("Embedded platform registration"), parent)
+EmbeddedRegistrationTest::EmbeddedRegistrationTest(
+        const strata::platform::PlatformPtr& platformRef,
+        QObject *parent)
+    : SciPlatformBaseTest(platformRef,
+                          Type::EmbeddedRegistration,
+                          QStringLiteral("Embedded platform registration"),
+                          parent)
 { }
 
 void EmbeddedRegistrationTest::run(const QVariant& testData)
@@ -129,9 +149,13 @@ void EmbeddedRegistrationTest::run(const QVariant& testData)
 
 // *** Assisted platform registration ***
 
-AssistedRegistrationTest::AssistedRegistrationTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, Type::AssistedRegistration, QStringLiteral("Assisted platform registration"), parent)
-{ }
+AssistedRegistrationTest::AssistedRegistrationTest(
+        const strata::platform::PlatformPtr& platformRef,
+        QObject *parent)
+    : SciPlatformBaseTest(platformRef,
+                          Type::AssistedRegistration,
+                          QStringLiteral("Assisted platform registration"),
+                          parent)
 
 void AssistedRegistrationTest::run(const QVariant& testData)
 {
@@ -145,8 +169,13 @@ void AssistedRegistrationTest::run(const QVariant& testData)
 
 // *** Firmware flashing ***
 
-FirmwareFlashingTest::FirmwareFlashingTest(const strata::platform::PlatformPtr& platformRef, QObject *parent)
-    : SciPlatformBaseTest(platformRef, Type::FirmwareFlashing, QStringLiteral("Firmware flashing"), parent),
+FirmwareFlashingTest::FirmwareFlashingTest(
+        const strata::platform::PlatformPtr& platformRef,
+        QObject *parent)
+    : SciPlatformBaseTest(platformRef,
+                          Type::FirmwareFlashing,
+                          QStringLiteral("Firmware flashing"),
+                          parent),
       fwFlashing_(nullptr, nullptr)
 { }
 

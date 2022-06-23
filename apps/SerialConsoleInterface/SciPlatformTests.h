@@ -38,7 +38,12 @@ public:
         FirmwareFlashing
     };
 
-    SciPlatformBaseTest(const strata::platform::PlatformPtr& platformRef, Type type, const QString& name, QObject *parent);
+    SciPlatformBaseTest(
+            const strata::platform::PlatformPtr &platformRef,
+            Type type,
+            const QString &name,
+            QObject *parent);
+
     virtual ~SciPlatformBaseTest();
 
     virtual void run(const QVariant& testData) = 0;
