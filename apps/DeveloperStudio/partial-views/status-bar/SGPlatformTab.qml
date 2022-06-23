@@ -200,7 +200,7 @@ Item {
             SGText {
                 id: platformName
                 color: "white"
-                text: platformTabRoot.name
+                text: platformTabRoot.index + " " + platformTabRoot.name
                 elide: Text.ElideRight
                 font.family: Fonts.franklinGothicBook
                 anchors {
