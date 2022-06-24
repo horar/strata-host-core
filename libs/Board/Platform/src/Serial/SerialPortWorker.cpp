@@ -71,6 +71,7 @@ void SerialPortWorker::openPort()
         if (serialPort_->open(QIODevice::ReadWrite)) {
             // clear() should be called right after open()
             serialPort_->clear(QSerialPort::AllDirections);
+            clearReadBuffer();
             serialPortOpened = true;
             qCDebug(lcDeviceSerial).noquote().nospace() << "Serial port '" << portName_ << "' opened.";
             remainingRetries_ = openRetries_;  // set retries count for next attempt to open serial port
