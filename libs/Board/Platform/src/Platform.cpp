@@ -160,9 +160,6 @@ void Platform::close(const std::chrono::milliseconds waitInterval) {
         emit closed();
         platformState_ = PlatformState::Closed;
         if (waitInterval != std::chrono::milliseconds::zero()) {
-            // clear internal device buffer for receiving messages because
-            // there can stay fragments of old message when device is reconnected
-            resetReceiving();
             reconnectTimer_.start(waitInterval.count());
         }
     } else {
