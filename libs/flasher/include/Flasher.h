@@ -136,7 +136,7 @@ class Flasher : public QObject
         /*!
          * This signal is emitted when Flasher finishes.
          * \param result result of firmware operation
-         * \param errorString error description if result is Error
+         * \param errorString error description
          */
         void finished(strata::Flasher::Result result, QString errorString);
 
@@ -198,7 +198,7 @@ class Flasher : public QObject
         // run next operation in operationList_
         void runNextOperation();
         // finish flasher
-        void finish(Result result, QString errorString = QString());
+        void finish(Result result, QString errorString);
 
         // hanlers which are called when operation in operationList_ finishes
         void startBootloaderFinished(int status);

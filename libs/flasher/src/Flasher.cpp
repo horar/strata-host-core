@@ -303,7 +303,7 @@ void Flasher::runFlasherOperation()
     }
 
     if (currentOperation_ == operationList_.end()) {
-        finish(Result::Ok);
+        finish(Result::Ok, QString());
         return;
     }
 
@@ -344,12 +344,18 @@ void Flasher::handleOperationFinished(operation::Result result, int status, QStr
         }
         break;
     case operation::Result::Timeout :
-        qCCritical(lcFlasher) << platform_ << "Timeout during firmware operation.";
-        finish(Result::Timeout);
+        {
+            QString errMsg(QStringLiteral("Timeout. No valid response from platform."));
+            qCCritical(lcFlasher) << platform_ << errMsg;
+            finish(Result::Timeout, errMsg);
+        }
         break;
     case operation::Result::Cancel :
-        qCWarning(lcFlasher) << platform_ << "Firmware operation was cancelled.";
-        finish(Result::Cancelled);
+        {
+            QString errMsg(QStringLiteral("Firmware operation was cancelled."));
+            qCWarning(lcFlasher) << platform_ << errMsg;
+            finish(Result::Cancelled, errMsg);
+        }
         break;
     case operation::Result::Reject :
     case operation::Result::Failure :
@@ -456,7 +462,7 @@ void Flasher::backupFinished(int status)
 {
     switch (status) {
     case operation::NO_FIRMWARE :
-        finish(Result::NoFirmware);
+        finish(Result::NoFirmware, QStringLiteral("Platform has no firmware, nothing to backup."));
         break;
     case operation::BACKUP_STARTED :
         manageBackup(-1);  // negative value (-1) means that no chunk was backed up yet
@@ -470,14 +476,16 @@ void Flasher::backupFinished(int status)
 void Flasher::startApplicationFinished(int status)
 {
     if (status == operation::NO_FIRMWARE) {
-        qCCritical(lcFlasher) << platform_ << "Platform has no firmware.";
-        finish(Result::NoFirmware);
+        QString errMsg(QStringLiteral("Platform has no firmware."));
+        qCCritical(lcFlasher) << platform_ << errMsg;
+        finish(Result::NoFirmware, errMsg);
         return;
     }
 
     if (status == operation::FIRMWARE_UNABLE_TO_START) {
-        qCCritical(lcFlasher) << platform_ << "Platform firmware is unable to start, platform remains in bootloader mode.";
-        finish(Result::BadFirmware);
+        QString errMsg(QStringLiteral("Platform firmware is unable to start (platform remains in bootloader mode)."));
+        qCCritical(lcFlasher) << platform_ << errMsg;
+        finish(Result::BadFirmware, errMsg);
         return;
     }
 
@@ -596,8 +604,9 @@ void Flasher::manageBackup(int chunkNumber)
         chunkCount_ = backupOp->totalChunks();
         expectedBackupSize_ = backupOp->backupSize();
         if ((chunkCount_ <= 0) || (expectedBackupSize_ <= 0)) {
-            qCWarning(lcFlasher) << "Cannot backup firmware which has 0 chunks or size 0.";
-            finish(Result::NoFirmware);
+            QString errStr(QStringLiteral("Cannot backup firmware which has 0 chunks or size 0."));
+            qCWarning(lcFlasher) << errStr;
+            finish(Result::NoFirmware, errStr);
             return;
         }
     } else {
