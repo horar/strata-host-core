@@ -23,6 +23,7 @@ using command::CommandResult;
 
 BaseValidation::BaseValidation(const PlatformPtr& platform, const QString& name):
     running_(false),
+    extraNotifications_(0),
     platform_(platform),
     name_(name),
     fatalFailure_(false),
@@ -76,6 +77,7 @@ void BaseValidation::run()
     }
     currentCommand_ = commandList_.begin();
 
+    extraNotifications_ = 0;
     fatalFailure_ = false;
     incomplete_ = false;
     ignoreCmdRejected_ = false;
@@ -164,6 +166,12 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
 }
 
 void BaseValidation::handleValidationFailure(QString error, command::ValidationFailure failure) {
+    if (failure == command::ValidationFailure::InappropriateNotification) {
+        // ignore inappropriate notifications for sent command
+        ++extraNotifications_;
+        return;
+    }
+
     if (ignoreCmdRejected_ && (failure == command::ValidationFailure::CmdRejected)) {
         return;
     }
@@ -176,7 +184,7 @@ void BaseValidation::handleValidationFailure(QString error, command::ValidationF
 
     Status status = Status::Warning;
     if (failure != command::ValidationFailure::Warning) {
-        // all validation failures except 'Warning' are fatal
+        // all other validation failures here except 'Warning' are fatal
         fatalFailure_ = true;
         status = Status::Error;
     }
@@ -220,6 +228,13 @@ void BaseValidation::finishValidation(ValidationResult result)
     // platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
     running_ = false;
+
+    if (extraNotifications_ > 0) {
+        QString message = QStringLiteral("Number of received notifications that did not belong to the sent commnads: ")
+                          + QString::number(extraNotifications_);
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Info, message);
+    }
 
     if (result != ValidationResult::Failed) {
         if (fatalFailure_) {

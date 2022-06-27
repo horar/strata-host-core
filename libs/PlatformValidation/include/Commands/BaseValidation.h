@@ -82,6 +82,7 @@ private:
     void finishValidation(ValidationResult result);
 
     bool running_;
+    unsigned extraNotifications_;
 
 protected:
     PlatformPtr platform_;

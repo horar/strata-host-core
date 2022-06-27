@@ -58,6 +58,7 @@ enum class ValidationFailure : int {
     CmdRejected,
     Timeout,
     FaultyNotification,
+    InappropriateNotification,
     Fatal
 };
 Q_ENUM_NS(ValidationFailure)

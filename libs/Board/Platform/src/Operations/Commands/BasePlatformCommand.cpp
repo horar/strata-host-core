@@ -202,9 +202,9 @@ void BasePlatformCommand::handleDeviceResponse(const PlatformMessage message)
             }
         } else {
             // some platforms send periodic notifications, it is not an error if we receive it, ignore it
-            QString warning = "Received invalid notification for command '" + cmdName_ + "': '" + message.rawNoNewlineEnd() + '\'';
+            QString warning = "Received inappropriate notification for command '" + cmdName_ + "': '" + message.rawNoNewlineEnd() + '\'';
             qCDebug(lcPlatformCommand) << platform_ << warning;
-            emitValidationFailure(warning, ValidationFailure::Warning);
+            emitValidationFailure(warning, ValidationFailure::InappropriateNotification);
         }
 
         return;
