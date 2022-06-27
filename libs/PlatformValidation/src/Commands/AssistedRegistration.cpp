@@ -158,6 +158,13 @@ BaseValidation::ValidationResult AssistedRegistration::requestPlatformIdCheck(bo
     if (checkKey(payload, JSON_CONTROLLER_TYPE, KeyType::Integer, jsonPath) == false) {
         return ValidationResult::Failed;
     }
+    const int controller = payload[JSON_CONTROLLER_TYPE].GetInt();
+
+    if (controller == CONTROLLER_TYPE_EMBEDDED) {
+        QString message(QStringLiteral("Platform recognized as embedded"));
+        qCWarning(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Warning, message);
+    }
 
     if (unsetId) {
         // check "class_id", "platform_id", "controller_class_id", "controller_platform_id"
@@ -180,7 +187,6 @@ BaseValidation::ValidationResult AssistedRegistration::requestPlatformIdCheck(bo
         }
     } else {
         // check "controller_type"
-        const int controller = payload[JSON_CONTROLLER_TYPE].GetInt();
         if (controller != CONTROLLER_TYPE_ASSISTED) {
             QString message = unsupportedValue(joinKeys(jsonPath, JSON_STATUS), QString::number(controller), true);
             qCWarning(lcPlatformValidation) << platform_ << message;

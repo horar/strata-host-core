@@ -126,19 +126,19 @@ BaseValidation::ValidationResult EmbeddedRegistration::requestPlatformIdCheck(bo
     }
     const int controller = payload[JSON_CONTROLLER_TYPE].GetInt();
 
-    QString assistedWarning(QStringLiteral("This can also happen if assisted controller is connected"));
+    if (controller == CONTROLLER_TYPE_ASSISTED) {
+        QString message(QStringLiteral("Platform recognized as assisted"));
+        qCWarning(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Warning, message);
+    }
 
     if (checkKey(payload, JSON_PLATFORM_ID, KeyType::String, jsonPath) == false) {
-        qCInfo(lcPlatformValidation) << platform_ << assistedWarning;
-        emit validationStatus(Status::Info, assistedWarning);
         return ValidationResult::Failed;
     }
     const rapidjson::Value& platformId = payload[JSON_PLATFORM_ID];
     const QLatin1String platformIdStr(platformId.GetString(), platformId.GetStringLength());
 
     if (checkKey(payload, JSON_CLASS_ID, KeyType::String, jsonPath) == false) {
-        qCInfo(lcPlatformValidation) << platform_ << assistedWarning;
-        emit validationStatus(Status::Info, assistedWarning);
         return ValidationResult::Failed;
     }
     const rapidjson::Value& classId = payload[JSON_CLASS_ID];
