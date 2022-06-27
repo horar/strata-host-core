@@ -169,8 +169,8 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
 }
 
 void BaseValidation::handleValidationFailure(QString error, command::ValidationFailure failure) {
-    if (failure == command::ValidationFailure::InappropriateNotification) {
-        // ignore inappropriate notifications for sent command
+    if (failure == command::ValidationFailure::UnexpectedNotification) {
+        // ignore unexpected notifications for sent command
         ++extraNotifications_;
         return;
     }
