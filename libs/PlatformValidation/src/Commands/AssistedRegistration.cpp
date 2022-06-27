@@ -303,6 +303,9 @@ BaseValidation::ValidationResult AssistedRegistration::setPlatformIdCheck(bool e
         }
         if (badValue) {
             QString message = unsupportedValue(joinKeys(jsonPath, JSON_STATUS), statusStr, true);
+            if (expectFailure) {
+                message += QStringLiteral(" - repeated registration should fail");
+            }
             qCWarning(lcPlatformValidation) << platform_ << message;
             emit validationStatus(Status::Error, message);
             return ValidationResult::Failed;
