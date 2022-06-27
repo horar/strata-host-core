@@ -20,7 +20,7 @@ namespace strata::platform::validation {
 BootloaderApplication::BootloaderApplication(const PlatformPtr& platform, const QString& name)
     : BaseValidation(platform, name)
 {
-    commandList_.reserve(6);
+    commandList_.reserve(7);
 
     // There may be delay between switching bootloader and application, so wait for a while
     // and also set retries count for "get_firmware_info" (to be sure).
@@ -58,6 +58,13 @@ BootloaderApplication::BootloaderApplication(const PlatformPtr& platform, const 
                               std::bind(&BootloaderApplication::beforeGetFwInfo, this),
                               std::bind(&BootloaderApplication::afterGetFwInfo, this, std::placeholders::_1, std::placeholders::_2),
                               std::bind(&BootloaderApplication::getFirmwareInfoCheck, this, false));
+
+    // When application (firmware) is booted, it starts to send periodic notifications after "request_platform_id" is received.
+    // This is reason why we send this command here.
+    commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(platform_),
+                              nullptr,
+                              nullptr,
+                              nullptr);
 }
 
 void BootloaderApplication::beforeStartCmd()

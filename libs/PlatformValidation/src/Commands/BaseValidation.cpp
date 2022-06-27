@@ -230,7 +230,7 @@ void BaseValidation::finishValidation(ValidationResult result)
     running_ = false;
 
     if (extraNotifications_ > 0) {
-        QString message = QStringLiteral("Number of received notifications that did not belong to the sent commnads: ")
+        QString message = QStringLiteral("Count of received notifications that did not belong to the sent commnads: ")
                           + QString::number(extraNotifications_);
         qCInfo(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Info, message);
