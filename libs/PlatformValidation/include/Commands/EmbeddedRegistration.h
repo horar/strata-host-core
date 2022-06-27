@@ -39,6 +39,8 @@ private:
     void afterSetIdFailure(command::CommandResult& result, int& status);
     void afterStartApplication(command::CommandResult& result, int& status);
 
+    void skipNextCommand();
+
     void logAndEmitUnexpectedValue(const QVector<const char*>& path,
                                    const char* key,
                                    const QString& current,

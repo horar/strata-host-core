@@ -113,6 +113,9 @@ void BaseValidation::handleCommandFinished(CommandResult result, int status)
     if (currentCommand_->afterAction) {
         currentCommand_->afterAction(result, status);  // this can modify result and status
     }
+    // Note: If there will be skipped next command (incremented 'currentCommand_' iterator) in 'afterAction',
+    // check for 'currentCommand_->notificationReceived' will be false because 'currentCommand_' iterator
+    // now points to command which was not sent and none notification was received for it.
 
     switch (result) {
     // OK

@@ -332,7 +332,7 @@ void AssistedRegistration::afterSetIdFailure(command::CommandResult& result, int
             message += QStringLiteral(" - platform not connected");
         }
         qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Info, message);
+        emit validationStatus(Status::Success, message);
     }
 }
 

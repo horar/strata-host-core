@@ -17,6 +17,7 @@
 #include <QLatin1String>
 
 #include <array>
+#include <iterator>
 
 namespace strata::platform::validation {
 
@@ -74,6 +75,8 @@ EmbeddedRegistration::EmbeddedRegistration(const PlatformPtr& platform, const QS
                               nullptr,
                               std::bind(&EmbeddedRegistration::afterStartApplication, this, std::placeholders::_1, std::placeholders::_2),
                               nullptr);
+
+    // If application cannot start, next 3 commands are skipped.
 
     commandList_.emplace_back(std::make_unique<command::CmdWait>(platform_, std::chrono::milliseconds(500), QStringLiteral("Waiting for application to start")),
                               nullptr,
@@ -271,7 +274,7 @@ void EmbeddedRegistration::afterSetIdFailure(command::CommandResult& result, int
             message += QStringLiteral(" - command not supported");
         }
         qCInfo(lcPlatformValidation) << platform_ << message;
-        emit validationStatus(Status::Info, message);
+        emit validationStatus(Status::Success, message);
     }
 }
 
@@ -282,6 +285,18 @@ void EmbeddedRegistration::afterStartApplication(command::CommandResult& result,
         QString message(QStringLiteral("No application present at platform"));
         qCInfo(lcPlatformValidation) << platform_ << message;
         emit validationStatus(Status::Warning, message);
+        // skip commands which should test application (they are added in constructor)
+        for (int i = 0; i < 3; ++i) {
+            skipNextCommand();
+        }
+    }
+}
+
+void EmbeddedRegistration::skipNextCommand()
+{
+    // if current command is not last, skip next command
+    if (std::distance(currentCommand_, commandList_.end()) > 1) {
+        ++currentCommand_;
     }
 }
 
