@@ -255,10 +255,14 @@ BaseValidation::ValidationResult EmbeddedRegistration::setPlatformIdCheck(bool e
             QString message = unsupportedValue(joinKeys(jsonPath, JSON_STATUS), statusStr, true);
             if (expectFailure) {
                 message += QStringLiteral(" - repeated registration should fail");
+                qCWarning(lcPlatformValidation) << platform_ << message;
+                emit validationStatus(Status::Warning, message);
+                incomplete_ = true;
+            } else {
+                qCWarning(lcPlatformValidation) << platform_ << message;
+                emit validationStatus(Status::Error, message);
+                return ValidationResult::Failed;
             }
-            qCWarning(lcPlatformValidation) << platform_ << message;
-            emit validationStatus(Status::Error, message);
-            return ValidationResult::Failed;
         }
     }
 
