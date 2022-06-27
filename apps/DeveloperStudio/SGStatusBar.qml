@@ -713,7 +713,7 @@ Rectangle {
 
     Loader {
         id: feedLoader
-        source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
+        source: "qrc:/partial-views/FeedbackDialog.qml"
         active: false
     }
 
@@ -785,7 +785,7 @@ Rectangle {
     }
 
     function showAboutWindow() {
-        SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+        SGDialogJS.createDialog(ApplicationWindow.window, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
     function showConnectBleDeviceDialog() {

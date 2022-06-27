@@ -16,10 +16,9 @@ import tech.strata.fonts 1.0
 
 Rectangle {
     id: alertToast
-    Layout.alignment: Qt.AlignHCenter
-    Layout.preferredHeight: 0
+    implicitHeight: 0
     color: Theme.palette.error
-    visible: Layout.preferredHeight > 0
+    visible: implicitHeight > 0
     clip: true
     Accessible.name: text
     Accessible.role: Accessible.AlertMessage
@@ -87,7 +86,7 @@ Rectangle {
     NumberAnimation {
         id: alertAnimation
         target: alertToast
-        property: "Layout.preferredHeight"
+        property: "implicitHeight"
         to: alertIcon.height + 10
         duration: 100
 
@@ -101,7 +100,7 @@ Rectangle {
     NumberAnimation {
         id: hideAlertAnimation
         target: alertToast
-        property: "Layout.preferredHeight"
+        property: "implicitHeight"
         to: 0
         duration: 100
         onStarted: alertToast.text = ""
@@ -117,6 +116,6 @@ Rectangle {
 
     function hideInstantly () {
         alertToast.text = ""
-        alertToast.Layout.preferredHeight = 0
+        alertToast.implicitHeight = 0
     }
 }

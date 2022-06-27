@@ -17,9 +17,8 @@ class CoreInterface : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(CoreInterface)
-    Q_PROPERTY(QString platformList_ READ platformList NOTIFY platformListChanged)
-    Q_PROPERTY(QString connectedPlatformList_ READ connectedPlatformList NOTIFY
-                   connectedPlatformListChanged)
+    Q_PROPERTY(QString platformList READ platformList NOTIFY platformListChanged)
+    Q_PROPERTY(QString connectedPlatformList READ connectedPlatformList NOTIFY connectedPlatformListChanged)
 
 public:
     /**
@@ -73,16 +72,14 @@ public:
 
 signals:
     /**
-     * Signal emitted when platformList_ is updated.
-     * @param [in] platformList QString of the all platform
+     * Signal emitted when platformList is updated.
      */
-    void platformListChanged(const QString &platformList);
+    void platformListChanged();
 
     /**
-     * Signal emitted when connectedPlatformList_ is updated.
-     * @param [in] connectedPlatformList QString of the all connected platforms
+     * Signal emitted when connectedPlatformList is updated.
      */
-    bool connectedPlatformListChanged(const QString &connectedPlatformList);
+    bool connectedPlatformListChanged();
 
     /**
      * Signal emitted when connected_platforms notification is received (regardless if connectedPlatformList_ did changed).
@@ -192,6 +189,6 @@ private:
     void processDisconnectDeviceNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};
-    QString platformList_{"{ \"list\":[]}"};
-    QString connectedPlatformList_{"{ \"list\":[]}"};
+    QString platformList_{"[]"};
+    QString connectedPlatformList_{"[]"};
 };

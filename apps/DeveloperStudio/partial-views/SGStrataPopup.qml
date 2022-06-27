@@ -12,6 +12,7 @@ import QtQml.Models 2.12
 import QtGraphicalEffects 1.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Dialog {
     id: dialog
@@ -51,7 +52,7 @@ Dialog {
     header: Rectangle {
         id: headerContainer
         implicitHeight: title.paintedHeight * 2
-        color: "#999"
+        color: Theme.palette.onsemiDark
 
         RowLayout {
             anchors.fill: parent

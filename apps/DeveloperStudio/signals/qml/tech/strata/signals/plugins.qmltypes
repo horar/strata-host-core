@@ -56,10 +56,6 @@ Module {
             Parameter { name: "result"; type: "string" }
             Parameter { name: "user"; type: "QVariant" }
         }
-        Signal {
-            name: "feedbackResult"
-            Parameter { name: "result"; type: "string" }
-        }
         Signal { name: "loadCVC" }
         Signal { name: "privacyPolicyUpdate" }
     }

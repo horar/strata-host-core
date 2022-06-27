@@ -256,6 +256,7 @@ ColumnLayout {
 
     SGNotificationToast {
         id: alertToast
+        Layout.alignment: Qt.AlignHCenter
         Layout.fillWidth: true
         interval: 0
         color: Theme.palette.error

@@ -10,6 +10,7 @@
 #include "LoggingQtCategories.h"
 
 #include <QJsonDocument>
+#include <QJsonArray>
 
 CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObject *parent)
     : QObject(parent), strataClient_(strataClient)
@@ -110,19 +111,21 @@ void CoreInterface::unregisterClient()
 
 void CoreInterface::processAllPlatformsNotification(const QJsonObject &payload)
 {
-    QString newPlatformList = QJsonDocument(payload).toJson(QJsonDocument::Compact);
+    QString newPlatformList = QJsonDocument(payload.value("list").toArray()).toJson(QJsonDocument::Compact);
     if (platformList_ != newPlatformList) {
         platformList_ = newPlatformList;
     }
-    emit platformListChanged(platformList_);
+    emit platformListChanged();
 }
 
 void CoreInterface::processConnectedPlatformsNotification(const QJsonObject &payload)
 {
-    QString newConnectedPlatformList = QJsonDocument(payload).toJson(QJsonDocument::Compact);
+    qDebug() << payload;
+
+    QString newConnectedPlatformList = QJsonDocument(payload.value("list").toArray()).toJson(QJsonDocument::Compact);
     if (connectedPlatformList_ != newConnectedPlatformList) {
         connectedPlatformList_ = newConnectedPlatformList;
-        emit connectedPlatformListChanged(connectedPlatformList_);
+        emit connectedPlatformListChanged();
     }
 
     emit connectedPlatformListMessage(payload);

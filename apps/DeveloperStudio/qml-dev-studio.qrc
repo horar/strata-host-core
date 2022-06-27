@@ -4,7 +4,6 @@
         <file>SGStatusBar.qml</file>
         <file>SGPlatformSelector.qml</file>
         <file>js/core_platform_interface.js</file>
-        <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
         <file>js/navigation_control.js</file>
         <file>js/platform_selection.js</file>
@@ -24,12 +23,13 @@
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
+        <file>partial-views/StrataButton.qml</file>
         <file>partial-views/SGStrataPopup.qml</file>
+        <file>partial-views/FeedbackDialog.qml</file>
         <file>partial-views/login/SGRegistrationControls.qml</file>
         <file>partial-views/login/ValidationField.qml</file>
         <file>partial-views/login/SGForgotPassword.qml</file>
         <file>partial-views/login/LoginComboBox.qml</file>
-        <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
         <file>partial-views/status-bar/SGMenuItem.qml</file>
         <file>partial-views/status-bar/SGSubmitInfoBox.qml</file>
         <file>partial-views/status-bar/SGToolButton.qml</file>

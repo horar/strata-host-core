@@ -20,8 +20,11 @@ QtObject {
     readonly property color onsemiBrown:    "#A84626"
     readonly property color onsemiBlue:     "#3880F6"
     readonly property color onsemiDarkBlue: "#276990"
+    readonly property color onsemiSecondaryDarkBlue: "#2C4C54"
     readonly property color onsemiCyan:     "#009691"
     readonly property color onsemiLightBlue:"#34A6CA"
+    readonly property color onsemiSecondaryLightBlue: "#688293"
+    readonly property color onsemiGray: "#B7BCC1"
 
     readonly property color white:          "#ffffff"
     readonly property color black:          "#000000"
