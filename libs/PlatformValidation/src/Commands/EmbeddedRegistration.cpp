@@ -161,8 +161,8 @@ BaseValidation::ValidationResult EmbeddedRegistration::requestPlatformIdCheck(bo
             if (keys[i].value.isEmpty() == false) {
                 QString message = keys[i].key + QStringLiteral(" is already set");
                 qCWarning(lcPlatformValidation) << platform_ << message;
-                emit validationStatus(Status::Error, message);
-                return ValidationResult::Failed;
+                emit validationStatus(Status::Warning, message);
+                return ValidationResult::Incomplete;
             }
         }
     } else {

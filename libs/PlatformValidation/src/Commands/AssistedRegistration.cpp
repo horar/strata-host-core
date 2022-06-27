@@ -161,7 +161,7 @@ BaseValidation::ValidationResult AssistedRegistration::requestPlatformIdCheck(bo
 
     if (unsetId) {
         // check "class_id", "platform_id", "controller_class_id", "controller_platform_id"
-        const std::array<const char*, 4> ids = {JSON_CLASS_ID, JSON_PLATFORM_ID, JSON_CNTRL_CLASS_ID, JSON_CNTRL_PLATFORM_ID};
+        const std::array<const char*, 4> ids = {JSON_PLATFORM_ID, JSON_CLASS_ID, JSON_CNTRL_PLATFORM_ID, JSON_CNTRL_CLASS_ID};
         for (size_t i = 0; i < ids.size(); ++i) {
             const char* key = ids[i];
             if (payload.HasMember(key)) {
@@ -173,8 +173,8 @@ BaseValidation::ValidationResult AssistedRegistration::requestPlatformIdCheck(bo
                 if (idStr.isEmpty() == false) {
                     QString message = key + QStringLiteral(" is already set");
                     qCWarning(lcPlatformValidation) << platform_ << message;
-                    emit validationStatus(Status::Error, message);
-                    return ValidationResult::Failed;
+                    emit validationStatus(Status::Warning, message);
+                    return ValidationResult::Incomplete;
                 }
             }
         }
