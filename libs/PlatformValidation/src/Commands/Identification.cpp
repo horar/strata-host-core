@@ -53,11 +53,15 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
         if (checkKey(payload, JSON_API_VERSION, KeyType::String, jsonPath) == false) {
             return ValidationResult::Failed;
         }
+
+        const rapidjson::Value& api = payload[JSON_API_VERSION];
+        const QLatin1String apiStr(api.GetString(), api.GetStringLength());
+        QString message = QStringLiteral("Detected API Version: '") + apiStr + '\'';
         if (platform_->apiVersion() != Platform::ApiVersion::v2_0) {
-            QString message = QStringLiteral("Unknown API version: '") + payload[JSON_API_VERSION].GetString() + '\'';
-            qCInfo(lcPlatformValidation) << platform_ << message;
-            emit validationStatus(Status::Info, message);
+            message += QStringLiteral(" (unknown API vesion)");
         }
+        qCInfo(lcPlatformValidation) << platform_ << message;
+        emit validationStatus(Status::Info, message);
     } else {  // API v1
         QString message = missingKey(joinKeys(jsonPath, JSON_API_VERSION)) + QStringLiteral(" - legacy API version 1");
         qCWarning(lcPlatformValidation) << platform_ << message;
@@ -71,7 +75,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
             return ValidationResult::Failed;
         }
         const rapidjson::Value& active = payload[JSON_ACTIVE];
-        QLatin1String activeStr(active.GetString(), active.GetStringLength());
+        const QLatin1String activeStr(active.GetString(), active.GetStringLength());
         if (activeStr == CSTR_BOOTLOADER) {
             inBootloader = true;
         } else if (activeStr != CSTR_APPLICATION) {
@@ -97,7 +101,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
                 return ValidationResult::Failed;
             }
             const rapidjson::Value& value = bootloader[key];
-            QLatin1String valueStr(value.GetString(), value.GetStringLength());
+            const QLatin1String valueStr(value.GetString(), value.GetStringLength());
             if (valueStr.isEmpty()) {
                 QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr, false);
                 qCWarning(lcPlatformValidation) << platform_ << message;
@@ -124,7 +128,7 @@ BaseValidation::ValidationResult Identification::getFirmwareInfoCheck()
             }
             if (inBootloader == false) {  // value can be empty if only bootloader is flashed on platform
                 const rapidjson::Value& value = application[key];
-                QLatin1String valueStr(value.GetString(), value.GetStringLength());
+                const QLatin1String valueStr(value.GetString(), value.GetStringLength());
                 if (valueStr.isEmpty()) {
                     QString message = unsupportedValue(joinKeys(jsonPath, key), valueStr, false);
                     qCWarning(lcPlatformValidation) << platform_ << message;
