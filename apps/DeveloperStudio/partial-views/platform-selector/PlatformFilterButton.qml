@@ -9,79 +9,65 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-
 import tech.strata.theme 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
-import "qrc:/js/platform_filters.js" as PlatformFilters
-
 Button {
-    id: filterButtonRoot
-    implicitHeight: textMetrics.boundingRect.height + (textColumn.anchors.margins * 2)
-    implicitWidth: Math.min((textColumn.anchors.margins * 2) + textMetrics.wideWidth, flow.width)
+    id: control
 
-    onYChanged: {
-        if (parent === flow) {
-            model.row = Math.ceil(y/(segmentCategoryList.delegateHeight + flow.spacing))
-        }
+    horizontalPadding: 6
+    verticalPadding: 5
+    hoverEnabled: true
+
+    property string type
+    property int maxWidth
+
+    contentItem: SGText {
+        id: textItem
+        fontSizeMultiplier: 0.9
+        horizontalAlignment: Text.AlignHCenter
+        text: textMetrics.elidedText
+        color: control.hovered ? Theme.palette.white : Theme.palette.onsemiDark
+        elide: Text.ElideRight
     }
 
     background: Rectangle {
+        implicitHeight: 10
+        implicitWidth: 20
         radius: 20
         border.width: 1
         border.color: Theme.palette.onsemiDark
-        color: mouse.containsMouse ? Theme.palette.onsemiDark : "transparent"
-
-        MouseArea {
-            id: mouse
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-
-            onClicked: {
-                filterButtonRoot.clicked()
-            }
-
-            ToolTip {
-                delay: 1000
-                visible: mouse.containsMouse
-                text: {
-                    if (model.type === "category") {
-                        return "Filter platforms in this category"
-                    } else {
-                        return "Filter platforms in this Segment"
-                    }
-                }
-            }
-        }
+        color: control.hovered ? Theme.palette.onsemiDark : "transparent"
     }
 
-    onClicked: {
-        PlatformFilters.setFilterActive(model.filterName, true)
-    }
-
-    ColumnLayout {
-        id: textColumn
-        anchors.fill: filterButtonRoot
-        anchors.margins: 5
-
-        SGText {
-            id: mainText
-            text: model.text
-            fontSizeMultiplier: 0.9
-            color: !mouse.containsMouse ? Theme.palette.onsemiDark : Theme.palette.white
-            elide: Text.ElideRight
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+    ToolTip {
+        delay: 1000
+        visible: control.hovered
+        text: {
+            if (control.type === "category") {
+                return "Filter platforms in this category"
+            } else {
+                return "Filter platforms in this Segment"
+            }
         }
     }
 
     TextMetrics {
         id: textMetrics
-        text: model.text
-        font.pixelSize: mainText.font.pixelSize
+        text: control.text
+        font: textItem.font
+        elide: Qt.ElideRight
+        elideWidth: control.maxWidth - control.leftPadding - control.rightPadding
+    }
 
-        property real wideWidth: width + 5
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        onPressed: {
+            mouse.accepted = false
+        }
+        hoverEnabled: true
+        cursorShape: control.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
     }
 }

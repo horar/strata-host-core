@@ -13,6 +13,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Shapes 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -36,6 +37,13 @@ Item {
         opacity: 1
         height: parent.height-1
         visible: model.connected
+    }
+
+    PlatformFilterButton {
+        id: dummyFilterButton
+        visible: false
+        type: "dummy"
+        text: "dummy"
     }
 
     MouseArea {
@@ -203,107 +211,76 @@ Item {
             Layout.preferredWidth: 200
             Layout.minimumWidth: 300
 
-            ColumnLayout {
+            Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Flickable {
-                    id: segmentCategoryScrollView
+                    id: flickable
+                    height: maxRows * dummyFilterButton.height + (maxRows - 1) * flow.spacing
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        right: parent.right
+                    }
+
                     clip: true
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    contentHeight: segmentCategoryList.height
+                    contentWidth: flow.width
+                    contentHeight: flow.childrenRect.height
                     interactive: segmentCategoryScrollBar.visible
                     flickableDirection: Flickable.VerticalFlick
                     boundsBehavior: Flickable.StopAtBounds
+
+                    property int maxRows: 4
 
                     ScrollBar.vertical: ScrollBar {
                         id: segmentCategoryScrollBar
                         minimumSize: 0.1
                         policy: ScrollBar.AlwaysOn
-                        visible: segmentCategoryScrollView.height < segmentCategoryScrollView.contentHeight
+                        visible: model.show_overflow_buttons && flickable.height < flickable.contentHeight
                     }
 
-                    ColumnLayout {
-                        id: segmentCategoryList
-                        width: segmentCategoryScrollView.width -
-                               (segmentCategoryScrollBar.visible ? segmentCategoryScrollBar.width : 0)
+                    Flow {
+                        id: flow
+                        width: flickable.width
+                        height: flickable.height
 
-                        property real delegateHeight: 25
+                        spacing: 3
 
-                        Flow {
-                            id: flow
-                            Layout.fillWidth: true
-                            spacing: 2
+                        Repeater {
+                            id: segmentCategoryRepeater
+                            model: segmentsCategories
 
-                            property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
-                            property int maxRows: 3
+                            delegate: PlatformFilterButton {
+                                type: model.type
+                                text: model.text
+                                maxWidth: flickable.width
 
-                            onRowsChanged: {
-                                if (rows < maxRows) {
-                                    reset()
-                                }
-                            }
-
-                            function reset () {
-                                for (let i = 0; i < filters.count; i++) {
-                                    filters.get(i).row = -1
-                                }
-                            }
-
-                            Repeater {
-                                id: segmentCategoryRepeater
-                                model: visibleButtons
-                                delegate: iconDelegate
-                            }
-                        }
-
-                        SGSortFilterProxyModel {
-                            id: segmentsCategories
-                            sourceModel: filters
-                            sortEnabled: true
-                            sortRole: "type"
-                        }
-
-                        SGSortFilterProxyModel {
-                            id: visibleButtons
-                            sourceModel: segmentsCategories
-                            invokeCustomFilter: true
-
-                            function filterAcceptsRow (index) {
-                                if (model.show_overflow_buttons === false) {
-                                    var listing = sourceModel.get(index)
-                                    return listing.row < flow.maxRows
-                                } else {
-                                    return true
+                                onClicked: {
+                                    PlatformFilters.setFilterActive(model.filterName, true)
                                 }
                             }
                         }
+                    }
 
-                        SGSortFilterProxyModel {
-                            id: remainingButtons
-                            sourceModel: segmentsCategories
-                            invokeCustomFilter: true
-
-                            function filterAcceptsRow (index) {
-                                var listing = sourceModel.get(index)
-                                return listing.row >= flow.maxRows
-                            }
-                        }
-
-                        Component {
-                            id: iconDelegate
-
-                            PlatformFilterButton { }
-                        }
+                    SGSortFilterProxyModel {
+                        id: segmentsCategories
+                        sourceModel: filters
+                        sortEnabled: true
+                        sortRole: "type"
                     }
                 }
 
                 SGText {
                     id: remainingText
-                    visible: remainingButtons.count > 0
-                    text: model.show_overflow_buttons ? "Show less..." : "Show " + remainingButtons.count + " more..."
-                    Layout.alignment: Qt.AlignHCenter
+                    anchors {
+                        top: flickable.bottom
+                        topMargin: 1
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    visible: flickable.height < flickable.contentHeight
+                    text: model.show_overflow_buttons ? "Show less..." : "Show more..."
                     font.underline: moreFiltersMouse.containsMouse
 
                     MouseArea {
@@ -314,7 +291,7 @@ Item {
 
                         onClicked: {
                             model.show_overflow_buttons = !model.show_overflow_buttons
-                            visibleButtons.invalidate()
+                            flickable.contentY = 0
                             root.updateIndex()
                         }
                     }
