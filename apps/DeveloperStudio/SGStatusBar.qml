@@ -581,12 +581,62 @@ Rectangle {
                 }
 
                 SGMenuItem {
+                    text: qsTr("Profile")
+                    onClicked: {
+                        profileMenu.close()
+                        profileLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
+                SGMenuItem {
                     text: qsTr("Feedback")
                     onClicked: {
                         profileMenu.close()
                         feedLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
+                Rectangle {
+                    color: "white"
+                    opacity: .4
+                    height: 1
+                    width: profileMenu.width - 20
+                    visible: cvcButton.state === "enabled"
+                    anchors {
+                        horizontalCenter: profileColumn.horizontalCenter
+                    }
+                }
+
+                SGMenuItem {
+                    text: qsTr("Control View Creator")
+                    visible: cvcButton.state === "enabled"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        Signals.loadCVC()
+                        profileMenu.close()
+                    }
+                }
+
+                Rectangle {
+                    color: "white"
+                    opacity: .4
+                    height: 1
+                    width: profileMenu.width - 20
+                    anchors {
+                        horizontalCenter: profileColumn.horizontalCenter
+                    }
                 }
 
                 SGMenuItem {
@@ -597,15 +647,6 @@ Rectangle {
                         profileMenu.close()
                         mainWindow.notificationsInbox.open()
                     }
-                }
-
-                SGMenuItem {
-                    text: qsTr("Profile")
-                    onClicked: {
-                        profileMenu.close()
-                        profileLoader.active = true
-                    }
-                    width: profileMenu.width
                 }
 
                 SGMenuItem {
@@ -628,63 +669,44 @@ Rectangle {
                     }
                 }
 
-                SGMenuItem {
-                    text: qsTr("Settings")
-                    onClicked: {
-                        profileMenu.close()
-                        settingsLoader.active = true
-                    }
-                    width: profileMenu.width
-                }
-
-                SGMenuItem {
-                    text: qsTr("Control View Creator")
-                    visible: cvcButton.state === "enabled"
-                    width: profileMenu.width
-
-                    onClicked: {
-                        Signals.loadCVC()
-                        profileMenu.close()
-                    }
-                }
-            RowLayout {
-                SGMenuItem {
-                    id: fullScreenLabel
-                    hoverEnabled: false
-                    text: qsTr("Full Screen")
-                    onClicked: {
-                        fullScreenSwitch.toggled()
-                    }
-                }
-
-                SGSwitch {
-                    id: fullScreenSwitch
-                    Layout.preferredWidth: 26
-                    Layout.preferredHeight: 16
-                    checked: mainWindow.visibility === Window.FullScreen
-                    grooveFillColor: Theme.palette.highlight
-
-                    onToggled: {
-                        if (mainWindow.visibility === Window.FullScreen) {
-                            mainWindow.showNormal()
-                        } else {
-                            mainWindow.showFullScreen()
-
-                            Notifications.createNotification(
-                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
-                            Notifications.Info,
-                            "current",
-                            null,
-                            {
-                                "singleton": true,
-                                "timeout": 4000
-                            }
-                            )
+                RowLayout {
+                    SGMenuItem {
+                        id: fullScreenLabel
+                        hoverEnabled: false
+                        text: qsTr("Full Screen")
+                        onClicked: {
+                            fullScreenSwitch.toggled()
                         }
-                        profileMenu.close()
+                    }
+
+                    SGSwitch {
+                        id: fullScreenSwitch
+                        Layout.preferredWidth: 26
+                        Layout.preferredHeight: 16
+                        checked: mainWindow.visibility === Window.FullScreen
+                        grooveFillColor: Theme.palette.highlight
+
+                        onToggled: {
+                            if (mainWindow.visibility === Window.FullScreen) {
+                                mainWindow.showNormal()
+                            } else {
+                                mainWindow.showFullScreen()
+
+                                Notifications.createNotification(
+                                qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
+                                Notifications.Info,
+                                "current",
+                                null,
+                                {
+                                    "singleton": true,
+                                    "timeout": 4000
+                                }
+                                )
+                            }
+                            profileMenu.close()
+                        }
                     }
                 }
-            }
 
                 Rectangle {
                     id: menuDivider
