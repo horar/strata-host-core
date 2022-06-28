@@ -245,7 +245,7 @@ namespace strata::platform {
          * Emitted when there is available new message from device.
          * @param msg message from device
          */
-        void messageReceived(PlatformMessage msg);
+        void messageReceived(strata::platform::PlatformMessage msg);
 
         /**
          * Emitted when message was written to device or some problem occured and message cannot be written.

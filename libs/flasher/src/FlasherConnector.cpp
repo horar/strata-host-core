@@ -269,7 +269,6 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
     // This is reason why custom deleter which calls deleteLater() is needed.
     flasher_.reset();
 
-    QString errorMessage;
     State state = State::Failed;
 
     switch (flasherResult) {
@@ -282,25 +281,17 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
         } else {
             state = State::Failed;
         }
-        errorMessage = QStringLiteral("Platform has no valid firmware.");
         break;
     case Flasher::Result::BadFirmware :
         state = State::BadFirmware;
-        errorMessage = QStringLiteral("Platform firmware is unable to start.");
         break;
     case Flasher::Result::Error :
     case Flasher::Result::Disconnect :
         state = State::Failed;
-        if (errorString.isEmpty()) {
-            errorMessage = QStringLiteral("Unknown error");
-        } else {
-            errorMessage = errorString;
-            qCWarning(lcFlasherConnector).noquote() << "Flasher error:" << errorMessage;
-        }
+        qCWarning(lcFlasherConnector).noquote() << "Flasher error:" << errorString;
         break;
     case Flasher::Result::Timeout :
         state = State::Failed;
-        errorMessage = QStringLiteral("Timeout. No response from platform.");
         break;
     case Flasher::Result::Cancelled :
         state = State::Cancelled;
@@ -309,7 +300,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult, QStr
     }
 
     if (state != State::Finished) {
-        emit operationStateChanged(operation_, state, errorMessage);
+        emit operationStateChanged(operation_, state, errorString);
     }
 
     switch (action_) {

@@ -20,5 +20,6 @@
         <file>ConnectBleDeviceDialog.qml</file>
         <file>SaveFirmwareView.qml</file>
         <file>MessageQueueView.qml</file>
+        <file>ValidationView.qml</file>
     </qresource>
 </RCC>

@@ -382,6 +382,14 @@ FocusScope {
                         onClicked: showSaveFirmwareView()
                     }
 
+                    SGWidgets.SGIconButton {
+                        text: "Validator"
+                        hintText: qsTr("Validate platform interface")
+                        icon.source: "qrc:/images/list-check.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showValidationView()
+                    }
+
                     VerticalDivider {
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -970,6 +978,13 @@ FocusScope {
         }
     }
 
+    Component {
+        id: validationComponent
+
+        ValidationView {
+        }
+    }
+
     function showProgramView() {
         stackView.push(programDeviceComponent)
     }
@@ -992,6 +1007,10 @@ FocusScope {
 
     function showMessageQueueView() {
         stackView.push(messageQueueComponent)
+    }
+
+    function showValidationView() {
+        stackView.push(validationComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {

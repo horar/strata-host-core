@@ -22,5 +22,6 @@ constexpr int FIRMWARE_UNABLE_TO_START(-103);
 constexpr int SET_PLATFORM_ID_FAILED(-200);
 constexpr int PLATFORM_ID_ALREADY_SET(-201);
 constexpr int BOARD_NOT_CONNECTED_TO_CONTROLLER(-202);
+constexpr int COMMAND_NOT_SUPPORTED(-300);
 
 }

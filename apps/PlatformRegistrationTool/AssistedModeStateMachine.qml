@@ -524,6 +524,8 @@ BaseStateMachine {
                         stateMachine.internalSubtext = "Controller has already been registered"
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
+                    } else if (statusString == "not_supported") {
+                        stateMachine.internalSubtext = "Registration not supported by controller"
                     } else if (statusString) {
                         stateMachine.internalSubtext = "Error: " + statusString
                     }
@@ -688,6 +690,8 @@ BaseStateMachine {
                         stateMachine.internalSubtext = "Assisted device has already been registered"
                     } else if (statusString == "device_not_connected") {
                         stateMachine.internalSubtext = "Assisted device not connected"
+                    } else if (statusString == "not_supported") {
+                        stateMachine.internalSubtext = "Registration not supported by controller"
                     } else if (statusString) {
                         stateMachine.internalSubtext = "Error: " + statusString
                     }

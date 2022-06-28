@@ -315,7 +315,7 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
             "properties": {
                 "status": {
                     "type": "string",
-                    "enum": ["ok", "failed", "already_initialized"]
+                    "enum": ["ok", "failed", "already_initialized", "not_supported"]
                 }
             },
             "required": [ "status" ]
@@ -332,7 +332,7 @@ const rapidjson::SchemaDocument CommandValidator::setAssistedPlatformId_nps_(
             "properties": {
                 "status": {
                     "type": "string",
-                    "enum": ["ok", "failed", "already_initialized", "board_not_connected"]
+                    "enum": ["ok", "failed", "already_initialized", "board_not_connected", "not_supported"]
                 }
             },
             "required": [ "status" ]
@@ -374,6 +374,8 @@ const std::map<const CommandValidator::JsonType, const char*> CommandValidator::
     {JsonType::flashBootloaderNotif, "flash_bootloader"},
 };
 
+QString CommandValidator::lastValidationError_;
+
 rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema, bool *isOk) {
     bool ok = true;
     rapidjson::Document sd;
@@ -393,26 +395,33 @@ rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema
 bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json, bool quiet) {
     rapidjson::SchemaValidator validator(schema);
 
-    if (json.Accept(validator) == false) {
-        if (quiet == false) {
+    if (json.Accept(validator)) {
+        // JSON is valid by required schema.
+        lastValidationError_.clear();
+        return true;
+    } else {
+        if (quiet) {
+            lastValidationError_ = QStringLiteral("JSON is not valid by required schema.");
+        } else {
             rapidjson::StringBuffer buffer;
             rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 
             json.Accept(writer);
-            QByteArray text(buffer.GetString(), static_cast<int>(buffer.GetSize()));
+            QByteArray text = "JSON '" + QByteArray(buffer.GetString(), static_cast<int>(buffer.GetSize()));
 
             buffer.Clear();
             writer.Reset(buffer);
 
             validator.GetError().Accept(writer);
 
-            qCCritical(lcCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
-        }
+            text += "' is not valid by required schema: '" + QByteArray(buffer.GetString(), static_cast<int>(buffer.GetSize())) + '\'';
 
+            qCCritical(lcCommandValidator).nospace().noquote() << text;
+
+            lastValidationError_ = text;
+        }
         return false;
     }
-
-    return true;
 }
 
 bool CommandValidator::validate(const QByteArray &command, const JsonType type, rapidjson::Document &doc) {
@@ -510,6 +519,11 @@ QByteArray CommandValidator::notificationStatus(const rapidjson::Document &doc) 
         return QByteArray(status.GetString(), status.GetStringLength());
     }
     return QByteArray();
+}
+
+QString CommandValidator::lastValidationError()
+{
+    return lastValidationError_;
 }
 
 }  // namespace

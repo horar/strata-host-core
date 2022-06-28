@@ -18,6 +18,8 @@
 
 namespace strata::platform::command {
 
+Q_NAMESPACE
+
 enum class CommandResult : int {
     Done,               // command done, move to next command and send it
     DoneAndWait,        // command done, move to next command but do not send it yet
@@ -33,6 +35,7 @@ enum class CommandResult : int {
     DeviceDisconnected, // device unexpectedly disconnected (unplugged)
     DeviceError         // unexpected device error has occured
 };
+Q_ENUM_NS(CommandResult)
 
 enum class CommandType : int {
     BackupFirmware,
@@ -49,6 +52,16 @@ enum class CommandType : int {
     StartFlashFirmware,
     Wait
 };
+
+enum class ValidationFailure : int {
+    Warning,
+    CmdRejected,
+    Timeout,
+    FaultyNotification,
+    UnexpectedNotification,
+    Fatal
+};
+Q_ENUM_NS(ValidationFailure)
 
 class BasePlatformCommand : public QObject
 {
@@ -110,6 +123,14 @@ public:
      */
     virtual void setNotificationTimeout(std::chrono::milliseconds notificationTimeout) final;
 
+    /*!
+     * Turn on/off 'validationFailure' and 'processedNotification' signals during
+     * processing messages from platform. By default these signals are turned off.
+     * Also turns on more strict check for command ACK.
+     * \param enabled true for turn on platform validation, false for turn off
+     */
+    virtual void enablePlatformValidation(bool enable) final;
+
 signals:
     /*!
      * Emitted when command is finished.
@@ -117,6 +138,21 @@ signals:
      * \param status specific command return value
      */
     void finished(CommandResult result, int status);
+
+    /*!
+     * Emitted when some issue occurs during processing message from device.
+     * This signal is emitted only if it was enabled by 'setValidationSignals' method.
+     * \param error description of what goes wrong during message processing
+     * \param state value from ValidationFailure enum
+     */
+    void validationFailure(QString error, ValidationFailure failure);
+
+    /*!
+     * Emitted when notification from platfom was received.
+     * This signal is emitted only if it was enabled by 'setValidationSignals' method.
+     * \param message received notification from platform
+     */
+    void receivedNotification(PlatformMessage message);
 
 protected:
     /*!
@@ -176,10 +212,12 @@ protected:
 
 private:
     void finishCommand(CommandResult result);
-    void logWrongResponse(const PlatformMessage& response);
+    QString generateWrongResponseError(const PlatformMessage& response) const;
+    inline void emitValidationFailure(QString warning, ValidationFailure failure);
     std::chrono::milliseconds ackTimeout_;
     std::chrono::milliseconds notificationTimeout_;
     bool deviceSignalsConnected_;
+    bool platformValidation_;
 
 };
 

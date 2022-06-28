@@ -51,6 +51,9 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciFilterScrollbackModel.cpp
     SciSearchScrollbackModel.cpp
     SciMessageQueueModel.cpp
+    SciPlatformTests.cpp
+    SciPlatformTestModel.cpp
+    SciPlatformTestMessageModel.cpp
     qml.qrc
     images/images.qrc
 
@@ -80,6 +83,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     strata::PlatformManager
+    strata::PlatformValidation
     strata::FlasherConnector
     strata::QtLogger
     strata::SGUtilsCpp

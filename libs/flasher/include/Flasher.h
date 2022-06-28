@@ -136,16 +136,16 @@ class Flasher : public QObject
         /*!
          * This signal is emitted when Flasher finishes.
          * \param result result of firmware operation
-         * \param errorString error description if result is Error
+         * \param errorString error description
          */
-        void finished(Result result, QString errorString);
+        void finished(strata::Flasher::Result result, QString errorString);
 
         /*!
          * This signal is emitted when flasher state is changed.
          * \param flasherState value from FlasherState enum (defining current flasher state)
          * \param done false if flasher just reached this state, true if flasher finished this state
          */
-        void flasherState(State flasherState, bool done);
+        void flasherState(strata::Flasher::State flasherState, bool done);
 
         /*!
          * This signal is emitted during firmware flashing.
@@ -198,7 +198,7 @@ class Flasher : public QObject
         // run next operation in operationList_
         void runNextOperation();
         // finish flasher
-        void finish(Result result, QString errorString = QString());
+        void finish(Result result, QString errorString);
 
         // hanlers which are called when operation in operationList_ finishes
         void startBootloaderFinished(int status);

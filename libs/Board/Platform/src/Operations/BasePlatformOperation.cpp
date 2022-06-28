@@ -144,7 +144,9 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
     switch (result) {
     case CommandResult::Done :
     case CommandResult::DoneAndWait :
-        ++currentCommand_;  // move to next command
+        if (currentCommand_ < commandList_.end()) {
+            ++currentCommand_;  // move to next command
+        }
         if (currentCommand_ == commandList_.end()) {  // end of command list - finish operation
             finishOperation(Result::Success, QString());
         } else {

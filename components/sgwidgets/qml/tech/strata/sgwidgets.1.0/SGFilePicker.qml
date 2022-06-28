@@ -37,6 +37,7 @@ FocusScope {
     property alias textFieldY: textEdit.loaderItemY
     property alias textFieldHeight: textEdit.loaderItemHeight
     property alias textFieldWidth: textEdit.loaderItemWidth
+    property bool selectButtonOnlyIcon: false
 
     function inputValidationErrorMsg() {
         return ""
@@ -69,7 +70,7 @@ FocusScope {
             left: parent.left
         }
 
-        itemWidth: parent.width - selectButton.width - 10
+        itemWidth: parent.width - selectButton.width - 4
         label: "File"
         placeholderText: "Select path..."
         focus: true
@@ -99,7 +100,10 @@ FocusScope {
             right: parent.right
         }
 
-        text: "Select"
+        text: selectButtonOnlyIcon ? "" : "Select"
+        icon.source: selectButtonOnlyIcon ? "qrc:/sgimages/folder-open.svg" : ""
+        scaleToFitHorizontally: selectButtonOnlyIcon
+
         onClicked: {
             selectFilePath()
             textEdit.forceActiveFocus()

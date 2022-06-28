@@ -195,6 +195,10 @@ int main(int argc, char *argv[])
     qmlRegisterType<HexModel>("tech.strata.sci", 1, 0, "HexModel");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
+    qmlRegisterUncreatableType<SciPlatformTestModel>("tech.strata.sci", 1, 0, "SciPlatformTestModel", "cannot instantiate SciPlatformTestModel in qml");
+    qmlRegisterUncreatableType<SciPlatformTestMessageModel>("tech.strata.sci", 1, 0, "SciPlatformTestMessageModel", "cannot instantiate SciPlatformTestMessageModel in qml");
+
+
     loadResources();
 
     // make sure that objects in context properties are declared before engine, to maintain proper order of destruction
