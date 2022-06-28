@@ -495,8 +495,8 @@ Item {
                     Layout.fillHeight: true
                     // Layout width settings must match categoryControlsRow in SGPlatformSelectorDelegate
                     Layout.fillWidth: true
-                    Layout.preferredWidth: 200
-                    Layout.minimumWidth: 300
+                    Layout.preferredWidth: 300
+                    Layout.minimumWidth: 200
 
                     border {
                         width: 1
