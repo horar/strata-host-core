@@ -17,29 +17,56 @@ AbstractButton {
 
     property var buttonSize: StrataButton.Small
     property bool isSecondary: false
+    property alias hintText: tooltip.text
 
     enum Size {
         Large,
         Medium,
-        Small
+        Small,
+        Tiny
     }
 
-    property int basePadding: {
+    property real fontSizeMultiplier: {
+        if (buttonSize === StrataButton.Large) {
+            return 1.5
+        } else if (buttonSize === StrataButton.Medium) {
+            return 1.2
+        }
+
+        return 1.0
+    }
+
+    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
+
+    font.bold: {
+        if (buttonSize === StrataButton.Tiny) {
+            return false
+        }
+
+        return true
+    }
+
+    focusPolicy: Qt.NoFocus
+
+    verticalPadding: {
         if (buttonSize === StrataButton.Large) {
             return 12
         } else if (buttonSize === StrataButton.Medium) {
             return 8
+        } else if (buttonSize === StrataButton.Small) {
+            return 6
         }
 
-        return 6
+        return 2
     }
 
-    topPadding: basePadding
-    bottomPadding: basePadding
-    leftPadding: 2*basePadding
-    rightPadding: 2*basePadding
+    horizontalPadding: {
+        if (buttonSize === StrataButton.Tiny) {
+            return 6
+        }
 
-    focusPolicy: Qt.NoFocus
+        return 2*verticalPadding
+    }
 
     contentItem: Item {
         implicitHeight: textItem.paintedHeight
@@ -51,14 +78,15 @@ AbstractButton {
 
             text: control.text
             opacity: enabled ? 1 : 0.5
-            font.bold: true
+            font: control.font
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
             color: {
                 if (isSecondary &&
                         (buttonSize === StrataButton.Medium
-                         || buttonSize === StrataButton.Small)) {
+                         || buttonSize === StrataButton.Small
+                         || buttonSize === StrataButton.Tiny)) {
 
                     if (control.hovered) {
                         return Theme.palette.white
@@ -69,22 +97,12 @@ AbstractButton {
 
                 return Theme.palette.white
             }
-
-            fontSizeMultiplier: {
-                if (buttonSize === StrataButton.Large) {
-                    return 1.5
-                } else if (buttonSize === StrataButton.Medium) {
-                    return 1.2
-                }
-
-                return 1.0
-            }
         }
     }
 
     background: Item {
-        implicitHeight: 40
-        implicitWidth: 100
+        implicitHeight: 20
+        implicitWidth: 60
 
         Rectangle {
             id: fill
@@ -132,7 +150,17 @@ AbstractButton {
                 return Theme.palette.onsemiOrange
             }
 
-            border.width: isSecondary ? 2 : 0
+            border.width: {
+                if (isSecondary) {
+                    if (buttonSize === StrataButton.Tiny) {
+                        return 1
+                    }
+
+                    return 2
+                }
+
+                return 0
+            }
             border.color: {
                 if (control.pressed) {
                     return fill.color
@@ -145,6 +173,12 @@ AbstractButton {
                 return Theme.palette.onsemiSecondaryDarkBlue
             }
         }
+    }
+
+    ToolTip {
+        id: tooltip
+        visible: text.length && mouseArea.containsMouse
+        delay: 500
     }
 
     MouseArea {
