@@ -101,6 +101,7 @@ Item {
            id : logDetailsPane
            Layout.fillWidth: true
            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
+           lcuApp: true
        }
     }
 }

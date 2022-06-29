@@ -19,6 +19,7 @@ GridLayout {
     id: logDetailsGrid
 
     property alias fileName: configFileSettings.filePath
+    property alias lcuApp: item.enabled
     property int innerSpacing: 5
     property int shortEdit: 180
     property int longEdit: 300
@@ -30,8 +31,19 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
 
+    Component.onCompleted: {
+        if (lcuApp == false) {
+            configFileSettings.filePath = ""
+        }
+    }
+
     ConfigFileSettings {
         id: configFileSettings
+    }
+
+    Item {
+        id: item
+        enabled: lcuApp
     }
 
     SGWidgets.SGText {
@@ -89,7 +101,6 @@ GridLayout {
         textFromValue: function(value, locale) {
             return Number(value).toLocaleString(locale,'d',0)
         }
-
 
         Connections {
             target: configFileSettings

@@ -119,7 +119,9 @@ SGStrataPopup {
         }
 
         LcuPlugin.LogLevel {
+            id: logLevel
             Layout.fillWidth: true
+            fileName: ""
         }
     }
 }

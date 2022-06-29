@@ -224,13 +224,18 @@ SGWidgets.SGDialog {
             }
 
             LcuPlugin.LogLevel {
+                id: logLevel
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
+                fileName: ""
             }
 
             LcuPlugin.LogDetails {
+                id: logDetails
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
+                fileName: ""
+                lcuApp: false
             }
 
             SGWidgets.SGText {

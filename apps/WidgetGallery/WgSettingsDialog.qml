@@ -39,11 +39,16 @@ SGWidgets.SGDialog {
         LcuPlugin.LogLevel {
             id: logLevel
             Layout.fillWidth: true
-            }
+            fileName: ""
+        }
+
 
         LcuPlugin.LogDetails {
+            id: logDetails
             Layout.fillWidth: true
-            }
+            fileName: ""
+            lcuApp: false
+        }
 
         SGWidgets.SGButton {
             text: "Close"
