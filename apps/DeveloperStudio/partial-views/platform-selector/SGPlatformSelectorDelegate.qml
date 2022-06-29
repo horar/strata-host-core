@@ -223,6 +223,7 @@ Item {
                         top: parent.top
                         left: parent.left
                         right: parent.right
+                        rightMargin: segmentCategoryScrollBar.width
                     }
 
                     clip: true
@@ -236,6 +237,13 @@ Item {
 
                     ScrollBar.vertical: ScrollBar {
                         id: segmentCategoryScrollBar
+                        parent: flickable.parent
+                        anchors {
+                            left: flickable.right
+                            top: flickable.top
+                            bottom: flickable.bottom
+                        }
+
                         minimumSize: 0.1
                         policy: ScrollBar.AlwaysOn
                         visible: model.show_overflow_buttons && flickable.height < flickable.contentHeight
