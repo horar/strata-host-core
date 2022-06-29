@@ -23,6 +23,7 @@ add_library(${PROJECT_NAME}
     src/PlatformmessageData.cpp
     src/logging/LoggingQtCategories.cpp
     src/Serial/SerialDevice.cpp
+    src/Serial/SerialPortWorker.cpp
     src/Mock/MockDevice.cpp
     src/Mock/MockDeviceControl.cpp
     src/Tcp/TcpDevice.cpp

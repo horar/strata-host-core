@@ -100,16 +100,21 @@ public:
 
 private slots:
     void checkNewSerialDevices();
+    void handleDeviceOpened();
+    void handleDeviceError(Device::ErrorCode errCode, QString msg);
 
 private:
     void startAutomaticScan();
     void stopAutomaticScan();
-    void computeListDiff(const QSet<QByteArray>& originalList, const QSet<QByteArray>& newList,
-                         QSet<QByteArray>& addedList, QSet<QByteArray>& removedList) const;
+    void deviceOpeningFinished(const QByteArray& deviceId, bool success);
 
     QTimer timer_;
+
     QSet<QByteArray> deviceIds_;        // Ids of detected Devices for which we emited deviceDetected
     QHash<QByteArray, QString> portNames_;  // serial port names for each detected Device Id
+
+    QSet<QByteArray> pendingDeviceIds_;  // Ids of pending devices - devices that are in the process of opening
+    QHash<QByteArray, DevicePtr> pendingDevices_;
 };
 
 }  // namespace
