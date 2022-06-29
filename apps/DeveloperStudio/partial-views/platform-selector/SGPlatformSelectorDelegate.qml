@@ -14,6 +14,7 @@ import QtQuick.Shapes 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "../../partial-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -39,10 +40,10 @@ Item {
         visible: model.connected
     }
 
-    PlatformFilterButton {
+    StrataButton {
         id: dummyFilterButton
+        buttonSize: StrataButton.Tiny
         visible: false
-        type: "dummy"
         text: "dummy"
     }
 
@@ -231,7 +232,7 @@ Item {
                     flickableDirection: Flickable.VerticalFlick
                     boundsBehavior: Flickable.StopAtBounds
 
-                    property int maxRows: 4
+                    property int maxRows: 5
 
                     ScrollBar.vertical: ScrollBar {
                         id: segmentCategoryScrollBar
@@ -251,13 +252,30 @@ Item {
                             id: segmentCategoryRepeater
                             model: segmentsCategories
 
-                            delegate: PlatformFilterButton {
-                                type: model.type
-                                text: model.text
-                                maxWidth: flickable.width
+                            delegate: StrataButton {
+                                id: tagButton
+                                text: textMetrics.elidedText
+                                buttonSize: StrataButton.Tiny
+                                isSecondary: true
+                                font.bold: false
+                                hintText: {
+                                    if (model.type === "category") {
+                                        return "Filter platforms in this category"
+                                    } else {
+                                        return "Filter platforms in this Segment"
+                                    }
+                                }
 
                                 onClicked: {
                                     PlatformFilters.setFilterActive(model.filterName, true)
+                                }
+
+                                TextMetrics {
+                                    id: textMetrics
+                                    text: model.text
+                                    font: tagButton.font
+                                    elide: Qt.ElideRight
+                                    elideWidth: flickable.width - tagButton.leftPadding - tagButton.rightPadding
                                 }
                             }
                         }
