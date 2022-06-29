@@ -96,7 +96,6 @@
         <file>partial-views/general/web-popup/SGWebView.qml</file>
         <file>partial-views/notifications/NotificationDelegate.qml</file>
         <file>partial-views/platform-selector/PlatformControlButton.qml</file>
-        <file>partial-views/platform-selector/PlatformFilterButton.qml</file>
         <file>partial-views/notifications/NotificationsContainer.qml</file>
         <file>partial-views/notifications/NotificationsInbox.qml</file>
         <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>

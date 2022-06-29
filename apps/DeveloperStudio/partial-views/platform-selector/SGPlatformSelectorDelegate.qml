@@ -345,39 +345,59 @@ Item {
                         PlatformSelection.openPlatformView(data)
                     }
 
-                    PlatformControlButton {
-                        id: openControls
-                        text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
-                        buttonEnabled: model.connected && model.available.control
+                    Item {
+                        Layout.fillWidth: true
+                        implicitHeight: openControls.implicitHeight
 
-                        toolTipText: {
-                            if (model.connected && model.available.control === false) {
-                                return "No control software found"
+                        StrataButton {
+                            id: openControls
+                            width: parent.width
+
+                            text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
+                            enabled: model.connected && model.available.control
+
+                            onClicked: controlButtonClicked()
+
+                            Accessible.role: Accessible.Button
+                            Accessible.name: enabled ? "HwControlsEnabled" : "HwControlsDisabled"
+                            Accessible.description: "'Hardware Controls' helper for automated GUI testing."
+                            Accessible.onPressAction: controlButtonClicked()
+
+                            function controlButtonClicked() {
+                                root.updateIndex()
+                                buttonColumn.openView("control")
                             }
-                            if (model.connected && model.available.control) { // buttonEnabled === true
-                                return ""
-                            }
-                            return "Hardware not connected"
                         }
 
-                        onClicked: controlButtonClicked()
+                        //custom tooltip so it can be visible even when button itself is not enabled
+                        MouseArea {
+                            id: openControlsMouseArea
+                            anchors.fill: parent
+                            onPressed: openControlsMouseArea.accepted = false
+                            enabled: openControls.enabled === false
+                            hoverEnabled: true
+                            cursorShape: openControls.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        }
 
-                        Accessible.role: Accessible.Button
-                        Accessible.name: buttonEnabled ? "HwControlsEnabled" : "HwControlsDisabled"
-                        Accessible.description: "'Hardware Controls' helper for automated GUI testing."
-                        Accessible.onPressAction: controlButtonClicked()
+                        ToolTip {
+                            id: toolTip
+                            visible: openControlsMouseArea.containsMouse && toolTip.text !== ""
+                            delay: 500
+                            text: {
+                                if (model.connected && model.available.control === false) {
+                                    return "No control software found"
+                                }
 
-                        function controlButtonClicked() {
-                            root.updateIndex()
-                            buttonColumn.openView("control")
+                                return "Hardware not connected"
+                            }
                         }
                     }
 
-                    PlatformControlButton {
+                    StrataButton {
                         id: select
                         text: model.view_open ? "Return to Documentation" : "Browse Documentation"
-                        buttonEnabled: model.available.documents
-                        toolTipText: buttonEnabled ? "" : "No documentation found"
+                        enabled: model.available.documents
+                        hintText: enabled ? "" : "No documentation found"
 
                         onClicked: {
                             root.updateIndex()
@@ -385,10 +405,11 @@ Item {
                         }
                     }
 
-                    PlatformControlButton {
+                    StrataButton {
                         id: order
                         text: "Contact Sales"
-                        buttonEnabled: model.available.order
+                        enabled: model.available.order
+                        Layout.fillWidth: true
 
                         onClicked: {
                             root.updateIndex()
