@@ -92,14 +92,6 @@ SGStrataPopup {
         }
     }
 
-    Timer {
-        id: closeDialogTimer
-        interval: 500
-        onTriggered: {
-            dialog.accept()
-        }
-    }
-
     Component {
         id: welcomePageComponent
 
@@ -160,6 +152,9 @@ SGStrataPopup {
                     buttonSize: StrataButton.Large
                     Layout.preferredWidth: 300
                     Layout.alignment: Qt.AlignHCenter
+                    Accessible.onPressAction: {
+                        clicked()
+                    }
                     onClicked: {
                         feedbackType = FeedbackDialog.ReportIssue
                         stackView.push(commentPageComponent)
@@ -228,7 +223,7 @@ SGStrataPopup {
                     focus: true
                     contextMenuEnabled: true
                     Accessible.role: Accessible.EditableText
-                    Accessible.name: "FeedbackEdit"
+                    Accessible.name: "CommentArea"
                     palette.highlight: Theme.palette.onsemiOrange
                     placeholderText: {
                         if (feedbackType === FeedbackDialog.ReportIssue) {
@@ -420,6 +415,9 @@ SGStrataPopup {
 
             text: "Submit"
             enabled: dialog.comment.trim().length > 1
+            Accessible.onPressAction: {
+                clicked()
+            }
             onClicked: {
                 sendFeedback()
             }
@@ -481,8 +479,6 @@ SGStrataPopup {
         //reset forms
         stackView.pop()
         stackView.push(commentPageComponent)
-
-        closeDialogTimer.start()
     }
 
     function feedbackCallbackError(response) {
