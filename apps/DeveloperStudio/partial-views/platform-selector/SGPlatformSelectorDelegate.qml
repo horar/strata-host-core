@@ -14,6 +14,7 @@ import QtQuick.Shapes 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "../../partial-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -39,10 +40,10 @@ Item {
         visible: model.connected
     }
 
-    PlatformFilterButton {
+    StrataButton {
         id: dummyFilterButton
+        buttonSize: StrataButton.Tiny
         visible: false
-        type: "dummy"
         text: "dummy"
     }
 
@@ -222,6 +223,7 @@ Item {
                         top: parent.top
                         left: parent.left
                         right: parent.right
+                        rightMargin: segmentCategoryScrollBar.width
                     }
 
                     clip: true
@@ -231,10 +233,17 @@ Item {
                     flickableDirection: Flickable.VerticalFlick
                     boundsBehavior: Flickable.StopAtBounds
 
-                    property int maxRows: 4
+                    property int maxRows: 5
 
                     ScrollBar.vertical: ScrollBar {
                         id: segmentCategoryScrollBar
+                        parent: flickable.parent
+                        anchors {
+                            left: flickable.right
+                            top: flickable.top
+                            bottom: flickable.bottom
+                        }
+
                         minimumSize: 0.1
                         policy: ScrollBar.AlwaysOn
                         visible: model.show_overflow_buttons && flickable.height < flickable.contentHeight
@@ -251,13 +260,30 @@ Item {
                             id: segmentCategoryRepeater
                             model: segmentsCategories
 
-                            delegate: PlatformFilterButton {
-                                type: model.type
-                                text: model.text
-                                maxWidth: flickable.width
+                            delegate: StrataButton {
+                                id: tagButton
+                                text: textMetrics.elidedText
+                                buttonSize: StrataButton.Tiny
+                                isSecondary: true
+                                font.bold: false
+                                hintText: {
+                                    if (model.type === "category") {
+                                        return "Filter platforms in this category"
+                                    } else {
+                                        return "Filter platforms in this Segment"
+                                    }
+                                }
 
                                 onClicked: {
                                     PlatformFilters.setFilterActive(model.filterName, true)
+                                }
+
+                                TextMetrics {
+                                    id: textMetrics
+                                    text: model.text
+                                    font: tagButton.font
+                                    elide: Qt.ElideRight
+                                    elideWidth: flickable.width - tagButton.leftPadding - tagButton.rightPadding
                                 }
                             }
                         }
@@ -345,39 +371,59 @@ Item {
                         PlatformSelection.openPlatformView(data)
                     }
 
-                    PlatformControlButton {
-                        id: openControls
-                        text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
-                        buttonEnabled: model.connected && model.available.control
+                    Item {
+                        Layout.fillWidth: true
+                        implicitHeight: openControls.implicitHeight
 
-                        toolTipText: {
-                            if (model.connected && model.available.control === false) {
-                                return "No control software found"
+                        StrataButton {
+                            id: openControls
+                            width: parent.width
+
+                            text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
+                            enabled: model.connected && model.available.control
+
+                            onClicked: controlButtonClicked()
+
+                            Accessible.role: Accessible.Button
+                            Accessible.name: enabled ? "HwControlsEnabled" : "HwControlsDisabled"
+                            Accessible.description: "'Hardware Controls' helper for automated GUI testing."
+                            Accessible.onPressAction: controlButtonClicked()
+
+                            function controlButtonClicked() {
+                                root.updateIndex()
+                                buttonColumn.openView("control")
                             }
-                            if (model.connected && model.available.control) { // buttonEnabled === true
-                                return ""
-                            }
-                            return "Hardware not connected"
                         }
 
-                        onClicked: controlButtonClicked()
+                        //custom tooltip so it can be visible even when button itself is not enabled
+                        MouseArea {
+                            id: openControlsMouseArea
+                            anchors.fill: parent
+                            onPressed: openControlsMouseArea.accepted = false
+                            enabled: openControls.enabled === false
+                            hoverEnabled: true
+                            cursorShape: openControls.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        }
 
-                        Accessible.role: Accessible.Button
-                        Accessible.name: buttonEnabled ? "HwControlsEnabled" : "HwControlsDisabled"
-                        Accessible.description: "'Hardware Controls' helper for automated GUI testing."
-                        Accessible.onPressAction: controlButtonClicked()
+                        ToolTip {
+                            id: toolTip
+                            visible: openControlsMouseArea.containsMouse && toolTip.text !== ""
+                            delay: 500
+                            text: {
+                                if (model.connected && model.available.control === false) {
+                                    return "No control software found"
+                                }
 
-                        function controlButtonClicked() {
-                            root.updateIndex()
-                            buttonColumn.openView("control")
+                                return "Hardware not connected"
+                            }
                         }
                     }
 
-                    PlatformControlButton {
+                    StrataButton {
                         id: select
                         text: model.view_open ? "Return to Documentation" : "Browse Documentation"
-                        buttonEnabled: model.available.documents
-                        toolTipText: buttonEnabled ? "" : "No documentation found"
+                        enabled: model.available.documents
+                        hintText: enabled ? "" : "No documentation found"
 
                         onClicked: {
                             root.updateIndex()
@@ -385,10 +431,11 @@ Item {
                         }
                     }
 
-                    PlatformControlButton {
+                    StrataButton {
                         id: order
                         text: "Contact Sales"
-                        buttonEnabled: model.available.order
+                        enabled: model.available.order
+                        Layout.fillWidth: true
 
                         onClicked: {
                             root.updateIndex()
