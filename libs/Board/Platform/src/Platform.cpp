@@ -296,11 +296,11 @@ void Platform::resetReceiving() {
     device_->resetReceiving();
 }
 
-void Platform::SetTerminationCause(const QString& terminationCause) {
+void Platform::setTerminationCause(const QString& terminationCause) {
     terminationCause_ = terminationCause;
 }
 
-QString Platform::GetTerminationCause() const {
+QString Platform::getTerminationCause() const {
     return terminationCause_;
 }
 
