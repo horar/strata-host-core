@@ -9,13 +9,13 @@
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets
 import tech.strata.theme 1.0
 
 AbstractButton {
     id: control
 
-    property var buttonSize: StrataButton.Small
+    property var buttonSize: SGButton.Small
     property bool isSecondary: false
     property alias hintText: tooltip.text
 
@@ -27,9 +27,9 @@ AbstractButton {
     }
 
     property real fontSizeMultiplier: {
-        if (buttonSize === StrataButton.Large) {
+        if (buttonSize === SGButton.Large) {
             return 1.5
-        } else if (buttonSize === StrataButton.Medium) {
+        } else if (buttonSize === SGButton.Medium) {
             return 1.2
         }
 
@@ -39,7 +39,7 @@ AbstractButton {
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
 
     font.bold: {
-        if (buttonSize === StrataButton.Tiny) {
+        if (buttonSize === SGButton.Tiny) {
             return false
         }
 
@@ -49,11 +49,11 @@ AbstractButton {
     focusPolicy: Qt.NoFocus
 
     verticalPadding: {
-        if (buttonSize === StrataButton.Large) {
+        if (buttonSize === SGButton.Large) {
             return 12
-        } else if (buttonSize === StrataButton.Medium) {
+        } else if (buttonSize === SGButton.Medium) {
             return 8
-        } else if (buttonSize === StrataButton.Small) {
+        } else if (buttonSize === SGButton.Small) {
             return 6
         }
 
@@ -61,7 +61,7 @@ AbstractButton {
     }
 
     horizontalPadding: {
-        if (buttonSize === StrataButton.Tiny) {
+        if (buttonSize === SGButton.Tiny) {
             return 6
         }
 
@@ -84,9 +84,9 @@ AbstractButton {
 
             color: {
                 if (isSecondary &&
-                        (buttonSize === StrataButton.Medium
-                         || buttonSize === StrataButton.Small
-                         || buttonSize === StrataButton.Tiny)) {
+                        (buttonSize === SGButton.Medium
+                         || buttonSize === SGButton.Small
+                         || buttonSize === SGButton.Tiny)) {
 
                     if (control.hovered) {
                         return Theme.palette.white
@@ -116,7 +116,7 @@ AbstractButton {
             color: {
                 if (isSecondary) {
 
-                    if (buttonSize === StrataButton.Large) {
+                    if (buttonSize === SGButton.Large) {
                         if (control.pressed) {
                             return Qt.darker(Theme.palette.onsemiSecondaryDarkBlue, 1.2)
                         }
@@ -152,7 +152,7 @@ AbstractButton {
 
             border.width: {
                 if (isSecondary) {
-                    if (buttonSize === StrataButton.Tiny) {
+                    if (buttonSize === SGButton.Tiny) {
                         return 1
                     }
 

@@ -11,6 +11,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.theme 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
@@ -18,7 +19,6 @@ import tech.strata.signals 1.0
 import "qrc:/partial-views/control-view-creator"
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/login_utilities.js" as LoginUtils
-import "qrc:/partial-views"
 
 SGWidgets.SGDialog {
     id: policyDialog
@@ -33,7 +33,7 @@ SGWidgets.SGDialog {
         implicitWidth: Math.max(implicitHeaderWidth, 400)
         implicitHeight: 100
 
-        SGWidgets.SGText {
+        SGWidgets2.SGText {
             width: parent.width
             anchors.centerIn: parent
             wrapMode: Text.Wrap
@@ -59,20 +59,20 @@ SGWidgets.SGDialog {
             anchors.centerIn: parent
             spacing: 100
 
-            StrataButton {
+            SGWidgets2.SGButton {
                 id: logOutButton
                 text: "Log Out"
                 isSecondary: true
-                buttonSize: StrataButton.Medium
+                buttonSize: SGWidgets2.SGButton.Medium
                 onClicked: {
                     policyDialog.reject()
                 }
             }
 
-            StrataButton {
+            SGWidgets2.SGButton {
                 id: acceptButton
                 text: "Accept"
-                buttonSize: StrataButton.Medium
+                buttonSize: SGWidgets2.SGButton.Medium
                 onClicked: {
                     console.log("Updating privacy policy consent!")
                     let data = {

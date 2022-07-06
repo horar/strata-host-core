@@ -14,10 +14,10 @@ import QtQuick.Shapes 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
-import "../../partial-views"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
@@ -40,9 +40,9 @@ Item {
         visible: model.connected
     }
 
-    StrataButton {
+    SGWidgets2.SGButton {
         id: dummyFilterButton
-        buttonSize: StrataButton.Tiny
+        buttonSize: SGWidgets2.SGButton.Tiny
         visible: false
         text: "dummy"
     }
@@ -260,10 +260,10 @@ Item {
                             id: segmentCategoryRepeater
                             model: segmentsCategories
 
-                            delegate: StrataButton {
+                            delegate: SGWidgets2.SGButton {
                                 id: tagButton
                                 text: textMetrics.elidedText
-                                buttonSize: StrataButton.Tiny
+                                buttonSize: SGWidgets2.SGButton.Tiny
                                 isSecondary: true
                                 font.bold: false
                                 hintText: {
@@ -297,7 +297,7 @@ Item {
                     }
                 }
 
-                SGText {
+                SGWidgets2.SGText {
                     id: remainingText
                     anchors {
                         top: flickable.bottom
@@ -375,7 +375,7 @@ Item {
                         Layout.fillWidth: true
                         implicitHeight: openControls.implicitHeight
 
-                        StrataButton {
+                        SGWidgets2.SGButton {
                             id: openControls
                             width: parent.width
 
@@ -419,7 +419,7 @@ Item {
                         }
                     }
 
-                    StrataButton {
+                    SGWidgets2.SGButton {
                         id: select
                         text: model.view_open ? "Return to Documentation" : "Browse Documentation"
                         enabled: model.available.documents
@@ -431,7 +431,7 @@ Item {
                         }
                     }
 
-                    StrataButton {
+                    SGWidgets2.SGButton {
                         id: order
                         text: "Contact Sales"
                         enabled: model.available.order

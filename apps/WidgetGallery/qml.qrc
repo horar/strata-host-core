@@ -34,5 +34,7 @@
         <file>commoncpp1_0/ExSGJsonSyntaxHighlighter.qml</file>
         <file>commoncpp1_0/ExSGSortFilterProxyModel.qml</file>
         <file>commoncpp1_0/ExSGCSVUtils.qml</file>
+        <file>widgets2_0/PageSGWidgetsTwoZero.qml</file>
+        <file>widgets2_0/ExSGButton.qml</file>
     </qresource>
 </RCC>
