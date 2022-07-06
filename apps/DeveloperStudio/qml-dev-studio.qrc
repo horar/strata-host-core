@@ -23,7 +23,6 @@
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
-        <file>partial-views/StrataButton.qml</file>
         <file>partial-views/SGStrataPopup.qml</file>
         <file>partial-views/FeedbackDialog.qml</file>
         <file>partial-views/login/SGRegistrationControls.qml</file>

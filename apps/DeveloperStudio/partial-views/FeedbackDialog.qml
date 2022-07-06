@@ -11,6 +11,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.theme 1.0
 import tech.strata.fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
@@ -96,7 +97,7 @@ SGStrataPopup {
         id: welcomePageComponent
 
         Item {
-            SGWidgets.SGText {
+            SGWidgets2.SGText {
                 id: thankyouText
                 width: parent.width
                 anchors {
@@ -125,9 +126,9 @@ SGStrataPopup {
 
                 spacing: 20
 
-                StrataButton {
+                SGWidgets2.SGButton {
                     text: "Acknowledgement"
-                    buttonSize: StrataButton.Large
+                    buttonSize: SGWidgets2.SGButton.Large
                     Layout.preferredWidth: 300
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
@@ -136,9 +137,9 @@ SGStrataPopup {
                     }
                 }
 
-                StrataButton {
+                SGWidgets2.SGButton {
                     text: "Feature Request"
-                    buttonSize: StrataButton.Large
+                    buttonSize: SGWidgets2.SGButton.Large
                     Layout.preferredWidth: 300
                     Layout.alignment: Qt.AlignHCenter
                     onClicked: {
@@ -147,9 +148,9 @@ SGStrataPopup {
                     }
                 }
 
-                StrataButton {
+                SGWidgets2.SGButton {
                     text: "Report Issue"
-                    buttonSize: StrataButton.Large
+                    buttonSize: SGWidgets2.SGButton.Large
                     Layout.preferredWidth: 300
                     Layout.alignment: Qt.AlignHCenter
                     Accessible.onPressAction: {
@@ -168,7 +169,7 @@ SGStrataPopup {
         id: commentPageComponent
 
         FocusScope {
-            SGWidgets.SGText {
+            SGWidgets2.SGText {
                 id: feedbackTitle
 
                 fontSizeMultiplier: 2.0
@@ -198,7 +199,7 @@ SGStrataPopup {
 
                 focus: true
 
-                SGWidgets.SGText {
+                SGWidgets2.SGText {
                     id: commentText
                     anchors {
                         top: parent.top
@@ -266,7 +267,7 @@ SGStrataPopup {
                     }
                 }
 
-                SGWidgets.SGText {
+                SGWidgets2.SGText {
                     id: charCounter
                     anchors {
                         right: parent.right
@@ -285,7 +286,7 @@ SGStrataPopup {
                 }
             }
 
-            SGWidgets.SGText {
+            SGWidgets2.SGText {
                 id: userInfoText
                 anchors {
                     bottom: detailWrapper.visible ? detailWrapper.top : parent.bottom
@@ -392,7 +393,7 @@ SGStrataPopup {
         implicitHeight: submitButton.height + 10
         visible: stackView.depth > 1 && submitInProgress === false
 
-        StrataButton {
+        SGWidgets2.SGButton {
             anchors {
                 left: parent.left
                 leftMargin: 10
@@ -405,7 +406,7 @@ SGStrataPopup {
             }
         }
 
-        StrataButton {
+        SGWidgets2.SGButton {
             id: submitButton
             anchors {
                 right: parent.right
