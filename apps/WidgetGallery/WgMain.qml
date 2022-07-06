@@ -22,6 +22,11 @@ Item {
         }
 
         ListElement {
+            name: "SGWidgets 2.0"
+            page: "widgets2_0/PageSGWidgetsTwoZero.qml"
+        }
+
+        ListElement {
             name: "CommonCpp 1.0"
             page: "commoncpp1_0/PageSGCommonCppOneZero.qml"
         }
