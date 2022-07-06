@@ -21,7 +21,6 @@ SGWidgets.SGDialog {
     destroyOnClose: true
 
     property int innerSpacing: 5
-    property color buttonColor: palette.mid
 
     ColumnLayout {
         id: wgSettings
@@ -51,6 +50,8 @@ SGWidgets.SGDialog {
         }
 
         SGWidgets.SGButton {
+            id: closeButton
+
             text: "Close"
             fontSizeMultiplier: 1.3
             font.bold: true
@@ -61,7 +62,7 @@ SGWidgets.SGDialog {
             background: Rectangle {
                 anchors.fill: parent
                 radius: innerSpacing
-                color: parent.hovered ? headerBgColor : buttonColor
+                color: parent.hovered ? headerBgColor : closeButton.implicitColor
             }
         }
     }

@@ -21,7 +21,6 @@ SGWidgets.SGDialog {
     destroyOnClose: true
 
     property int innerSpacing: 5
-    property color buttonColor: palette.mid
 
     ColumnLayout {
         id: prtSettings
