@@ -23,276 +23,273 @@ SGWidgets.SGDialog {
     property int gridRowSpacing: 10
     property int gridColumnSpacaing: 6
 
-    Column {
+        RowLayout {
+            spacing: gridRowSpacing
 
-        GridLayout {
-            id: platformTabSettings
-            anchors.right: parent.right
-            columns: 2
-            rowSpacing: gridRowSpacing
-            columnSpacing: gridColumnSpacaing
+            ColumnLayout {
+                spacing: gridColumnSpacaing
 
-            SGWidgets.SGText {
-                text: "Platform Tab"
-                fontSizeMultiplier: 1.1
-                font.bold: true
+                GridLayout {
+                    id: platformTabSettings
+                    columns: 2
+                    rowSpacing: gridRowSpacing
+                    columnSpacing: gridColumnSpacaing
 
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignLeft
-            }
+                    SGWidgets.SGText {
+                        text: "Platform Tab"
+                        fontSizeMultiplier: 1.1
+                        font.bold: true
 
-            SGWidgets.SGText {
-                text: "Commands in scrollback:"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            Row {
-                SGWidgets.SGSpinBox {
-                    id: maxCommandsInScrollbackEdit
-                    from: 1
-                    to: 100000
-                    stepSize: 5000
-                    editable: true
-                    enabled: !Sci.Settings.commandsInScrollbackUnlimited
-                    Layout.alignment: Qt.AlignRight
-
-                    Binding {
-                        target: maxCommandsInScrollbackEdit
-                        property: "value"
-                        value: Sci.Settings.maxCommandsInScrollback
+                        Layout.columnSpan: 2
+                        Layout.alignment: Qt.AlignLeft
                     }
 
-                    onValueChanged: {
-                        Sci.Settings.maxCommandsInScrollback = value
-                    }
-                }
-
-                SGWidgets.SGCheckBox {
-                    id: commandsInScrollbackUnlimitedCheckbox
-                    text: "Unlimited"
-
-                    Binding {
-                        target: commandsInScrollbackUnlimitedCheckbox
-                        property: "checked"
-                        value: Sci.Settings.commandsInScrollbackUnlimited
+                    SGWidgets.SGText {
+                        text: "Commands in scrollback:"
+                        Layout.alignment: Qt.AlignRight
                     }
 
-                    onCheckedChanged : {
-                        Sci.Settings.commandsInScrollbackUnlimited = checked
+                    Row {
+                        SGWidgets.SGSpinBox {
+                            id: maxCommandsInScrollbackEdit
+                            from: 1
+                            to: 100000
+                            stepSize: 5000
+                            editable: true
+                            enabled: !Sci.Settings.commandsInScrollbackUnlimited
+                            Layout.alignment: Qt.AlignRight
+
+                            Binding {
+                                target: maxCommandsInScrollbackEdit
+                                property: "value"
+                                value: Sci.Settings.maxCommandsInScrollback
+                            }
+
+                            onValueChanged: {
+                                Sci.Settings.maxCommandsInScrollback = value
+                            }
+                        }
+
+                        SGWidgets.SGCheckBox {
+                            id: commandsInScrollbackUnlimitedCheckbox
+                            text: "Unlimited"
+
+                            Binding {
+                                target: commandsInScrollbackUnlimitedCheckbox
+                                property: "checked"
+                                value: Sci.Settings.commandsInScrollbackUnlimited
+                            }
+
+                            onCheckedChanged : {
+                                Sci.Settings.commandsInScrollbackUnlimited = checked
+                            }
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        text: "Commands in history:"
+                        Layout.alignment: Qt.AlignRight
+                    }
+
+                    SGWidgets.SGSpinBox {
+                        id: maxCommandsInHistoryEdit
+
+                        from: 1
+                        to: 99
+                        editable: true
+                        Layout.alignment: Qt.AlignLeft
+
+                        Binding {
+                            target: maxCommandsInHistoryEdit
+                            property: "value"
+                            value: Sci.Settings.maxCommandsInHistory
+                        }
+
+                        onValueChanged: {
+                            Sci.Settings.maxCommandsInHistory = value
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        text: "Environment"
+                        fontSizeMultiplier: 1.1
+                        font.bold: true
+                        Layout.columnSpan: 2
+                        Layout.alignment: Qt.AlignLeft
+                    }
+
+                    SGWidgets.SGText {
+                        text: "Base font size:"
+                        Layout.alignment: Qt.AlignRight
+                    }
+
+                    SGWidgets.SGSpinBox {
+                        id: fontPixelSizeEdit
+                        from: 8
+                        to: 24
+                        editable: true
+                        Layout.alignment: Qt.AlignLeft
+
+                        Binding {
+                            target: fontPixelSizeEdit
+                            property: "value"
+                            value: SGWidgets.SGSettings.fontPixelSize
+                        }
+
+                        onValueChanged: {
+                            SGWidgets.SGSettings.fontPixelSize = value
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        text: "General"
+                        fontSizeMultiplier: 1.1
+                        font.bold: true
+                        Layout.columnSpan: 2
+                        Layout.alignment: Qt.AlignLeft
+                    }
+
+                    SGWidgets.SGText {
+                        text: "Commands collapsed at startup:"
+                        Layout.alignment: Qt.AlignRight
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: commandsCollapsed
+                        padding: 0
+                        Layout.alignment: Qt.AlignLeft
+                        text: " "
+
+                        Binding {
+                            target: commandsCollapsed
+                            property: "checked"
+                            value: Sci.Settings.commandsCondensedAtStartup
+                        }
+
+                        onCheckedChanged : {
+                            Sci.Settings.commandsCondensedAtStartup = checked
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        text: "Release port of unrecognized device"
+                        Layout.alignment: Qt.AlignRight
+                    }
+
+                    SGWidgets.SGCheckBox {
+                        id: relesePortOption
+                        padding: 0
+                        Layout.alignment: Qt.AlignLeft
+                        text: " "
+
+                        Binding {
+                            target: relesePortOption
+                            property: "checked"
+                            value: Sci.Settings.relasePortOfUnrecongizedDevice
+                        }
+
+                        onCheckedChanged : {
+                            Sci.Settings.relasePortOfUnrecongizedDevice = checked
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        text: "Message queue send delay [ms]:"
+                        Layout.alignment: Qt.AlignRight
+                    }
+
+                    SGWidgets.SGSpinBox {
+                        id: messageQueueSendDelayEdit
+
+                        from: 0
+                        to: 2000
+                        stepSize: 100
+                        editable: true
+                        Layout.alignment: Qt.AlignLeft
+
+                        Binding {
+                            target: messageQueueSendDelayEdit
+                            property: "value"
+                            value: Sci.Settings.messageQueueSendDelay
+                        }
+
+                        onValueChanged: {
+                            Sci.Settings.messageQueueSendDelay = value
+                        }
                     }
                 }
-            }
-
-            SGWidgets.SGText {
-                text: "Commands in history:"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            SGWidgets.SGSpinBox {
-                id: maxCommandsInHistoryEdit
-
-                from: 1
-                to: 99
-                editable: true
-                Layout.alignment: Qt.AlignLeft
-
-                Binding {
-                    target: maxCommandsInHistoryEdit
-                    property: "value"
-                    value: Sci.Settings.maxCommandsInHistory
-                }
-
-                onValueChanged: {
-                    Sci.Settings.maxCommandsInHistory = value
-                }
-            }
-
-            SGWidgets.SGText {
-                text: "Environment"
-                fontSizeMultiplier: 1.1
-                font.bold: true
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignLeft
-            }
-
-            SGWidgets.SGText {
-                text: "Base font size:"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            SGWidgets.SGSpinBox {
-                id: fontPixelSizeEdit
-                from: 8
-                to: 24
-                editable: true
-                Layout.alignment: Qt.AlignLeft
-
-                Binding {
-                    target: fontPixelSizeEdit
-                    property: "value"
-                    value: SGWidgets.SGSettings.fontPixelSize
-                }
-
-                onValueChanged: {
-                    SGWidgets.SGSettings.fontPixelSize = value
-                }
-            }
-
-            SGWidgets.SGText {
-                text: "General"
-                fontSizeMultiplier: 1.1
-                font.bold: true
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignLeft
-            }
-
-            SGWidgets.SGText {
-                text: "Commands collapsed at startup:"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            SGWidgets.SGCheckBox {
-                id: commandsCollapsed
-                padding: 0
-                Layout.alignment: Qt.AlignLeft
-                text: " "
-
-                Binding {
-                    target: commandsCollapsed
-                    property: "checked"
-                    value: Sci.Settings.commandsCondensedAtStartup
-                }
-
-                onCheckedChanged : {
-                    Sci.Settings.commandsCondensedAtStartup = checked
-                }
-            }
-
-            SGWidgets.SGText {
-                text: "Release port of unrecognized device"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            SGWidgets.SGCheckBox {
-                id: relesePortOption
-                padding: 0
-                Layout.alignment: Qt.AlignLeft
-                text: " "
-
-                Binding {
-                    target: relesePortOption
-                    property: "checked"
-                    value: Sci.Settings.relasePortOfUnrecongizedDevice
-                }
-
-                onCheckedChanged : {
-                    Sci.Settings.relasePortOfUnrecongizedDevice = checked
-                }
-            }
-
-            SGWidgets.SGText {
-                text: "Message queue send delay [ms]:"
-                Layout.alignment: Qt.AlignRight
-            }
-
-            SGWidgets.SGSpinBox {
-                id: messageQueueSendDelayEdit
-
-                from: 0
-                to: 2000
-                stepSize: 100
-                editable: true
-                Layout.alignment: Qt.AlignLeft
-
-                Binding {
-                    target: messageQueueSendDelayEdit
-                    property: "value"
-                    value: Sci.Settings.messageQueueSendDelay
-                }
-
-                onValueChanged: {
-                    Sci.Settings.messageQueueSendDelay = value
-                }
-            }
-
-            SGWidgets.SGText {
-                text: "Logging Configuration"
-                fontSizeMultiplier: 1.1
-                font.bold: true
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignLeft
-            }
-
-            LcuPlugin.LogLevel {
-                id: logLevel
-                Layout.columnSpan: 2
-                Layout.fillWidth: true
-                fileName: ""
-            }
-
-            LcuPlugin.LogDetails {
-                id: logDetails
-                Layout.columnSpan: 2
-                Layout.fillWidth: true
-                fileName: ""
-                lcuApp: false
-            }
-
-            SGWidgets.SGText {
-                text: "Reset Settings"
-                fontSizeMultiplier: 1.1
-                font.bold: true
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignLeft
-            }
-
-            Column {
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignRight
 
                 SGWidgets.SGText {
-                    anchors.right: parent.right
-                    text: "Restore all settings to their default values"
-                }
-
-                SGWidgets.SGButton {
-                    anchors.right: parent.right
                     text: "Reset Settings"
-                    onClicked: {
-                        SGWidgets.SGDialogJS.showConfirmationDialog(
-                                    rootItem,
-                                    "Reset settings to defaults",
-                                    "Do you really want to reset all settings to their default values?",
-                                    "Reset",
-                                    function() {
-                                        SGWidgets.SGSettings.resetToDefaultValues()
-                                        Sci.Settings.resetToDefaultValues()
-                                    },
-                                    "Cancel",
-                                    undefined,
-                                    SGWidgets.SGMessageDialog.Warning
-                                    )
+                    fontSizeMultiplier: 1.1
+                    font.bold: true
+                    Layout.columnSpan: 2
+                    Layout.alignment: Qt.AlignLeft
+                }
+
+                RowLayout {
+                    Layout.columnSpan: 2
+                    Layout.alignment: Qt.AlignCenter
+                    Layout.fillWidth: true
+                    spacing: gridRowSpacing
+
+                    SGWidgets.SGButton {
+                        text: "Reset Settings"
+                        hintText: "Restore all settings to their default values"
+                        onClicked: {
+                            SGWidgets.SGDialogJS.showConfirmationDialog(
+                                        rootItem,
+                                        "Reset settings to defaults",
+                                        "Do you really want to reset all settings to their default values?",
+                                        "Reset",
+                                        function() {
+                                            SGWidgets.SGSettings.resetToDefaultValues()
+                                            Sci.Settings.resetToDefaultValues()
+                                        },
+                                        "Cancel",
+                                        undefined,
+                                        SGWidgets.SGMessageDialog.Warning
+                                        )
+                        }
+                    }
+
+                    SGWidgets.SGButton {
+                        text: "Reset Window Size"
+                        hintText: "Restore default window size"
+                        onClicked: rootItem.resetWindowSize()
                     }
                 }
             }
 
-            Column {
-                Layout.columnSpan: 2
-                Layout.alignment: Qt.AlignRight
+            ColumnLayout {
+                Layout.alignment: Qt.AlignTop
+                spacing: gridColumnSpacaing
 
                 SGWidgets.SGText {
-                    anchors.right: parent.right
-                    text: "Restore default window size"
+                    text: "Logging Configuration"
+                    fontSizeMultiplier: 1.1
+                    font.bold: true
+                    Layout.columnSpan: 2
+                    Layout.alignment: Qt.AlignLeft
                 }
 
-                SGWidgets.SGButton {
-                    anchors.right: parent.right
-                    text: "Reset Window Size"
-                    onClicked: rootItem.resetWindowSize()
+                LcuPlugin.LogLevel {
+                    id: logLevel
+                    Layout.columnSpan: 2
+                    Layout.fillWidth: true
+                    fileName: ""
+                }
+
+                LcuPlugin.LogDetails {
+                    id: logDetails
+                    Layout.columnSpan: 2
+                    Layout.fillWidth: true
+                    fileName: ""
+                    lcuApp: false
                 }
             }
         }
-    }
+
 
     footer: Item {
         implicitHeight: buttonRow.height + 10
