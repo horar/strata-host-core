@@ -83,7 +83,11 @@ Item {
                Layout.preferredWidth: height
                Layout.alignment: Qt.AlignRight
                icon.source: "qrc:/sgimages/redo.svg"
-               onClicked: configFileModel.reload()
+               onClicked: {
+                   configFileModel.reload()
+                   iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
+                   configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
+               }
            }
        }
 
