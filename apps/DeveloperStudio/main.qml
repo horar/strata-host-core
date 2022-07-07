@@ -12,6 +12,7 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.notifications 1.0 as PlatformNotifications
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -343,6 +344,19 @@ SGWidgets.SGMainWindow {
 
         onPrivacyPolicyUpdate: {
             showPrivacyPolicyDialog()
+        }
+
+        onSessionExpired: {
+            PlatformNotifications.Notifications.createNotification(
+                        "Session Expired",
+                        PlatformNotifications.Notifications.Critical,
+                        "all",
+                        Qt.application,
+                        {
+                            "description": "Please login again",
+                        })
+
+            logout()
         }
     }
 

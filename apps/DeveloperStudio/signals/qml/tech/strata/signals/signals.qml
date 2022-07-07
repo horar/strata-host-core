@@ -71,4 +71,9 @@ QtObject {
       Privacy Policy Update signal
     */
     signal privacyPolicyUpdate()
+
+    /*
+      When login session expires
+    */
+    signal sessionExpired()
 }
