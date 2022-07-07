@@ -240,6 +240,7 @@ FocusScope {
         }
     }
 
+    //some delay to finish login animation
     Timer {
         id: delayWizardPushTimer
         interval: 500
