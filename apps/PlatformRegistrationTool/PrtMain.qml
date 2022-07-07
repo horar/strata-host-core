@@ -24,35 +24,6 @@ Item {
         WizardPage
     }
 
-    Connections {
-        target: prtModel.authenticator
-
-        onLoginFinished: {
-            if (status === true) {
-                delayWizardPushTimer.start()
-            }
-        }
-
-        onLogoutStarted: {
-            stackView.pop(null)
-        }
-
-        onRenewSessionFinished: {
-            if (status === true) {
-                delayWizardPushTimer.start()
-            }
-        }
-    }
-
-    //some delay to finish login animation
-    Timer {
-        id: delayWizardPushTimer
-        interval: 500
-        onTriggered: {
-            stackView.push(settingsComponent)
-        }
-    }
-
     StackView {
         id: stackView
         anchors.fill: parent
@@ -70,6 +41,10 @@ Item {
 
         LoginScreen {
             focus: true
+
+            onPushSettingsPageRequested: {
+                stackView.push(settingsComponent)
+            }
         }
     }
 

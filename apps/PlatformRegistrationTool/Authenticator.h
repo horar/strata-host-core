@@ -44,6 +44,8 @@ public:
     QString firstname() const;
     QString lastname() const;
 
+    void handleSessionExpiration();
+
 signals:
     void loginStarted();
     void loginFinished(bool status, QString errorString);
@@ -56,6 +58,7 @@ signals:
     void usernameChanged();
     void firstnameChanged();
     void lastnameChanged();
+    void sessionExpired();
 
 private:
     QPointer<RestClient> restClient_;
@@ -77,4 +80,5 @@ private:
 
     bool parseLoginReply(const QByteArray &data);
     bool parseRenewSessionReply(const QByteArray &data);
+    void clearCredentials();
 };

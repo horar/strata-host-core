@@ -125,18 +125,14 @@ void Authenticator::logout()
         qCInfo(lcPrtAuth) << "logout success";
         emit logoutFinished(true);
 
-        setSessionId(QByteArray());
-        setXAccessToken(QByteArray());
-        writeSettings();
+        clearCredentials();
     });
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
         qCCritical(lcPrtAuth) << "logout failed" << status << errorString;
         emit logoutFinished(false);
 
-        setSessionId(QByteArray());
-        setXAccessToken(QByteArray());
-        writeSettings();
+        clearCredentials();
     });
 }
 
@@ -163,6 +159,13 @@ QString Authenticator::firstname() const
 QString Authenticator::lastname() const
 {
     return lastname_;
+}
+
+void Authenticator::handleSessionExpiration()
+{
+    clearCredentials();
+
+    emit sessionExpired();
 }
 
 void Authenticator::writeSettings(bool storeXAccessToken)
@@ -287,4 +290,11 @@ bool Authenticator::parseRenewSessionReply(const QByteArray &data)
     setUsername(doc.object().value("user").toString());
 
     return true;
+}
+
+void Authenticator::clearCredentials()
+{
+    setSessionId(QByteArray());
+    setXAccessToken(QByteArray());
+    writeSettings();
 }

@@ -112,6 +112,10 @@ void RestClient::replyFinished()
         }
 
         deferred->callError(errorCode, reply->errorString());
+
+        if (reply->error() ==  QNetworkReply::AuthenticationRequiredError) {
+            authenticator_->handleSessionExpiration();
+        }
     }
 
     deferredList_.removeOne(deferred);
