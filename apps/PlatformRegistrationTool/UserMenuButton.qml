@@ -149,7 +149,7 @@ SGWidgets.SGButton {
                     hoverEnabled: true
 
                     onClicked: {
-                        prtModel.authenticator.logout();
+                        prtModel.authenticator.logout()
                         popupMenu.close()
                     }
                 }
