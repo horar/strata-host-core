@@ -19,7 +19,6 @@
         <file>SGIcon.qml</file>
         <file>SGIconButton.qml</file>
         <file>SGInfoBox.qml</file>
-        <file>SGLogLevelSelector.qml</file>
         <file>SGMainWindow.qml</file>
         <file>SGMarkdownViewer/SGMarkdownViewer.qml</file>
         <file>SGMarkdownViewer/index.html</file>
