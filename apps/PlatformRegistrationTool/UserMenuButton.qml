@@ -117,7 +117,7 @@ SGWidgets.SGButton {
                 Row {
                     id: settingsRow
                     anchors {
-                        verticalCenter: parent.verticalCenter
+                        verticalCenter: settingsBg.verticalCenter
                         left: parent.left
                         leftMargin: 4
                     }
@@ -166,7 +166,7 @@ SGWidgets.SGButton {
                 }
 
                 Rectangle {
-                    id: bg
+                    id: logoutBg
                     anchors {
                         left: parent.left
                         right: parent.right
@@ -189,7 +189,7 @@ SGWidgets.SGButton {
                 Row {
                     id: logoutRow
                     anchors {
-                        verticalCenter: parent.verticalCenter
+                        verticalCenter: logoutBg.verticalCenter
                         left: parent.left
                         leftMargin: 4
                     }
