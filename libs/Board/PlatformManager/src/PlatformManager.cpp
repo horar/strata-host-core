@@ -56,17 +56,17 @@ PlatformManager::~PlatformManager() {
     for(const PlatformPtr& platform: qAsConst(platforms_)) {
         disconnect(platform.get(), nullptr, this, nullptr);
         const QByteArray deviceId = platform->deviceId();
-        platform->SetTerminationCause("Platform terminated by force");
+        platform->setTerminationCause("Platform terminated by force");
         if (platform->isOpen()) {
             emit platformAboutToClose(deviceId);
             platform->close();
             emit platformClosed(deviceId);
             platform->terminate();
-            emit platformRemoved(deviceId, platform->GetTerminationCause());
+            emit platformRemoved(deviceId, platform->getTerminationCause());
             qCDebug(lcPlatformManager).noquote() << "Platform terminated by force, deviceId:" << deviceId;
         } else {
             platform->terminate();
-            emit platformRemoved(deviceId, platform->GetTerminationCause());
+            emit platformRemoved(deviceId, platform->getTerminationCause());
         }
     }
     platforms_.clear();
@@ -254,7 +254,7 @@ void PlatformManager::handleDeviceLost(QByteArray deviceId, QString errorString)
     if (iter != platforms_.constEnd()) {
         qCDebug(lcPlatformManager).noquote().nospace() << "Going to terminate platform, deviceId: " << deviceId;
         if (errorString.isEmpty() == false) {
-            iter.value()->SetTerminationCause(errorString);
+            iter.value()->setTerminationCause(errorString);
         }
         iter.value()->terminate();
     }
@@ -322,7 +322,7 @@ void PlatformManager::handlePlatformTerminated() {
     auto iter = platforms_.find(deviceId);
     if (iter != platforms_.end()) {
         qCDebug(lcPlatformManager).noquote() << "Terminating device:" << deviceId;
-        QString terminationCause = iter.value()->GetTerminationCause();
+        QString terminationCause = iter.value()->getTerminationCause();
         disconnect(iter.value().get(), nullptr, this, nullptr);
         platforms_.erase(iter);     // platform gets deleted after this point, do not reuse
         emit platformRemoved(deviceId, terminationCause);
@@ -348,7 +348,7 @@ void PlatformManager::handlePlatformRecognized(bool isRecognized, bool inBootloa
     if (isRecognized == false && keepDevicesOpen_ == false) {
         qCInfo(lcPlatformManager).noquote()
             << "Platform was not recognized and should be ignored, going to release communication channel, deviceId:" << deviceId;
-        platform->SetTerminationCause("Device not recognized");
+        platform->setTerminationCause("Device not recognized");
         disconnectPlatform(deviceId);
     }
 }
@@ -394,17 +394,17 @@ void PlatformManager::handleDeviceError(Device::ErrorCode errCode, QString errSt
     } break;
     case Device::ErrorCode::DeviceFailedToOpen: {
         qCWarning(lcPlatformManager).nospace() << "Platform failed to open: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
-        platform->SetTerminationCause(errStr);
+        platform->setTerminationCause(errStr);
         disconnectPlatform(deviceId);
     }
     case Device::ErrorCode::DeviceDisconnected: {
         qCWarning(lcPlatformManager).nospace() << "Platform was disconnected: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
-        platform->SetTerminationCause(errStr);
+        platform->setTerminationCause(errStr);
         disconnectPlatform(deviceId);
     } break;
     case Device::ErrorCode::DeviceError: {
         qCCritical(lcPlatformManager).nospace() << "Platform error received: deviceId: " << deviceId << ", code: " << errCode << ", message: " << errStr;
-        platform->SetTerminationCause(errStr);
+        platform->setTerminationCause(errStr);
         disconnectPlatform(deviceId);
     } break;
     }

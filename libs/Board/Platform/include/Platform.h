@@ -229,13 +229,13 @@ namespace strata::platform {
          * Set termination cause
          * @param terminationCause error string describing cause of termination, empty (null) when termination was expected
          */
-        void SetTerminationCause(const QString& terminationCause);
+        void setTerminationCause(const QString& terminationCause);
 
         /**
          * Return termination cause
          * @return termination cause if any was set, otherwise empty string
          */
-        QString GetTerminationCause() const;
+        QString getTerminationCause() const;
 
         friend QDebug operator<<(QDebug dbg, const Platform* d);
         friend QDebug operator<<(QDebug dbg, const PlatformPtr& d);
