@@ -78,6 +78,13 @@ SGWidgets.SGMainWindow {
                 }
             }
 
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Settings")
+                onTriggered:  {
+                    showSettingsDialog()
+                }
+            }
+
             QtLabsPlatform.MenuSeparator {}
 
             QtLabsPlatform.MenuItem {
@@ -152,6 +159,17 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/LogViewerAboutWindow.qml")
+    }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/LogViewerSettingsDialog.qml"
+                    )
+        dialog.accepted.connect(function() {
+            dialog.destroy()
+        })
+        dialog.open()
     }
 
     SGDebugWidgets.SGQmlDebug {

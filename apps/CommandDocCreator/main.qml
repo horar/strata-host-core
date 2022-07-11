@@ -112,6 +112,13 @@ SGWidgets.SGMainWindow {
                 }
             }
 
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Settings")
+                onTriggered:  {
+                    showSettingsDialog()
+                }
+            }
+
             QtLabsPlatform.MenuSeparator {}
 
             QtLabsPlatform.MenuItem {
@@ -148,4 +155,16 @@ SGWidgets.SGMainWindow {
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/CdcAboutWindow.qml")
     }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/CdcSettingsDialog.qml"
+                    )
+        dialog.accepted.connect(function() {
+            dialog.destroy()
+        })
+        dialog.open()
+    }
+
 }

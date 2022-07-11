@@ -125,15 +125,6 @@ Item {
                     }
                 }
             }
-
-            RowLayout {
-                Label {
-                    text: qsTr("Log level:")
-                }
-
-                SGWidgets.SGLogLevelSelector {
-                }
-            }
         }
     }
 

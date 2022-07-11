@@ -5,5 +5,6 @@
         <file>MdExampleWindow.qml</file>
         <file>CdcAboutWindow.qml</file>
         <file>resources/example.md</file>
+        <file>CdcSettingsDialog.qml</file>
     </qresource>
 </RCC>

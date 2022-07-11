@@ -30,13 +30,6 @@ GridLayout {
     }
 
     SGWidgets.SGText {
-        id: configOptionsText
-        Layout.columnSpan: 4
-        Layout.fillWidth: true
-        text: "Configuration Options"
-    }
-
-    SGWidgets.SGText {
         id: logLevelText
         text: "Log level"
         Layout.columnSpan: 2

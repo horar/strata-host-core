@@ -29,7 +29,6 @@ SGHueSlider 1.0 SGHueSlider.qml
 SGIcon 1.0 SGIcon.qml
 SGIconButton 1.0 SGIconButton.qml
 SGInfoBox 1.0 SGInfoBox.qml
-SGLogLevelSelector 1.0 SGLogLevelSelector.qml
 SGMainWindow 1.0 SGMainWindow.qml
 SGMarkdownViewer 1.0 SGMarkdownViewer/SGMarkdownViewer.qml
 SGPage 1.0 SGPage.qml

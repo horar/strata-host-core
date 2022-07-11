@@ -27,6 +27,13 @@ SGWidgets.SGMainWindow {
             title: "File"
 
             QtLabsPlatform.MenuItem {
+                text: qsTr("&Settings")
+                onTriggered:  {
+                    showSettingsDialog()
+                }
+            }
+
+            QtLabsPlatform.MenuItem {
                 text: qsTr("&Exit")
                 onTriggered:  {
                     root.close()
@@ -59,6 +66,17 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/WgAboutWindow.qml")
+    }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/WgSettingsDialog.qml"
+                    )
+        dialog.accepted.connect(function() {
+            dialog.destroy()
+        })
+        dialog.open()
     }
 
     SGDebugWidgets.SGQmlDebug {

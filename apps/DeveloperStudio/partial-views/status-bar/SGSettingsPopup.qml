@@ -10,7 +10,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
-
+import tech.strata.logconf 1.0 as LcuPlugin
 import "../"
 import "../general/"
 
@@ -104,6 +104,24 @@ SGStrataPopup {
                 userSettings.notifyOnPlatformConnections = checked
                 userSettings.saveSettings()
             }
+        }
+
+        SGText {
+            text: "Logging configuration"
+            fontSizeMultiplier: 1.3
+        }
+
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: "#666"
+        }
+
+        LcuPlugin.LogLevel {
+            id: logLevel
+            Layout.fillWidth: true
+            fileName: ""
         }
     }
 }

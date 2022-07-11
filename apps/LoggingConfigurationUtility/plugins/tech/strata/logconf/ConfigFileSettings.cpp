@@ -276,7 +276,13 @@ void ConfigFileSettings::setFilePath(const QString& filePath)
     if (settings_ != nullptr && filePath == settings_->fileName()) {
         return;
     }
-    settings_.reset(new QSettings(filePath, QSettings::IniFormat));
+
+    if (filePath == "") {
+        settings_.reset(new QSettings());
+    } else {
+        settings_.reset(new QSettings(filePath, QSettings::IniFormat));
+    }
 
     emit filePathChanged();
+
 }
