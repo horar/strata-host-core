@@ -30,14 +30,12 @@ The following Qt5 components are required:
 ### Windows
 
 * MSVC 2017 64-bit
-* Qt Charts
 * Qt WebEngine
 * Qt Developer and Designer Tools -> OpenSSL Toolkit
 
 ### MacOS
 
 * macOS
-* Qt Charts
 * Qt WebEngine
 
 ## Build Instructions

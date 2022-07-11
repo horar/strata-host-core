@@ -37,7 +37,7 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml Xml WebEngine Charts RemoteObjects Svg
+    COMPONENTS Core Gui Widgets Quick Qml Xml WebEngine RemoteObjects Svg
     REQUIRED
 )
 
