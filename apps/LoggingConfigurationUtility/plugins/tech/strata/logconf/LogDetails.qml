@@ -276,7 +276,7 @@ GridLayout {
        icon.width: infoButtonSize
        icon.height: infoButtonSize
        hintText: "Opens web browser with documentation"
-       onClicked: Qt.openUrlExternally("https://doc.qt.io/qt-5/qtglobal.html#qSetMessagePattern")
+       onClicked: Qt.openUrlExternally("https://doc.qt.io/archives/qt-5.12/qtglobal.html#qSetMessagePattern")
    }
 
    SGWidgets.SGTextField {
