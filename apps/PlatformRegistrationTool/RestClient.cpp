@@ -20,9 +20,9 @@ void Deferred::callSuccess(int status, QByteArray data)
     emit finishedSuccessfully(status, data);
 }
 
-void Deferred::callError(int status, QString errorString)
+void Deferred::callError(int status, QString errorString, QByteArray data)
 {
-    emit finishedWithError(status, errorString);
+    emit finishedWithError(status, errorString, data);
 }
 
 RestClient::RestClient(QObject *parent)
@@ -111,7 +111,7 @@ void RestClient::replyFinished()
             errorCode = reply->error();
         }
 
-        deferred->callError(errorCode, reply->errorString());
+        deferred->callError(errorCode, reply->errorString(), data);
 
         if (reply->error() ==  QNetworkReply::AuthenticationRequiredError) {
             authenticator_->handleSessionExpiration();

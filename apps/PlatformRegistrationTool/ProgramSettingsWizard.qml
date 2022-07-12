@@ -56,9 +56,9 @@ FocusScope {
         running: true
         initialState: stateStep1
 
-        signal findPlatformReplyNotValid()
+        signal findPlatformReplyNotValid(string errorString)
         signal findPlatformOpnValid(int controllerType)
-        signal findPlatformOpnNotValid()
+        signal findPlatformOpnNotValid(string errorString)
 
         DSM.State {
             id: stateStep1
@@ -129,7 +129,7 @@ FocusScope {
                     signal: stateMachine.findPlatformOpnNotValid
                     onTriggered: {
                         firstOpnDelegate.isSet = false
-                        firstOpnDelegate.errorText = "OPN not valid"
+                        firstOpnDelegate.errorText = errorString
                     }
                 }
 
@@ -138,7 +138,7 @@ FocusScope {
                     signal: stateMachine.findPlatformReplyNotValid
                     onTriggered: {
                         firstOpnDelegate.isSet = false
-                        firstOpnDelegate.errorText = "Reply not valid"
+                        firstOpnDelegate.errorText = errorString
                     }
                 }
             }
@@ -244,7 +244,7 @@ FocusScope {
                     signal: stateMachine.findPlatformOpnNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
-                        secondOpnDelegate.errorText = "OPN not valid"
+                        secondOpnDelegate.errorText = errorString
                     }
                 }
 
@@ -253,7 +253,7 @@ FocusScope {
                     signal: stateMachine.findPlatformReplyNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
-                        secondOpnDelegate.errorText = "Reply not valid"
+                        secondOpnDelegate.errorText = errorString
                     }
                 }
             }
@@ -423,7 +423,7 @@ FocusScope {
                     signal: stateMachine.findPlatformReplyNotValid
                     onTriggered: {
                         secondOpnDelegate.isSet = false
-                        secondOpnDelegate.errorText = "Reply not valid"
+                        secondOpnDelegate.errorText = errorString
                     }
                 }
             }
@@ -566,17 +566,27 @@ FocusScope {
         var deferred = prtModel.restClient.get(endpoint)
 
         deferred.finishedSuccessfully.connect(function(status, data) {
-            //when OPN is not found, empty array is returned
-
             console.log(Logger.prtCategory,"platform info:", status, data)
 
             processReplyData(opn.toLowerCase(), data);
         })
 
-        deferred.finishedWithError.connect(function(status ,errorString) {
-            console.error(Logger.prtCategory, status, errorString)
+        deferred.finishedWithError.connect(function(status, errorString, data) {
+            console.error(Logger.prtCategory, status, errorString, data)
 
-            stateMachine.findPlatformReplyNotValid()
+            let errStr = "OPN not found"
+            if (data.toString().length) {
+                try {
+                    var dataObject = JSON.parse(data)
+                    if (dataObject.hasOwnProperty("message")) {
+                        errStr = dataObject["message"]
+                    }
+                } catch(error) {
+                    errStr = "Reply from server not valid"
+                }
+            }
+
+            stateMachine.findPlatformReplyNotValid(errStr)
         })
     }
 
@@ -587,46 +597,59 @@ FocusScope {
             var dataObject = JSON.parse(dataString)
         } catch(error) {
             console.error(Logger.prtCategory, "cannot parse reply from server")
-
-            stateMachine.findPlatformReplyNotValid()
+            stateMachine.findPlatformReplyNotValid("Reply from server not valid")
             return
         }
 
-        if (Array.isArray(dataObject)) {
-            stateMachine.findPlatformOpnNotValid()
+        if (dataObject.hasOwnProperty("controller_type") === false) {
+            console.error(Logger.prtCategory, "controller_type is missing")
+            stateMachine.findPlatformReplyNotValid("Reply from server not valid")
             return
+        }
+
+        var controller_type = dataObject["controller_type"]
+
+        var validationSchema = {}
+        if (controller_type === 1) {
+            validationSchema = JsonSchemas.documentEmbeddedSchema
+        } else if (controller_type === 2) {
+            validationSchema = JsonSchemas.documentAssistedSchema
+        } else if (controller_type === 3) {
+            validationSchema = JsonSchemas.documentControllerSchema
         } else {
-            if (dataObject.hasOwnProperty("controller_type") === false) {
-                console.error(Logger.prtCategory, "controller_type is missing")
-                stateMachine.findPlatformReplyNotValid()
+            let errStr = "Unknown controller type"
+            console.error(Logger.prtCategory, errStr, controller_type)
+            stateMachine.findPlatformReplyNotValid(errStr)
+            return
+        }
+
+        var isValid = CommonCpp.SGUtilsCpp.validateJson(dataString, JSON.stringify(validationSchema))
+        if (isValid) {
+            var errStr = ""
+            if (controller_type === 1 || controller_type === 2) {
+                if (dataObject.hasOwnProperty("firmware") === false) {
+                    errStr = "No firmware available. Platform cannot be registerd."
+                }
+            } else if (controller_type === 1 || controller_type === 3) {
+                if (dataObject.hasOwnProperty("bootloader") === false) {
+                    errStr = "No bootloader available. Platform cannot be registerd."
+                }
+            }
+
+            if (errStr.length) {
+                console.info(Logger.prtCategory, errStr)
+                stateMachine.findPlatformOpnNotValid(errStr)
                 return
             }
 
-            var controller_type = dataObject["controller_type"]
-
-            var validationSchema = {}
-            if (controller_type === 1) {
-                validationSchema = JsonSchemas.documentEmbeddedSchema
-            } else if (controller_type === 2) {
-                validationSchema = JsonSchemas.documentAssistedSchema
-            } else if (controller_type === 3) {
-                validationSchema = JsonSchemas.documentControllerSchema
-            } else {
-                console.error(Logger.prtCategory, "Unknown controller type", controller_type)
-                stateMachine.findPlatformReplyNotValid()
-                return
-            }
-
-            var isValid = CommonCpp.SGUtilsCpp.validateJson(dataString, JSON.stringify(validationSchema))
-            if (isValid) {
-                wizard.latestData = dataObject
-                stateMachine.findPlatformOpnValid(dataObject.controller_type)
-                wizard.latestData = {}
-            } else {
-                console.error(Logger.prtCategory, "Cannot validate OPN. Schema of reply not valid.")
-                stateMachine.findPlatformReplyNotValid()
-                return
-            }
+            wizard.latestData = dataObject
+            stateMachine.findPlatformOpnValid(dataObject.controller_type)
+            wizard.latestData = {}
+        } else {
+            let errStr = "Cannot validate OPN. Reply from server not valid."
+            console.error(Logger.prtCategory, errStr)
+            stateMachine.findPlatformReplyNotValid(errStr)
+            return
         }
     }
 }
