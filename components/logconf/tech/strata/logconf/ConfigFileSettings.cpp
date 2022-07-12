@@ -279,6 +279,10 @@ void ConfigFileSettings::setFilePath(const QString& filePath)
 
     if (filePath == "") {
         settings_.reset(new QSettings());
+    } else if (filePath == "hcs") {
+        QSettings settings;
+        QFileInfo fileInfo(settings.fileName());
+        settings_.reset(new QSettings(fileInfo.absolutePath() + "/Host Controller Service.ini", QSettings::IniFormat));
     } else {
         settings_.reset(new QSettings(filePath, QSettings::IniFormat));
     }
