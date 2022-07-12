@@ -9,7 +9,7 @@
 
 module tech.strata.logconf
 
-plugin lcuPlugin
+plugin component-logconf
 typeinfo plugins.qmltypes
 
 LogLevel 1.0 qrc:///LogLevel.qml

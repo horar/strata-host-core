@@ -61,8 +61,6 @@ if(APPLE)
     )
 endif()
 
-add_subdirectory(plugins)
-
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
