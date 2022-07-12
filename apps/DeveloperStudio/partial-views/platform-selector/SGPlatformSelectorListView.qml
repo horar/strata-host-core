@@ -636,12 +636,9 @@ Item {
                                         id: segmentFilterRepeater
                                         model: SGSortFilterProxyModel {
                                             sourceModel: PlatformFilters.filterModel
-                                            invokeCustomFilter: true
-
-                                            function filterAcceptsRow(index) {
-                                                let item = sourceModel.get(index)
-                                                return item.type === "segment"
-                                            }
+                                            sortRole: "name"
+                                            filterRole: "type"
+                                            filterPattern: "segment"
                                         }
 
                                         delegate: SegmentFilterDelegate {
@@ -676,12 +673,9 @@ Item {
                                         id: categoryFilterRepeater
                                         model: SGSortFilterProxyModel {
                                             sourceModel: PlatformFilters.filterModel
-                                            invokeCustomFilter: true
-
-                                            function filterAcceptsRow(index) {
-                                                let item = sourceModel.get(index)
-                                                return item.type === "category"
-                                            }
+                                            sortRole: "name"
+                                            filterRole: "type"
+                                            filterPattern: "category"
                                         }
 
                                         delegate: SegmentFilterDelegate {
@@ -723,12 +717,9 @@ Item {
                     id: activeFilterRepeater
                     model: SGSortFilterProxyModel {
                         sourceModel: PlatformFilters.filterModel
-                        invokeCustomFilter: true
-
-                        function filterAcceptsRow (index) {
-                            let item = sourceModel.get(index)
-                            return item.activelyFiltering
-                        }
+                        filterRole: "activelyFiltering"
+                        filterPattern: "true"
+                        sortEnabled: false
                     }
 
                     delegate: Rectangle {
