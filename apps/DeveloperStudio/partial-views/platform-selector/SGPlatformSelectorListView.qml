@@ -117,7 +117,7 @@ Item {
                     }
 
                     for (let j = 0; j < item.filters.count; j++){
-                        if (PlatformFilters.activeFilters[i] === item.filters.get(j).filterName) {
+                        if (PlatformFilters.activeFilters[i] === item.filters.get(j).filterId) {
                             continue mainLoop
                         }
 
@@ -274,20 +274,20 @@ Item {
                                 model: ListModel {
 
                                     ListElement {
-                                        filterName: "status-recently-released"
-                                        text: "Show Recently Released"
+                                        filterId: "status-recently-released"
+                                        name: "Show Recently Released"
                                         iconSource: ""
                                     }
 
                                     ListElement {
-                                        filterName: "status-coming-soon"
-                                        text: "Show Coming Soon"
+                                        filterId: "status-coming-soon"
+                                        name: "Show Coming Soon"
                                         iconSource: ""
                                     }
 
                                     ListElement {
-                                        filterName: "status-connected"
-                                        text: "Show Connected"
+                                        filterId: "status-connected"
+                                        name: "Show Connected"
                                         iconSource: ""
                                     }
                                 }
@@ -636,12 +636,9 @@ Item {
                                         id: segmentFilterRepeater
                                         model: SGSortFilterProxyModel {
                                             sourceModel: PlatformFilters.filterModel
-                                            invokeCustomFilter: true
-
-                                            function filterAcceptsRow(index) {
-                                                let item = sourceModel.get(index)
-                                                return item.type === "segment"
-                                            }
+                                            sortRole: "name"
+                                            filterRole: "type"
+                                            filterPattern: "segment"
                                         }
 
                                         delegate: SegmentFilterDelegate {
@@ -676,12 +673,9 @@ Item {
                                         id: categoryFilterRepeater
                                         model: SGSortFilterProxyModel {
                                             sourceModel: PlatformFilters.filterModel
-                                            invokeCustomFilter: true
-
-                                            function filterAcceptsRow(index) {
-                                                let item = sourceModel.get(index)
-                                                return item.type === "category"
-                                            }
+                                            sortRole: "name"
+                                            filterRole: "type"
+                                            filterPattern: "category"
                                         }
 
                                         delegate: SegmentFilterDelegate {
@@ -723,12 +717,9 @@ Item {
                     id: activeFilterRepeater
                     model: SGSortFilterProxyModel {
                         sourceModel: PlatformFilters.filterModel
-                        invokeCustomFilter: true
-
-                        function filterAcceptsRow (index) {
-                            let item = sourceModel.get(index)
-                            return item.activelyFiltering
-                        }
+                        filterRole: "activelyFiltering"
+                        filterPattern: "true"
+                        sortEnabled: false
                     }
 
                     delegate: Rectangle {
@@ -744,7 +735,7 @@ Item {
                             }
 
                             SGText {
-                                text: model.text
+                                text: model.name
                                 color: "white"
                                 Layout.leftMargin: 5
                             }
@@ -765,7 +756,7 @@ Item {
                                     cursorShape: Qt.PointingHandCursor
 
                                     onClicked:  {
-                                        PlatformFilters.setFilterActive(model.filterName, false)
+                                        PlatformFilters.setFilterActive(model.filterId, false)
                                     }
                                 }
                             }
