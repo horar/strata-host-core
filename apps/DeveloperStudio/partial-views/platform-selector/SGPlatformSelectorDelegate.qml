@@ -275,12 +275,12 @@ Item {
                                 }
 
                                 onClicked: {
-                                    PlatformFilters.setFilterActive(model.filterName, true)
+                                    PlatformFilters.setFilterActive(model.filterId, true)
                                 }
 
                                 TextMetrics {
                                     id: textMetrics
-                                    text: model.text
+                                    text: model.name
                                     font: tagButton.font
                                     elide: Qt.ElideRight
                                     elideWidth: flickable.width - tagButton.leftPadding - tagButton.rightPadding

@@ -25,7 +25,7 @@ Rectangle {
     signal selected()
 
     function onClicked() {
-        PlatformFilters.setFilterActive(model.filterName, true)
+        PlatformFilters.setFilterActive(model.filterId, true)
         selected()
     }
 
@@ -60,7 +60,7 @@ Rectangle {
         }
 
         SGText {
-            text: model.text
+            text: model.name
             Layout.fillWidth: true
             Layout.margins: 5
             elide: Text.ElideRight
