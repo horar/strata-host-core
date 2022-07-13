@@ -26,20 +26,15 @@ Item {
         category: "ApplicationWindow"
 
         property alias selectedFileName: iniFileComboBox.currentText
+
+        Component.onCompleted: {
+            configFileModel.reload()
+            iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
+        }
     }
 
     ConfigFileModel {
         id:configFileModel
-    }
-
-    ConfigFileSettings {
-        id: configFileSettings
-    }
-
-    Component.onCompleted: {
-        configFileModel.reload()
-        iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
-        configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
     }
 
     ColumnLayout {
@@ -56,52 +51,54 @@ Item {
             text: "Configuration files"
         }
 
-       RowLayout {
-           SGWidgets.SGComboBox {
-               id: iniFileComboBox
-               Layout.fillWidth: true
-               model: configFileModel
-               textRole: "fileName"
-               enabled: count !== 0
-               placeholderText: count == 0 ? "No configuration files found" : "Please select config file"
-               onActivated: {
-                   console.log(Logger.lcuCategory, "Selected INI file changed to:", iniFileComboBox.currentText)
-                   configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
-               }
-               popupHeight: mainLayout.height
+        RowLayout {
+            SGWidgets.SGComboBox {
+                id: iniFileComboBox
+                Layout.fillWidth: true
+                model: configFileModel
+                textRole: "fileName"
+                enabled: count !== 0
+                placeholderText: count == 0 ? "No configuration files found" : "Please select config file"
+                onActivated: {
+                    console.log(Logger.lcuCategory, "Selected INI file changed to:", iniFileComboBox.currentText)
+                }
+                popupHeight: mainLayout.height
 
-               Connections {
-                   target: configFileModel
-                   onCountChanged: { //is called always when list of INI files is loaded/reloaded
-                       iniFileComboBox.currentIndex = -1
-                       configFileSettings.filePath = ""
-                   }
-               }
-           }
-           SGWidgets.SGButton {
-               id: reloadButton
-               Layout.preferredWidth: height
-               Layout.alignment: Qt.AlignRight
-               icon.source: "qrc:/sgimages/redo.svg"
-               onClicked: {
-                   configFileModel.reload()
-                   iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
-                   configFileSettings.filePath = configFileModel.get(iniFileComboBox.currentIndex).filePath
-               }
-           }
-       }
+                Connections {
+                    target: configFileModel
+                    onCountChanged: { //is called always when list of INI files is loaded/reloaded
+                        iniFileComboBox.currentIndex = -1
+                    }
+                }
+            }
+            SGWidgets.SGButton {
+                id: reloadButton
+                Layout.preferredWidth: height
+                Layout.alignment: Qt.AlignRight
+                icon.source: "qrc:/sgimages/redo.svg"
+                onClicked: {
+                    configFileModel.reload()
+                    iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
+                }
+            }
+        }
 
-       LogLevel {
-           id: logLevelPane
-           Layout.fillWidth: true
-           fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
-       }
+        LogLevel {
+            id: logLevelPane
+            Layout.fillWidth: true
+            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
+        }
 
-       LogDetails {
-           id : logDetailsPane
-           Layout.fillWidth: true
-           fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
-           lcuApp: true
-       }
+        LogDetails {
+            id : logDetailsPane
+            Layout.fillWidth: true
+            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
+            lcuApp: true
+
+            Component.onCompleted: {
+                configFileModel.reload()
+                iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
+            }
+        }
     }
 }

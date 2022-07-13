@@ -41,6 +41,7 @@ if(APPS_CORECOMPONENTS)
     add_subdirectory(sgwidgets)
     add_subdirectory(common)
     add_subdirectory(commoncpp)
+    add_subdirectory(logconf)
 endif()
 
 if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/strata-platform-control-views")
