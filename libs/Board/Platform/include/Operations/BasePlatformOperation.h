@@ -132,7 +132,7 @@ signals:
      * \param status specific status for operation
      * \param errorString error string (valid only if operation finishes with error)
      */
-    void finished(Result result, int status, QString errorString = QString());
+    void finished(strata::platform::operation::Result result, int status, QString errorString = QString());
 
     /*!
      * This signal is emitted during some operations (e.g. firmware flashing) when one of
