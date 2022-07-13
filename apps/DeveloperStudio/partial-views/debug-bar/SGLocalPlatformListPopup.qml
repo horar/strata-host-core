@@ -860,16 +860,12 @@ Window {
     // Loads the new platform class_id, and stores the recently used platform or checks to see if it is a custom platform and stores it to the custom platforms
     function updateConnectedPlatforms() {
 
-        let injectList = {
-            "list": [],
-            "type": "connected_platforms"
-        }
-
+        let injectList = []
         for (var i = 0; i < platformModel.count; i++) {
             const updatedPlatform = platformModel.get(i)
             const isAssisted = updatedPlatform.controller_type === Constants.DEVICE_CONTROLLER_TYPES.ASSISTED
             if (updatedPlatform.connected) {
-                injectList.list.push({
+                injectList.push({
                                          "class_id": updatedPlatform.class_id,
                                          "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
                                          "firmware_version": updatedPlatform.firmware_version,

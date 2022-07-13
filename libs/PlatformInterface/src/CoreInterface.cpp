@@ -120,8 +120,6 @@ void CoreInterface::processAllPlatformsNotification(const QJsonObject &payload)
 
 void CoreInterface::processConnectedPlatformsNotification(const QJsonObject &payload)
 {
-    qDebug() << payload;
-
     QString newConnectedPlatformList = QJsonDocument(payload.value("list").toArray()).toJson(QJsonDocument::Compact);
     if (connectedPlatformList_ != newConnectedPlatformList) {
         connectedPlatformList_ = newConnectedPlatformList;
