@@ -125,7 +125,7 @@ QHash<int, QByteArray> DocumentListModel::roleNames() const
 QString DocumentListModel::getMD5()
 {
     QJsonObject jsonObj;
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         jsonObj.insert(item->dirname + "_" + item->prettyName, item->md5);
     }
     QJsonDocument doc(jsonObj);
@@ -152,14 +152,14 @@ void DocumentListModel::setHistoryState(const QString &doc, const QString &state
 
 void DocumentListModel::setAllHistoryStateToSeen()
 {
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         item->historyState = "seen";
     }
 }
 
 bool DocumentListModel::anyItemsUnseen()
 {
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         if (item->historyState != "seen") {
             return true;
         }
@@ -170,7 +170,7 @@ bool DocumentListModel::anyItemsUnseen()
 QStringList DocumentListModel::getItemsUnseen()
 {
     QStringList ls;
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         if (item->historyState != "seen") {
             ls << item->prettyName;
         }

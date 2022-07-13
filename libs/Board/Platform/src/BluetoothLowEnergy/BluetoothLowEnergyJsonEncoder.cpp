@@ -90,7 +90,7 @@ QBluetoothUuid BluetoothLowEnergyJsonEncoder::normalizeBleUuid(const std::string
 {
     QString tmpUuid = QString::fromStdString(uuid);
     tmpUuid = tmpUuid.remove('-').toLower();
-    for (const auto &ch : tmpUuid) {
+    for (const auto &ch : qAsConst(tmpUuid)) {
         if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f')) {
             continue;
         }

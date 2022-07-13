@@ -219,7 +219,7 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
 
 int VersionedListModel::getLatestVersionIndex() {
     QStringList versions;
-    for (VersionedItem *versionItem : data_) {
+    for (const VersionedItem *versionItem : qAsConst(data_)) {
         versions.append(versionItem->version);
     }
 
