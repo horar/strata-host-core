@@ -32,7 +32,7 @@ DownloadManager::DownloadManager(QNetworkAccessManager *manager, QObject *parent
 
 DownloadManager::~DownloadManager()
 {
-    for (QNetworkReply* reply : currentDownloads_) {
+    for (QNetworkReply* reply : qAsConst(currentDownloads_)) {
         reply->abort();
         reply->deleteLater();
     }
@@ -138,7 +138,7 @@ QString DownloadManager::resolveUniqueFilePath(const QString &filePath)
 QList<DownloadManager::DownloadResponseItem> DownloadManager::getResponseList(const QString &groupId)
 {
     QList<DownloadResponseItem> list;
-    for (const auto item : internalRequestList_) {
+    for (const auto item : qAsConst(internalRequestList_)) {
 
         if (item->groupId != groupId) {
             continue;
@@ -170,7 +170,7 @@ void DownloadManager::abortAll(const QString &groupId)
     group->aborted = true;
 
     //stops pending requests
-    for (auto item : internalRequestList_) {
+    for (auto item : qAsConst(internalRequestList_)) {
         if (item->groupId != groupId) {
             continue;
         }
@@ -181,7 +181,7 @@ void DownloadManager::abortAll(const QString &groupId)
     }
 
     //stops running requests
-    for (auto const &reply : currentDownloads_) {
+    for (auto const &reply : qAsConst(currentDownloads_)) {
         InternalDownloadRequest *internalRequest = qobject_cast<InternalDownloadRequest*>(reply->request().originatingObject());
         if (internalRequest == nullptr) {
             qCCritical(lcDownloadManager) << "cannot cast originating object";
@@ -423,7 +423,7 @@ void DownloadManager::processRequest(InternalDownloadRequest *internalRequest, c
 
 InternalDownloadRequest* DownloadManager::findNextPendingDownload()
 {
-    for (InternalDownloadRequest *item : internalRequestList_) {
+    for (InternalDownloadRequest *item : qAsConst(internalRequestList_)) {
         if (item->state == InternalDownloadRequest::DownloadState::Pending) {
             return item;
         }
@@ -555,7 +555,7 @@ void DownloadManager::resolveGroupProgress(
     filesCompleted = 0;
     filesTotal = 0;
 
-    for (auto const item : internalRequestList_) {
+    for (auto const item : qAsConst(internalRequestList_)) {
         if (item->groupId == groupId) {
             ++filesTotal;
             if (item->state == InternalDownloadRequest::DownloadState::Finished

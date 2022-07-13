@@ -127,7 +127,7 @@ void SciCommandHistoryModel::populate(const QStringList &list)
     beginResetModel();
     commandList_.clear();
 
-    for (QString message : list) {
+    for (const QString& message : list) {
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
 

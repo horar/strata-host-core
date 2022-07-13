@@ -110,7 +110,7 @@ void SciPlatformSettings::loadData()
     }
 
     QJsonParseError parseError;
-    QJsonDocument doc =QJsonDocument::fromJson(file.readAll(), &parseError);
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
         qCCritical(lcSci) << "cannot load data, json corrupted"
@@ -124,7 +124,8 @@ void SciPlatformSettings::loadData()
         return;
     }
 
-    for (const QJsonValueRef board : doc.array()) {
+    const QJsonArray boardArray = doc.array();
+    for (const QJsonValue& board : boardArray) {
         if (settingsList_.length() > maxCount_) {
             break;
         }
@@ -152,7 +153,7 @@ void SciPlatformSettings::saveData()
     QJsonDocument doc;
     QJsonArray boardList;
 
-    for (const auto *item : settingsList_) {
+    for (const auto *item : qAsConst(settingsList_)) {
         QJsonObject obj;
         obj.insert(SCI_SETTINGS_ID, item->id);
         obj.insert(SCI_SETTINGS_CMD_HISTORY, QJsonArray::fromStringList(item->commandHistoryList));

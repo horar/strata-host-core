@@ -357,7 +357,7 @@ void DownloadDocumentListModel::groupDownloadFinishedHandler(const QJsonObject &
 QString DownloadDocumentListModel::getMD5()
 {
     QJsonObject jsonObj;
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         jsonObj.insert(item->dirname + "_" + item->prettyName, item->md5);
     }
     QJsonDocument doc(jsonObj);
@@ -384,14 +384,14 @@ void DownloadDocumentListModel::setHistoryState(const QString &doc, const QStrin
 
 void DownloadDocumentListModel::setAllHistoryStateToSeen()
 {
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         item->historyState = "seen";
     }
 }
 
 bool DownloadDocumentListModel::anyItemsUnseen()
 {
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         if (item->historyState != "seen") {
             return true;
         }
@@ -402,7 +402,7 @@ bool DownloadDocumentListModel::anyItemsUnseen()
 QStringList DownloadDocumentListModel::getItemsUnseen()
 {
     QStringList ls;
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         if (item->historyState != "seen") {
             ls << item->prettyName;
         }
