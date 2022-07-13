@@ -83,7 +83,7 @@ public:
     virtual void disconnectAllDevices() override;
 
 signals:
-    void discoveryFinished(DiscoveryFinishStatus status, QString errorString);
+    void discoveryFinished(strata::device::scanner::BluetoothLowEnergyScanner::DiscoveryFinishStatus status, QString errorString);
 
 private slots:
     void discoveryFinishedHandler();

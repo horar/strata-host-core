@@ -232,7 +232,7 @@ public:
 
 private slots:
     void readMessage(QByteArray msg);
-    void handleError(ErrorCode errCode, QString msg);
+    void handleError(strata::device::Device::ErrorCode errCode, QString msg);
 
 private:
     bool opened_ = false;
