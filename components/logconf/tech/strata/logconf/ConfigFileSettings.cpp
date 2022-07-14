@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QSettings>
+#include <QGuiApplication>
 
 ConfigFileSettings::ConfigFileSettings(QObject *parent) :
     QObject(parent),
@@ -278,11 +279,9 @@ void ConfigFileSettings::setFilePath(const QString& filePath)
     }
 
     if (filePath == "") {
-        settings_.reset(new QSettings());
+        settings_.reset(new QSettings(QSettings::IniFormat,QSettings::UserScope,QCoreApplication::organizationName(),QCoreApplication::applicationName()));
     } else if (filePath == "hcs") {
-        QSettings settings;
-        QFileInfo fileInfo(settings.fileName());
-        settings_.reset(new QSettings(fileInfo.absolutePath() + "/Host Controller Service.ini", QSettings::IniFormat));
+        settings_.reset(new QSettings(QSettings::IniFormat,QSettings::UserScope,QCoreApplication::organizationName(),"Host Controller Service"));
     } else {
         settings_.reset(new QSettings(filePath, QSettings::IniFormat));
     }
