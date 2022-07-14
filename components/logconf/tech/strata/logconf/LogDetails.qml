@@ -18,7 +18,7 @@ import tech.strata.pluginLogger 1.0
 GridLayout {
     id: logDetailsGrid
 
-    property alias fileName: configFileSettings.filePath
+    property alias fileName: configFileSettings.fileName
     property alias lcuApp: item.enabled
     property int innerSpacing: 5
     property int shortEdit: 180
@@ -33,9 +33,7 @@ GridLayout {
 
     Component.onCompleted: {
         if (lcuApp == false) {
-            configFileSettings.filePath = ""
-        } else {
-
+            configFileSettings.fileName = Qt.application.name
         }
     }
 
@@ -110,7 +108,7 @@ GridLayout {
                 maxFileSizeSpinBox.value = configFileSettings.maxFileSize
                 textInputFileSize.text = maxFileSizeSpinBox.value
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 if (configFileSettings.maxFileSize == -1) {
                     maxFileSizeEnabled = false
                 } else {
@@ -126,7 +124,7 @@ GridLayout {
         id: maxFileSizeButton
         Layout.maximumWidth: height
         text: maxFileSizeSpinBox.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== ""
+        enabled: configFileSettings.fileName !== ""
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.maxFileSize = 0
@@ -200,7 +198,7 @@ GridLayout {
                 maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
                 textInputNoFiles.text = maxNoFilesSpinBox.value
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 if (configFileSettings.maxNoFiles == -1) {
                     maxNoFilesEnabled = false
                 } else {
@@ -216,7 +214,7 @@ GridLayout {
         id: maxNoFilesButton
         Layout.maximumWidth: height
         text: maxNoFilesSpinBox.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== "" //disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== "" //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.maxNoFiles = 0
@@ -248,7 +246,7 @@ GridLayout {
             onQtFilterRulesChanged: {
                 qtFilterRulesTextField.text = configFileSettings.qtFilterRules
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 qtFilterRulesTextField.text = configFileSettings.qtFilterRules
             }
         }
@@ -258,7 +256,7 @@ GridLayout {
         id: qtFilterRulesButton
         Layout.maximumWidth: height
         text: qtFilterRulesTextField.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== "" //disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== "" //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.qtFilterRules = ""
@@ -295,7 +293,7 @@ GridLayout {
             onQtMsgPatternChanged: {
                 qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
             }
         }
@@ -305,7 +303,7 @@ GridLayout {
         id: qtMsgPatternButton
         Layout.maximumWidth: height
         text: qtMsgPatternTextField.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== ""//disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== ""//disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.qtMsgPattern = ""
@@ -342,7 +340,7 @@ GridLayout {
              onSpdlogMsgPatternChanged: {
                  spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
              }
-             onFilePathChanged: {
+             onFileNameChanged: {
                  spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
              }
          }
@@ -351,7 +349,7 @@ GridLayout {
         id: spdlogMsgPatternButton
         Layout.maximumWidth: height
         text: spdlogMsgPatternTextField.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== "" //disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== "" //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.spdlogMsgPattern = ""

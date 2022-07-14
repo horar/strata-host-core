@@ -289,14 +289,14 @@ SGWidgets.SGDialog {
                 id: logLevel
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
-                fileName: ""
+                fileName: Qt.application.name
             }
 
             LcuPlugin.LogDetails {
                 id: logDetails
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
-                fileName: ""
+                fileName: Qt.application.name
                 lcuApp: false
             }
         }

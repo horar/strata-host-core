@@ -17,7 +17,7 @@ import tech.strata.pluginLogger 1.0
 GridLayout {
     id: logLevelGrid
 
-    property alias fileName: configFileSettings.filePath
+    property alias fileName: configFileSettings.fileName
     property int innerSpacing: 5
     property int shortEdit: 180
 
@@ -51,7 +51,7 @@ GridLayout {
             onLogLevelChanged: {
                 logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 logLevelComboBox.currentIndex = logLevelComboBox.find(configFileSettings.logLevel)
             }
         }
@@ -65,7 +65,7 @@ GridLayout {
         id: setLogLevelButton
         Layout.maximumWidth: height
         text: logLevelComboBox.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== ""
+        enabled: configFileSettings.fileName !== ""
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.logLevel = ""

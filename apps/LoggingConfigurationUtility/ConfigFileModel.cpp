@@ -43,7 +43,6 @@ void ConfigFileModel::reload()
         qCWarning(lcLcu) << "No ini files were found.";
     }
 
-    //TODO in different ticket - when list of files is reloaded and its count changes, set current index on the file which was opened before reloading. If the file doesn't exist any more, set index to 0.
     emit countChanged();
 }
 
@@ -58,7 +57,7 @@ QVariantMap ConfigFileModel::get(int index)
 
     QFileInfo item = iniFiles_.at(index);
     QVariantMap map;
-    map.insert("fileName", item.fileName());
+    map.insert("fileName", item.baseName());
     map.insert("filePath", item.absoluteFilePath());
     return map;
 }
@@ -79,7 +78,7 @@ QVariant ConfigFileModel::data(const QModelIndex & index, int role) const
 
     switch (role) {
     case FileNameRole:
-        return iniFiles_.at( index.row() ).fileName();
+        return iniFiles_.at( index.row() ).baseName();
     case FilePathRole:
         return iniFiles_.at( index.row() ).absoluteFilePath();
     }

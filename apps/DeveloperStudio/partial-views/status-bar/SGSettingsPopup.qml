@@ -107,37 +107,37 @@ SGStrataPopup {
         }
 
         SGText {
-                    text: "Logging configuration"
-                    fontSizeMultiplier: 1.3
-                }
+            text: "Logging configuration"
+            fontSizeMultiplier: 1.3
+        }
 
-                Rectangle {
-                    // divider
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: "#666"
-                }
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: "#666"
+        }
 
-                SGText {
-                    text: "Strata Developer Studio"
-                    fontSizeMultiplier: 1.1
-                }
+        SGText {
+            text: "Strata Developer Studio"
+            fontSizeMultiplier: 1.1
+        }
 
-                LcuPlugin.LogLevel {
-                    id: logLevelSDS
-                    Layout.fillWidth: true
-                    fileName: ""
-                }
+        LcuPlugin.LogLevel {
+            id: logLevelSDS
+            Layout.fillWidth: true
+            fileName: Qt.application.name
+        }
 
-                SGText {
-                    text: "Host Controller Service"
-                    fontSizeMultiplier: 1.1
-                }
+        SGText {
+            text: "Host Controller Service"
+            fontSizeMultiplier: 1.1
+        }
 
-                LcuPlugin.LogLevel {
-                    id: logLevelHCS
-                    Layout.fillWidth: true
-                    fileName: "hcs"
-                }
+        LcuPlugin.LogLevel {
+            id: logLevelHCS
+            Layout.fillWidth: true
+            fileName: "Host Controller Service"
+        }
     }
 }

@@ -38,7 +38,7 @@ SGWidgets.SGDialog {
         LcuPlugin.LogLevel {
             id: logLevel
             Layout.fillWidth: true
-            fileName: ""
+            fileName: Qt.application.name
         }
 
         SGWidgets.SGButton {
