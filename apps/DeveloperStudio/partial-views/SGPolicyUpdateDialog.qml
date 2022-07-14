@@ -29,16 +29,17 @@ SGWidgets.SGDialog {
     modal: true
     focus: true
 
-    Item { 
+    Item {
         implicitWidth: Math.max(implicitHeaderWidth, 400)
-        implicitHeight: 100
+        implicitHeight: Math.max(policyText.height, 100)
 
         SGWidgets2.SGText {
+            id: policyText
             width: parent.width
             anchors.centerIn: parent
             wrapMode: Text.Wrap
             textFormat: Text.StyledText
-            text: "We respect your privacy and won\’t share your information with outside parties without your consent. " + 
+            text: "We respect your privacy and won\’t share your information with outside parties without your consent. " +
                 "To learn more about the onsemi privacy policy, click <a href='" + sdsModel.urls.privacyPolicyUrl + "'>here</a>." +
                 "<br> <br>" +
                 "You can learn more about how we handle your personal data and your rights by reviewing our <a href='" +
