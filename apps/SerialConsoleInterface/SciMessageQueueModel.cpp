@@ -76,7 +76,7 @@ SciMessageQueueModel::ErrorCode SciMessageQueueModel::append(const QByteArray &m
     item.rawMessage = message;
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+    QJsonDocument::fromJson(message, &parseError);
     item.isJsonValid = parseError.error == QJsonParseError::NoError;
 
     if (item.isJsonValid) {
