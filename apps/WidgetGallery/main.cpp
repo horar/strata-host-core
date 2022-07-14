@@ -30,7 +30,7 @@ static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scrip
     Q_UNUSED(engine)
 
     QJSValue appInfo = scriptEngine->newObject();
-    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data(), AppInfo::versionMinor.data(), AppInfo::versionPatch.data()));
     appInfo.setProperty("buildId", AppInfo::buildId.data());
     appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
     appInfo.setProperty("numberOfCommits", AppInfo::numberOfCommits.data());
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
     const strata::loggers::QtLoggerSetup loggerInitialization(app);
-    qCInfo(lcWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(lcWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
 
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 

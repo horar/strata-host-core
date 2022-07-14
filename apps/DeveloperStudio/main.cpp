@@ -62,7 +62,7 @@ static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scrip
     Q_UNUSED(engine)
 
     QJSValue appInfo = scriptEngine->newObject();
-    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data(), AppInfo::versionMinor.data(), AppInfo::versionPatch.data()));
     appInfo.setProperty("buildId", AppInfo::buildId.data());
     appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
     appInfo.setProperty("numberOfCommits", AppInfo::numberOfCommits.data());
