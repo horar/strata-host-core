@@ -30,7 +30,7 @@ QString SGJsonFormatter::prettifyJson(
     while (token.type != TokenType::TextAtEnd) {
         resolveNextToken(jsonString, token.startIndex + token.length, nextToken);
 
-        prettifiedJson.append(jsonString.mid(token.startIndex, token.length));
+        prettifiedJson.append(jsonString.midRef(token.startIndex, token.length));
 
         switch (token.type) {
 
@@ -88,7 +88,7 @@ QString SGJsonFormatter::minifyJson(const QString &jsonString)
             break;
         }
 
-        minifiedJson.append(jsonString.mid(token.startIndex, token.length));
+        minifiedJson.append(jsonString.midRef(token.startIndex, token.length));
     };
 
     return minifiedJson;
