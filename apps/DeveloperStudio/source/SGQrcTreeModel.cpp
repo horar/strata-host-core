@@ -999,7 +999,7 @@ void SGQrcTreeModel::startSave()
     QThread *thread = QThread::create(std::bind(&SGQrcTreeModel::save, this));
     thread->setObjectName("SGQrcTreeModel - FileIO Thread");
     // Delete the thread when it is finished saving
-    connect(thread, &QThread::finished, [=] {
+    connect(thread, &QThread::finished, this, [=] {
         startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
         thread->deleteLater();
     });

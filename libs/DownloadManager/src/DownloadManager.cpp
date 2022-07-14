@@ -60,7 +60,7 @@ QString DownloadManager::download(
     qCDebug(lcDownloadManager) << "new download request" << groupId;
 
     if (itemList.isEmpty()) {
-        QTimer::singleShot(1ms, [this, groupId]() {
+        QTimer::singleShot(1ms, this, [this, groupId]() {
             emit groupDownloadFinished(groupId, "Nothing to download");
         });
 
@@ -85,7 +85,7 @@ QString DownloadManager::download(
     }
 
     //to make sure response is always asynchronious
-    QTimer::singleShot(1ms, [this, oneValidRequest]() {
+    QTimer::singleShot(1ms, this, [this, oneValidRequest]() {
         if (oneValidRequest) {
             for (int i = 0; i < maxDownloadCount_; ++i) {
                 startNextDownload();
