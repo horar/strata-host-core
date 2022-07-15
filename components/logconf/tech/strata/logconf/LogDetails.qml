@@ -31,12 +31,6 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
 
-    Component.onCompleted: {
-        if (lcuApp == false) {
-            configFileSettings.fileName = Qt.application.name
-        }
-    }
-
     ConfigFileSettings {
         id: configFileSettings
     }
@@ -116,6 +110,16 @@ GridLayout {
                     maxFileSizeEnabled = true
                     textInputFileSize.text = maxFileSizeSpinBox.value
                 }
+            }
+        }
+
+        Component.onCompleted: {
+            if (configFileSettings.maxFileSize == -1) {
+                maxFileSizeEnabled = false
+            } else {
+                maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                maxFileSizeEnabled = true
+                textInputFileSize.text = maxFileSizeSpinBox.value
             }
         }
     }
@@ -208,6 +212,16 @@ GridLayout {
                 }
             }
         }
+
+        Component.onCompleted: {
+            if (configFileSettings.maxNoFiles == -1) {
+                maxNoFilesEnabled = false
+            } else {
+                maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                maxNoFilesEnabled = true
+                textInputNoFiles.text = maxNoFilesSpinBox.value
+            }
+        }
     }
 
     SGWidgets.SGButton {
@@ -249,6 +263,10 @@ GridLayout {
             onFileNameChanged: {
                 qtFilterRulesTextField.text = configFileSettings.qtFilterRules
             }
+        }
+
+        Component.onCompleted: {
+            text = configFileSettings.qtFilterRules
         }
     }
 
@@ -297,6 +315,10 @@ GridLayout {
                 qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
             }
         }
+
+        Component.onCompleted: {
+            text = configFileSettings.qtMsgPattern
+        }
     }
 
     SGWidgets.SGButton {
@@ -343,6 +365,10 @@ GridLayout {
              onFileNameChanged: {
                  spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
              }
+         }
+
+         Component.onCompleted: {
+             text = configFileSettings.spdlogMsgPattern
          }
     }
     SGWidgets.SGButton {
