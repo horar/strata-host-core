@@ -472,22 +472,4 @@ Item {
     function updateIndex() {
         PlatformSelection.platformSelectorModel.currentIndex = index
     }
-
-    function highlightPatternInText(text, pattern) {
-        if (!text) {
-            return ""
-        }
-
-        var pos = text.toLowerCase().indexOf(pattern)
-        if (pos >= 0) {
-            var txt = text
-            return txt.substring(0, pos)
-                    + `<font color="${Theme.palette.onsemiOrange}">`
-                    + txt.substring(pos, pos + pattern.length)
-                    + "</font>"
-                    + txt.substring(pos + pattern.length);
-        }
-
-        return text
-    }
 }
