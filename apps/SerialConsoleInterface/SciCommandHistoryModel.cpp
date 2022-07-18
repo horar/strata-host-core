@@ -84,7 +84,7 @@ void SciCommandHistoryModel::add(const QString &message)
     QString messageToStore = message;
 
     QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+    QJsonDocument::fromJson(message.toUtf8(), &parseError);
     bool isJsonValid = parseError.error == QJsonParseError::NoError;
 
     if (isJsonValid) {
@@ -127,9 +127,9 @@ void SciCommandHistoryModel::populate(const QStringList &list)
     beginResetModel();
     commandList_.clear();
 
-    for (QString message : list) {
+    for (const QString& message : list) {
         QJsonParseError parseError;
-        QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &parseError);
+        QJsonDocument::fromJson(message.toUtf8(), &parseError);
 
         SciCommandHistoryModelItem item;
         item.message = message;

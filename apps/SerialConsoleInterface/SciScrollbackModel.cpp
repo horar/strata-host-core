@@ -221,7 +221,6 @@ QString SciScrollbackModel::exportToFile(QString filePath)
 
     qint64 bytesWritten = file.write(getTextForExport());
     if (bytesWritten <= 0) {
-        QString errorString = exportFile_.errorString();
         qCCritical(lcSci) << "write failed" << file.errorString() << filePath;
         return file.errorString();
     }

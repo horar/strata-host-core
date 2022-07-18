@@ -50,7 +50,8 @@ void StorageInfo::calculateSize() const
     future.waitForFinished();
 
     QLocale locale;
-    for (const auto& [folderName, folderSize] : future.results()) {
+    const auto results = future.results();
+    for (const auto& [folderName, folderSize] : results) {
         qCDebug(lcHcsStorageCache) << locale.formattedDataSize(folderSize) << "in" << folderName;
     }
 }

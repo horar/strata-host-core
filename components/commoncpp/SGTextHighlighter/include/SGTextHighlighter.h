@@ -26,7 +26,6 @@ class SGTextHighlighter: public QSyntaxHighlighter
     Q_PROPERTY(FilterSyntax filterPatternSyntax READ filterPatternSyntax WRITE setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
     Q_PROPERTY(bool caseSensitive READ caseSensitive WRITE setCaseSensitive NOTIFY caseSensitiveChanged)
 
-    Q_ENUMS(FilterSyntax)
 public:
     explicit SGTextHighlighter(QObject *parent = nullptr);
 
@@ -36,6 +35,7 @@ public:
     void setFilterPattern(const QString &filter);
 
     enum FilterSyntax { RegExp, Wildcard, FixedString };
+    Q_ENUM(FilterSyntax)
 
     FilterSyntax filterPatternSyntax() const;
     void setFilterPatternSyntax(FilterSyntax syntax);

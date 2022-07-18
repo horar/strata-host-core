@@ -88,7 +88,8 @@ QVariant SGQrcTreeModel::data(const QModelIndex &index, int role) const
 
     if (role == ChildrenRole) {
         QVariantList list;
-        for (SGQrcTreeNode* child : node->children()) {
+        const QVector<SGQrcTreeNode*> children = node->children();
+        for (SGQrcTreeNode* child : children) {
             list.append(QVariant::fromValue(child));
         }
         return list;
@@ -578,7 +579,7 @@ void SGQrcTreeModel::removeDeletedFilesFromQrc()
 QList<QString> SGQrcTreeModel::getMissingFiles()
 {
     QList<QString> missingFiles;
-    for (QString filepath : qrcItems_.toList()) {
+    for (const QString& filepath : qAsConst(qrcItems_)) {
         if (!QFileInfo::exists(filepath)) {
             missingFiles.append(filepath);
         }
@@ -901,7 +902,8 @@ void SGQrcTreeModel::createModel()
 
 void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentDir, QSet<QString> qrcItems, int depth)
 {
-    for (QFileInfo info : currentDir.entryInfoList(QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs)) {
+    const QFileInfoList fileInfoList = currentDir.entryInfoList(QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs);
+    for (const QFileInfo& info : fileInfoList) {
         QString uid = QUuid::createUuid().toString();
         if (info.isDir()) {
             SGQrcTreeNode *dirNode = new SGQrcTreeNode(parentNode, info, true, false, uid);
@@ -997,7 +999,7 @@ void SGQrcTreeModel::startSave()
     QThread *thread = QThread::create(std::bind(&SGQrcTreeModel::save, this));
     thread->setObjectName("SGQrcTreeModel - FileIO Thread");
     // Delete the thread when it is finished saving
-    connect(thread, &QThread::finished, [=] {
+    connect(thread, &QThread::finished, this, [=] {
         startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
         thread->deleteLater();
     });
@@ -1099,7 +1101,8 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
     if (parentNode) {
         QVector<SGQrcTreeNode*> nodesDeleted;
 
-        for (SGQrcTreeNode *node : parentNode->children()) {
+        const QVector<SGQrcTreeNode*> children = parentNode->children();
+        for (SGQrcTreeNode *node : children) {
             if (!QFileInfo::exists(SGUtilsCpp::urlToLocalFile(node->filepath()))) {
                 nodesDeleted.append(node);
                 continue;
@@ -1115,7 +1118,8 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
                 QString deletedPath = SGUtilsCpp::urlToLocalFile(node->filepath());
                 QStringList paths;
 
-                for (QString p : fsWatcher_->directories()) {
+                const QStringList directories = fsWatcher_->directories();
+                for (const QString& p : directories) {
                     if (p != deletedPath) {
                         paths.append(p);
                     }

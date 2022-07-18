@@ -93,7 +93,8 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
         return false;
     }
 
-    for (QJsonValue vNotification : notificationsList.toArray()) {
+    QJsonArray notificationsListArray = notificationsList.toArray();
+    for (QJsonValueRef vNotification : notificationsListArray) {
         QJsonObject notification = vNotification.toObject();
         outputStream << generateNotification(notification, indentLevel);
 
@@ -192,7 +193,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
 
     if (command.contains("payload") && command["payload"].isNull() == false) {
         QJsonArray payload = command["payload"].toArray();
-        for (QJsonValue payloadPropertyValue : payload) {
+        for (QJsonValueRef payloadPropertyValue : payload) {
             QJsonObject payloadProperty = payloadPropertyValue.toObject();
             QJsonValue propertyNameValue = payloadProperty.value("name");
             QString propertyName = propertyNameValue.toString();
@@ -201,7 +202,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         updateFunctionKwRemoved = updateFunctionParams;
         removeReservedKeywords(updateFunctionKwRemoved);
 
-        for (QJsonValue payloadPropertyValue : payload) {
+        for (QJsonValueRef payloadPropertyValue : payload) {
             QJsonObject payloadProperty = payloadPropertyValue.toObject();
             QJsonValue propNameValue = payloadProperty.value("name");
             QString propName = propNameValue.toString();
@@ -301,7 +302,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
     QJsonArray payload = notification["payload"].toArray();
 
     // Add the properties to the notification
-    for (QJsonValue payloadPropertyValue : payload) {
+    for (QJsonValueRef payloadPropertyValue : payload) {
         if (payloadPropertyValue.isObject() == false) {
             lastError_ = "Payload elements are not objects";
             qCCritical(lcControlViewCreator) << lastError_;

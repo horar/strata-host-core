@@ -79,7 +79,7 @@ void SciPlatformModel::setMaxScrollbackCount(int maxScrollbackCount)
         maxScrollbackCount_ = maxScrollbackCount;
         emit maxScrollbackCountChanged();
 
-        for (auto *platform : platformList_) {
+        for (auto *platform : qAsConst(platformList_)) {
             platform->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
         }
     }
@@ -96,7 +96,7 @@ void SciPlatformModel::setMaxCmdInHistoryCount(int maxCmdInHistoryCount)
         maxCmdInHistoryCount_ = maxCmdInHistoryCount;
         emit maxCmdInHistoryCountChanged();
 
-        for (auto *platform : platformList_) {
+        for (auto *platform : qAsConst(platformList_)) {
             platform->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
         }
     }

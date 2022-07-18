@@ -130,7 +130,7 @@ void QtLoggerSetup::setupSpdLog(const QCoreApplication& app)
         }
     }
 
-    logger_.setup(QStringLiteral("%1/%2.log").arg(logPath).arg(app.applicationName()).toStdString(),
+    logger_.setup(QStringLiteral("%1/%2.log").arg(logPath, app.applicationName()).toStdString(),
                   messagePattern.toStdString(), messagePattern4file.toStdString(),
                   logParams_.value("level").toStdString(), maxFileSize, maxNoFiles);
 }

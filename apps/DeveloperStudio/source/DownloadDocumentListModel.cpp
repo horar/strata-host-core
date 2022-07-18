@@ -159,7 +159,6 @@ void DownloadDocumentListModel::setSelected(int index, bool selected)
 
 void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
 {
-    QJsonDocument doc;
     QJsonArray fileArray;
     QDir dir(saveUrl.path());
 
@@ -223,7 +222,6 @@ QHash<int, QByteArray> DownloadDocumentListModel::roleNames() const
 
 void DownloadDocumentListModel::downloadFilePathChangedHandler(const QJsonObject &payload)
 {
-    QJsonDocument doc(payload);
     QString originalFilePath = payload["original_filepath"].toString();
     if (downloadingData_.contains(originalFilePath) == false) {
         //not our file
@@ -251,8 +249,6 @@ void DownloadDocumentListModel::downloadFilePathChangedHandler(const QJsonObject
 
 void DownloadDocumentListModel::singleDownloadProgressHandler(const QJsonObject &payload)
 {
-    QJsonDocument doc(payload);
-
     QString filePath = payload["filepath"].toString();
     if (downloadingData_.contains(filePath) == false) {
         //not our file
@@ -357,7 +353,7 @@ void DownloadDocumentListModel::groupDownloadFinishedHandler(const QJsonObject &
 QString DownloadDocumentListModel::getMD5()
 {
     QJsonObject jsonObj;
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         jsonObj.insert(item->dirname + "_" + item->prettyName, item->md5);
     }
     QJsonDocument doc(jsonObj);
@@ -384,14 +380,14 @@ void DownloadDocumentListModel::setHistoryState(const QString &doc, const QStrin
 
 void DownloadDocumentListModel::setAllHistoryStateToSeen()
 {
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         item->historyState = "seen";
     }
 }
 
 bool DownloadDocumentListModel::anyItemsUnseen()
 {
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         if (item->historyState != "seen") {
             return true;
         }
@@ -402,7 +398,7 @@ bool DownloadDocumentListModel::anyItemsUnseen()
 QStringList DownloadDocumentListModel::getItemsUnseen()
 {
     QStringList ls;
-    for (const auto &item : data_) {
+    for (const auto &item : qAsConst(data_)) {
         if (item->historyState != "seen") {
             ls << item->prettyName;
         }

@@ -834,7 +834,6 @@ void HostControllerService::processCmdProgramController(const strataRPC::RpcRequ
 void HostControllerService::processCmdDownlodView(const strataRPC::RpcRequest &request)
 {
     QString url = request.params().value("url").toString();
-    QString errorString;
     if (url.isEmpty()) {
         strataRPC::RpcError error(
                     strataRPC::RpcErrorCode::InvalidParamsError,

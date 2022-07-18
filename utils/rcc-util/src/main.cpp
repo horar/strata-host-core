@@ -101,9 +101,7 @@ int main(int argc, char* argv[])
                         QDir workingDir{QDir::currentPath()};
 
                         if (const bool pathCreated =
-                                workingDir.mkpath(QString("%1/%2")
-                                                      .arg(parser.value(QStringLiteral("extract")))
-                                                      .arg(localFile));
+                                workingDir.mkpath(QString("%1/%2").arg(parser.value(QStringLiteral("extract")), localFile));
                             pathCreated == false) {
                             info << QCoreApplication::translate(
                                 "main", "Failed to create target working folder");
@@ -111,10 +109,10 @@ int main(int argc, char* argv[])
                         } else {
                             info << QCoreApplication::translate(
                                         "main", "creating folder '%1' -> %2/%3/%4 ... %5\n")
-                                        .arg(resourceFile)
-                                        .arg(workingDir.path())
-                                        .arg(parser.value(QStringLiteral("extract")))
-                                        .arg(localFile)
+                                        .arg(resourceFile,
+                                             workingDir.path(),
+                                             parser.value(QStringLiteral("extract")),
+                                             localFile)
                                         .arg(pathCreated);
                         }
 
@@ -123,13 +121,13 @@ int main(int argc, char* argv[])
                     }
 
                     info << QCoreApplication::translate("main", "copying '%1' -> %2 ... %3\n")
-                                .arg(resourceFile)
-                                .arg(localFile)
+                                .arg(resourceFile,
+                                     localFile)
                                 .arg(QFile::copy(resourceFile,
                                                  QString("%1/%2/%3")
-                                                     .arg(QDir::currentPath())
-                                                     .arg(parser.value(QStringLiteral("extract")))
-                                                     .arg(localFile)));
+                                                     .arg(QDir::currentPath(),
+                                                          parser.value(QStringLiteral("extract")),
+                                                          localFile)));
                 } else {
                     info << it.next() << '\n';
                 }

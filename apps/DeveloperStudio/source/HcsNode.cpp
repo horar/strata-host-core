@@ -45,9 +45,7 @@ void HcsNode::initConnections()
 
 void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
 {
-    qCInfo(lcDevStudioNode) << QStringLiteral("Connected to: %1 %2")
-                                                  .arg(appInfoPod.appName())
-                                                  .arg(appInfoPod.appVersion());
+    qCInfo(lcDevStudioNode) << QStringLiteral("Connected to: %1 %2").arg(appInfoPod.appName(), appInfoPod.appVersion());
 }
 
 void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
