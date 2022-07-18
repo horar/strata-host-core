@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QSettings>
+#include <QGuiApplication>
 
 ConfigFileSettings::ConfigFileSettings(QObject *parent) :
     QObject(parent),
@@ -145,7 +146,7 @@ QString ConfigFileSettings::spdlogMsgPattern() const
     return "";
 }
 
-QString ConfigFileSettings::filePath() const
+QString ConfigFileSettings::fileName() const
 {
     return settings_->fileName();
 }
@@ -271,18 +272,15 @@ void ConfigFileSettings::setSpdlogMsgPattern(const QString &spdlogMessagePattern
     emit spdlogMsgPatternChanged();
 }
 
-void ConfigFileSettings::setFilePath(const QString& filePath)
+void ConfigFileSettings::setFileName(const QString& appName)
 {
-    if (settings_ != nullptr && filePath == settings_->fileName()) {
+    if (settings_ != nullptr && appName == QFileInfo(settings_->fileName()).baseName()) {
         return;
     }
 
-    if (filePath == "") {
-        settings_.reset(new QSettings());
-    } else {
-        settings_.reset(new QSettings(filePath, QSettings::IniFormat));
-    }
+    settings_.reset(new QSettings(QSettings::IniFormat,QSettings::UserScope,QCoreApplication::organizationName(), appName));
+    qCDebug(lcLcu) << "Opened configuration file " + settings_->fileName();
 
-    emit filePathChanged();
+    emit fileNameChanged();
 
 }

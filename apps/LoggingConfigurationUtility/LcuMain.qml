@@ -86,19 +86,14 @@ Item {
         LogLevel {
             id: logLevelPane
             Layout.fillWidth: true
-            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
+            fileName: iniFileComboBox.currentText
         }
 
         LogDetails {
             id : logDetailsPane
             Layout.fillWidth: true
-            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
+            fileName: iniFileComboBox.currentText
             lcuApp: true
-
-            Component.onCompleted: {
-                configFileModel.reload()
-                iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
-            }
         }
     }
 }

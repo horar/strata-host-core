@@ -22,7 +22,7 @@ class ConfigFileSettings : public QObject
     Q_PROPERTY(QString qtFilterRules READ qtFilterRules WRITE setQtFilterRules NOTIFY qtFilterRulesChanged)
     Q_PROPERTY(QString qtMsgPattern READ qtMsgPattern WRITE setQtMsgPattern NOTIFY qtMsgPatternChanged)
     Q_PROPERTY(QString spdlogMsgPattern READ spdlogMsgPattern WRITE setSpdlogMsgPattern NOTIFY spdlogMsgPatternChanged)
-    Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
 
     Q_PROPERTY(int maxSizeDefault READ maxSizeDefault CONSTANT)
     Q_PROPERTY(int maxCountDefault READ maxCountDefault CONSTANT)
@@ -44,7 +44,7 @@ public:
     QString qtMsgPattern() const;
     QString spdlogMsgPattern() const;
     //returns file path to currently opened config file
-    QString filePath() const;
+    QString fileName() const;
 
     //return default param values defined in QtLoggerDefaults.h
     int maxSizeDefault() const;
@@ -59,7 +59,7 @@ public:
     void setQtFilterRules(const QString& qtFilterRules);
     void setQtMsgPattern(const QString& qtMessagePattern);
     void setSpdlogMsgPattern(const QString& spdlogMessagePattern);
-    void setFilePath(const QString& filePath);
+    void setFileName(const QString& appName);
 
 signals:
     void logLevelChanged();
@@ -68,7 +68,7 @@ signals:
     void qtFilterRulesChanged();
     void qtMsgPatternChanged();
     void spdlogMsgPatternChanged();
-    void filePathChanged();
+    void fileNameChanged();
     void corruptedFile(QString param, QString errorString) const;
 
 private:

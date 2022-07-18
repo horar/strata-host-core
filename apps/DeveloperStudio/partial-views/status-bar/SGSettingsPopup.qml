@@ -118,10 +118,26 @@ SGStrataPopup {
             color: "#666"
         }
 
+        SGText {
+            text: "Strata Developer Studio"
+            fontSizeMultiplier: 1.1
+        }
+
         LcuPlugin.LogLevel {
-            id: logLevel
+            id: logLevelSDS
             Layout.fillWidth: true
-            fileName: ""
+            fileName: Qt.application.name
+        }
+
+        SGText {
+            text: "Host Controller Service"
+            fontSizeMultiplier: 1.1
+        }
+
+        LcuPlugin.LogLevel {
+            id: logLevelHCS
+            Layout.fillWidth: true
+            fileName: "Host Controller Service"
         }
     }
 }
