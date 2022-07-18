@@ -52,7 +52,6 @@
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
-        <file>partial-views/platform-selector/SegmentFilterDelegate.qml</file>
         <file>js/platform_filters.js</file>
         <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
