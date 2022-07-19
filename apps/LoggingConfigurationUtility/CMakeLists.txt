@@ -27,6 +27,7 @@ find_package(Qt5 ${VERSION_QT5}
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     ConfigFileModel.cpp
+    LogFilesCompress.cpp
     main.cpp
     qml.qrc
     images/images.qrc
