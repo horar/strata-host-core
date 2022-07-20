@@ -303,18 +303,11 @@ SGWidgets.SGDialog {
 
         SGWidgets.SGButton {
             id: closeButton
-
             Layout.column: 1
             Layout.row: 1
             Layout.minimumHeight: logLevel.height
             Layout.maximumWidth: 1.5*height
             text: "Close"
-            fontSizeMultiplier: 1.3
-            background: Rectangle {
-                anchors.fill: parent
-                radius: 3
-                color: parent.hovered ? headerBgColor : closeButton.implicitColor
-            }
             onClicked: dialog.accept()
         }
     }
