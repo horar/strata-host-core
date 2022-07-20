@@ -6,8 +6,7 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-#ifndef LOGFILESCOMPRESS_H
-#define LOGFILESCOMPRESS_H
+#pragma once
 
 #include <QObject>
 
@@ -22,5 +21,3 @@ public:
 signals:
 
 };
-
-#endif // LOGFILESCOMPRESS_H

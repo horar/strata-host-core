@@ -22,3 +22,6 @@
 [submodule "strata-cmake-modules"]
 	path = strata-cmake-modules
 	url = ../strata-cmake-modules.git
+[submodule "extern/quazip"]
+	path = extern/quazip
+	url = https://github.com/stachenov/quazip.git

@@ -8,6 +8,10 @@
  */
 #include "LogFilesCompress.h"
 #include "logging/LoggingQtCategories.h"
+#include <QDir>
+#include <QFile>
+#include <quazip/quazip.h>
+#include <quazip/JlCompress.h>
 
 LogFilesCompress::LogFilesCompress(QObject *parent)
     : QObject{parent}
@@ -17,5 +21,12 @@ LogFilesCompress::LogFilesCompress(QObject *parent)
 
 void LogFilesCompress::compress()
 {
-    qCDebug(lcLcu) << "compressing begins";
+    QDir dir;
+    QStringList fileList = dir.entryList();
+
+    QuaZip zip("file.zip");
+    //zip.open(QuaZip::mdUnzip);
+    //JlCompress::compressFiles("zip",fileList);
+    //QuaZip file("file");
+    qCDebug(lcLcu) << "compressing begins ";
 }
