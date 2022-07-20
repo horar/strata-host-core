@@ -51,19 +51,9 @@ SGWidgets.SGDialog {
 
         SGWidgets.SGButton {
             id: closeButton
-
             text: "Close"
-            fontSizeMultiplier: 1.3
-            font.bold: true
             Layout.alignment: Qt.AlignCenter
-            Layout.minimumHeight: logLevel.height
-            Layout.minimumWidth: 2*height
             onClicked: cdcSettingsDialog.accepted()
-            background: Rectangle {
-                anchors.fill: parent
-                radius: innerSpacing
-                color: parent.hovered ? headerBgColor : closeButton.implicitColor
-            }
         }
     }
 }
