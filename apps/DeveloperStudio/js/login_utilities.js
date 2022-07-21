@@ -387,6 +387,8 @@ function close_account_result(response) {
             SignalsModule.Signals.closeAccountResult("Bad Request");
         }
     } else {
+        Rest.jwt = ""
+        Rest.session = ""
         SignalsModule.Signals.closeAccountResult("Success");
     }
 }
