@@ -41,10 +41,12 @@ GenericPopup {
 
     DoubleValidator {
         id: doubleValidator
+        locale: "C"
     }
 
     IntValidator {
         id: intValidator
+        locale: "C"
     }
 
     RegExpValidator {
