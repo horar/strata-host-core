@@ -62,6 +62,12 @@ ColumnLayout {
 
     function checkForNewerVersion() {
         matchVersion()
+
+        if (platformStack.connected === false) {
+            platformStack.firmwareIsOutOfDate = false
+            return
+        }
+
         let isOutOfDate = false
         for (let i = 0; i < firmwareCount; i++) {
             if (platformStack.is_assisted === true &&
