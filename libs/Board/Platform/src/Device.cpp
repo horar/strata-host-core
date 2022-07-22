@@ -14,7 +14,8 @@ namespace strata::device {
 
 QDebug operator<<(QDebug dbg, const Device* d)
 {
-    return dbg.nospace().noquote() << QStringLiteral("Device ") << d->deviceId_ << QStringLiteral(": ");
+    const QString deviceId = (d) ? d->deviceId_ : QStringLiteral("--");
+    return dbg.nospace().noquote() << QStringLiteral("Device ") << deviceId << QStringLiteral(": ");
 }
 
 QDebug operator<<(QDebug dbg, const DevicePtr& d)
