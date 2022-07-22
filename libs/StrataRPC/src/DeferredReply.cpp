@@ -67,7 +67,11 @@ QDebug operator<<(QDebug debug, const DeferredReply &reply)
 
 QDebug operator<<(QDebug debug, const DeferredReply *reply)
 {
-    debug.noquote() << reply->id() << reply->timestamp() << reply->method() << reply->params();
+    if (reply) {
+        debug.noquote() << reply->id() << reply->timestamp() << reply->method() << reply->params();
+    } else {
+        debug.noquote() << "No reply";
+    }
     return debug;
 }
 
