@@ -26,8 +26,8 @@ Component.prototype.createOperations = function()
         let config_dir = getProgramDataDirectory() + "\\onsemi";
 
         let file_content = '@echo off\n';
-        let target_file = target_dir + "\\Offer of Source.txt"; // Strata module is erased first
-        file_content += 'IF EXIST "' + target_file + '" EXIT /b 0\n';
+        let target_file = target_dir + "\\uninstall.lock";
+        file_content += 'IF NOT EXIST "' + target_file + '" EXIT /b 0\n';
         target_file = ini_dir + "\\Host Controller Service.ini";
         file_content += 'IF EXIST "' + target_file + '" del /q "' + target_file + '"\n';
         target_file = ini_dir + "\\desktop.ini";                // erases hidden file in case it was created
@@ -57,8 +57,8 @@ Component.prototype.createOperations = function()
         let log_dir = home_dir + "/Library/Application Support/onsemi";
 
         let file_content = '';
-        let target_file = target_dir + "/Offer of Source.txt";  // Strata module is erased first
-        file_content += 'if [ -f "' + target_file + '" ]; then exit 0; fi\n';
+        let target_file = target_dir + "/uninstall.lock";
+        file_content += 'if [ ! -f "' + target_file + '" ]; then exit 0; fi\n';
         target_file = ini_dir + "/Host Controller Service.ini";
         file_content += 'if [ -f "' + target_file + '" ]; then rm -f "' + target_file + '"; fi\n';
         target_file = ini_dir + "/.DS_Store";                   // in case it was created

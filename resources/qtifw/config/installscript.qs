@@ -38,6 +38,7 @@ function Controller()
     installer.setValue("performCleanup", "false");
 
     installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
+    installer.uninstallationStarted.connect(Controller.prototype.UninstallationStarted);   
     installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
 }
 
@@ -150,6 +151,39 @@ Controller.prototype.InstallationPerformed = function ()
         if (widget === widget_cmp) {
             console.log("InstallationPerformed clicking next button");
             gui.clickButton(buttons.NextButton, 2000);    // timer to avoid double clicking
+        }
+    }
+
+    if (installer.isUninstaller()) {
+        let uninstall_lock = installer.value("TargetDir") +  "/uninstall.lock";
+        if (systemInfo.productType == "windows") {
+            uninstall_lock = uninstall_lock.split("/").join("\\");
+            if (installer.fileExists(uninstall_lock) == true) {
+                installer.execute("cmd", ["/c", "del", uninstall_lock]);
+            }
+        } else if (systemInfo.productType == "osx") {
+            if (installer.fileExists(uninstall_lock) == true) {
+                installer.execute("rm", [uninstall_lock]);
+            }
+        }
+    }
+}
+
+Controller.prototype.UninstallationStarted = function ()
+{
+    console.log("UninstallationStarted entered");
+
+    if (installer.isUninstaller()) {
+        let uninstall_lock = installer.value("TargetDir") +  "/uninstall.lock";
+        if (systemInfo.productType == "windows") {
+            uninstall_lock = uninstall_lock.split("/").join("\\");
+            if (installer.fileExists(uninstall_lock) == false) {
+                installer.execute("cmd", ["/c", "copy", "NUL", uninstall_lock]);
+            }
+        } else if (systemInfo.productType == "osx") {
+            if (installer.fileExists(uninstall_lock) == false) {
+                installer.execute("touch", [uninstall_lock]);
+            }
         }
     }
 }
