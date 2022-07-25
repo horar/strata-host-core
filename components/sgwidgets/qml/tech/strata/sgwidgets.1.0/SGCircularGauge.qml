@@ -72,7 +72,7 @@ Item {
             property real ratio: Math.max(0, Math.min((root.value - root.minimumValue)/(root.maximumValue - root.minimumValue), 1)) // bound to 0, 1
 
             tickmarkLabel:  SGText {
-                                text: styleData.value.toFixed(root.tickmarkDecimalPlaces)
+                                text: (gauge.minimumValue + (gaugeStyle.tickmarkStepSize * styleData.index)).toFixed(root.tickmarkDecimalPlaces)
                                 color: root.outerTextColor
                                 antialiasing: true
                                 fontSizeMultiplier: root.outerTextFontSizeMultiplier * (outerRadius * (1/100))

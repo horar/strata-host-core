@@ -66,15 +66,20 @@ Item {
             border.color: "#444"
             border.width: 0.5
 
-            TextInput {
+            SGTextInput {
                 id: projectName
 
-                anchors.fill: parent
+                anchors {
+                    fill: parent
+                    leftMargin: 10
+                    rightMargin: 10
+                }
                 color: "#333"
                 verticalAlignment: Text.AlignVCenter
                 selectByMouse: true
-                leftPadding: 10
                 selectionColor: Theme.palette.onsemiOrange
+                contextMenuEnabled: true
+                clip: true
             }
         }
 

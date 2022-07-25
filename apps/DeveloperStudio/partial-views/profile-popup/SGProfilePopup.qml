@@ -700,14 +700,9 @@ SGStrataPopup {
                         userNames = userNames.filter(username => username !== NavigationControl.context.user_id);
                         userStoreSettings.setValue("userNameStore", JSON.stringify(userNames));
                         userStoreSettings.setValue("userNameIndex", -1);
-                        spinnerDialog.close()
 
                         resetFields()
-
-                        PlatformFilters.clearActiveFilters()
-                        LoginUtils.logout()
-                        PlatformSelection.logout()
-                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        mainWindow.logout()
                     } else {
                         if (result === "No Connection") {
                             alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."

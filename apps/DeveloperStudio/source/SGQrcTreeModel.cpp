@@ -637,26 +637,52 @@ bool SGQrcTreeModel::createEmptyFile(const QString &filepath)
 bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFilename)
 {
     SGQrcTreeNode *node = getNode(index);
-    QString oldPath = SGUtilsCpp::urlToLocalFile(node->filepath());
-    QFileInfo oldFileInfo(oldPath);
-    QString newPath = SGUtilsCpp::joinFilePath(oldFileInfo.absolutePath(), newFilename);
+    QFileInfo oldFileInfo(SGUtilsCpp::urlToLocalFile(node->filepath()));
+    QString oldPath = oldFileInfo.absoluteFilePath();
+    QString parentPath = oldFileInfo.absolutePath();
+    QString newPath = SGUtilsCpp::joinFilePath(parentPath, newFilename);
     QUrl oldUrl = QUrl::fromLocalFile(oldPath);
     QUrl newUrl = QUrl::fromLocalFile(newPath);
-    bool wasWatchingOldPath = false;
+    QStringList oldWatchedPaths;
+    QStringList newWatchedPaths;
 
-    if ( (oldFileInfo.isDir() && fsWatcher_->directories().contains(oldPath))
-            || (!oldFileInfo.isDir() && fsWatcher_->files().contains(oldPath)) ) {
-        stopWatchingPath(oldPath);
-        wasWatchingOldPath = true;
+    if (fsWatcher_->directories().contains(parentPath)) {
+        oldWatchedPaths.push_back(parentPath);
+        newWatchedPaths.push_back(parentPath);
     }
 
-    stopWatchingPath(oldFileInfo.absolutePath());
+    if (oldFileInfo.isDir()) {
+        // iterate through all children and stop watching them - needed for rename on Windows
+        foreach(QString watchedPath, fsWatcher_->directories()) {
+            if (watchedPath.startsWith(oldPath)) {
+                oldWatchedPaths.push_back(watchedPath);
+                watchedPath.replace(0, oldPath.size(), newPath);
+                newWatchedPaths.push_back(watchedPath);
+            }
+        }
+        foreach(QString watchedPath, fsWatcher_->files()) {
+            if (watchedPath.startsWith(oldPath)) {
+                oldWatchedPaths.push_back(watchedPath);
+                watchedPath.replace(0, oldPath.size(), newPath);
+                newWatchedPaths.push_back(watchedPath);
+            }
+        }
+    } else {
+        if (fsWatcher_->files().contains(oldPath)) {
+            oldWatchedPaths.push_back(oldPath);
+            newWatchedPaths.push_back(newPath);
+        }
+    }
+
+    foreach(const QString& oldWatchedPath, oldWatchedPaths) {
+        stopWatchingPath(oldWatchedPath);
+    }
+
     if (!QFile::rename(oldPath, newPath)) {
         qCCritical(lcControlViewCreator) << "Failed to rename" << (node->isDir() ? "folder" : "file") << "from" << oldPath << "to" << newPath;
-        if (wasWatchingOldPath) {
-            startWatchingPath(oldPath);
+        foreach(const QString& oldWatchedPath, oldWatchedPaths) {
+            startWatchingPath(oldWatchedPath);
         }
-        startWatchingPath(oldFileInfo.absolutePath());
         return false;
     }
 
@@ -684,10 +710,9 @@ bool SGQrcTreeModel::renameFile(const QModelIndex &index, const QString &newFile
         startSave();
     }
 
-    if (wasWatchingOldPath) {
-        startWatchingPath(newPath);
+    foreach(const QString& newWatchedPath, newWatchedPaths) {
+        startWatchingPath(newWatchedPath);
     }
-    startWatchingPath(oldFileInfo.absolutePath());
     return true;
 }
 
@@ -743,7 +768,8 @@ bool SGQrcTreeModel::createNewFolder(const QString &path)
 void SGQrcTreeModel::stopWatchingPath(const QString &path)
 {
     if (!path.isEmpty()) {
-        fsWatcher_->removePath(path);
+        QFileInfo fileInfo(path);   // need to convert it to consistent slash semantic, QFileSystemWatcher is sensitive to it
+        fsWatcher_->removePath(fileInfo.absoluteFilePath());
     }
 }
 
@@ -760,7 +786,8 @@ void SGQrcTreeModel::stopWatchingAll()
 void SGQrcTreeModel::startWatchingPath(const QString &path)
 {
     if (!path.isEmpty()) {
-        fsWatcher_->addPath(path);
+        QFileInfo fileInfo(path);   // need to convert it to consistent slash semantic, QFileSystemWatcher is sensitive to it
+        fsWatcher_->addPath(fileInfo.absoluteFilePath());
     }
 }
 

@@ -19,12 +19,16 @@
 
 namespace strata::platform {
 
-QDebug operator<<(QDebug dbg, const Platform* d) {
-    return dbg.nospace().noquote() << d->device_;
+QDebug operator<<(QDebug dbg, const Platform* p) {
+    if (p) {
+        return dbg.nospace().noquote() << p->device_;
+    } else {
+        return dbg.nospace().noquote() << QStringLiteral("No platform: ");
+    }
 }
 
-QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
-    return dbg << d.get();
+QDebug operator<<(QDebug dbg, const PlatformPtr& p) {
+    return dbg << p.get();
 }
 
 Platform::Platform(const device::DevicePtr& device) :
