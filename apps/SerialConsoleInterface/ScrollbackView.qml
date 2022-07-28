@@ -700,7 +700,7 @@ Item {
         for (var i = selectionStartIndex; i <= selectionEndIndex; ++i) {
             var sourceIndex = scrollbackView.model.mapIndexToSource(i)
             if (sourceIndex < 0) {
-                console.error(Logger.sciCategory, "Index out of scope.")
+                console.error(Logger.sciCategory, "index out of range")
                 text = ""
                 break
             }
