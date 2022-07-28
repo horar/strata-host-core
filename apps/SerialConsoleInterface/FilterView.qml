@@ -289,7 +289,7 @@ FocusScope {
                         onSuggestionDelegateSelected: {
                             var sourceIndex = sortFilterModel.mapIndexToSource(index)
                             if (sourceIndex < 0) {
-                                console.error(Logger.sciCategory, "Index out of scope.")
+                                console.error(Logger.sciCategory, "index out of range")
                                 return
                             }
                             text = filterSuggestionModel.get(sourceIndex)["suggestion"]

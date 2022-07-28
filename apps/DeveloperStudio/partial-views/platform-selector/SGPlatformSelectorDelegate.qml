@@ -352,7 +352,7 @@ Item {
                     function openView(view) {
                         var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
                         if (sourceIndex < 0) {
-                            console.error(Logger.devStudioCategory, "Index out of scope.")
+                            console.error(Logger.devStudioCategory, "index out of range")
                             return
                         }
                         let data = {

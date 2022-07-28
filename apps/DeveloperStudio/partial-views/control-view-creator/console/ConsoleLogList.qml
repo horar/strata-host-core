@@ -51,7 +51,7 @@ ListView {
         for (var i = 0; i < consoleLogs.model.count; i++) {
             var listElement = consoleModel.get(consoleLogs.model.mapIndexToSource(i));
             if (listElement < 0) {
-                console.error(Logger.devStudioCategory, "Index out of scope.")
+                console.error(Logger.devStudioCategory, "index out of range")
                 return
             }
             if (i >= start && i < end) {
