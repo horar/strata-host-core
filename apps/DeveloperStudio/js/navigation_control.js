@@ -30,8 +30,6 @@ var screens = {
     SPLASH_SCREEN: "qrc:/SplashScreen.qml",
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
     PLATFORM_SELECTOR: "qrc:/SGPlatformSelector.qml",
-    PLATFORM_VIEW: "qrc:/partial-views/platform-view/SGPlatformView.qml",
-    CONTENT_SCREEN: "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml",
     LOAD_ERROR: "qrc:/partial-views/SGLoadError.qml"
 }
