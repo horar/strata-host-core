@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "StrataRPC/RpcError.h"
+#include <QJsonDocument>
 
 namespace strata::strataRPC
 {
@@ -105,9 +106,11 @@ QDebug operator<<(QDebug debug, const RpcError &error)
 {
     debug.noquote().nospace()
             << error.code()
-            << " "
+            << ' '
             << error.message()
-            << ", data: " << error.data();
+            << ", data: '"
+            << QJsonDocument(error.data()).toJson(QJsonDocument::Compact)
+            << '\'';
 
     return debug;
 }
