@@ -34,7 +34,7 @@ Item {
 
     onVisibleChanged: {
         if (!openProjectContainer.visible) {
-            alertMessage.Layout.preferredHeight = 0
+            alertMessage.hideInstantly()
         }
     }
 
@@ -73,7 +73,7 @@ Item {
         if (!SGUtilsCpp.exists(localFile)) {
             console.warn("Tried to open non-existent QRC file/project")
             if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
+                alertMessage.hideInstantly()
             }
             if (inRecentProjects) {
                 alertMessage.text = "QRC file does not exist anymore. Removed from your recent projects."
