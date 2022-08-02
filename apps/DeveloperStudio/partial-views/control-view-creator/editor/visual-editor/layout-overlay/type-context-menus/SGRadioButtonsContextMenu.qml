@@ -24,6 +24,7 @@ ActionGroup {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "orientation"
+            menuLoader.item.updateCurrentItem()
             menuLoader.item.open()
             menuLoader.item.label = "Select the orientation."
             contextMenu.close()
