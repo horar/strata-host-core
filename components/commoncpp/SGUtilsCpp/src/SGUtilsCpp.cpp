@@ -163,6 +163,7 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     }
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
 
     out << content;
 

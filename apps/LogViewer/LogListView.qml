@@ -633,7 +633,7 @@ Item {
                             logViewWrapper.forceActiveFocus()
                             var sourceIndex = logSortFilterModel.mapIndexToSource(index)
                             if (sourceIndex < 0) {
-                                console.error(Logger.logviewerCategory, "Index out of scope.")
+                                console.error(Logger.logviewerCategory, "index out of range")
                                 return
                             }
                             delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
@@ -800,7 +800,7 @@ Item {
         else if ((event.key === Qt.Key_M) && markIconVisible) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
             if (sourceIndex < 0) {
-                console.error(Logger.logviewerCategory, "Index out of scope.")
+                console.error(Logger.logviewerCategory, "index out of range")
                 return
             }
             logModel.toggleIsMarked(sourceIndex)

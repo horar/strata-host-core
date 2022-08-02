@@ -35,7 +35,7 @@ Rectangle {
             if (sourceIndex > -1) {
                 Notifications.model.remove(sourceIndex)
             } else {
-                console.error(Logger.devStudioCategory, "Index out of scope.")
+                console.error(Logger.devStudioCategory, "index out of range")
             }
         }
 
@@ -44,7 +44,7 @@ Rectangle {
             if (sourceIndex > -1) {
                 Qt.callLater(Notifications.model.remove, sourceIndex)
             } else {
-                console.error(Logger.devStudioCategory, "Index out of scope.")
+                console.error(Logger.devStudioCategory, "index out of range")
             }
         }
     }

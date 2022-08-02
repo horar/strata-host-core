@@ -291,21 +291,10 @@ function previousDeviceIndex(device_id) {
     Determine if connected platform exists in model or if unrecognized
 */
 function addConnectedPlatform(platform) {
-    const is_assisted = (platform.controller_class_id !== undefined)
+    platform.is_assisted = platform.controller_class_id !== undefined
 
-    // common data for embedded and assisted platforms
-    let data = {
-        "class_id": platform.class_id,
-        "device_id": platform.device_id,
-        "firmware_version": platform.firmware_version,
-        "is_assisted": is_assisted
-        // assisted platforms have an extra field - "controller_class_id"
-    }
-
-    if (is_assisted) {
+    if (platform.is_assisted) {
         // Assisted Strata
-
-        data.controller_class_id = platform.controller_class_id  // assisted platforms have an extra data field
 
         if (platform.controller_class_id === "") {
             //unregistered assisted controller
@@ -350,6 +339,7 @@ function addConnectedPlatform(platform) {
                                 sdsModel.platformOperation.platformStartApplication(platform.device_id)
                             }
                         } else {
+                            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory,"Assisted platform with controller connected.")
                             connectListing(platform)
                         }
                     }
@@ -417,7 +407,7 @@ function addConnectedPlatform(platform) {
     }
     notifyConnectedState(true, platform_name)
 
-    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
+    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, platform)
 }
 
 /*
@@ -520,11 +510,11 @@ function openPlatformView(platform) {
 */
 function disconnectPlatform(platform) {
     const class_id = (platform.class_id !== undefined) ? platform.class_id : platform.controller_class_id
-    const is_assisted = (platform.controller_class_id !== undefined)
     let selector_listing = getDeviceListing(class_id, platform.device_id)
+
     if (selector_listing === null) {
         let errStr = "Unable to disconnect platform, device_id: " + platform.device_id + ", class_id: " + platform.class_id
-        if (is_assisted) {
+        if (platform.is_assisted) {
             errStr += ", controller_class_id: " + platform.controller_class_id
         }
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, errStr)
@@ -541,17 +531,11 @@ function disconnectPlatform(platform) {
     }
     notifyConnectedState(false, platform_name)
 
-    let data = {
-        "device_id": platform.device_id,
-        "class_id": platform.class_id,
-        "controller_class_id": platform.controller_class_id,
-        "is_assisted": is_assisted
-    }
-    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, data)
+    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, platform)
 
     if (selector_listing.view_open && NavigationControl.userSettings.closeOnDisconnect) {
         closePlatformView(platform)
-        NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)
+        NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, platform)
     }
 }
 
@@ -679,9 +663,7 @@ function insertAssistedIncompatibleListing (platform) {
 */
 function insertProgramFirmwareListing(platform) {
     let listing_data = {
-        "verbose_name": (platform.controller_class_id !== undefined)
-                        ? "Strata Assisted Platform"
-                        : "Strata Embedded Platform",
+        "verbose_name": platform.is_assisted ? "Strata Assisted Platform" : "Strata Embedded Platform",
         "program_controller": true
     }
     const class_id = platform.class_id

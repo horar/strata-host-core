@@ -221,7 +221,7 @@ FocusScope {
         function filterAcceptsRow(row) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(row)
             if (sourceIndex < 0) {
-                console.error(Logger.logviewerCategory, "Index out of scope.")
+                console.error(Logger.logviewerCategory, "index out of range")
                 return
             }
             var isMarked = logModel.data(sourceIndex, "isMarked")
@@ -999,7 +999,7 @@ FocusScope {
                                 }
                                     var sourceIndex = markedModel.mapIndexToSource(index)
                                     if (sourceIndex < 0) {
-                                        console.error(Logger.logviewerCategory, "Index out of scope.")
+                                        console.error(Logger.logviewerCategory, "index out of range")
                                         return
                                     }
                                     positionView(primaryLogView, sourceIndex)

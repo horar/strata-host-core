@@ -49,6 +49,7 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
     }
 
     QTextStream outputStream(&outputFile);
+    outputStream.setCodec("UTF-8");
     int indentLevel = 0;
 
     // Generate license

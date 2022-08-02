@@ -29,7 +29,7 @@ Item {
 
     onVisibleChanged: {
         if (!visible) {
-            alertMessage.Layout.preferredHeight = 0
+            alertMessage.hideInstantly()
         } else {
             if (fileOutput.text === "") {
                 fileOutput.text = openProjectContainer.fileDialogFolder()
@@ -317,7 +317,7 @@ Item {
         if (!SGUtilsCpp.exists(path)) {
             console.warn("Tried to open non-existent project")
             if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
+                alertMessage.hideInstantly()
             }
             alertMessage.text = "Cannot create project. Destination folder does not exist"
             alertMessage.show()
@@ -328,7 +328,7 @@ Item {
         if (projectExists) {
             console.warn("Identically-named project already exists in this location")
             if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
+                alertMessage.hideInstantly()
             }
             alertMessage.text = "A non-empty project '" + projectName.text + "' already exists in the selected location"
             alertMessage.show()
