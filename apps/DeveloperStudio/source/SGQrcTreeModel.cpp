@@ -612,6 +612,7 @@ bool SGQrcTreeModel::createQmlFile(const QString &filepath, const bool isFileVEE
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream stream(&file);
+        stream.setCodec("UTF-8");
         stream << licenseQML_;
         stream << (isFileVEEnabled ? veQMLFile_ : baseQMLFile_);
         file.close();
@@ -1045,6 +1046,7 @@ void SGQrcTreeModel::save()
 
     // Write the change to disk
     QTextStream stream(&qrcFile);
+    stream.setCodec("UTF-8");
     stream << qrcDoc_.toString(4);
     qrcFile.close();
     startWatchingPath(SGUtilsCpp::urlToLocalFile(url_));
