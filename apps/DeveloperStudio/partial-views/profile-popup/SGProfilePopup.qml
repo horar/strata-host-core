@@ -58,7 +58,7 @@ SGStrataPopup {
     }
 
     onClosed: {
-        alertRect.Layout.preferredHeight = 0
+        alertRect.hideInstantly()
         basicInfoControls.editing = false
         basicInfoControls.resetHeight()
         firstNameColumn.editable = false
