@@ -133,6 +133,7 @@ void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeLi
     QFile cmakeOutFile(cmakeListsFilePath);
     if (cmakeOutFile.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&cmakeOutFile);
+        out.setCodec("UTF-8");
         out << cmakeText;
     } else {
         qCCritical(lcControlViewCreator) << "Failed to edit CMakeLists template file with project name";
