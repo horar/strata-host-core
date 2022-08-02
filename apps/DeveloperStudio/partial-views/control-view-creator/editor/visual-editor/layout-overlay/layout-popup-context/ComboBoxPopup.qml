@@ -56,4 +56,14 @@ GenericPopup {
             }
         }
     }
+
+    function updateCurrentItem() {
+        let currentItem = visualEditor.functions.getObjectPropertyValue(layoutOverlayRoot.layoutInfo.uuid, sourceProperty)
+        for (let i = 0; i < comboBox.model.length; ++i) {
+            if (comboBox.model[i] === currentItem) {
+                comboBox.currentIndex = i
+                break
+            }
+        }
+    }
 }

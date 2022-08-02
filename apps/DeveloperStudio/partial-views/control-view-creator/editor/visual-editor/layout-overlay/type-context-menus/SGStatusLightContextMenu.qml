@@ -25,6 +25,7 @@ ActionGroup {
             menuLoader.active = true
             menuLoader.item.sourceProperty = "status"
             menuLoader.item.model = ["LayoutSGStatusLight.Yellow","LayoutSGStatusLight.Green", "LayoutSGStatusLight.Blue", "LayoutSGStatusLight.Orange", "LayoutSGStatusLight.Red", "LayoutSGStatusLight.Off"]
+            menuLoader.item.updateCurrentItem()
             menuLoader.item.open()
             menuLoader.item.label = "Select the color of the status light."
             contextMenu.close()
