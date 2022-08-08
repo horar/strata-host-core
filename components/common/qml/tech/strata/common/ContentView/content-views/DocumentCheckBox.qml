@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 CheckBox {
     id: control
@@ -29,7 +30,8 @@ CheckBox {
         radius: width / 2
         color: "transparent"
         border.width: 1
-        border.color: "white"
+        //border.color: Theme.palette.onsemiGray
+        border.color: Qt.darker(Theme.palette.onsemiGray)
 
         Rectangle {
             id: innerRadio
@@ -39,7 +41,7 @@ CheckBox {
 
             radius: width / 2
             opacity: enabled || fakeEnabled ? 1.0 : 0.3
-            color: "white"
+            color: Theme.palette.onsemiOrange
             visible: control.checked
         }
     }
@@ -48,7 +50,7 @@ CheckBox {
         leftPadding: control.indicator && !control.mirrored ? control.indicator.width + control.spacing : 0
         rightPadding: control.indicator && control.mirrored ? control.indicator.width + control.spacing : 0
         text: control.text
-        alternativeColorEnabled: true
+        //alternativeColorEnabled: true
         verticalAlignment: Text.AlignVCenter
     }
 }

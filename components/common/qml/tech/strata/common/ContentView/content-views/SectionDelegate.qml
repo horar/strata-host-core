@@ -28,7 +28,7 @@ Item {
             leftMargin: 5
         }
 
-        alternativeColorEnabled: true
+        //alternativeColorEnabled: true
         elide: Text.ElideMiddle
         font.capitalization: Font.Capitalize
         font.bold: true

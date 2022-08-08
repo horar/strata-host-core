@@ -10,6 +10,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: datasheet
@@ -105,7 +106,8 @@ Item {
                             right: chevronImage.left
                         }
                         font.bold: delegate.checked
-                        alternativeColorEnabled: delegate.checked === false
+                        color: delegate.checked ? "black" : Qt.darker(Theme.palette.onsemiGray)
+                        //alternativeColorEnabled: delegate.checked === false
                         wrapMode: Text.Wrap
                         textFormat: Text.PlainText
                         maximumLineCount: 3

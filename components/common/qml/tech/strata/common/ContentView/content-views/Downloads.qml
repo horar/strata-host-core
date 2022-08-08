@@ -55,7 +55,7 @@ Item {
             text: "Select files for download:"
             font.bold: true
             fontSizeMultiplier: 1.2
-            alternativeColorEnabled: true
+            //alternativeColorEnabled: true
         }
 
         DocumentCheckBox {
@@ -192,7 +192,8 @@ Item {
 
                                 return model.downloadFilename.replace(htmlTags, "");
                             }
-                            alternativeColorEnabled: true
+                            //alternativeColorEnabled: true
+                            color: delegate.checked ? "black" : Qt.darker(Theme.palette.onsemiGray)
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             elide: Text.ElideNone
@@ -314,7 +315,7 @@ Item {
                 }
 
                 text: "Save folder"
-                color: "white"
+                //color: "white"
             }
 
             SGWidgets.SGTextField {
@@ -327,7 +328,7 @@ Item {
                 }
 
                 contextMenuEnabled: true
-                darkMode: true
+                //darkMode: true
                 text: savePath
                 onTextChanged: {
                     savePath = text
@@ -351,6 +352,18 @@ Item {
                 }
 
                 icon.source: "qrc:/sgimages/folder-open.svg"
+                icon.color: !buttonCursor.containsMouse
+                            ? Theme.palette.onsemiGray : buttonCursor.pressed
+                              ? Qt.darker(Theme.palette.onsemiGray) : Qt.darker(Theme.palette.onsemiGray, 1.5)
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: "transparent"
+                    border.width: 1
+                    border.color: !buttonCursor.containsMouse
+                                  ? Theme.palette.onsemiGray : buttonCursor.pressed
+                                    ? Qt.darker(Theme.palette.onsemiGray) : Qt.darker(Theme.palette.onsemiGray, 1.5)
+                }
+
                 onClicked: {
                     if (savePath.length === 0) {
                         fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(defaultSavePath)
@@ -363,6 +376,7 @@ Item {
 
                 MouseArea {
                     id: buttonCursor
+                    hoverEnabled: true
                     anchors.fill: parent
                     onPressed:  mouse.accepted = false
                     cursorShape: Qt.PointingHandCursor
@@ -391,9 +405,14 @@ Item {
             }
 
             background: Rectangle {
-                implicitWidth: 200
-                implicitHeight: 40
-                color: TangoTheme.palette.aluminium2
+                //implicitWidth: 200
+                //implicitHeight: 40
+                radius: 10
+                color: !buttonCursor2.containsMouse
+                       ? Theme.palette.onsemiGray : buttonCursor2.pressed
+                         ? Qt.darker(Theme.palette.onsemiGray, 1.25) : Qt.darker(Theme.palette.onsemiGray, 1.15)
+                //color: TangoTheme.palette.aluminium2
+
             }
 
             onClicked: {
@@ -407,6 +426,7 @@ Item {
                 anchors.fill: parent
                 onPressed:  mouse.accepted = false
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
             }
         }
 
@@ -440,9 +460,13 @@ Item {
             }
 
             background: Rectangle {
-                color: Theme.palette.onsemiOrange
-                implicitWidth: 100
-                implicitHeight: 40
+                //color: Theme.palette.onsemiOrange
+                color: !buttonCursor1.containsMouse
+                       ? Theme.palette.onsemiOrange : buttonCursor1.pressed
+                         ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
+                //implicitWidth: 100
+                //implicitHeight: 40
+                radius: 10
             }
 
             onClicked: {
@@ -455,6 +479,7 @@ Item {
                 anchors.fill: parent
                 onPressed:  mouse.accepted = false
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
             }
         }
     }
