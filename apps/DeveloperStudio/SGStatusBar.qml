@@ -759,7 +759,7 @@ Rectangle {
         property bool firstLogin: true
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
-        property bool notifyOnFirmwareUpdate: false
+        property bool notifyOnFirmwareUpdate: true
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
         property int selectedDistributionPortal: 0
