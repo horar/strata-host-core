@@ -74,6 +74,9 @@ SGWidgets.SGDialog {
                 id: acceptButton
                 text: "Accept"
                 buttonSize: SGWidgets2.SGButton.Medium
+                Accessible.onPressAction: {
+                    clicked()
+                }
                 onClicked: {
                     console.log("Updating privacy policy consent!")
                     let data = {
