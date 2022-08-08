@@ -134,6 +134,9 @@ Rectangle {
         visible: model.connected
         clip: true
 
+        Accessible.role: Accessible.Graphic
+        Accessible.name: "ConnectedRectangle"
+
         SGText {
             id: title
             color: "white"

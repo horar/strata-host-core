@@ -385,8 +385,7 @@ Item {
                             onClicked: controlButtonClicked()
 
                             Accessible.role: Accessible.Button
-                            Accessible.name: enabled ? "HwControlsEnabled" : "HwControlsDisabled"
-                            Accessible.description: "'Hardware Controls' helper for automated GUI testing."
+                            Accessible.name: "Open Hardware Controls"
                             Accessible.onPressAction: controlButtonClicked()
 
                             function controlButtonClicked() {
