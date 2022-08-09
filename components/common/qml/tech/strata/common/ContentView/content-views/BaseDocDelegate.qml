@@ -59,8 +59,6 @@ Item {
 
             return Theme.palette.white
         }
-
-        border.color: Theme.palette.gray
     }
 
 

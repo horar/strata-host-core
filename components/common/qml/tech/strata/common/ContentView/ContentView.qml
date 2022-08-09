@@ -161,7 +161,7 @@ Item {
 
         Rectangle {
             id: navigationSidebar
-            color: "#F4F5F5"
+            color: "#F1F2F2"
             Layout.fillHeight: true
             Layout.minimumWidth: 100
             implicitWidth: 300
@@ -172,8 +172,7 @@ Item {
                 anchors {
                     fill: parent
                 }
-
-                contentsColor: "#F4F5F5"
+                contentsColor: "#F1F2F2"
                 headerOpenColor: Theme.palette.darkGray
                 headerClosedColor: Theme.palette.lightGray
                 dividerColor: contentsColor
