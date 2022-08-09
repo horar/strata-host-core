@@ -313,7 +313,6 @@ Item {
                 }
 
                 text: "Save folder"
-                //color: "white"
             }
 
             SGWidgets.SGTextField {
@@ -326,7 +325,6 @@ Item {
                 }
 
                 contextMenuEnabled: true
-                //darkMode: true
                 text: savePath
                 onTextChanged: {
                     savePath = text
@@ -351,15 +349,15 @@ Item {
 
                 icon.source: "qrc:/sgimages/folder-open.svg"
                 icon.color: !buttonCursor.containsMouse
-                            ? Theme.palette.onsemiGray : buttonCursor.pressed
-                              ? Qt.darker(Theme.palette.onsemiGray) : Qt.darker(Theme.palette.onsemiGray, 1.5)
+                            ? Theme.palette.gray : buttonCursor.pressed
+                              ? Qt.darker(Theme.palette.gray) : Qt.darker(Theme.palette.gray, 1.5)
                 background: Rectangle {
                     anchors.fill: parent
-                    color: "transparent"
+                    color: Theme.palette.white
                     border.width: 1
                     border.color: !buttonCursor.containsMouse
-                                  ? Theme.palette.onsemiGray : buttonCursor.pressed
-                                    ? Qt.darker(Theme.palette.onsemiGray) : Qt.darker(Theme.palette.onsemiGray, 1.5)
+                                  ? Theme.palette.gray : buttonCursor.pressed
+                                    ? Qt.darker(Theme.palette.gray) : Qt.darker(Theme.palette.gray, 1.5)
                 }
 
                 onClicked: {
@@ -397,20 +395,17 @@ Item {
             contentItem: SGWidgets.SGText {
                 text: parent.text
                 font: parent.font
-                color: enabled ? "black" : "white"
+                color: buttonCursor2.containsMouse ? Theme.palette.white : Qt.darker(Theme.palette.darkGray)
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
             }
 
             background: Rectangle {
-                //implicitWidth: 200
-                //implicitHeight: 40
                 radius: 10
                 color: !buttonCursor2.containsMouse
-                       ? Theme.palette.onsemiGray : buttonCursor2.pressed
-                         ? Qt.darker(Theme.palette.onsemiGray, 1.25) : Qt.darker(Theme.palette.onsemiGray, 1.15)
-                //color: TangoTheme.palette.aluminium2
-
+                       ? Theme.palette.white : buttonCursor2.pressed
+                         ? Theme.palette.darkGray : Theme.palette.gray
+                border.color: Theme.palette.gray
             }
 
             onClicked: {
@@ -458,12 +453,9 @@ Item {
             }
 
             background: Rectangle {
-                //color: Theme.palette.onsemiOrange
                 color: !buttonCursor1.containsMouse
                        ? Theme.palette.onsemiOrange : buttonCursor1.pressed
                          ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Qt.darker(Theme.palette.onsemiOrange, 1.15)
-                //implicitWidth: 100
-                //implicitHeight: 40
                 radius: 10
             }
 
