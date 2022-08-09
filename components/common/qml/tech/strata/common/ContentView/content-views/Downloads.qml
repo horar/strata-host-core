@@ -55,7 +55,6 @@ Item {
             text: "Select files for download:"
             font.bold: true
             fontSizeMultiplier: 1.2
-            //alternativeColorEnabled: true
         }
 
         DocumentCheckBox {
@@ -192,8 +191,7 @@ Item {
 
                                 return model.downloadFilename.replace(htmlTags, "");
                             }
-                            //alternativeColorEnabled: true
-                            color: delegate.checked ? "black" : Qt.darker(Theme.palette.onsemiGray)
+                            color: Theme.palette.black
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             elide: Text.ElideNone

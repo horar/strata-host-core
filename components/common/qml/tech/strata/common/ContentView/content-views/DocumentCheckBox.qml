@@ -30,8 +30,7 @@ CheckBox {
         radius: width / 2
         color: "transparent"
         border.width: 1
-        //border.color: Theme.palette.onsemiGray
-        border.color: Qt.darker(Theme.palette.onsemiGray)
+        border.color: Theme.palette.darkGray
 
         Rectangle {
             id: innerRadio
@@ -50,7 +49,6 @@ CheckBox {
         leftPadding: control.indicator && !control.mirrored ? control.indicator.width + control.spacing : 0
         rightPadding: control.indicator && control.mirrored ? control.indicator.width + control.spacing : 0
         text: control.text
-        //alternativeColorEnabled: true
         verticalAlignment: Text.AlignVCenter
     }
 }

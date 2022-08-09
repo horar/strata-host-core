@@ -46,19 +46,21 @@ Item {
 
         color: {
             if (mouseArea.pressed && delegate.pressable) {
-                return Qt.darker(Theme.palette.onsemiGray,1.5)
+                return Theme.palette.darkGray
             }
 
             if (delegate.checked && whiteBgWhenSelected) {
-                return Qt.darker(Theme.palette.onsemiGray,1.25)
+                return Theme.palette.gray
             }
 
             if (mouseArea.containsMouse) {
-                return Qt.darker(Theme.palette.onsemiGray,1.15)
+                return Theme.palette.lightGray
             }
 
-            return Theme.palette.onsemiGray
+            return Theme.palette.white
         }
+
+        border.color: Theme.palette.gray
     }
 
 

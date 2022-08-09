@@ -106,8 +106,7 @@ Item {
                             right: chevronImage.left
                         }
                         font.bold: delegate.checked
-                        color: delegate.checked ? "black" : Qt.darker(Theme.palette.onsemiGray)
-                        //alternativeColorEnabled: delegate.checked === false
+                        color: Theme.palette.black
                         wrapMode: Text.Wrap
                         textFormat: Text.PlainText
                         maximumLineCount: 3

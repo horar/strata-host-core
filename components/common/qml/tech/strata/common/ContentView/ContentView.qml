@@ -161,7 +161,7 @@ Item {
 
         Rectangle {
             id: navigationSidebar
-            //color: Qt.darker("#666")
+            color: "#F4F5F5"
             Layout.fillHeight: true
             Layout.minimumWidth: 100
             implicitWidth: 300
@@ -173,12 +173,10 @@ Item {
                     fill: parent
                 }
 
-                contentsColor:"white"
+                contentsColor: "#F4F5F5"
                 headerOpenColor: Theme.palette.darkGray
-                textOpenColor: "white"
-                textClosedColor: Qt.darker(Theme.palette.darkGray)
                 headerClosedColor: Theme.palette.lightGray
-                //dividerColor: contentsColor
+                dividerColor: contentsColor
                 exclusive: false
 
                 accordionItems: Column {
@@ -305,7 +303,6 @@ Item {
         visible: loadingText.text.length
 
         Rectangle {
-            //color: "#222"
             opacity: .5
             anchors {
                 fill: parent
@@ -326,7 +323,6 @@ Item {
 
         Text {
             id: loadingText
-            //color: "#fff"
             anchors {
                 top: loadingImage.bottom
                 horizontalCenter: loading.horizontalCenter

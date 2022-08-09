@@ -28,7 +28,6 @@ Item {
             leftMargin: 5
         }
 
-        //alternativeColorEnabled: true
         elide: Text.ElideMiddle
         font.capitalization: Font.Capitalize
         font.bold: true
@@ -41,7 +40,7 @@ Item {
         }
 
         color: Theme.palette.onsemiOrange
-        height: 1
+        height: 2
         width: parent.width
     }
 }

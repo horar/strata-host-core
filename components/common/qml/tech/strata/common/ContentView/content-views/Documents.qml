@@ -96,8 +96,7 @@ Item {
                         Layout.rightMargin: 2
                         Layout.fillWidth: true
                         font.bold: delegate.checked
-                        //alternativeColorEnabled: delegate.checked === false
-                        color: delegate.checked ? "black" : Qt.darker(Theme.palette.onsemiGray)
+                        color: Theme.palette.black
                         wrapMode: Text.Wrap
                         textFormat: Text.PlainText
                         maximumLineCount: 3
