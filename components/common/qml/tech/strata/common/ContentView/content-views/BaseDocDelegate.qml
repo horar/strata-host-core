@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: delegate
@@ -45,18 +46,18 @@ Item {
 
         color: {
             if (mouseArea.pressed && delegate.pressable) {
-                return "#888"
+                return Theme.palette.darkGray
             }
 
             if (delegate.checked && whiteBgWhenSelected) {
-                return "#eee"
+                return Theme.palette.gray
             }
 
             if (mouseArea.containsMouse) {
-                return "#666"
+                return Theme.palette.lightGray
             }
 
-            return "#444"
+            return Theme.palette.white
         }
     }
 

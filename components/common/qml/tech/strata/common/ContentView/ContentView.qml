@@ -12,9 +12,10 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
-import tech.strata.sgwidgets 1.0 as SGWidgets1
+import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -152,7 +153,7 @@ Item {
         }
     }
 
-    SGWidgets1.SGSplitView {
+    SGWidgets.SGSplitView {
         id: contentContainer
         anchors {
             fill: parent
@@ -160,7 +161,7 @@ Item {
 
         Rectangle {
             id: navigationSidebar
-            color: Qt.darker("#666")
+            color: "#F1F2F2"
             Layout.fillHeight: true
             Layout.minimumWidth: 100
             implicitWidth: 300
@@ -171,10 +172,9 @@ Item {
                 anchors {
                     fill: parent
                 }
-
-                contentsColor: Qt.darker("#555")
-                textClosedColor: "#ccc"
-                headerClosedColor: "#484848"
+                contentsColor: "#F1F2F2"
+                headerOpenColor: Theme.palette.darkGray
+                headerClosedColor: Theme.palette.lightGray
                 dividerColor: contentsColor
                 exclusive: false
 
@@ -302,7 +302,6 @@ Item {
         visible: loadingText.text.length
 
         Rectangle {
-            color: "#222"
             opacity: .5
             anchors {
                 fill: parent
@@ -323,7 +322,6 @@ Item {
 
         Text {
             id: loadingText
-            color: "#fff"
             anchors {
                 top: loadingImage.bottom
                 horizontalCenter: loading.horizontalCenter

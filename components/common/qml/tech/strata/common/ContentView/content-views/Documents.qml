@@ -11,6 +11,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -95,7 +96,7 @@ Item {
                         Layout.rightMargin: 2
                         Layout.fillWidth: true
                         font.bold: delegate.checked
-                        alternativeColorEnabled: delegate.checked === false
+                        color: Theme.palette.black
                         wrapMode: Text.Wrap
                         textFormat: Text.PlainText
                         maximumLineCount: 3
