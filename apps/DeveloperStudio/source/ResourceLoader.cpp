@@ -22,7 +22,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include <QRegularExpression>
 
 const QStringList ResourceLoader::coreResources_{
     QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
@@ -33,7 +32,9 @@ const QStringList ResourceLoader::coreResources_{
     #endif
 };
 
-ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
+ResourceLoader::ResourceLoader(QObject *parent)
+    : QObject(parent),
+      projectNameRegEx_("(?<=project\\()([\\w\\.\\+\\-]+)")
 {
     loadCoreResources();
     loadPluginResources();
@@ -553,8 +554,7 @@ QString ResourceLoader::getProjectNameFromCmake(const QString &qrcPath) {
         return QString();
     }
 
-    // Regex to get 'project_name' out of 'project(project_name)'
-    const QRegularExpression re("(?<=project\\()([\\w\\.\\+\\-]+)");
-    const QRegularExpressionMatch match = re.match(cmakeText);
+    // Get 'project_name' out of 'project(project_name)'
+    const QRegularExpressionMatch match = projectNameRegEx_.match(cmakeText);
     return match.captured();
 }
