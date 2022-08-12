@@ -273,7 +273,7 @@ void DownloadManager::networkReplyFinishedHandler()
     QString errorString;
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     if (reply->error() != QNetworkReply::NoError) {
-        errorString = "Network error: " + reply->errorString();
+        errorString = "Network error (" + QString::number(statusCode) + "): " + reply->errorString();
     } else if (statusCode < 200 || statusCode >= 300) {
         errorString = "Reply error, status code is " + QString::number(statusCode);
     } else {
