@@ -19,7 +19,6 @@
         <file>partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
-        <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
