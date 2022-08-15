@@ -37,10 +37,6 @@ Item {
         id: configFileModel
     }
 
-    LogFilesCompress {
-        id: logFilesCompress
-    }
-
     ColumnLayout {
         id: mainLayout
 
@@ -100,16 +96,10 @@ Item {
             lcuApp: true
         }
 
-        SGWidgets.SGButton {
-            id: logExportButton
-            text: "Log Export"
-            hintText: "Exports compressed log files into Desktop folder"
-            Layout.alignment: Qt.AlignCenter
-
-            onClicked: {
-                logFilesCompress.compress();
-                console.log(Logger.lcuCategory, "compressing done")
-            }
+        LogExport {
+            id: logExportPane
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignRight
         }
     }
 }

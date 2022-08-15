@@ -9,14 +9,19 @@
 #pragma once
 
 #include <QObject>
+#include <QDir>
 
 class LogFilesCompress : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(LogFilesCompress)
+
 public:
     explicit LogFilesCompress(QObject *parent = nullptr);
 
-    Q_INVOKABLE void compress();
+    Q_INVOKABLE void logExport();
+
+    bool compress (QFileInfoList filesToZip, QString zipName);
 
 signals:
 

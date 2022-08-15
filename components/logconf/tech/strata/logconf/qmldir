@@ -14,3 +14,4 @@ typeinfo plugins.qmltypes
 
 LogLevel 1.0 qrc:///LogLevel.qml
 LogDetails 1.0 qrc:///LogDetails.qml
+LogExport 1.0 qrc:///LogExport.qml

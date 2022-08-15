@@ -20,6 +20,7 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME} MODULE
     ConfigFileSettings.cpp
+    LogFilesCompress.cpp
     logconf_plugin.cpp
     qml.qrc
 
@@ -35,6 +36,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Qml
 
     strata::QtLogger
+    QuaZip::QuaZip
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

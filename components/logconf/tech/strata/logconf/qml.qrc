@@ -3,5 +3,6 @@
         <file>LogLevel.qml</file>
         <file>LogDetails.qml</file>
         <file>CorruptedFileDialog.qml</file>
+        <file>LogExport.qml</file>
     </qresource>
 </RCC>

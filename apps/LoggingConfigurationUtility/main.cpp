@@ -7,7 +7,6 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "ConfigFileModel.h"
-#include "LogFilesCompress.h"
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
     loadResources();
 
     qmlRegisterType<ConfigFileModel>("tech.strata.lcu", 1, 0, "ConfigFileModel");
-    qmlRegisterType<LogFilesCompress>("tech.strata.lcu", 1, 0, "LogFilesCompress");
 
     QQmlApplicationEngine engine;
 
