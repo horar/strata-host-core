@@ -780,7 +780,7 @@ Item {
 
                                 delegate: Item {
                                     width: ListView.view.width
-                                    height: Math.max(categoryDelegateIcon.height, categoryDelegateText.height)
+                                    height: Math.max(categoryDelegateIcon.height, categoryDelegateText.height) + 2
 
                                     function click() {
                                         categoryDelegateMouseArea.clicked()
@@ -793,8 +793,8 @@ Item {
 
                                     SGIcon {
                                         id: categoryDelegateIcon
-                                        width: 25
-                                        height: 25
+                                        width: 26
+                                        height: 26
                                         anchors {
                                             left: parent.left
                                             leftMargin: 10
