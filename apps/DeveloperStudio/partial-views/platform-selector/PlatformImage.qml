@@ -58,7 +58,7 @@ Rectangle {
         function initialize() {
             if (model.image.length === 0) {
                 console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
-                source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                source = "qrc:/images/not-found.png"
             } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image)) && SGUtilsCpp.isValidImage(SGUtilsCpp.urlToLocalFile(model.image))) {
                 source = model.image
             } else {
@@ -69,7 +69,7 @@ Rectangle {
         onStatusChanged: {
             if (image.status === Image.Error){
                 console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
-                source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                source = "qrc:/images/not-found.png"
             }
         }
 
@@ -90,7 +90,7 @@ Rectangle {
                 } else {
                     // stop trying to load after 31 seconds (interval doubles every triggered)
                     console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image loading timed out:", model.image)
-                    image.source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                    image.source = "qrc:/images/not-found.png"
                 }
             }
         }

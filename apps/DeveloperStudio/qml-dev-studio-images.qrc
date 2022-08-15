@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/blank_avatar.png</file>
+        <file>images/category-amplifier-and-comparator.svg</file>
+        <file>images/category-audio-video.svg</file>
+        <file>images/category-clock-and-timing.svg</file>
+        <file>images/category-connectivity.svg</file>
+        <file>images/category-discrete-and-driver.svg</file>
+        <file>images/category-interface.svg</file>
+        <file>images/category-isolation-and-protection.svg</file>
+        <file>images/category-memory.svg</file>
+        <file>images/category-microcontroller.svg</file>
+        <file>images/category-optoelectronic.svg</file>
+        <file>images/category-power-management.svg</file>
+        <file>images/category-power-module.svg</file>
+        <file>images/category-sensor.svg</file>
+        <file>images/category-standard-logic.svg</file>
+        <file>images/circuits-background-tiled.svg</file>
+        <file>images/grey-white-fade-background.svg</file>
+        <file>images/loading.gif</file>
+        <file>images/no-hcs-connection.svg</file>
+        <file>images/not-found.png</file>
+        <file>images/on-semi-logo-horiz.svg</file>
+        <file>images/placeholder.svg</file>
+        <file>images/segment-automotive.svg</file>
+        <file>images/segment-cloud.svg</file>
+        <file>images/segment-internet-of-things.svg</file>
+        <file>images/strata-logo-reverse.svg</file>
+        <file>images/strata-logo.svg</file>
+    </qresource>
+</RCC>
