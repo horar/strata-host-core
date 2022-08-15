@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/blank_avatar.png</file>
+        <file>images/circuits-background-tiled.svg</file>
+        <file>images/grey-white-fade-background.svg</file>
+        <file>images/loading.gif</file>
+        <file>images/no-hcs-connection.svg</file>
+        <file>images/not-found.png</file>
+        <file>images/on-semi-logo-horiz.svg</file>
+        <file>images/placeholder.svg</file>
+        <file>images/strata-logo-reverse.svg</file>
+        <file>images/strata-logo.svg</file>
+    </qresource>
+</RCC>

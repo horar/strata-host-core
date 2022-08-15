@@ -18,7 +18,6 @@
         <file>partial-views/help-tour/images/top-fade.png</file>
         <file>partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
@@ -52,7 +51,6 @@
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
         <file>js/platform_filters.js</file>
-        <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>

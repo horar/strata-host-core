@@ -82,6 +82,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
     qml-dev-studio.qrc
     qml-dev-studio-resources.qrc
+    qml-dev-studio-images.qrc
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}

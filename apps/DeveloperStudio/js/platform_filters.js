@@ -609,7 +609,7 @@ function initialize () {
         var mappingItem = JSON.parse(JSON.stringify(rawData[i]))
 
         if (mappingItem.hasOwnProperty("iconSource") == false) {
-            mappingItem["iconSource"] = "qrc:/partial-views/platform-selector/images/icons/placeholder.svg"
+            mappingItem["iconSource"] = "qrc:/images/placeholder.svg"
         }
 
         if (mappingItem.hasOwnProperty("parentCategory") == false) {
