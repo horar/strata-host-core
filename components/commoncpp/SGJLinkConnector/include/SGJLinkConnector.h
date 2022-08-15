@@ -13,6 +13,7 @@
 #include <QProcess>
 #include <QTemporaryFile>
 #include <QVariantMap>
+#include <QRegularExpression>
 
 class SGJLinkConnector : public QObject
 {
@@ -87,6 +88,10 @@ private:
     int startAddress_ = 0x0;
     QString latestRawOutput_;
     QVariantMap latestOutputInfo_;
+    const QRegularExpression referenceVoltageRegEx_;
+    const QRegularExpression libraryVersionRegEx_;
+    const QRegularExpression commanderVersionRegEx_;
+    const QRegularExpression emulatorFwVersionRegEx_;
 
     bool processRequest(const QString &cmd, ProcessType type);
     void finishProcess(bool exitedNormally);
