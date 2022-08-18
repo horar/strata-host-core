@@ -11,6 +11,8 @@ module tech.strata.sgwidgets
 
 SGButton 2.0 SGButton.qml
 SGText 2.0 SGText.qml
+SGIcon 2.0 SGIcon.qml
+SGCheckBox 2.0 SGCheckBox.qml
 
 singleton SGSettings 2.0 SGSettings.qml
 

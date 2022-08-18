@@ -21,6 +21,10 @@ FocusScope {
             name: "SGButton"
             page: "ExSGButton.qml"
         }
+        ListElement {
+            name: "SGCheckBox"
+            page: "ExSGCheckBox.qml"
+        }
     }
 
     Component.onCompleted: {
