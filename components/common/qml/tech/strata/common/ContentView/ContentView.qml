@@ -13,6 +13,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
@@ -302,6 +303,7 @@ Item {
         visible: loadingText.text.length
 
         Rectangle {
+            color: "#222"
             opacity: .5
             anchors {
                 fill: parent
@@ -320,8 +322,9 @@ Item {
             width: 200
         }
 
-        Text {
+        SGWidgets2.SGText {
             id: loadingText
+            color: "#fff"
             anchors {
                 top: loadingImage.bottom
                 horizontalCenter: loading.horizontalCenter
@@ -342,7 +345,6 @@ Item {
                 return ""
             }
 
-            width: 500
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
         }
