@@ -69,24 +69,78 @@ AbstractButton {
     }
 
     contentItem: Item {
-        implicitHeight: textItem.paintedHeight
-        implicitWidth: textItem.implicitWidth
+        implicitWidth: {
+            if (iconItem.status === Image.Ready && control.text.length) {
+                return iconItem.width + textItem.paintedWidth
+            } else if (iconItem.status === Image.Ready) {
+                return iconItem.width
+            } else {
+                return textItem.width
+            }
+        }
+
+        implicitHeight: {
+            if (iconItem.status === Image.Ready && control.text.length) {
+                return Math.max(textItem.paintedHeight, iconItem.height)
+            } else if (iconItem.status === Image.Ready) {
+                return iconItem.height
+            } else {
+                return textItem.paintedHeight
+            }
+        }
+
+        SGWidgets.SGIcon {
+            id: iconItem
+            height: font.pixelSize
+            width: font.pixelSize
+            anchors {
+                left: textItem.text.length ? parent.left : undefined
+                centerIn: textItem.text.length == 0 ? parent : undefined
+                verticalCenter: parent.verticalCenter
+            }
+
+            source: control.icon.source
+            opacity: enabled ? 1 : 0.5
+            visible: iconItem.status === Image.Ready
+            iconColor: {
+                if (isSecondary && buttonSize !== SGButton.Large) {
+                    if (control.hovered) {
+                        return Theme.palette.white
+                    }
+                    return Theme.palette.onsemiSecondaryDarkBlue
+                }
+                return Theme.palette.white
+            }
+        }
 
         SGWidgets.SGText {
             id: textItem
-            anchors.centerIn: parent
+            anchors {
+                left: iconItem.paintedWidth ? iconItem.right : undefined
+                centerIn: iconItem.paintedWidth ? undefined : parent
+                verticalCenter: parent.verticalCenter
+            }
 
-            text: control.text
+            text: {
+                var spacing = ""
+                if (control.text.length && iconItem.status === Image.Ready) {
+                    if (control.buttonSize === SGButton.Tiny) {
+                        spacing = " "   //one space
+                    } else {
+                        spacing = "  "  //two spaces
+                    }
+                }
+                return  spacing + control.text
+            }
+
             opacity: enabled ? 1 : 0.5
             font: control.font
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+            visible: text.length
 
             color: {
-                if (isSecondary &&
-                        (buttonSize === SGButton.Medium
-                         || buttonSize === SGButton.Small
-                         || buttonSize === SGButton.Tiny)) {
+                if (isSecondary && buttonSize !== SGButton.Large) {
 
                     if (control.hovered) {
                         return Theme.palette.white
@@ -98,11 +152,17 @@ AbstractButton {
                 return Theme.palette.white
             }
         }
+
     }
 
     background: Item {
         implicitHeight: 20
-        implicitWidth: 60
+        implicitWidth: {
+            if (textItem.text.length) {
+                return 60
+            }
+            return icon.width
+        }
 
         Rectangle {
             id: fill
@@ -115,7 +175,6 @@ AbstractButton {
 
             color: {
                 if (isSecondary) {
-
                     if (buttonSize === SGButton.Large) {
                         if (control.pressed) {
                             return Qt.darker(Theme.palette.onsemiSecondaryDarkBlue, 1.2)
