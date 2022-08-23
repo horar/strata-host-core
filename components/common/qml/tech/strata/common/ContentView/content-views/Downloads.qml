@@ -133,11 +133,29 @@ Item {
                                 onCheckedChanged: {
                                     delegate.checked = checked
                                 }
+                                onHoveredChanged: {
+                                    delegate.hovered = hovered
+                                }
 
                                 Binding {
                                     target: checkbox
                                     property: "checked"
                                     value: delegate.checked
+                                }
+
+                                MouseArea {
+                                    id: mouseArea
+                                    anchors.fill: checkbox
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+
+                                    onClicked: {
+                                        if (checkbox.checked) {
+                                            checkbox.checked = false
+                                        } else {
+                                            checkbox.checked = true
+                                        }
+                                    }
                                 }
 
                                 ButtonGroup.group: downloadButtonGroup

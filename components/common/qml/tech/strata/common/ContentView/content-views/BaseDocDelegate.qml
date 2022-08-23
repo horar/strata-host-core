@@ -18,6 +18,7 @@ Item {
     property int bottomPadding: 1
     property bool pressable: true
     property bool checked: false
+    property bool hovered: false
     property bool uncheckable: false
     property bool whiteBgWhenSelected: true
     property alias headerSourceComponent: headerLoader.sourceComponent
@@ -52,7 +53,7 @@ Item {
                 return Theme.palette.gray
             }
 
-            if (mouseArea.containsMouse) {
+            if (mouseArea.containsMouse || hovered) {
                 return Theme.palette.lightGray
             }
 
