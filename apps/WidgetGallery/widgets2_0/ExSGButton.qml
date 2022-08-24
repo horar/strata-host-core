@@ -9,7 +9,6 @@
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import tech.strata.sgwidgets 1.0 as SGWidgets1
 import tech.strata.sgwidgets 2.0
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
@@ -70,12 +69,104 @@ Item {
             isSecondary: true
         }
 
+        SGButton {
+            text: "Tiny Button"
+            buttonSize: SGButton.Tiny
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Tiny Button"
+            buttonSize: SGButton.Tiny
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Small Button"
+            buttonSize: SGButton.Small
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Small Button"
+            buttonSize: SGButton.Small
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Medium Button"
+            buttonSize: SGButton.Medium
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Medium Button"
+            buttonSize: SGButton.Medium
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Large Button"
+            buttonSize: SGButton.Large
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            text: "Large Button"
+            buttonSize: SGButton.Large
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Tiny
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Tiny
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Small
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Small
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Medium
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Medium
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Large
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
+
+        SGButton {
+            buttonSize: SGButton.Large
+            isSecondary: true
+            icon.source: "qrc:/sgimages/folder-open.svg"
+        }
     }
 
-
-
-
-    SGWidgets1.SGCheckBox {
+    SGCheckBox {
         id: editEnabledCheckBox
         anchors {
             top: contentGrid.bottom

@@ -37,5 +37,6 @@
         <file>widgets2_0/PageSGWidgetsTwoZero.qml</file>
         <file>widgets2_0/ExSGButton.qml</file>
         <file>WgSettingsDialog.qml</file>
+        <file>widgets2_0/ExSGCheckBox.qml</file>
     </qresource>
 </RCC>
