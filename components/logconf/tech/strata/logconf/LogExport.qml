@@ -10,13 +10,35 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Qt.labs.settings 1.1 as QtLabsSettings
+import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.logconf 1.0
 import tech.strata.pluginLogger 1.0
 
-RowLayout {
-    id: logExportRow
-    spacing: 5
+GridLayout {
+    id: logExportGrid
+
+    property alias appName: logFilesCompress.appName
+    property string defaultExportPath: CommonCpp.SGUtilsCpp.urlToLocalFile(
+                                           QtLabsPlatform.StandardPaths.writableLocation(
+                                               QtLabsPlatform.StandardPaths.DesktopLocation))
+    property int innerSpacing: 5
+
+    columns: 3
+    rows: 3
+    columnSpacing: innerSpacing
+    rowSpacing: innerSpacing
+
+    enabled: logFilesCompress.appName !== ""
+
+    QtLabsSettings.Settings {
+        id: settings
+        category: "LogExport"
+
+        property alias exportPath: exportPathField.text
+        property alias openFolder: openFolderCheckBox.checked
+    }
 
     LogFilesCompress {
         id: logFilesCompress
@@ -26,29 +48,93 @@ RowLayout {
         id: timer
     }
 
+    SGWidgets.SGText {
+        text: "Export log files"
+        Layout.columnSpan: 3
+    }
+
+    SGWidgets.SGTextField {
+        id: exportPathField
+        Layout.fillWidth: true
+
+        text: settings.value("exportPath",defaultExportPath)
+        placeholderText: "Select export path..."
+
+        onTextChanged: {
+            warningText.visible = false
+            if (text.length == 0) {
+                logExportButton.enabled = false
+            } else {
+                logExportButton.enabled = true
+            }
+        }
+    }
+
+    SGWidgets.SGIconButton {
+        icon.source: "qrc:/sgimages/folder-open.svg"
+        icon.width: logExportButton.height -2
+        icon.height: logExportButton.height - 2
+        hintText: "Select export path"
+        onClicked: {
+            if (exportPathField.text.length === 0) {
+                fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(defaultExportPath)
+            } else {
+                fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(exportPathField.text)
+            }
+
+            fileDialog.open()
+        }
+    }
+
     SGWidgets.SGButton {
         id: logExportButton
 
-        text: "Export log files"
-        hintText: "Exports compressed log files into Desktop folder"
+        Layout.maximumWidth: height + 2
+        text: "Export"
 
         onClicked: {
-            logExportRow.enabled = false
+            logExportButton.enabled = false
             timer.interval = 100  // a short delay, enabled status would change properly.
             timer.triggered.connect(logExportInProgress)
             timer.start()
         }
     }
 
-    SGWidgets.SGCheckBox {
-        id: openFolderCheckBox
+    SGWidgets.SGText {
+        id: warningText
+        Layout.columnSpan: 3
 
-        text: "Open folder after saving"
+        color: "red"
+        text: "Non-existent or non-writable directory.  Log-export unsuccessful."
+        visible: false
     }
 
+    SGWidgets.SGCheckBox {
+        id: openFolderCheckBox
+        Layout.columnSpan: 3
+
+        text: "Open folder after saving"
+        checked: settings.value("openFolder",false)
+    }
+
+    QtLabsPlatform.FolderDialog {
+        id: fileDialog
+        currentFolder: defaultExportPath
+        title: qsTr("Please choose a file")
+        onAccepted: {
+            exportPathField.text = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
+        }
+    }
+
+
     function logExportInProgress() {
-        logFilesCompress.logExport(); //compress Files
+        if (logFilesCompress.logExport(exportPathField.text) === false) {
+            warningText.visible = true
+        }
         timer.triggered.disconnect(logExportInProgress) // remove the callback
-        logExportRow.enabled = true
+        logExportButton.enabled = true
+        if (openFolderCheckBox.checked && warningText.visible === false) {
+            Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(exportPathField.text))
+        }
     }
 }

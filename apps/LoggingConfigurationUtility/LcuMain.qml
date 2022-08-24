@@ -100,6 +100,7 @@ Item {
             id: logExportPane
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignRight
+            appName: iniFileComboBox.currentText
         }
     }
 }

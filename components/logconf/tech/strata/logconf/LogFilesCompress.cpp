@@ -20,23 +20,41 @@ LogFilesCompress::LogFilesCompress(QObject *parent)
 
 }
 
-void LogFilesCompress::logExport()
+bool LogFilesCompress::logExport(QString exportPath)
 {
-    qCDebug(lcLcu) << "compressing begins ";
+    //check export path
+    QDir exportDir(exportPath);
+    if (exportDir.exists() == false || QFileInfo(exportPath).isWritable() == false) {
+        qCWarning(lcLcu) << "Non-existent or non-writable directory";
+        return false;
+    }
+    const QString timeStamp = QDateTime::currentDateTime().toString("dd-MM-yyyy-hh-mm-ss");
+    const QString zipName(exportDir.path() + "/strata-logs-" + timeStamp + ".zip");
 
     QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
-    QDir logDir(logPath);
-    QDir desktopDir(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    QFileInfoList fileInfoList(logDir.entryInfoList({"*.log"}, QDir::Files));
 
-    const QString timeStamp = QDateTime::currentDateTime().toString("dd-MM-yyyy-hh-mm-ss");
-    const QString zipName(desktopDir.path() + "/strata-logs-" + timeStamp + ".zip");
+    //LCU app compresses log files of app that is chosen in comboBox
+    if (QCoreApplication::applicationName() == "Logging Configuration Utility") {
+        logPath.replace(QCoreApplication::applicationName(), applicationName);
+    }
+
+    //SDS, PRT (or any other app) compresses their own log files
+    QDir logDir(logPath);
+    QFileInfoList fileInfoList(logDir.entryInfoList({applicationName + "*.log"}, QDir::Files));
+
+    //SDS compresses also HCS log files
+    if (QCoreApplication::applicationName() == "Strata Developer Studio") {
+        QDir hcsLogDir(logPath.replace(applicationName, "Host Controller Service"));
+        fileInfoList << hcsLogDir.entryInfoList({"Host Controller Service*.log"}, QDir::Files);
+    }
 
     if (compress (fileInfoList, zipName)) {
         qCDebug(lcLcu) << "Compressing succesfully completed";
         qCDebug(lcLcu) << "Path to strata-log archive: " << zipName;
+        return true;
     } else {
         qCWarning(lcLcu) << "Compressing unsuccessful";
+        return false;
     }
 
 }
@@ -82,7 +100,7 @@ bool LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
         zipFile.close();
     }
 
-    zip.setComment(QString("Log files archive"));
+    zip.setComment(applicationName +" log files archive");
     zip.close();
 
     if (zipName.startsWith("<")) { // something like "<QIODevice pointer>"
@@ -91,4 +109,16 @@ bool LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
         qCDebug(lcLcu) << "ZipFile exists: " << QFileInfo::exists(zipName);
         return true;
     }
+}
+
+QString LogFilesCompress::appName() const
+{
+    return applicationName;
+}
+
+void LogFilesCompress::setAppName(const QString &appName)
+{
+    applicationName = appName;
+
+    emit appNameChanged();
 }

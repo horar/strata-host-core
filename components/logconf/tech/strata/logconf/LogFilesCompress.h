@@ -16,13 +16,23 @@ class LogFilesCompress : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(LogFilesCompress)
 
+    Q_PROPERTY(QString appName READ appName WRITE setAppName NOTIFY appNameChanged)
+
 public:
     explicit LogFilesCompress(QObject *parent = nullptr);
 
-    Q_INVOKABLE void logExport();
+    Q_INVOKABLE bool logExport(QString exportPath);
+
+
 
     bool compress (QFileInfoList filesToZip, QString zipName);
+    QString appName() const;
+
+    void setAppName(const QString& appName);
 
 signals:
+    void appNameChanged();
 
+private:
+    QString applicationName;
 };
