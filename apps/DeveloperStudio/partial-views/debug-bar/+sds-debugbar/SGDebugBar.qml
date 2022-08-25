@@ -89,12 +89,25 @@ Item {
             }
 
             Button {
+                id: loginButton
                 text: "Login as Guest"
                 onClicked: {
                     if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
+                        loginButton.registerClient()
+                    }
+                }
+
+                function registerClient() {
+                    var reply = sdsModel.strataClient.sendRequest("register_client", {"api_version":"2.0"});
+
+                    reply.finishedSuccessfully.connect(function(result) {
                         Notifications.currentUser = Constants.GUEST_USER_ID
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
-                    }
+                    })
+
+                    reply.finishedWithError.connect(function(error) {
+                        console.warn("Registration with server failed", JSON.stringify(error))
+                    })
                 }
             }
 
@@ -103,8 +116,7 @@ Item {
                 text: "Always Login as Guest"
                 onCheckedChanged: {
                     if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
-                        Notifications.currentUser = Constants.GUEST_USER_ID
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
+                        loginButton.registerClient()
                     }
                 }
 
@@ -119,8 +131,7 @@ Item {
                     onHcsConnectedChanged: {
                         if (sdsModel.hcsConnected && alwaysLogin.checked) {
                             NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                            Notifications.currentUser = Constants.GUEST_USER_ID
-                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
+                            loginButton.registerClient()
                         }
                     }
                 }
