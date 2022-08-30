@@ -16,13 +16,16 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 Item {
     id: controlViewContainer
 
     property string activeDownloadUri: ""
     property var otaVersionsToRemove: []
-    property var controlViewList: sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
+    property var controlViewList: (platformStack.is_assisted && platformStack.class_id.length === 0)
+                                  ? sdsModel.documentManager.getClassDocuments(platformStack.controller_class_id).controlViewListModel
+                                  : sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
     property bool controlLoaded: false
     property real loadTime
@@ -108,7 +111,7 @@ Item {
 
                         Rectangle {
                             id: bar
-                            color: "#57d445"
+                            color: Theme.palette.success
                             height: parent.height
                             width: loadingBar.visualPosition * loadingBar.width
                             radius: 5

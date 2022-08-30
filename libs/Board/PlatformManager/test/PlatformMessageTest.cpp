@@ -115,6 +115,20 @@ void PlatformMessageTest::copyMessageTest()
         QVERIFY(msg1.jsonErrorOffset() == msg2.jsonErrorOffset());
         QVERIFY(msg1.jsonErrorString() == msg2.jsonErrorString());
     }
+    // assignment operator and copy constructor test
+    {
+        PlatformMessage msg1("{\"a\":1}");
+        PlatformMessage msg2("{\"b\":2}");
+        PlatformMessage msg3(msg1);   // calls copy constructor
+        PlatformMessage msg4 = msg1;  // also calls copy constructor
+        QVERIFY(msg1.raw() == msg3.raw());
+        QVERIFY(msg3.raw() == msg4.raw());
+        msg2 = msg1;  // calls assignment operator
+        QVERIFY(msg1.json() == msg2.json());
+        QVERIFY(msg1.raw() == msg2.raw());
+        msg3 = msg4;  // msg3 and msg4 had the same shared data before assignment
+        QVERIFY(msg3.raw() == msg4.raw());
+    }
 }
 
 void PlatformMessageTest::messageContentTest()

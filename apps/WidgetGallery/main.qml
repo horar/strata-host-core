@@ -8,6 +8,7 @@
  */
 import QtQuick 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
 
 SGWidgets.SGMainWindow {
@@ -24,6 +25,13 @@ SGWidgets.SGMainWindow {
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
             title: "File"
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Settings")
+                onTriggered:  {
+                    showSettingsDialog()
+                }
+            }
 
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Exit")
@@ -58,5 +66,28 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/WgAboutWindow.qml")
+    }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/WgSettingsDialog.qml"
+                    )
+        dialog.accepted.connect(function() {
+            dialog.destroy()
+        })
+        dialog.open()
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            topMargin: 10
+            rightMargin: 170
+            right: parent.right
+            top: parent.top
+        }
+
+            signalTarget: wgModel
     }
 }

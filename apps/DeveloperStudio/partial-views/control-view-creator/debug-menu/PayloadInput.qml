@@ -61,9 +61,12 @@ Item {
                 clip: true
                 focus: true
                 selectByMouse: true
+                contextMenuEnabled: true
+                selectionColor: Theme.palette.onsemiOrange
                 validator: switch(type) {
                     case "int": return intValid
                     case "double": return doubleValid
+                    default: return null
                 }
             }
         }
@@ -75,9 +78,11 @@ Item {
 
     IntValidator {
         id: intValid
+        locale: "C"
     }
 
     DoubleValidator {
         id: doubleValid
+        locale: "C"
     }
 }

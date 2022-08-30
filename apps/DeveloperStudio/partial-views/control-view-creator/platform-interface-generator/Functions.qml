@@ -12,6 +12,7 @@ import QtQml 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 import "../"
 
@@ -344,7 +345,7 @@ QtObject {
         alertToast.hide()
         alertToast.text = "Successfully imported JSON model." + (modelPopulated() ? "" : " Note: imported list of commands/notifications is empty.")
         alertToast.textColor = "white"
-        alertToast.color = "green"
+        alertToast.color = Theme.palette.success
         alertToast.interval = 4000
         alertToast.show()
 
@@ -500,9 +501,13 @@ QtObject {
     function getTypedValue (type, value) {
         switch (type) {
             case "int":
-                return parseInt(value)
             case "double":
-                return parseFloat(value)
+                let textVal = Number(value)
+                if (isNaN(textVal)) {
+                    console.warn("Unable to parse the input value '" + value + "'")
+                    textVal = 0
+                }
+                return textVal
             case "bool":
                 if (value === "false") {
                     return false
@@ -524,20 +529,30 @@ QtObject {
         if (!result) {
             alertToast.text = "Generation Failed: " + sdsModel.platformInterfaceGenerator.lastError
             alertToast.textColor = "white"
-            alertToast.color = "#D10000"
+            alertToast.color = Theme.palette.error
             alertToast.interval = 0
-        } else if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
-            alertToast.text = "Generation Succeeded, but with warnings: " + sdsModel.platformInterfaceGenerator.lastError
-            alertToast.textColor = "black"
-            alertToast.color = "#DFDF43"
-            alertToast.interval = 0
-            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
+            console.error("Unable to generate file", outputFileText.text + "/PlatformInterface.qml")
         } else {
-            alertToast.text = "Successfully generated PlatformInterface.qml"
-            alertToast.textColor = "white"
-            alertToast.color = "green"
-            alertToast.interval = 4000
-            SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
+            if (sdsModel.platformInterfaceGenerator.lastError.length > 0) {
+                alertToast.text = "Generation Succeeded, but with warnings: " + sdsModel.platformInterfaceGenerator.lastError
+                alertToast.textColor = "black"
+                alertToast.color = Theme.palette.warning
+                alertToast.interval = 0
+                console.warn("There were warnings when generating", outputFileText.text + "/PlatformInterface.qml")
+            } else {
+                alertToast.text = "Successfully generated PlatformInterface.qml"
+                alertToast.textColor = "white"
+                alertToast.color = Theme.palette.success
+                alertToast.interval = 4000
+                console.log("Successfully generated", outputFileText.text + "/PlatformInterface.qml")
+            }
+
+            const success = SGUtilsCpp.atomicWrite(jsonInputFilePath, JSON.stringify(jsonObject, null, 4))
+            if (success) {
+                console.log("Successfully saved", jsonInputFilePath)
+            } else {
+                console.error("Unable to save file", jsonInputFilePath)
+            }
         }
         alertToast.show()
 
@@ -669,7 +684,7 @@ QtObject {
                         }
                         alertToast.text = "The imported JSON file uses a deprecated API. If you 'Generate' your code will be updated to the new API."
                         alertToast.textColor = "white"
-                        alertToast.color = "goldenrod"
+                        alertToast.color = Theme.palette.warning
                         alertToast.interval = 0
                         alertToast.show()
                         deprecatedFunctions.createModelFromJsonAPIv0(jsonObject)
@@ -677,7 +692,7 @@ QtObject {
                 } else {
                     alertToast.text = "The JSON file is improperly formatted"
                     alertToast.textColor = "white"
-                    alertToast.color = "#D10000"
+                    alertToast.color = Theme.palette.error
                     alertToast.interval = 0
                     alertToast.show()
                 }
@@ -685,7 +700,7 @@ QtObject {
                 console.error(e)
                 alertToast.text = "Failed to parse input JSON file: " + e
                 alertToast.textColor = "white"
-                alertToast.color = "#D10000"
+                alertToast.color = Theme.palette.error
                 alertToast.interval = 0
                 alertToast.show()
                 return

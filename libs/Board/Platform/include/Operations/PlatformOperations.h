@@ -94,10 +94,14 @@ signals:
      * @param status specific status for operation
      * @param errorString error string (valid only if operation finishes with error)
      */
-    void finished(QByteArray deviceId, Type type, Result result, int status, QString errorString);
+    void finished(QByteArray deviceId,
+                  strata::platform::operation::Type type,
+                  strata::platform::operation::Result result,
+                  int status,
+                  QString errorString);
 
 private slots:
-    void handleOperationFinished(Result result, int status, QString errorString);
+    void handleOperationFinished(strata::platform::operation::Result result, int status, QString errorString);
 private:
     static void operationLaterDeleter(BasePlatformOperation* operation);
     OperationSharedPtr processOperation(const OperationSharedPtr& operation);

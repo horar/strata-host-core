@@ -60,12 +60,18 @@ Loader {
 
             function update() {
                 const keyValue = {}
-                let defaultVal = value
+                let defaultVal
                 switch(type) {
-                    case "int": defaultVal = Number(defaultVal)
+                    case "int":
+                    case "double":
+                        defaultVal = Number(value)
+                        if (isNaN(defaultVal)) {
+                            console.warn("Unable to parse the input value '" + value + "'")
+                            defaultVal = 0
+                        }
                         break
-                    case "double": defaultVal = Number(defaultVal)
-                        break
+                    default:
+                        defaultVal = value
                 }
                 keyValue[name] = defaultVal
                 debugDelegateRoot.updatePartialPayload(keyValue)

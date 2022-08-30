@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #ifndef PLATFORM_DOCUMENT_H
 #define PLATFORM_DOCUMENT_H
 
@@ -20,6 +19,8 @@ struct PlatformFileItem {
     QString md5;
     QString timestamp;
     qint64 filesize;
+
+    friend QDebug operator<<(QDebug dbg, const PlatformFileItem &item);
 };
 
 struct FirmwareFileItem {
@@ -46,14 +47,14 @@ struct PlatformDatasheetItem {
     QString subcategory;
 };
 
-QDebug operator<<(QDebug dbg, const PlatformFileItem &item);
-
 class PlatformDocument
 {
 public:
+    friend QDebug operator<<(QDebug dbg, const PlatformDocument* platfDoc);
+
     PlatformDocument(const QString &classId);
 
-    bool parseDocument(const QString &document);
+    bool parseDocument(const QByteArray &document);
     QString classId();
     const QList<PlatformFileItem>& getViewList();
     const QList<PlatformDatasheetItem>& getDatasheetList();
@@ -61,16 +62,21 @@ public:
     const QList<FirmwareFileItem>& getFirmwareList();
     const QList<ControlViewFileItem>& getControlViewList();
     const PlatformFileItem& platformSelector();
+    const QString firstNormalPublishedTimestamp();
 
 private:
     QString classId_;
     QString name_;
+    QString firstNormalPublishedTimestamp_;
     QList<PlatformDatasheetItem> datasheetsList_;
     QList<PlatformFileItem> downloadList_;
     QList<PlatformFileItem> viewList_;
     QList<FirmwareFileItem> firmwareList_;
     QList<ControlViewFileItem> controlViewList_;
     PlatformFileItem platformSelector_;
+
+    bool getObjectFromJson(const QJsonObject &json, const QString &key, QJsonObject &destObject) const;
+    bool getArrayFromJson(const QJsonObject &json, const QString &key, bool mandatory, QJsonArray &destArray) const;
 
     bool populateFileObject(const QJsonObject& jsonObject, PlatformFileItem &file);
     void populateFileList(const QJsonArray &jsonList, QList<PlatformFileItem> &fileList);

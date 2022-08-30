@@ -11,6 +11,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     id: payloadDelegateRoot
@@ -84,7 +85,7 @@ Rectangle {
 
                 icon {
                     source: "qrc:/sgimages/times.svg"
-                    color: removePayloadPropertyMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                    color: removePayloadPropertyMouseArea.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Theme.palette.onsemiOrange
                     height: 7
                     width: 7
                     name: "Remove property"
@@ -128,6 +129,7 @@ Rectangle {
                 selectByMouse: true
                 persistentSelection: true // must deselect manually
                 placeholderText: "Property key"
+                palette.highlight: Theme.palette.onsemiOrange
 
                 validator: RegExpValidator {
                     regExp: /^[a-z_][a-zA-Z0-9_]*/
@@ -136,17 +138,17 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            return "#D10000"
+                            return Theme.palette.error
                         } else if (propertyKey.activeFocus) {
-                            return palette.highlight
+                            return Theme.palette.onsemiOrange
                         } else {
-                            return "lightgrey"
+                            return Theme.palette.lightGray
                         }
                     }
 
                     border.width: (!model.valid || propertyKey.activeFocus) ? 2 : 1
+                    color: model.valid ? Theme.palette.white : Qt.lighter(Theme.palette.error, 2.35)
                 }
-
                 Component.onCompleted: {
                     text = model.name
                     if (!text) {
@@ -169,7 +171,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
+                    if (activeFocus === false && (contextMenuPopupLoader.item == null || contextMenuPopupLoader.item.visible === false)) {
                         propertyKey.deselect()
                     }
                 }
@@ -186,7 +188,6 @@ Rectangle {
                     onReleased: {
                         if (containsMouse) {
                             contextMenuPopupLoader.active = true
-                            contextMenuPopupLoader.item.textEditor = propertyKey
                             contextMenuPopupLoader.item.popup(null)
                         }
                     }
@@ -195,7 +196,9 @@ Rectangle {
                 Loader {
                     id: contextMenuPopupLoader
                     active: false
-                    sourceComponent: contextMenuPopupComponent
+                    sourceComponent: SGContextMenuEditActions {
+                        textEditor: propertyKey
+                    }
                 }
             }
 
@@ -231,13 +234,16 @@ Rectangle {
             visible: active
 
             property bool isBool: propertyType.currentIndex === 3
+            property string modelType: model.type
 
             onIsBoolChanged: {
                 // reseting text, value, and checked to base states
                 if (propertyType.currentIndex !== 3) {
                     model.value = "0"
-                    item.text = "0"
-                    item.checked = false
+                    if (item) {
+                        item.text = "0"
+                        item.checked = false
+                    }
                 } else {
                     model.value = "false"
                     model.checked = false
@@ -251,6 +257,33 @@ Rectangle {
                     item.checked = (model.value === "true") ? true : false
                     item.checkedChanged.connect(checkedChanged)
                     item.textChanged.connect(textChanged)
+                    validateModelType(false)
+                }
+            }
+
+            onModelTypeChanged: {
+                if (item) {
+                    validateModelType(true)
+                }
+            }
+
+            function validateModelType(resetValue) {
+                switch (modelType) {
+                case sdsModel.platformInterfaceGenerator.TYPE_INT:
+                    if (resetValue) {
+                        item.text = "0"
+                    }
+                    item.validator = intValid
+                    break
+                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
+                    if (resetValue) {
+                        item.text = "0"
+                    }
+                    item.validator = doubleValid
+                    break
+                default:
+                    item.validator = null
+                    break
                 }
             }
 
@@ -262,6 +295,16 @@ Rectangle {
 
             function textChanged() {
                 model.value = item.text
+            }
+
+            IntValidator {
+                id: intValid
+                locale: "C"
+            }
+
+            DoubleValidator {
+                id: doubleValid
+                locale: "C"
             }
         }
 

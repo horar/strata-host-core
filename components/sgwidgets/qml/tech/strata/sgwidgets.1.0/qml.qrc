@@ -19,7 +19,6 @@
         <file>SGIcon.qml</file>
         <file>SGIconButton.qml</file>
         <file>SGInfoBox.qml</file>
-        <file>SGLogLevelSelector.qml</file>
         <file>SGMainWindow.qml</file>
         <file>SGMarkdownViewer/SGMarkdownViewer.qml</file>
         <file>SGMarkdownViewer/index.html</file>
@@ -27,6 +26,7 @@
         <file>SGMarkdownViewer/3rdparty/marked.min.js</file>
         <file>SGMarkdownViewer/3rdparty/LICENSE.md</file>
         <file>SGPage.qml</file>
+        <file>SGPopup.qml</file>
         <file>SGRadioButton.qml</file>
         <file>SGRadioButtonContainer.qml</file>
         <file>SGResponsiveScrollView.qml</file>

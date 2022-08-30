@@ -51,14 +51,14 @@ QString MockDeviceScanner::disconnectDevice(const QByteArray& deviceId) {
     qCInfo(lcDeviceScanner).nospace().noquote()
         << "Erased mock device: ID: " << deviceId;
 
-    emit deviceLost(deviceId);
+    emit deviceLost(deviceId, QString());
 
     return "";
 }
 
 void MockDeviceScanner::disconnectAllDevices() {
     for (auto devIdIter = devices_.keyBegin(); devIdIter != devices_.keyEnd(); ++devIdIter) {
-        emit deviceLost(*devIdIter);
+        emit deviceLost(*devIdIter, QString());
     }
 
     devices_.clear();

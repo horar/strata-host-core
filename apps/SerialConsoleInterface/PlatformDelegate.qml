@@ -124,7 +124,7 @@ FocusScope {
                         right: parent.right
                     }
 
-                    property var nextContent: ""
+                    property string nextContent: ""
                     onNextContentChanged: {
                         changeContentTimer.start()
                     }
@@ -143,12 +143,15 @@ FocusScope {
                         property: "nextContent"
                         when: platformDelegate.hexViewShown
                         value: {
-                            var sourceIndex = platformDelegate.filterScrollbackModel.mapIndexToSource(scrollbackView.currentIndex)
-                            if (sourceIndex < 0 || scrollbackView.count === 0) {
+                            if (platformDelegate.filterScrollbackModel.count === 0 || scrollbackView.currentIndex < 0) {
+                                return ""
+                            }
+                            let sourceIndex = platformDelegate.filterScrollbackModel.mapIndexToSource(scrollbackView.currentIndex)
+                            if (sourceIndex < 0) {
                                 return ""
                             }
 
-                            var selectedMsg = platformDelegate.scrollbackModel.data(sourceIndex, "rawMessage")
+                            let selectedMsg = platformDelegate.scrollbackModel.data(sourceIndex, "rawMessage")
                             if (selectedMsg === undefined) {
                                 return ""
                             } else {
@@ -377,6 +380,26 @@ FocusScope {
                         icon.source: "qrc:/images/chip-download.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: showSaveFirmwareView()
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Validator"
+                        hintText: qsTr("Validate platform interface")
+                        icon.source: "qrc:/images/list-check.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showValidationView()
+                    }
+
+                    VerticalDivider {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    SGWidgets.SGIconButton {
+                        text: "Queue"
+                        hintText: qsTr("Manage message queue")
+                        icon.source: "qrc:/sgimages/queue.svg"
+                        iconSize: toolButtonRow.iconHeight
+                        onClicked: showMessageQueueView()
                     }
 
                     VerticalDivider {
@@ -650,7 +673,7 @@ FocusScope {
                     }
 
                     enabled: messageEditor.enabled
-                    text: "ADD TO QUEUE"
+                    text: "TO QUEUE"
                     hintText: "Add message to queue"
 
                     onClicked: {
@@ -947,6 +970,21 @@ FocusScope {
         }
     }
 
+    Component {
+        id: messageQueueComponent
+
+        MessageQueueView {
+            messageQueueModel: model.platform.messageQueueModel
+        }
+    }
+
+    Component {
+        id: validationComponent
+
+        ValidationView {
+        }
+    }
+
     function showProgramView() {
         stackView.push(programDeviceComponent)
     }
@@ -965,6 +1003,14 @@ FocusScope {
 
     function showFilterView() {
         stackView.push(filterComponent)
+    }
+
+    function showMessageQueueView() {
+        stackView.push(messageQueueComponent)
+    }
+
+    function showValidationView() {
+        stackView.push(validationComponent)
     }
 
     function prettifyHintText(hintText, shortcut) {

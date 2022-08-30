@@ -8,7 +8,9 @@
  */
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.theme 1.0
 
 SGWidgets.SGDialog {
     id: dialog
@@ -85,7 +87,7 @@ SGWidgets.SGDialog {
             SGWidgets.SGText {
                 id: errorText
                 text: ""
-                color: "Red"
+                color: TangoTheme.palette.error
 
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignLeft

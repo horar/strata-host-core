@@ -102,7 +102,7 @@ ProgramSettingsDelegate {
 
             font.italic: true
             text:errorText
-            color: Theme.palette.error
+            color: TangoTheme.palette.error
         }
 
         SGWidgets.SGButton {

@@ -58,7 +58,7 @@ protected:
     /*!
      * BasePlatformOperation constructor.
      * \param platform platform which will be used by platform operation
-     * \param type type of operation (value from OperationType enum)
+     * \param type type of operation (value from Type enum)
      */
     BasePlatformOperation(const PlatformPtr& platform, Type type);
 
@@ -132,7 +132,7 @@ signals:
      * \param status specific status for operation
      * \param errorString error string (valid only if operation finishes with error)
      */
-    void finished(Result result, int status, QString errorString = QString());
+    void finished(strata::platform::operation::Result result, int status, QString errorString = QString());
 
     /*!
      * This signal is emitted during some operations (e.g. firmware flashing) when one of
@@ -150,8 +150,6 @@ private slots:
     void handleCommandFinished(command::CommandResult result, int status);
 
 private:
-    void reset();
-
     const Type type_;
 
     bool started_;

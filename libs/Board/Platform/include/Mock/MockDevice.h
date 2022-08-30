@@ -181,6 +181,13 @@ public:
     bool mockSetResponseForCommand(MockResponse response, MockCommand command);
 
     /**
+     * Adds notification which will be sent after particular command
+     * @param notification the notification sent after a particular command
+     * @param command the particular command after which will be sent notification
+     */
+    void mockAddNotificationAfterCommand(MockNotification notification, MockCommand command);
+
+    /**
      * Configures mock device version (non-OTA / OTA)
      * @param version mock device version
      * @return true if parameter was changed, otherwise false
@@ -225,7 +232,7 @@ public:
 
 private slots:
     void readMessage(QByteArray msg);
-    void handleError(ErrorCode errCode, QString msg);
+    void handleError(strata::device::Device::ErrorCode errCode, QString msg);
 
 private:
     bool opened_ = false;

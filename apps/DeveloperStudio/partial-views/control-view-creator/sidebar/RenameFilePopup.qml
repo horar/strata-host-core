@@ -9,8 +9,10 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
+
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/partial-views"
 
@@ -74,6 +76,7 @@ SGStrataPopup {
                 readOnly: false
                 enabled: true
                 contextMenuEnabled: true
+                selectionColor: Theme.palette.onsemiOrange
 
                 onAccepted: {
                     if (renameFileButton.enabled) {
@@ -97,7 +100,7 @@ SGStrataPopup {
                 }
 
                 const newFileName = newFilenameInfobox.text + (fileExtension === "" ? "" : ("." + fileExtension))
-                const url = SGUtilsCpp.joinFilePath(parentDir, newFileName)
+                const url = SGUtilsCpp.pathToUrl(SGUtilsCpp.joinFilePath(parentDir, newFileName))
 
                 treeModel.stopWatchingPath(parentDir)
 
@@ -199,7 +202,7 @@ SGStrataPopup {
             SGIcon {
                 visible: renameFilePopup.renameType === "File" && renameFilePopup.fileExtension === "qml"
                 source: filenameReqsPopup.qmlFileBeginWithUppercaseLetter ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-                iconColor: filenameReqsPopup.qmlFileBeginWithUppercaseLetter ? "#30c235" : "#cccccc"
+                iconColor: filenameReqsPopup.qmlFileBeginWithUppercaseLetter ? Theme.palette.success : "#cccccc"
                 height: 20
                 width: height
             }
@@ -212,7 +215,7 @@ SGStrataPopup {
 
             SGIcon {
                 source: filenameReqsPopup.fileDoesNotExist ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
-                iconColor: filenameReqsPopup.fileDoesNotExist ? "#30c235" : "#cccccc"
+                iconColor: filenameReqsPopup.fileDoesNotExist ? Theme.palette.success : "#cccccc"
                 height: 20
                 width: height
             }

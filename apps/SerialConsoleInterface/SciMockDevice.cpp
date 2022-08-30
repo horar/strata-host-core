@@ -39,7 +39,7 @@ void SciMockDevice::setMockDevice(const strata::device::MockDevicePtr& mockDevic
             emit openEnabledChanged();
             emit autoResponseChanged();
             emit mockVersionChanged();
-            QList<MockCommand> commands = strata::device::mockSupportedCommands(mockGetVersion());
+            QList<MockCommand> commands = strata::device::MockUtils::supportedCommands(mockGetVersion());
             if ((commands.empty() == false) && (commands.contains(currentCommand_) == false)) {
                 currentCommand_ = commands.first();
             }
@@ -216,7 +216,7 @@ void SciMockDevice::mockSetVersion(MockVersion version)
 {
     if (mockDevice_ != nullptr) {
         if (mockDevice_->mockSetVersion(version) == true) {
-            QList<MockCommand> commands = strata::device::mockSupportedCommands(version);
+            QList<MockCommand> commands = strata::device::MockUtils::supportedCommands(version);
             if ((commands.empty() == false) && (commands.contains(currentCommand_) == false)) {
                 currentCommand_ = commands.first();
             }

@@ -100,7 +100,7 @@ Rectangle {
                    } else {
                        root.failed()
                        alertRect.text = errorAlertText
-                       alertRect.color = "red"
+                       alertRect.color = Theme.palette.error
                        alertRect.show()
                    }
                }

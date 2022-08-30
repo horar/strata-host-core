@@ -159,6 +159,9 @@ Rectangle {
                     onTextChanged: {
                         consoleLogger.searchText = text
                     }
+                    onUseCaseChanged: {
+                        consoleLogger.searchUseCase = useCase
+                    }
                 }
 
                 SGControlViewIconButton {

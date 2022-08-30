@@ -117,9 +117,9 @@ void SciMockResponseModel::updateModelData(const MockVersion& version, const Moc
     beginResetModel();
 
     responses_.clear();
-    QList<MockResponse> responses = mockSupportedResponses(version, command);
+    QList<MockResponse> responses = MockUtils::supportedResponses(version, command);
     foreach(auto response, responses) {
-        responses_.push_back({response, mockResponseConvertEnumToString(response)});
+        responses_.push_back({response, MockResponseUtils::convertEnumToString(response)});
     }
 
     endResetModel();

@@ -10,7 +10,9 @@ import QtQuick 2.12
 import QtQml 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 Rectangle {
     width:  ListView.view.width
@@ -45,7 +47,7 @@ Rectangle {
 
                 icon {
                     source: "qrc:/sgimages/times.svg"
-                    color: removeCommandMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                    color: removeCommandMouseArea.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Theme.palette.onsemiOrange
                     height: 7
                     width: 7
                     name: "Remove command / notification"
@@ -89,6 +91,7 @@ Rectangle {
                 selectByMouse: true
                 persistentSelection: true // must deselect manually
                 placeholderText: commandColumn.isNoti ? "Notification name" : "Command name"
+                palette.highlight: Theme.palette.onsemiOrange
 
                 validator: RegExpValidator {
                     regExp: /^[a-z_][a-zA-Z0-9_]*/
@@ -97,15 +100,16 @@ Rectangle {
                 background: Rectangle {
                     border.color: {
                         if (!model.valid) {
-                            return "#D10000"
+                            return Theme.palette.error
                         } else if (cmdNotifName.activeFocus) {
-                            return palette.highlight
+                            return Theme.palette.onsemiOrange
                         } else {
-                            return "lightgrey"
+                            return Theme.palette.lightGray
                         }
                     }
 
                     border.width: (!model.valid || cmdNotifName.activeFocus) ? 2 : 1
+                    color: model.valid ? Theme.palette.white : Qt.lighter(Theme.palette.error, 2.35)
                 }
 
                 Component.onCompleted: {
@@ -129,7 +133,7 @@ Rectangle {
                 }
 
                 onActiveFocusChanged: {
-                    if (activeFocus === false && contextMenuPopupLoader.item && contextMenuPopupLoader.item.visible === false) {
+                    if (activeFocus === false && (contextMenuPopupLoader.item == null || contextMenuPopupLoader.item.visible === false)) {
                         cmdNotifName.deselect()
                     }
                 }
@@ -144,7 +148,6 @@ Rectangle {
                     onReleased: {
                         if (containsMouse) {
                             contextMenuPopupLoader.active = true
-                            contextMenuPopupLoader.item.textEditor = cmdNotifName
                             contextMenuPopupLoader.item.popup(null)
                         }
                     }
@@ -153,7 +156,9 @@ Rectangle {
                 Loader {
                     id: contextMenuPopupLoader
                     active: false
-                    sourceComponent: contextMenuPopupComponent
+                    sourceComponent: SGContextMenuEditActions {
+                        textEditor: cmdNotifName
+                    }
                 }
             }
         }
@@ -208,6 +213,7 @@ Rectangle {
 
             property alias text: defaultValueTextField.text
             property alias checked: defaultValueSwitch.checked
+            property alias validator: defaultValueTextField.validator
 
             RowLayout {
                 anchors {
@@ -232,6 +238,7 @@ Rectangle {
                         height: parent.height
                         selectByMouse: true
                         persistentSelection: true // must deselect manually
+                        palette.highlight: Theme.palette.onsemiOrange
                     }
 
                     SGSwitch {
@@ -242,6 +249,7 @@ Rectangle {
                         visible: enabled
                         checkedLabel: "True"
                         uncheckedLabel: "False"
+                        grooveFillColor: Theme.palette.highlight
                     }
                 }
             }
@@ -259,7 +267,6 @@ Rectangle {
                 onReleased: {
                     if (containsMouse) {
                         contextMenuPopupLoader.active = true
-                        contextMenuPopupLoader.item.textEditor = defaultValueTextField
                         contextMenuPopupLoader.item.popup(null)
                     }
                 }
@@ -268,7 +275,9 @@ Rectangle {
             Loader {
                 id: contextMenuPopupLoader
                 active: false
-                sourceComponent: contextMenuPopupComponent
+                sourceComponent: SGContextMenuEditActions {
+                    textEditor: defaultValueTextField
+                }
             }
         }
     }

@@ -18,7 +18,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2019-2022 ${PROJECT_COMPANY}")
 
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick WebEngine Qml
+    COMPONENTS Core Quick Qml
     REQUIRED
 )
 
@@ -53,7 +53,6 @@ generate_app_version(GITTAG_PREFIX "cbb_" MACBUNDLE ON)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
-    Qt5::WebEngine
 
     "${PROJECT_NAME}Library"
 )

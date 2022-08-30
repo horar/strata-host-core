@@ -10,6 +10,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import tech.strata.theme 1.0
+
 Rectangle {
     id: arrayDelegateRoot
     implicitHeight: arrayPropertyContainer.implicitHeight + 10
@@ -56,7 +58,7 @@ Rectangle {
 
                 icon {
                     source: "qrc:/sgimages/times.svg"
-                    color: removeItemMouseArea.containsMouse ? Qt.darker("#D10000", 1.25) : "#D10000"
+                    color: removeItemMouseArea.containsMouse ? Qt.darker(Theme.palette.onsemiOrange, 1.25) : Theme.palette.onsemiOrange
                     height: 7
                     width: 7
                     name: "add"
@@ -124,13 +126,16 @@ Rectangle {
             visible: active
 
             property bool isBool: propertyType.currentIndex === 3
+            property string modelType: model.type
 
             onIsBoolChanged: {
                 // reseting text, value, and checked to base states
                 if (propertyType.currentIndex !== 3) {
                     model.value = "0"
-                    item.text = "0"
-                    item.checked = false
+                    if (item) {
+                        item.text = "0"
+                        item.checked = false
+                    }
                 } else {
                     model.value = "false"
                     model.checked = false
@@ -145,6 +150,33 @@ Rectangle {
                     item.checked = (model.value === "true") ? true : false
                     item.checkedChanged.connect(checkedChanged)
                     item.textChanged.connect(textChanged)
+                    validateModelType(false)
+                }
+            }
+
+            onModelTypeChanged: {
+                if (item) {
+                    validateModelType(true)
+                }
+            }
+
+            function validateModelType(resetValue) {
+                switch (modelType) {
+                case sdsModel.platformInterfaceGenerator.TYPE_INT:
+                    if (resetValue) {
+                        item.text = "0"
+                    }
+                    item.validator = intValid
+                    break
+                case sdsModel.platformInterfaceGenerator.TYPE_DOUBLE:
+                    if (resetValue) {
+                        item.text = "0"
+                    }
+                    item.validator = doubleValid
+                    break
+                default:
+                    item.validator = null
+                    break
                 }
             }
 
@@ -156,6 +188,16 @@ Rectangle {
 
             function textChanged() {
                 model.value = item.text
+            }
+
+            IntValidator {
+                id: intValid
+                locale: "C"
+            }
+
+            DoubleValidator {
+                id: doubleValid
+                locale: "C"
             }
         }
 

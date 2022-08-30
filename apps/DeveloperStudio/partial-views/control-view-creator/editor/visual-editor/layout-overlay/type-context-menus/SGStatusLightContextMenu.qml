@@ -24,7 +24,7 @@ ActionGroup {
             menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/ComboBoxPopup.qml")
             menuLoader.active = true
             menuLoader.item.sourceProperty = "status"
-            menuLoader.item.model = ["LayoutSGStatusLight.Yellow","LayoutSGStatusLight.Green", "LayoutSGStatusLight.Blue", "LayoutSGStatusLight.Orange", "LayoutSGStatusLight.Red", "LayoutSGStatusLight.Off"]
+            menuLoader.item.updateCurrentItem(layoutOverlayRoot.sourceItem.status)
             menuLoader.item.open()
             menuLoader.item.label = "Select the color of the status light."
             contextMenu.close()

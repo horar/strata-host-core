@@ -1,5 +1,4 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
+<RCC>
     <qresource prefix="/">
         <file>main.qml</file>
         <file>PrtMain.qml</file>
@@ -24,6 +23,7 @@
         <file>WorkflowNodeText.qml</file>
         <file>jsonSchemas.js</file>
         <file alias="TaskbarButton.qml">TaskbarButtonDummy.qml</file>
+        <file>PrtSettingsDialog.qml</file>
     </qresource>
     <qresource prefix="/+windows">
         <file>TaskbarButton.qml</file>

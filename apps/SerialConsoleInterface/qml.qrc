@@ -6,7 +6,6 @@
         <file>SciMain.qml</file>
         <file>SciSettings.qml</file>
         <file>PlatformDelegate.qml</file>
-        <file>PlatformInfoWindow.qml</file>
         <file>SciAboutWindow.qml</file>
         <file>SciSettingsDialog.qml</file>
         <file>VerticalDivider.qml</file>
@@ -18,6 +17,9 @@
         <file>HexView.qml</file>
         <file>SciConnectMockDeviceDialog.qml</file>
         <file>MockSettingsView.qml</file>
+        <file>ConnectBleDeviceDialog.qml</file>
         <file>SaveFirmwareView.qml</file>
+        <file>MessageQueueView.qml</file>
+        <file>ValidationView.qml</file>
     </qresource>
 </RCC>

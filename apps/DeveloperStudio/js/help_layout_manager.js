@@ -120,7 +120,7 @@ function startHelpTour(tourName, device_id) {
             device_id = platformView.device_id
         } else {
             if (control_view_creator) {
-                device_id = control_view_creator.debugPlatform.device_id
+                device_id = control_view_creator.visualEditorOpen ? "VisualEditor" : control_view_creator.debugPlatform.device_id
             } else {
                 console.error("Help tour started from nonstandard location")
                 return
@@ -215,7 +215,7 @@ function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
 
 function createHelpObject(tourTarget) {
     destroyHelpObject()
-    help_object = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml", window)
+    help_object = Utility.createObject("qrc:/partial-views/help-tour/HelpTourPeekThroughOverlay.qml", window)
     help_object.index = tourTarget.index
     help_object.description = tourTarget.description
     help_object.setTarget(tourTarget.target)

@@ -17,7 +17,7 @@ Item {
     width: parent.width
 
     property alias model: sortModel.sourceModel
-    property var datasheetCurrentIndex: 0
+    property int datasheetCurrentIndex: 0
 
     Column {
         id: wrapper
@@ -64,7 +64,7 @@ Item {
                     }
                 }
 
-                property var currentDocumentCategory: view.currentDocumentCategory
+                property bool currentDocumentCategory: view.currentDocumentCategory
                 onCurrentDocumentCategoryChanged: {
                     if(categoryOpened === "platform datasheets") {
                         if(currentDocumentCategory) {
@@ -83,12 +83,13 @@ Item {
                 Binding {
                     target: delegate
                     property: "checked"
-                    value: pdfViewer.url.toString() === model.uri
+                    value: pdfViewer.remoteUrl.toString() === model.uri
                 }
 
                 onCheckedChanged: {
                     if (checked) {
-                        pdfViewer.url = model.uri
+                        pdfViewer.url = ""
+                        pdfViewer.remoteUrl = model.uri
                     }
                 }
 

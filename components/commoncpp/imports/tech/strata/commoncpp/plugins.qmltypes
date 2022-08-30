@@ -87,28 +87,26 @@ Module {
         prototype: "QObject"
         exports: ["tech.strata.commoncpp/SGCSVUtils 1.0"]
         exportMetaObjectRevisions: [0]
-        Method {
-            name: "getData"
-            type: "QVariant"
-        }
+        Signal { name: "outputPathChanged" }
+        Signal { name: "fileNameChanged" }
         Method {
             name: "importFromFile"
-            Parameter {name: "filePath"; type: "string"}
-        }
-        Method {
-            name: "clear"
-        }
-        Method {
-            name: "writeToFile"
-            Parameter {name: "filePath"; type: "string"}
-        }
-        Method {
-            name: "setData"
-            Parameter {name: "data"; type: "QVariant"}
+            type: "QVariantList"
+            Parameter { name: "filePath"; type: "string" }
         }
         Method {
             name: "appendRow"
-            Parameter {name: "data"; type: "QVariant"}
+            Parameter { name: "data"; type: "QVariantList" }
+        }
+        Method { name: "getData"; type: "QVariantList" }
+        Method {
+            name: "setData"
+            Parameter { name: "data"; type: "QVariantList" }
+        }
+        Method { name: "clear" }
+        Method {
+            name: "writeToFile"
+            Parameter { name: "filePath"; type: "string" }
         }
     }
     Component {
@@ -311,10 +309,10 @@ Module {
         Property { name: "textDocument"; type: "QQuickTextDocument"; isPointer: true }
     }
     Component {
-        name: "SGQWTPlot"
+        name: "SGQwtPlot"
         defaultProperty: "data"
         prototype: "QQuickPaintedItem"
-        exports: ["tech.strata.commoncpp/SGQWTPlot 1.0"]
+        exports: ["tech.strata.commoncpp/SGQwtPlot 1.0"]
         exportMetaObjectRevisions: [0]
         Property { name: "xMin"; type: "double" }
         Property { name: "xMax"; type: "double" }
@@ -364,17 +362,17 @@ Module {
         Method { name: "autoScaleYAxis" }
         Method {
             name: "createCurve"
-            type: "SGQWTPlotCurve*"
+            type: "SGQwtPlotCurve*"
             Parameter { name: "name"; type: "string" }
         }
         Method {
             name: "curve"
-            type: "SGQWTPlotCurve*"
+            type: "SGQwtPlotCurve*"
             Parameter { name: "index"; type: "int" }
         }
         Method {
             name: "removeCurve"
-            Parameter { name: "curve"; type: "SGQWTPlotCurve"; isPointer: true }
+            Parameter { name: "curve"; type: "SGQwtPlotCurve"; isPointer: true }
         }
         Method {
             name: "removeCurve"
@@ -402,11 +400,11 @@ Module {
         }
     }
     Component {
-        name: "SGQWTPlotCurve"
+        name: "SGQwtPlotCurve"
         prototype: "QObject"
-        exports: ["tech.strata.commoncpp/SGQWTPlotCurve 1.0"]
+        exports: ["tech.strata.commoncpp/SGQwtPlotCurve 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "graph"; type: "SGQWTPlot"; isPointer: true }
+        Property { name: "graph"; type: "SGQwtPlot"; isPointer: true }
         Property { name: "color"; type: "QColor" }
         Property { name: "name"; type: "string" }
         Property { name: "autoUpdate"; type: "bool" }
@@ -443,6 +441,11 @@ Module {
             Parameter { name: "color"; type: "QColor" }
             Parameter { name: "penStyle"; type: "int" }
             Parameter { name: "size"; type: "int" }
+        }
+        Method {
+            name: "closestXAxisPointIndex"
+            type: "int"
+            Parameter { name: "xVal"; type: "double" }
         }
     }
     Component {
@@ -496,6 +499,7 @@ Module {
             type: "bool"
             Parameter { name: "text"; type: "string" }
         }
+        Method { name: "invalidateFilter" }
     }
     Component {
         name: "SGTextHighlighter"
@@ -671,6 +675,16 @@ Module {
             Parameter { name: "file"; type: "string" }
         }
         Method {
+            name: "isRelative"
+            type: "bool"
+            Parameter { name: "file"; type: "string" }
+        }
+        Method {
+            name: "containsForbiddenCharacters"
+            type: "bool"
+            Parameter { name: "fileName"; type: "string" }
+        }
+        Method {
             name: "fileName"
             type: "string"
             Parameter { name: "file"; type: "string" }
@@ -694,6 +708,10 @@ Module {
         Method {
             name: "pathToUrl"
             type: "QUrl"
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
+            name: "showFileInFolder"
             Parameter { name: "path"; type: "string" }
         }
         Method {
@@ -783,6 +801,25 @@ Module {
             type: "QList<QString>"
             Parameter { name: "path"; type: "string" }
         }
+        Method {
+            name: "joinForbiddenCharacters"
+            type: "string"
+            Parameter { name: "separator"; type: "string" }
+        }
+        Method { name: "joinForbiddenCharacters"; type: "string" }
+        Method { name: "getForbiddenCharacters"; type: "QStringList" }
+        Method {
+            name: "getWordStartEndPositions"
+            type: "QVariantMap"
+            Parameter { name: "text"; type: "string" }
+            Parameter { name: "pos"; type: "int" }
+        }
+        Method {
+            name: "getLineStartEndPositions"
+            type: "QVariantMap"
+            Parameter { name: "text"; type: "string" }
+            Parameter { name: "pos"; type: "int" }
+        }
     }
     Component {
         name: "SGVersionUtils"
@@ -844,6 +881,12 @@ Module {
             Parameter { name: "version2"; type: "string" }
         }
         Method {
+            name: "compareSuffix"
+            type: "int"
+            Parameter { name: "suffix1"; type: "string" }
+            Parameter { name: "suffix2"; type: "string" }
+        }
+        Method {
             name: "getGreatestVersion"
             type: "int"
             Parameter { name: "versions"; type: "QStringList" }
@@ -863,6 +906,17 @@ Module {
             name: "cleanVersion"
             type: "string"
             Parameter { name: "version"; type: "string" }
+            Parameter { name: "retainSuffix"; type: "bool" }
+        }
+        Method {
+            name: "cleanVersion"
+            type: "string"
+            Parameter { name: "version"; type: "string" }
+        }
+        Method {
+            name: "cleanSuffix"
+            type: "string"
+            Parameter { name: "suffix"; type: "string" }
         }
     }
 }

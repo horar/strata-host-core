@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #include "PlatformOperation.h"
 
 #include <QString>
@@ -30,23 +29,29 @@ bool PlatformOperation::platformStartApplication(QString deviceId)
         { "device_id", deviceId }
     };
 
-    strata::strataRPC::DeferredRequest *deferredRequest = strataClient_->sendRequest(command, payload);
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest(command, payload);
 
-    if (deferredRequest == nullptr) {
+    if (reply == nullptr) {
         qCCritical(lcDevStudio).noquote().nospace() << "Failed to send '" << command << "' request, device ID: " << deviceId;
         return false;
     }
 
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedSuccessfully, this, &PlatformOperation::replyHandler);
-    connect(deferredRequest, &strata::strataRPC::DeferredRequest::finishedWithError, this, &PlatformOperation::replyHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, &PlatformOperation::replyHandler);
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, &PlatformOperation::errorHandler);
 
     return true;
 }
 
 void PlatformOperation::replyHandler(QJsonObject payload)
 {
-    const QString errorString = payload.value(QStringLiteral("error_string")).toString();
-    if (errorString.isEmpty() == false) {
-        qCWarning(lcDevStudio).noquote() << "Platform operation has failed:" << errorString;
-    }
+    Q_UNUSED(payload);
+    qCDebug(lcDevStudio) << "Platform operation finished successfully";
+}
+
+void PlatformOperation::errorHandler(QJsonObject payload)
+{
+    qCWarning(lcDevStudio).noquote()
+            << "Platform operation has failed."
+            << payload.value("code").toInt()
+            << payload.value("message").toString();
 }

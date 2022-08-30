@@ -12,9 +12,13 @@
 #include "SGNewControlView.h"
 #include "HcsNode.h"
 #include "ResourceLoader.h"
+#include "FileDownloader.h"
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
+#ifdef APPS_FEATURE_BLE
+#include "BleDeviceModel.h"
+#endif // APPS_FEATURE_BLE
 #include "FirmwareUpdater.h"
 #include "PlatformOperation.h"
 
@@ -35,10 +39,11 @@
 
 SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent)
     : QObject(parent),
-      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), this)),
+      strataClient_(new strata::strataRPC::StrataClient(dealerAddress.toString(), QByteArray(), strata::strataRPC::default_check_reply_interval, strata::strataRPC::default_reply_expiration_time, this)),
       coreInterface_(new CoreInterface(strataClient_, this)),
       documentManager_(new DocumentManager(strataClient_, coreInterface_, this)),
       resourceLoader_(new ResourceLoader(this)),
+      fileDownloader_(new FileDownloader(strataClient_, coreInterface_, this)),
       newControlView_(new SGNewControlView(this)),
       firmwareUpdater_(new FirmwareUpdater(strataClient_, coreInterface_, this)),
       platformInterfaceGenerator_(new PlatformInterfaceGenerator(this)),
@@ -46,6 +51,9 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       platformOperation_(new PlatformOperation(strataClient_, this)),
+#ifdef APPS_FEATURE_BLE
+      bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
+#endif // APPS_FEATURE_BLE
       hcsIdentifier_(QRandomGenerator::global()->bounded(0x00000001u, 0xFFFFFFFFu)) // skips 0
 {
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged, this, &SDSModel::setHcsConnected);
@@ -195,6 +203,11 @@ ResourceLoader *SDSModel::resourceLoader() const
     return resourceLoader_;
 }
 
+FileDownloader *SDSModel::fileDownloader() const
+{
+    return fileDownloader_;
+}
+
 SGNewControlView *SDSModel::newControlView() const
 {
     return newControlView_;
@@ -224,6 +237,13 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
 {
     return std::addressof(strata::loggers::QtLogger::instance());
 }
+
+#ifdef APPS_FEATURE_BLE
+BleDeviceModel *SDSModel::bleDeviceModel() const
+{
+    return bleDeviceModel_;
+}
+#endif // APPS_FEATURE_BLE
 
 strata::strataRPC::StrataClient *SDSModel::strataClient() const
 {
@@ -294,7 +314,7 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     hcsConnected_ = hcsConnected;
 
     if (true == hcsConnected_) {
-        strataClient_->connect();
+        strataClient_->initializeAndConnect();
     } else {
         strataClient_->disconnect();
     }
@@ -336,4 +356,13 @@ QString SDSModel::openLogViewer()
     }
 
     return "";
+}
+
+void SDSModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
 }

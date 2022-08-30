@@ -16,7 +16,7 @@ import QtQml 2.12
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/login_utilities.js" as LoginUtils
 import "qrc:/js/constants.js" as Constants
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
@@ -91,7 +91,7 @@ Rectangle {
         id: tabRow
         anchors {
             left: container.left
-            right: profileIconContainer.left
+            right: bleIconContainer.left
         }
         spacing: 1
 
@@ -396,6 +396,62 @@ Rectangle {
         }
     }
 
+    Item {
+        id: bleIconContainer
+        width: height
+        anchors {
+            right: profileIconContainer.left
+            rightMargin: 2
+            top: profileIconContainer.top
+            bottom: profileIconContainer.bottom
+        }
+
+        Rectangle {
+            visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
+            height: bleIconContainer.height
+            width: height
+            anchors.centerIn: bleIconContainer
+
+            radius: 5
+            color: {
+                if (bleIconHover.containsMouse) {
+                    return "dimgrey"
+                } else {
+                    return "transparent"
+                }
+            }
+
+            SGIcon {
+                height: parent.height - 20
+                width: height
+                anchors {
+                    centerIn: parent
+                }
+
+                source: "qrc:/sgimages/bluetooth.svg"
+                iconColor: Theme.palette.white
+            }
+        }
+
+        MouseArea {
+            id: bleIconHover
+            visible: (typeof APPS_FEATURE_BLE !== "undefined") && APPS_FEATURE_BLE
+            anchors.fill: bleIconContainer
+
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: pressAction()
+            onPressed: pressAction()
+
+            function pressAction() {
+                showConnectBleDeviceDialog()
+            }
+        }
+    }
+
     Rectangle {
         id: profileIconContainer
         width: height
@@ -525,12 +581,62 @@ Rectangle {
                 }
 
                 SGMenuItem {
+                    text: qsTr("Profile")
+                    onClicked: {
+                        profileMenu.close()
+                        profileLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
+                SGMenuItem {
                     text: qsTr("Feedback")
                     onClicked: {
                         profileMenu.close()
                         feedLoader.active = true
                     }
                     width: profileMenu.width
+                }
+
+                SGMenuItem {
+                    text: qsTr("Settings")
+                    onClicked: {
+                        profileMenu.close()
+                        settingsLoader.active = true
+                    }
+                    width: profileMenu.width
+                }
+
+                Rectangle {
+                    color: "white"
+                    opacity: .4
+                    height: 1
+                    width: profileMenu.width - 20
+                    visible: cvcButton.state === "enabled"
+                    anchors {
+                        horizontalCenter: profileColumn.horizontalCenter
+                    }
+                }
+
+                SGMenuItem {
+                    text: qsTr("Control View Creator")
+                    visible: cvcButton.state === "enabled"
+                    width: profileMenu.width
+
+                    onClicked: {
+                        Signals.loadCVC()
+                        profileMenu.close()
+                    }
+                }
+
+                Rectangle {
+                    color: "white"
+                    opacity: .4
+                    height: 1
+                    width: profileMenu.width - 20
+                    anchors {
+                        horizontalCenter: profileColumn.horizontalCenter
+                    }
                 }
 
                 SGMenuItem {
@@ -544,23 +650,18 @@ Rectangle {
                 }
 
                 SGMenuItem {
-                    text: qsTr("Profile")
-                    onClicked: {
-                        profileMenu.close()
-                        profileLoader.active = true
-                    }
+                    text: hasUpdate ? qsTr("Update") : qsTr("Check for Updates")
                     width: profileMenu.width
-                }
+                    iconSource: hasUpdate ? "qrc:/sgimages/exclamation-circle.svg" : ""
 
-                SGMenuItem {
-                    text: qsTr("Update")
-                    width: profileMenu.width
-                    enabled: false
-                    iconSource: enabled ? "qrc:/sgimages/exclamation-circle.svg" : ""
+                    property bool hasUpdate: false
 
                     onClicked: {
                         profileMenu.close()
-                        CoreUpdate.createUpdatePopup();
+                        if (hasUpdate === false) {
+                            CoreUpdate.getUpdateInformation()
+                        }
+                        CoreUpdate.createUpdatePopup()
                     }
 
                     Component.onCompleted: {
@@ -568,62 +669,44 @@ Rectangle {
                     }
                 }
 
-                SGMenuItem {
-                    text: qsTr("Settings")
-                    onClicked: {
-                        profileMenu.close()
-                        settingsLoader.active = true
-                    }
-                    width: profileMenu.width
-                }
-
-                SGMenuItem {
-                    text: qsTr("CVC")
-                    visible: cvcButton.state === "debug"
-                    width: profileMenu.width
-
-                    onClicked: {
-                        Signals.loadCVC()
-                        profileMenu.close()
-                    }
-                }
-            RowLayout {
-                SGMenuItem {
-                    id: fullScreenLabel
-                    hoverEnabled: false
-                    text: qsTr("Full Screen")
-                    onClicked: {
-                        fullScreenSwitch.toggled()
-                    }
-                }
-
-                SGSwitch {
-                    id: fullScreenSwitch
-                    Layout.preferredWidth: 26
-                    Layout.preferredHeight: 16
-                    checked: mainWindow.visibility === Window.FullScreen
-                    grooveFillColor: Theme.palette.onsemiHighlight
-
-                    onToggled: {
-                        if (mainWindow.visibility === Window.FullScreen) {
-                            mainWindow.showNormal()
-                        } else {
-                            mainWindow.showFullScreen()
-
-                            Notifications.createNotification(
-                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
-                            Notifications.Info,
-                            "current",
-                            {
-                                "singleton": true,
-                                "timeout": 4000
-                            }
-                            )
+                RowLayout {
+                    SGMenuItem {
+                        id: fullScreenLabel
+                        hoverEnabled: false
+                        text: qsTr("Full Screen")
+                        onClicked: {
+                            fullScreenSwitch.toggled()
                         }
-                        profileMenu.close()
+                    }
+
+                    SGSwitch {
+                        id: fullScreenSwitch
+                        Layout.preferredWidth: 26
+                        Layout.preferredHeight: 16
+                        checked: mainWindow.visibility === Window.FullScreen
+                        grooveFillColor: Theme.palette.highlight
+
+                        onToggled: {
+                            if (mainWindow.visibility === Window.FullScreen) {
+                                mainWindow.showNormal()
+                            } else {
+                                mainWindow.showFullScreen()
+
+                                Notifications.createNotification(
+                                qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
+                                Notifications.Info,
+                                "current",
+                                null,
+                                {
+                                    "singleton": true,
+                                    "timeout": 4000
+                                }
+                                )
+                            }
+                            profileMenu.close()
+                        }
                     }
                 }
-            }
 
                 Rectangle {
                     id: menuDivider
@@ -641,7 +724,7 @@ Rectangle {
                     onClicked: {
                         profileMenu.close()
                         if (!controlViewCreatorLoader.active || !controlViewCreatorLoader.item.blockWindowClose(logout)) {
-                            logout()
+                            mainWindow.logout()
                         }
                     }
                     width: profileMenu.width
@@ -652,7 +735,7 @@ Rectangle {
 
     Loader {
         id: feedLoader
-        source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
+        source: "qrc:/partial-views/FeedbackDialog.qml"
         active: false
     }
 
@@ -676,10 +759,9 @@ Rectangle {
         property bool firstLogin: true
         property bool autoOpenView: false
         property bool closeOnDisconnect: false
-        property bool notifyOnFirmwareUpdate: false
+        property bool notifyOnFirmwareUpdate: true
         property bool notifyOnPlatformConnections: true
         property bool notifyOnCollateralDocumentUpdate: true
-        property bool hasOptedOut: false
         property int selectedDistributionPortal: 0
 
         function loadSettings() {
@@ -706,9 +788,6 @@ Rectangle {
             if (settings.hasOwnProperty("notifyOnPlatformConnections")) {
                 notifyOnPlatformConnections = settings.notifyOnPlatformConnections
             }
-            if (settings.hasOwnProperty("hasOptedOut")) {
-                hasOptedOut = settings.hasOptedOut
-            }
 
             NavigationControl.userSettings = userSettings
         }
@@ -721,24 +800,29 @@ Rectangle {
                 notifyOnFirmwareUpdate: notifyOnFirmwareUpdate,
                 selectedDistributionPortal: selectedDistributionPortal,
                 notifyOnPlatformConnections: notifyOnPlatformConnections,
-                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate,
-                hasOptedOut: hasOptedOut
+                notifyOnCollateralDocumentUpdate: notifyOnCollateralDocumentUpdate
             }
             userSettings.writeFile("general-settings.json", settings)
         }
     }
 
     function showAboutWindow() {
-        SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+        SGDialogJS.createDialog(ApplicationWindow.window, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 
-    function logout() {
-        controlViewCreatorLoader.active = false
-        Signals.logout()
-        PlatformFilters.clearActiveFilters()
-        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
-        Authenticator.logout()
-        PlatformSelection.logout()
-        sdsModel.strataClient.sendRequest("unregister", {})
+    function showConnectBleDeviceDialog() {
+        var dialog = SGDialogJS.createDialog(ApplicationWindow.window, "qrc:/partial-views/BleScanDialog.qml")
+        dialog.open()
+    }
+
+    Timer {
+        id: sessionHeartbeat
+        interval: 60000 // 1 minute
+        running: user_id !== "Guest"
+        repeat: true
+
+        onTriggered: {
+            LoginUtils.heartbeat()
+        }
     }
 }

@@ -199,6 +199,11 @@ bool MockDevice::mockSetResponseForCommand(MockResponse response, MockCommand co
     return control_.setResponseForCommand(response, command);
 }
 
+void MockDevice::mockAddNotificationAfterCommand(MockNotification notification, MockCommand command)
+{
+    control_.addNotificationAfterCommand(notification, command);
+}
+
 bool MockDevice::mockSetVersion(MockVersion version)
 {
     return control_.setVersion(version);

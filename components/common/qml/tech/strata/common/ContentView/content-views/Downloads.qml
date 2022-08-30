@@ -8,7 +8,6 @@
  */
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import Qt.labs.platform 1.1
 
 import Qt.labs.settings 1.0 as QtLabsSettings
 import Qt.labs.platform 1.1 as QtLabsPlatform
@@ -234,7 +233,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: Theme.palette.green
+                                color: TangoTheme.palette.chameleon2
                             }
                         }
 
@@ -249,7 +248,7 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: Theme.palette.error
+                            color: TangoTheme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
@@ -270,11 +269,11 @@ Item {
                                 if (model.status === DownloadDocumentListModel.Waiting) {
                                     return "Preparing to download"
                                 } else if (model.status === DownloadDocumentListModel.InProgress) {
-                                    var received = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesReceived)
-                                    var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
+                                    let received = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesReceived)
+                                    let total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
                                     return received + " of " + total
                                 } else if (model.status === DownloadDocumentListModel.Finished) {
-                                    var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
+                                    let total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
                                     return "Done " + total
                                 } else if (model.status === DownloadDocumentListModel.FinishedWithError) {
                                     return model.errorString
@@ -379,14 +378,22 @@ Item {
         Button {
             width: Math.min(implicitWidth, parent.width)
             anchors.horizontalCenter: wrapper.horizontalCenter
-            opacity: enabled ? 1 : 0.2
+            opacity: enabled ? 1 : 0.4
             enabled: savePath !== ""
-            text: "Open Selected Save Folder"
+            text: "Open Save Folder"
+
+            contentItem: SGWidgets.SGText {
+                text: parent.text
+                font: parent.font
+                color: enabled ? "black" : "white"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
 
             background: Rectangle {
                 implicitWidth: 200
                 implicitHeight: 40
-                color: Theme.palette.lightGray
+                color: TangoTheme.palette.aluminium2
             }
 
             onClicked: {
@@ -413,7 +420,7 @@ Item {
                 horizontalCenter: wrapper.horizontalCenter
             }
 
-            opacity: enabled ? 1 : 0.2
+            opacity: enabled ? 1 : 0.4
             enabled: {
                 if (downloadButtonGroup.checkState === Qt.Unchecked
                         || repeater.model.downloadInProgress
@@ -452,7 +459,7 @@ Item {
         }
     }
 
-    FolderDialog {
+    QtLabsPlatform.FolderDialog {
         id: fileDialog
         title: qsTr("Please choose a file")
         onAccepted: {

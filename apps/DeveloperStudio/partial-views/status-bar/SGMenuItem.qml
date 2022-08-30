@@ -44,7 +44,7 @@ Button {
             Layout.preferredHeight: 20
             Layout.preferredWidth: Layout.preferredHeight
             iconColor : "white"
-            visible: source !== ""
+            visible: source && source.toString().length !== 0   // source is URL so toString() must be used for comparison
         }
     }
 

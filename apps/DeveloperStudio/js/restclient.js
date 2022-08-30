@@ -89,6 +89,14 @@ var xhr = function(method, endpoint, data, callback, errorCallback, headers) {
                 errorCallback(response);
                 timeOut.destroy()
             }
+
+            if (xhr.status === 401) {
+                console.error(LoggerModule.Logger.devStudioRestClientCategory, "user not authenticated, session probably expired")
+
+                jwt = ""
+                session = ""
+                signals.sessionExpired()
+            }
         }
         // No connection to db - readyState is 4 (request complete)
         else if (xhr.readyState === 4 && xhr.status === 0 ) {

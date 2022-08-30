@@ -411,3 +411,12 @@ FileModel *LogModel::fileModel()
 {
     return &fileModel_;
 }
+
+void LogModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
+}

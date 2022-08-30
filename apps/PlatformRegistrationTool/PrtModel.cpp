@@ -150,7 +150,7 @@ void PrtModel::identifyBootloader()
     }
 
     Identify *operation = new Identify(platformList_.first(), false);
-    connect(operation, &Identify::finished, [this, operation](Result result, int status, QString errorString) {
+    connect(operation, &Identify::finished, this, [this, operation](Result result, int status, QString errorString) {
         Q_UNUSED(status)
 
         if (result == Result::Success) {
@@ -280,7 +280,7 @@ void PrtModel::notifyServiceAboutRegistration(
                 doc.toJson(QJsonDocument::Compact));
 
 
-    connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
+    connect(deferred, &Deferred::finishedSuccessfully, this, [this] (int status, QByteArray data) {
         Q_UNUSED(status)
 
         qCDebug(lcPrtAuth) << "reply data" << data;
@@ -306,7 +306,7 @@ void PrtModel::notifyServiceAboutRegistration(
         emit notifyServiceFinished(boardCount, "");
     });
 
-    connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
+    connect(deferred, &Deferred::finishedWithError, this, [this] (int status, QString errorString) {
         qCCritical(lcPrtAuth)
                 << "failed, "
                 << "status=" << status
@@ -373,7 +373,7 @@ void PrtModel::setPlatformId(
                 platformList_.first(),
                 data);
 
-    connect(operation, &SetPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
+    connect(operation, &SetPlatformId::finished, this, [this, operation](Result result, int status, QString errorString) {
 
         if (result != Result::Success) {
             emit setPlatformIdFinished(errorString);
@@ -425,13 +425,15 @@ void PrtModel::setAssistedPlatformId(const QVariantMap &data)
         operation->setFwClassId(data.value("fw_class_id").toString());
     }
 
-    connect(operation, &SetAssistedPlatformId::finished, [this, operation](Result result, int status, QString errorString) {
+    connect(operation, &SetAssistedPlatformId::finished, this, [this, operation](Result result, int status, QString errorString) {
         if (status == strata::platform::operation::SET_PLATFORM_ID_FAILED) {
             emit setAssistedPlatformIdFinished("failed");
         } else if (status == strata::platform::operation::PLATFORM_ID_ALREADY_SET) {
             emit setAssistedPlatformIdFinished("already_initialized");
-        } else if(status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
+        } else if (status == strata::platform::operation::BOARD_NOT_CONNECTED_TO_CONTROLLER) {
             emit setAssistedPlatformIdFinished("device_not_connected");
+        } else if (status == strata::platform::operation::COMMAND_NOT_SUPPORTED) {
+            emit setAssistedPlatformIdFinished("not_supported");
         } else if (result != Result::Success) {
             emit setAssistedPlatformIdFinished(errorString);
         } else{
@@ -458,7 +460,7 @@ void PrtModel::startBootloader()
 
     StartBootloader *operation = new StartBootloader(platformList_.first());
 
-    connect(operation, &StartBootloader::finished, [this, operation](Result result, int status, QString errorString) {
+    connect(operation, &StartBootloader::finished, this, [this, operation](Result result, int status, QString errorString) {
         if (errorString.isEmpty() == false ) {
             qCCritical(lcPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
         }
@@ -485,7 +487,7 @@ void PrtModel::startApplication()
 
     StartApplication *operation = new StartApplication(platformList_.first());
 
-    connect(operation, &StartApplication::finished, [this, operation](Result result, int status, QString errorString) {
+    connect(operation, &StartApplication::finished, this, [this, operation](Result result, int status, QString errorString) {
         if (errorString.isEmpty() == false ) {
             qCCritical(lcPrt) << "start bootloader failed" << static_cast<int>(result) << errorString << status;
         }
@@ -643,4 +645,13 @@ bool PrtModel::debugBuild() const
 #else
     return true;
 #endif
+}
+
+void PrtModel::handleQmlWarning(const QList<QQmlError> &warnings)
+{
+    QStringList msg;
+    foreach (const QQmlError &error, warnings) {
+        msg << error.toString();
+    }
+    emit notifyQmlError(msg.join(QStringLiteral("\n")));
 }

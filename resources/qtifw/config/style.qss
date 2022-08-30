@@ -1,0 +1,653 @@
+/*
+ * Copyright (c) 2018-2022 onsemi.
+ *
+ * All rights reserved. This software and/or documentation is licensed by onsemi under
+ * limited terms and conditions. The terms and conditions pertaining to the software and/or
+ * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+ * Terms and Conditions of Sale, Section 8 Software”).
+ */
+
+/************************************************************************************************/
+/*generic selector for items in installer*/
+QWidget
+{
+    border: none; /* removes the blue highlight border */
+    background-color: transparent;
+}
+/************************************************************************************************/
+/* the Main screen */
+QWizard
+{
+    background-image: url(:/assets/circuits-background-tiled.png);
+    background-color: white;
+    background-repeat: repeat-xy;
+    border-top: 1px solid rgba(200, 200, 200, 150);
+}
+/************************************************************************************************/
+/* Settings dialog */
+QDialog#SettingsDialog
+{
+    background-image: url(:/assets/circuits-background-tiled.png);
+    background-color: white;
+    background-repeat: repeat-xy;
+    border-top: 1px solid rgba(200, 200, 200, 150);
+
+    min-width: 720px;
+    min-height: 400px;
+}
+/************************************************************************************************/
+/* Popup MessageBoxes like "do you want to exit installer", etc */
+QMessageBox
+{
+    background-image: url(:/assets/circuits-background-tiled.png);
+    background-color: white;
+    background-repeat: repeat-xy;
+    border-top: 1px solid rgba(200, 200, 200, 150);
+}
+/************************************************************************************************/
+/* on all pages - the list of pages on the left */
+QListWidget#PageListWidget::item:disabled
+{
+    color: rgb(233, 125, 46);
+}
+QListWidget#PageListWidget
+{
+    padding-left: 5px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(230, 230, 230, 100%), stop:1 rgba(230, 230, 230, 0%));
+}
+/************************************************************************************************/
+/* all ScrollBars
+ - License Agreement page
+ - Settings - Repositories
+ */
+QScrollBar
+{
+    border-width: 0px;
+    border-radius: 2px;
+    background-color: rgba(233, 125, 46, 50);
+    width: 8px;
+    min-height: 8px;
+}
+QScrollBar::handle
+{
+    min-height: 8px;
+    border-width: 0px;
+    border-radius: 2px;
+    background-color: rgb(233, 125, 46);
+}
+QScrollBar::add-line:vertical
+{
+    height: 0px;
+}
+QScrollBar::sub-line:vertical
+{
+    height: 0px;
+}
+QScrollBar::add-page, QScrollBar::sub-page
+{
+    background: none;
+}
+/************************************************************************************************/
+/* generic Labels present around entire installer
+ - text on every page
+ - Settings
+ - etc
+ */
+QLabel
+{
+    color: black;
+    selection-color: black;
+    selection-background-color: rgb(230, 230, 230);
+}
+QLabel:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    selection-color: rgba(0, 0, 0, 60%);
+    selection-background-color: rgba(230, 230, 230, 60%);
+}
+/************************************************************************************************/
+/* all Buttons present around entire installer
+ - Buttons on every page
+ - Settings
+ - etc
+ */
+QPushButton
+{
+    color: black;
+    background-color: rgb(200, 200, 200);
+    border-color: rgb(130, 130, 130);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    min-height: 20px;
+    max-height: 20px;
+    min-width: 60px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+QPushButton:hover
+{
+    background-color: rgb(160, 160, 160);
+}
+QPushButton:pressed, QPushButton:checked
+{
+    background-color: rgb(130, 130, 130);
+}
+QPushButton:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    background-color: rgba(200, 200, 200, 60%);
+    border-color: rgba(130, 130, 130, 60%);
+}
+/************************************************************************************************/
+/* every editable Text field
+ - Installation folder / Select Folder
+ - Settings / Network / HTTP/FTP proxy
+ - Settings / Repositories - adding repository
+ */
+QLineEdit
+{
+    padding-left: 5px;
+    padding-right: 5px;
+    color: black;
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    min-height: 24px;
+    background-color: white;
+    selection-color: black;
+    selection-background-color: rgb(200, 200, 200);
+}
+QLineEdit:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    selection-color: rgba(0, 0, 0, 60%);
+    background-color: rgb(250, 227, 209);   /* light onsemi orange */
+    selection-background-color: rgba(200, 200, 200, 60%);
+}
+QTreeView QLineEdit
+{
+    /* this QLineEdit overlaps QTreeView fields and must match */
+    min-height: 18px;
+    padding-right: 15px;
+    border-radius: 1px;
+}
+/************************************************************************************************/
+/* Used only for large texts
+ - License Agreement page / License text
+ - Installing page / Details
+ */
+QTextEdit
+{
+    color: black;
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    background-color: white;
+    selection-color: black;
+    selection-background-color: rgb(200, 200, 200);
+}
+QTextEdit:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    selection-color: rgba(0, 0, 0, 60%);
+    background-color: rgba(233, 125, 46, 20%);
+    selection-background-color: rgba(200, 200, 200, 60%);
+}
+/************************************************************************************************/
+/* all standalone checkboxes (not part of QTreeView)
+ - Settings / Repositories / Use temporary repositories only
+ - License Agreement / I accept the licenses.
+ - Shortcut Selection / Desktop + Startup
+*/
+QCheckBox
+{
+    color: black;
+    spacing: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+QCheckBox:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+}
+QCheckBox::indicator
+{
+    min-height: 16px;
+    max-height: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    background-color: white;
+    border: 1px solid black;
+}
+QCheckBox::indicator:disabled
+{
+    border-color: rgba(0, 0, 0, 60%);
+    background-color: rgba(255, 255, 255, 60%);
+}
+QCheckBox::indicator:checked
+{
+    image: url(:/assets/checkbox_checked.png);
+}
+QCheckBox::indicator:checked:disabled
+{
+    image: url(:/assets/checkbox_checked_disabled.png);
+}
+QCheckBox::indicator:indeterminate
+{
+    image: url(:/assets/checkbox_indeterminate.png);
+}
+QCheckBox::indicator:indeterminate:disabled
+{
+    image: url(:/assets/checkbox_indeterminate_disabled.png);
+}
+/************************************************************************************************/
+/* all standalone radiobuttons
+ - Settings / Network / proxy configuration
+ - after installing - Radio Buttons for selecting Maintenance Tool type
+ */
+QRadioButton
+{
+    color: black;
+    spacing: 8px;
+    min-height: 24px;
+}
+QRadioButton::indicator
+{
+    min-height: 16px;
+    max-height: 16px;
+    min-width: 16px;
+    max-width: 16px;
+}
+QRadioButton::indicator::unchecked {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 white, stop:0.71 white, stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator:unchecked:hover {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 rgb(220, 220, 220), stop:0.71 rgb(220, 220, 220), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator:unchecked:pressed {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 rgb(200, 200, 200), stop:0.71 rgb(200, 200, 200), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator::unchecked:disabled {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 rgba(255, 255, 255, 60%), stop:0.71 rgba(255, 255, 255, 60%), stop:0.8 rgba(0, 0, 0, 60%), stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator::checked {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 white, stop:0.71 white, stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator:checked:hover {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 rgb(220, 220, 220), stop:0.71 rgb(220, 220, 220), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator:checked:pressed {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 rgb(200, 200, 200), stop:0.71 rgb(200, 200, 200), stop:0.8 black, stop:0.9 transparent, stop:1 transparent)
+}
+QRadioButton::indicator::checked:disabled {
+    background-color: qradialgradient(cx:0.5, cy:0.5, radius: 0.5, fx:0.5, fy:0.5, stop:0 black, stop:0.35 black, stop:0.45 rgba(255, 255, 255, 60%), stop:0.71 rgba(255, 255, 255, 60%), stop:0.8 rgba(0, 0, 0, 60%), stop:0.9 transparent, stop:1 transparent)
+}
+/************************************************************************************************/
+/*
+ - on all pages - the list of pages on the left
+ - the list of licenses
+ - the start menu list
+*/
+QListView
+{
+    show-decoration-selected: 1;
+    border: none;
+    background-color: white;
+}
+QListView::item
+{
+    color: black;
+}
+#StartMenuDirectoryPage QListView
+{
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+#StartMenuDirectoryPage QListView::item:selected
+{
+    background-color: rgba(233, 125, 46, 50%);
+}
+#StartMenuDirectoryPage QListView::item:selected:hover
+{
+    background-color: rgba(233, 125, 46, 55%);
+}
+#StartMenuDirectoryPage QListView::item:hover
+{
+    background-color: rgba(233, 125, 46, 40%);
+}
+QListView#LicenseListWidget
+{
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    padding: 5px;
+}
+QListView::item:selected#LicenseListWidget[layoutDirection="0"]
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0.75, y2:0, stop: 0 rgb(233, 125, 46), stop: 1 rgb(250, 250, 250));
+}
+QListView::item:selected:hover#LicenseListWidget[layoutDirection="0"]
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0.75, y2:0, stop: 0 rgb(233, 125, 46), stop: 1 rgb(250, 250, 250));
+}
+QListView::item:hover#LicenseListWidget[layoutDirection="0"]
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0.75, y2:0, stop: 0 rgba(242, 183, 140), stop: 1 rgb(250, 250, 250));
+}
+QListView::item:selected#LicenseListWidget[layoutDirection="1"]
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0.75, y2:0, stop: 0 rgb(250, 250, 250), stop: 1 rgb(233, 125, 46));
+}
+QListView::item:selected:hover#LicenseListWidget[layoutDirection="1"]
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0.75, y2:0, stop: 0 rgb(250, 250, 250), stop: 1 rgb(233, 125, 46));
+}
+QListView::item:hover#LicenseListWidget[layoutDirection="1"]
+{
+    background-color: qlineargradient(x1:0, y1:0, x2:0.75, y2:0, stop: 0 rgb(250, 250, 250), stop: 1 rgba(242, 183, 140));
+}
+/************************************************************************************************/
+/* all treeview tables 
+ - Settings / Repositories
+ - Select Components
+*/
+QTreeView
+{
+    /* alternate-background-color is not working because alternatingRowColors is not enabled */
+    show-decoration-selected: 1;
+    background-color: rgb(240, 240, 240);
+    border: 1px solid rgba(50, 50, 50, 150);
+}
+QTreeView::item
+{
+    min-height: 20px;
+    color: black;
+    selection-color: black;
+    background-color: transparent;
+}
+QTreeView::item:selected
+{
+    background-color: rgb(150, 150, 150);
+}
+QTreeView::item:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    /* can set disabled selection-color, but will create artifacts */
+}
+QTreeView::branch
+{
+    background-color: transparent;
+}
+QTreeView::branch:selected
+{
+    background-color: rgb(150, 150, 150);
+    /* impossible to set disabled background-color */
+}
+QTreeView::branch:has-children:adjoins-item:closed[layoutDirection="0"]
+{
+    image: url(:/assets/chevron-right.png);
+}
+QTreeView::branch:has-children:adjoins-item:closed[layoutDirection="1"]
+{
+    image: url(:/assets/chevron-left.png);
+}
+QTreeView::branch:has-children:adjoins-item:open
+{
+    image: url(:/assets/chevron-down.png);
+}
+QTreeView::indicator
+{
+    min-height: 16px;
+    max-height: 16px;
+    min-width: 16px;
+    max-width: 16px;
+    subcontrol-position: left center;
+    background-color: white;
+    border: 1px solid black;
+}
+QTreeView::indicator:disabled
+{
+    border-color: rgba(0, 0, 0, 60%);
+    background-color: rgba(255, 255, 255, 60%);
+}
+QTreeView::indicator:checked
+{
+    image: url(:/assets/checkbox_checked.png);
+}
+QTreeView::indicator:checked:disabled
+{
+    image: url(:/assets/checkbox_checked_disabled.png);
+}
+QTreeView::indicator:indeterminate
+{
+    image: url(:/assets/checkbox_indeterminate.png);
+}
+QTreeView::indicator:indeterminate:disabled
+{
+    image: url(:/assets/checkbox_indeterminate_disabled.png);
+}
+
+/************************************************************************************************/
+/* headers in tables
+ - Settings / Repositories / Header above the repository selection
+ - Select Compponentns page when doing update in Maintenance Tool
+*/
+QHeaderView
+{
+    color: black;
+    font-weight: bold;
+    background-color: rgba(70, 94, 102, 60%);
+    border-bottom: 1px solid rgba(50, 50, 50, 150);
+    min-height: 24px;
+    max-height: 24px;
+}
+QHeaderView::section
+{
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 3px;                /* makes a more stylish borders between tabs */
+    margin-bottom: 3px;
+    background-color: transparent;  /* has to be defined when overriding borders, otherwise it bugs itself*/
+    
+}
+QHeaderView::section:middle
+{
+    border: 1px solid transparent;  /* bug workaround, for some reason simply doing border-right does not works */
+    border-right-color: rgba(50, 50, 50, 150);
+}
+QHeaderView::section:first
+{
+    border: 1px solid transparent;  /* bug workaround, for some reason simply doing border-right does not works */
+    border-right-color: rgba(50, 50, 50, 150);
+}
+/************************************************************************************************/
+/* Settings / Repositories/Network center area */
+QTabWidget
+{
+    background-color: white;
+}
+QTabWidget::pane
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    top: -8px;  /* hides the border line under QTabBar::tab */
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    color: rgb(233, 125, 46);
+    background-color: rgb(250, 250, 250);
+}
+QTabWidget::tab-bar
+{
+    subcontrol-position: top center;
+}
+/* Settings / Repositories/Network tabs */
+QTabBar::tab
+{
+    color: white;
+    font-weight: bold;
+    background-color: rgb(130, 130, 130);
+    border: 1px solid rgb(130, 130, 130);
+    border-radius: 5px;
+    min-width: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 20px;
+    margin-left: 1px;
+}
+QTabBar::tab:hover
+{
+    background-color: rgb(240, 168, 117);
+    border-color: rgb(240, 168, 117);
+}
+QTabBar::tab:selected
+{
+    background-color: rgb(233, 125, 46);
+    border-color: rgb(233, 125, 46);
+}
+QTabBar::tab:disabled
+{
+    color: rgba(255, 255, 255, 60%);
+    background-color: rgba(130, 130, 130, 60%);
+    border-color: rgba(130, 130, 130, 60%);
+}
+/************************************************************************************************/
+/* progressbars when downloading / installing data
+ - Introduction page / downloading metadata
+ - Installing page / downloading / installing data (also in Maintenance Tool)
+*/
+QProgressBar
+{
+    color: rgb(233, 125, 46);
+    background-color: white;
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    text-align: center center;
+}
+QProgressBar::chunk
+{
+    background-color: rgba(233, 125, 46, 50);
+    color: rgba(233, 125, 46, 50);
+}
+/************************************************************************************************/
+/* Settings / Repositories / HTTP/FTP ports */
+QSpinBox
+{
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    min-height: 28px;
+    background-color: white;
+    color: black;
+    selection-color: black;
+    selection-background-color: rgb(200, 200, 200);
+}
+QSpinBox:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    selection-color: rgba(0, 0, 0, 60%);
+    background-color: rgb(250, 227, 209);   /* light onsemi orange */
+    selection-background-color: rgba(200, 200, 200, 60%);
+}
+QSpinBox::down-button
+{
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    color: black;
+    background-color: rgb(200, 200, 200);
+    border-color: rgb(130, 130, 130);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    margin-bottom: 2px;
+    margin-right: 2px;
+    width: 20px;
+    image: url(:/assets/chevron-down.png);
+}
+QSpinBox::down-button:disabled
+{
+    image: url(:/assets/chevron-down-disabled.png);
+}
+QSpinBox::down-button:hover
+{
+    background-color: rgb(160, 160, 160);
+}
+QSpinBox::down-button:pressed
+{
+    background-color: rgb(130, 130, 130);
+}
+/* off state when value reached threshold */
+QSpinBox::down-button:off, QSpinBox::down-button:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    background-color: rgba(200, 200, 200, 60%);
+    border-color: rgba(130, 130, 130, 60%);
+}
+QSpinBox::up-button
+{
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    color: black;
+    background-color: rgb(200, 200, 200);
+    border-color: rgb(130, 130, 130);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    margin-top: 2px;
+    margin-right: 2px;
+    margin-bottom: 1px;
+    width: 20px;
+    image: url(:/assets/chevron-up.png);
+}
+QSpinBox::up-button:disabled
+{
+    image: url(:/assets/chevron-up-disabled.png);
+}
+QSpinBox::up-button:hover
+{
+    background-color: rgb(160, 160, 160);
+}
+QSpinBox::up-button:pressed
+{
+    background-color: rgb(130, 130, 130);
+}
+/* off state when value reached threshold */
+QSpinBox::up-button:off, QSpinBox::up-button:disabled
+{
+    color: rgba(0, 0, 0, 60%);
+    background-color: rgba(200, 200, 200, 60%);
+    border-color: rgba(130, 130, 130, 60%);
+}
+/************************************************************************************************/
+/* "Details" in Installation page */
+#DetailsBrowser
+{
+    background-color: white;
+    border: 1px solid rgb(233, 125, 46);
+    border-radius: 2px;
+    margin-bottom: 15px;
+}
+/************************************************************************************************/
+/* right-click mouse menu */
+.QMenu
+{
+    background-color: rgb(160, 160, 160);
+}
+.QMenu::item
+{
+    color: white;
+    background-color: transparent;
+}
+.QMenu::item:selected
+{
+    background-color: rgb(130, 130, 130);
+}
+.QMenu::item:disabled
+{
+    color: rgba(255, 255, 255, 60%);
+}
+/************************************************************************************************/
+/* "Components stuff" in Select Components page */
+#ComponentsTreeView, #ComponentSizeLabel
+{
+    margin-bottom: 15px;
+}

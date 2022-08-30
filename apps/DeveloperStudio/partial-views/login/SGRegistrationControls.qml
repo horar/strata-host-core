@@ -12,7 +12,7 @@ import QtQuick.Controls 2.12
 import "qrc:/partial-views"
 import "qrc:/partial-views/login/registration"
 import "qrc:/partial-views/general/"
-import "qrc:/js/login_utilities.js" as Registration
+import "qrc:/js/login_utilities.js" as LoginUtils
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
@@ -41,6 +41,7 @@ Item {
 
         SGNotificationToast {
             id: alertRect
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: fieldGrid.width
         }
 
@@ -301,8 +302,8 @@ Item {
                         username:emailField.text,
                         password:passwordField.text
                     }
-                    registrationStatus.currentId = Registration.getNextId()
-                    Registration.register(register_info)
+                    registrationStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.register(register_info)
                 }
 
                 ToolTip {
@@ -363,11 +364,11 @@ Item {
             registrationStatus.text = ""
             fieldGrid.visible = true
             if (result === "Registered") {
-                alertRect.color = "#57d445"
+                alertRect.color = Theme.palette.success
                 alertRect.text = "Account successfully registered to " + emailField.text + "!"
                 root.resetForm()
             } else {
-                alertRect.color = "red"
+                alertRect.color = Theme.palette.error
                 if (result === "No Connection") {
                     alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
                 } else if (result === "Server Error") {

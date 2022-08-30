@@ -49,7 +49,7 @@ signals:
 
 private slots:
     void handleDeviceDetected(strata::platform::PlatformPtr platform);
-    void handleDeviceLost(QByteArray deviceId);
+    void handleDeviceLost(QByteArray deviceId, QString errorString);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

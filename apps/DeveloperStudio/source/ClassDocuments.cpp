@@ -86,7 +86,6 @@ void ClassDocuments::loadPlatformDocuments()
 
 void ClassDocuments::updateLoadingProgress(QJsonObject data)
 {
-    QJsonDocument doc(data);
     int filesCompleted = data["files_completed"].toInt();
     int filesTotal = data["files_total"].toInt();
 

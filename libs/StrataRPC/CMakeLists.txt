@@ -13,11 +13,39 @@ project(StrataRPC
 
 set (SERVER ${PROJECT_NAME}-StrataServer)
 set (CLIENT ${PROJECT_NAME}-StrataClient)
-set (COMMON_LIB ${PROJECT_NAME}-CommonLib)
+set (COMMON ${PROJECT_NAME}-Common)
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
     REQUIRED
+)
+
+#
+# StrataRPC-Common
+#
+add_library(${COMMON}
+    src/RpcError.cpp
+    include/StrataRPC/RpcError.h
+)
+
+add_library(strata::${COMMON} ALIAS ${COMMON})
+
+target_include_directories(${COMMON}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_link_libraries(${COMMON}
+    PUBLIC Qt5::Core
+)
+
+set_target_properties(${COMMON} PROPERTIES
+    AUTOMOC ON
+)
+
+target_compile_definitions(${COMMON} PRIVATE
+    QT_DEPRECATED_WARNINGS
+    QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
 #
@@ -29,8 +57,11 @@ add_library(${SERVER}
     src/ClientsController.cpp
     src/ServerConnector.cpp
     src/logging/LoggingQtCategories.cpp
+    src/Dispatcher.h
+    src/RpcRequest.cpp
 
     include/StrataRPC/StrataServer.h
+    include/StrataRPC/RpcRequest.h
 )
 
 add_library(strata::${SERVER} ALIAS ${SERVER})
@@ -44,6 +75,7 @@ target_link_libraries(${SERVER}
     PUBLIC Qt5::Core
     PUBLIC strata::QtLogger
     PUBLIC strata::connector
+    PUBLIC ${COMMON}
 )
 
 set_target_properties(${SERVER} PROPERTIES
@@ -55,19 +87,17 @@ target_compile_definitions(${SERVER} PRIVATE
     QT_DISABLE_DEPRECATED_BEFORE=${VERSION_QT5_DEPRECATE_BEFORE}
 )
 
-
 #
 # StrataRPC-Client
 #
 add_library(${CLIENT}
     src/StrataClient.cpp
     src/ClientConnector.cpp
-    src/RequestsController.cpp
-    src/DeferredRequest.cpp
+    src/DeferredReply.cpp
     src/logging/LoggingQtCategories.cpp
 
     include/StrataRPC/StrataClient.h
-    include/StrataRPC/DeferredRequest.h
+    include/StrataRPC/DeferredReply.h
 )
 
 add_library(strata::${CLIENT} ALIAS ${CLIENT})
@@ -81,6 +111,7 @@ target_link_libraries(${CLIENT}
     PUBLIC Qt5::Core
     PUBLIC strata::QtLogger
     PUBLIC strata::connector
+    PUBLIC ${COMMON}
 )
 
 set_target_properties(${CLIENT} PROPERTIES

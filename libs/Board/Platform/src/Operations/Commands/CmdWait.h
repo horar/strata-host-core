@@ -36,7 +36,7 @@ private slots:
 
 private:
     std::chrono::milliseconds waitTime_;
-    QString description_;
+    const QString description_;
 };
 
 }  // namespace

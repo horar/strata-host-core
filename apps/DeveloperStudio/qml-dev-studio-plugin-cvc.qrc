@@ -1,7 +1,7 @@
 <RCC>
-    <qresource prefix="/partial-views/control-view-creator/+cvc">
-        <file alias="ControlViewCreator.qml">partial-views/control-view-creator/+cvc/ControlViewCreator.qml</file>
-        <file alias="CVCButton.qml">partial-views/control-view-creator/+cvc/CVCButton.qml</file>
+    <qresource prefix="/partial-views/control-view-creator/+sds-cvc">
+        <file alias="ControlViewCreator.qml">partial-views/control-view-creator/+sds-cvc/ControlViewCreator.qml</file>
+        <file alias="CVCButton.qml">partial-views/control-view-creator/+sds-cvc/CVCButton.qml</file>
     </qresource>
     <qresource prefix="/partial-views/control-view-creator">
         <file alias="Editor.qml">partial-views/control-view-creator/Editor.qml</file>

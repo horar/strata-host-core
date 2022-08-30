@@ -10,5 +10,6 @@
         <file>question.svg</file>
         <file>hex-view.svg</file>
         <file>chip-download.svg</file>
+        <file>list-check.svg</file>
     </qresource>
 </RCC>

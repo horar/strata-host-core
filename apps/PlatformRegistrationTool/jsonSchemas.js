@@ -58,7 +58,7 @@ var documentEmbeddedSchema = {
             }
         }
     },
-    "required": ["class_id", "controller_type", "mcu", "firmware", "bootloader"]
+    "required": ["class_id", "controller_type", "mcu"]
 }
 
 var documentAssistedSchema = {
@@ -85,7 +85,7 @@ var documentAssistedSchema = {
             }
         }
     },
-    "required": ["opn", "class_id", "controller_type", "firmware"]
+    "required": ["opn", "class_id", "controller_type"]
 }
 
 var documentControllerSchema = {
@@ -124,7 +124,7 @@ var documentControllerSchema = {
             }
         }
     },
-    "required": ["opn", "class_id", "controller_type", "mcu", "bootloader"]
+    "required": ["opn", "class_id", "controller_type", "mcu"]
 }
 
 /* fake data for testing until cloud service can provide proper data */

@@ -17,7 +17,7 @@ import tech.strata.signals 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/constants.js" as Constants
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/login_utilities.js" as LoginUtils
 
 /*
   Core notifications: see createNotification() below for use
@@ -101,7 +101,7 @@ Item {
 
         onValidationResult: {
             if (result === "Current token is valid" && currentUser !== Constants.GUEST_USER_ID) {
-                currentUser = Authenticator.settings.user
+                currentUser = LoginUtils.settings.user
             }
         }
     }
@@ -113,6 +113,7 @@ Item {
         - title (REQUIRED): The notification title
         - level (REQUIRED): The notification importance level (0, 1, 2) (Notifications.Info, Notifications.Warning, Notifications.Critical)
         - to (REQUIRED): The user to show the notification to. Either "all", "current", or a specific user's email id
+        - source (REQUIRED): The element this notification is bound to. Once deleted, the notification closes itself.
         - additionalParameters: The object can include the following properties
             - description: The notification description
             - actions: A list of Action objects that correspond to each button in the notification
@@ -123,25 +124,30 @@ Item {
             - iconSource: The icon's source url | DEFAULT: level === Notifications.Level.Info ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/exclamation-triangle.svg"
 
         Example:
-            Action {
-                id: notificationAction
-                text: "Click me" // Text displayed on the button
-                onTriggered: { // Run this when the button is clicked
-                    console.log("I was clicked!")
+            Item {
+                id: notifications
+                Action {
+                    id: notificationAction
+                    text: "Click me" // Text displayed on the button
+                    onTriggered: { // Run this when the button is clicked
+                        console.log("I was clicked!")
+                    }
                 }
+                ...
             }
 
             Notifications.createNotification(
                         "This is a title",
                         Notifications.Info,
                         "all",
+                        notifications,
                         {
                             "description": "This is the notification description",
-                            "actions": [testNotificationAction, ...]
+                            "actions": [notificationAction, ...]
                         })
 
      **/
-    function createNotification(title, level, to, additionalParameters = {}) {
+    function createNotification(title, level, to, source, additionalParameters = {}) {
         const description = additionalParameters.hasOwnProperty("description") ? additionalParameters["description"] : "";
         const actions = additionalParameters.hasOwnProperty("actions") ? additionalParameters["actions"].map((action) => ({"action": action})) : [];
         const saveToDisk = additionalParameters.hasOwnProperty("saveToDisk") ? additionalParameters["saveToDisk"] : false;
@@ -167,6 +173,7 @@ Item {
             "description": description,
             "level": level,
             "to": to,
+            "source": source,
             "hidden": false,
             "date": new Date(),
             "timeout": timeout,
@@ -235,6 +242,7 @@ Item {
                 "description": savedNotifications[i].description,
                 "level": savedNotifications[i].level,
                 "to": savedNotifications[i].to,
+                "source": null,
                 "hidden": true,
                 "date": Date.fromLocaleString(Qt.locale(), savedNotifications[i].date),
                 "timeout": 0,
@@ -248,10 +256,10 @@ Item {
         }
     }
 
-    function destroyNotification(uuid){
-        if(uuid !== null && uuid !== ""){
-            for(var i = 0;i < model_.count; i++){
-                if(model_.get(i).uuid === uuid){
+    function destroyNotification(uuid) {
+        if (uuid !== null && uuid !== "") {
+            for (var i = 0;i < model_.count; i++) {
+                if (model_.get(i).uuid === uuid) {
                     model_.remove(i)
                     break
                 }
@@ -259,12 +267,12 @@ Item {
         }
     }
 
-    function create_UUID(){
+    function create_UUID() {
         var dt = new Date().getTime();
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             var r = (dt + Math.random()*16)%16 | 0;
             dt = Math.floor(dt/16);
-            return (c =='x' ? r :(r&0x3|0x8)).toString(16);
+            return (c === 'x' ? r :(r&0x3|0x8)).toString(16);
         });
         return uuid;
     }

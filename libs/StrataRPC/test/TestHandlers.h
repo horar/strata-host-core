@@ -7,24 +7,29 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #pragma once
-#include <StrataRPC/Message.h>
 
-using strata::strataRPC::Message;
+#include "StrataRPC/RpcRequest.h"
+
+using strata::strataRPC::RpcRequest;
 
 class TestHandlers
 {
 public:
+
+
     TestHandlers()
     {
     }
     ~TestHandlers()
     {
     }
-    void handler_1(const Message &message);
-    void handler_2(const Message &message);
-    void handler_3(const Message &message);
-    void handler_4(const Message &message);
+    void handler_1(const RpcRequest &request);
+    void handler_2(const RpcRequest &request);
+    void handler_3(const RpcRequest &request);
+    void handler_4(const RpcRequest &request);
 
 private:
-    void printClientMessage(const Message &message);
+    void printClientMessage(const RpcRequest &request);
+
+
 };

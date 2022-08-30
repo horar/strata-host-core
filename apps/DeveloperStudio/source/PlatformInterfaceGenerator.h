@@ -53,6 +53,12 @@ public:
     Q_INVOKABLE bool generate(const QJsonValue &jsonObject, const QString &outputPath);
 
     /**
+     * @brief generateLicense Generates the license section of the QML file
+     * @return Returns the license text
+     */
+    QString generateLicense() const;
+
+    /**
      * @brief generateImports Generates the import section of the QML file
      * @return Returns the imports text
      */

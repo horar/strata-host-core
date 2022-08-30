@@ -11,12 +11,12 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.sglayout 1.0
 
 GenericPopup {
     id: comboBoxPopup
 
     property string sourceProperty
-    property alias model: comboBox.model
     property alias label: label.text
 
     ColumnLayout {
@@ -33,7 +33,48 @@ GenericPopup {
         SGComboBox {
             id: comboBox
             Layout.alignment: Qt.AlignHCenter
-            model: ["Qt.Horizontal", "Qt.Vertical"]
+            textRole: "name"
+            model: comboBoxPopup.sourceProperty === "status" ? statusListModel : orientationListModel
+        }
+
+        ListModel {
+            id: orientationListModel
+            ListElement {
+                name: "Qt.Horizontal"
+                value: Qt.Horizontal
+            }
+            ListElement {
+                name: "Qt.Vertical"
+                value: Qt.Vertical
+            }
+        }
+
+        ListModel {
+            id: statusListModel
+            ListElement {
+                name: "LayoutSGStatusLight.Yellow"
+                value: LayoutSGStatusLight.Yellow
+            }
+            ListElement {
+                name: "LayoutSGStatusLight.Green"
+                value: LayoutSGStatusLight.Green
+            }
+            ListElement {
+                name: "LayoutSGStatusLight.Blue"
+                value: LayoutSGStatusLight.Blue
+            }
+            ListElement {
+                name: "LayoutSGStatusLight.Orange"
+                value: LayoutSGStatusLight.Orange
+            }
+            ListElement {
+                name: "LayoutSGStatusLight.Red"
+                value: LayoutSGStatusLight.Red
+            }
+            ListElement {
+                name: "LayoutSGStatusLight.Off"
+                value: LayoutSGStatusLight.Off
+            }
         }
 
         RowLayout {
@@ -53,6 +94,15 @@ GenericPopup {
                 onClicked: {
                     comboBoxPopup.close()
                 }
+            }
+        }
+    }
+
+    function updateCurrentItem(currentItem) {
+        for (let i = 0; i < comboBox.model.count; ++i) {
+            if (comboBox.model.get(i).value === currentItem) {
+                comboBox.currentIndex = i
+                break
             }
         }
     }

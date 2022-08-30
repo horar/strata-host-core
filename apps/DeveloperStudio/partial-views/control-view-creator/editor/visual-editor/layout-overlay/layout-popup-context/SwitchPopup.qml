@@ -11,6 +11,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
 
 GenericPopup {
     id: switchPopup
@@ -35,6 +36,7 @@ GenericPopup {
             checkedLabel: "true"
             uncheckedLabel: "false"
             Layout.alignment: Qt.AlignHCenter
+            grooveFillColor: Theme.palette.highlight
         }
 
         RowLayout {

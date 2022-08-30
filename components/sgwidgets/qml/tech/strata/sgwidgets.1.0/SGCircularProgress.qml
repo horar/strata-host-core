@@ -15,8 +15,8 @@ Item {
     implicitWidth: 80
     implicitHeight: 80
 
-    property color baseColor: Theme.palette.lightGray
-    property color highlightColor: Theme.palette.green
+    property color baseColor: TangoTheme.palette.aluminium2
+    property color highlightColor: TangoTheme.palette.chameleon2
     property alias textColor: infoText.color
 
     /* from 0 to 1 */

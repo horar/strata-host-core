@@ -14,7 +14,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
 
-Popup {
+SGWidgets.SGPopup {
     id: popup
 
     property Item textEditor
@@ -30,7 +30,6 @@ Popup {
     property bool closeWithArrowKey: false
     property bool openOnActiveFocus: false
     property int maxHeight: 120
-    property int position: Item.Bottom
     property int verticalLayoutDirection: ListView.TopToBottom
     property string emptyModelText: "No suggestions."
     property string headerText
@@ -46,42 +45,10 @@ Popup {
     signal delegateSelected(int index)
     signal removeRequested(int index)
 
-    x: {
-        if (!textEditor) {
-            return 0
-        }
-
-        /* this is to trigger calculation when positions changes */
-        var calculatePositionAgain = popup.parent.x + textEditor.x
-
-        var pos = textEditor.mapToItem(popup.parent, 0, 0)
-        return  pos.x
-    }
-    y: {
-        if (!textEditor) {
-            return 0
-        }
-
-        /* this is to trigger calculation when position changes */
-        var calculatePositionAgain = popup.parent.y + textEditor.y + textEditor.height
-
-        var deltaY = 0
-
-        if (position === Item.Bottom) {
-            deltaY = textEditor.height
-        }
-
-        if (position === Item.Top) {
-            deltaY = -popup.contentItem.height - popup.topPadding - popup.bottomPadding
-        }
-
-        var pos = textEditor.mapToItem(popup.parent, 0, deltaY)
-        return  pos.y
-    }
-
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-    padding: 2
     implicitWidth: textEditor ? textEditor.width : 0
+    originItem: textEditor
+    position: Item.Bottom
 
     onAboutToShow: {
         if (position === Item.Bottom) {
@@ -197,26 +164,6 @@ Popup {
                 width: 8
                 visible: view.height < view.contentHeight
             }
-        }
-    }
-
-    background: Item {
-        RectangularGlow {
-            id: effect
-            anchors {
-                fill: parent
-                topMargin: position === Item.Bottom ? glowRadius - 2 : 0
-                bottomMargin: position === Item.Top ? glowRadius - 2 : 0
-            }
-            glowRadius: 8
-            color: dummyControl.palette.mid
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            color: "white"
-            border.color: dummyControl.palette.mid
-            border.width: 1
         }
     }
 
@@ -358,7 +305,7 @@ Popup {
 
                 iconColor: "white"
                 icon.source: "qrc:/sgimages/times.svg"
-                highlightImplicitColor: Theme.palette.error
+                highlightImplicitColor: TangoTheme.palette.error
                 onClicked: {
                     removeRequested(index)
                 }

@@ -44,7 +44,7 @@ QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir, QString &a
 
     if (applicationDir.exists(maintenanceToolFilename) == false) {
         qCCritical(lcCoreUpdate) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
-        return QString("Strata Maintenance Tool not found.");
+        return QString("Unable to update application. Strata Maintenance Tool not found.");
     }
 
     return QString();
@@ -54,7 +54,7 @@ void CoreUpdate::performCoreUpdate(const QString &absPathMaintenanceTool, const 
     // Launch Strata Maintenance Tool wizard and quit Strata
     qCDebug(lcCoreUpdate) << "Launching Strata Maintenance Tool";
     QStringList arguments;
-    arguments << "isSilent=true" << "--updater";
+    arguments << "--su" << "--sv" << "isSilent=true";
 
     QProcess maintenanceToolProcess;
     maintenanceToolProcess.setProgram(absPathMaintenanceTool);

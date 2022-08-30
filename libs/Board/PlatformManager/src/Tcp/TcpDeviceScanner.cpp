@@ -93,13 +93,13 @@ QString TcpDeviceScanner::disconnectDevice(const QByteArray &deviceId)
 
     createdDevices_.remove(deviceId);
 
-    emit deviceLost(deviceId);
+    emit deviceLost(deviceId, QString());
     return QString();
 }
 
 void TcpDeviceScanner::disconnectAllDevices() {
     for (const auto &tcpDeviceInfo : qAsConst(discoveredDevices_)) {
-        emit deviceLost(tcpDeviceInfo.deviceId);
+        emit deviceLost(tcpDeviceInfo.deviceId, QString());
     }
     discoveredDevices_.clear();
 }

@@ -1,4 +1,4 @@
-<?xml version="2.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Copyright (c) 2018-2022 onsemi.
 
@@ -10,9 +10,10 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>The Strata Host Controller Service is the middleware that connects to platform, client (UI, service, scripts) and cloud</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>70</SortingPriority>
+    <Dependencies>@PROJECT_DEPENDENCIES@</Dependencies>
+    <SortingPriority>80</SortingPriority>
 </Package>

@@ -49,7 +49,11 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
     }
 
     QTextStream outputStream(&outputFile);
+    outputStream.setCodec("UTF-8");
     int indentLevel = 0;
+
+    // Generate license
+    outputStream << generateLicense();
 
     // Generate imports
     outputStream << generateImports();
@@ -90,7 +94,8 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
         return false;
     }
 
-    for (QJsonValue vNotification : notificationsList.toArray()) {
+    QJsonArray notificationsListArray = notificationsList.toArray();
+    for (QJsonValueRef vNotification : notificationsListArray) {
         QJsonObject notification = vNotification.toObject();
         outputStream << generateNotification(notification, indentLevel);
 
@@ -147,6 +152,19 @@ bool PlatformInterfaceGenerator::generate(const QJsonValue &jsonObject, const QS
     return true;
 }
 
+QString PlatformInterfaceGenerator::generateLicense() const
+{
+    QString license = "/*\n";
+    license += " * Copyright (c) 2018-" + QString::number(QDate::currentDate().year()) + " onsemi.\n";
+    license += " *\n";
+    license += " * All rights reserved. This software and/or documentation is licensed by onsemi under\n";
+    license += " * limited terms and conditions. The terms and conditions pertaining to the software and/or\n";
+    license += " * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard\n";
+    license += " * Terms and Conditions of Sale, Section 8 Software”).\n";
+    license += "*/\n";
+    return license;
+}
+
 QString PlatformInterfaceGenerator::generateImports() const
 {
     QString imports = "import QtQuick 2.12\n";
@@ -176,7 +194,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
 
     if (command.contains("payload") && command["payload"].isNull() == false) {
         QJsonArray payload = command["payload"].toArray();
-        for (QJsonValue payloadPropertyValue : payload) {
+        for (QJsonValueRef payloadPropertyValue : payload) {
             QJsonObject payloadProperty = payloadPropertyValue.toObject();
             QJsonValue propertyNameValue = payloadProperty.value("name");
             QString propertyName = propertyNameValue.toString();
@@ -185,7 +203,7 @@ QString PlatformInterfaceGenerator::generateCommand(const QJsonObject &command, 
         updateFunctionKwRemoved = updateFunctionParams;
         removeReservedKeywords(updateFunctionKwRemoved);
 
-        for (QJsonValue payloadPropertyValue : payload) {
+        for (QJsonValueRef payloadPropertyValue : payload) {
             QJsonObject payloadProperty = payloadPropertyValue.toObject();
             QJsonValue propNameValue = payloadProperty.value("name");
             QString propName = propNameValue.toString();
@@ -285,7 +303,7 @@ QString PlatformInterfaceGenerator::generateNotification(const QJsonObject &noti
     QJsonArray payload = notification["payload"].toArray();
 
     // Add the properties to the notification
-    for (QJsonValue payloadPropertyValue : payload) {
+    for (QJsonValueRef payloadPropertyValue : payload) {
         if (payloadPropertyValue.isObject() == false) {
             lastError_ = "Payload elements are not objects";
             qCCritical(lcControlViewCreator) << lastError_;

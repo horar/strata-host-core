@@ -17,6 +17,7 @@ import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
@@ -25,13 +26,25 @@ Item {
     id: root
 
     property bool isCurrentItem: false
+    property string highlightPattern
+    property bool matchName: false
+    property bool matchDescription: false
+    property bool matchOpn: false
+    property bool matchPartList: false
 
     Rectangle {
         width: 50
-        color: "#29e335"//Theme.palette.onsemiOrange
+        color: Theme.palette.onsemiLightBlue
         opacity: 1
         height: parent.height-1
         visible: model.connected
+    }
+
+    SGWidgets2.SGButton {
+        id: dummyFilterButton
+        buttonSize: SGWidgets2.SGButton.Tiny
+        visible: false
+        text: "dummy"
     }
 
     MouseArea {
@@ -65,8 +78,8 @@ Item {
 
             PlatformImage {
                 id: imageContainer
-                text: model.program_controller ? "PROGRAMMING" : defaultText
-                textBgColor: model.program_controller ? Theme.palette.orange : defaultTextBg
+                text: model.program_controller ? "PROGRAMMING" : connectedText
+                textBgColor: model.program_controller ? Theme.palette.onsemiOrange : connectedTextBg
             }
         }
 
@@ -81,13 +94,11 @@ Item {
             Text {
                 id: name
                 text: {
-                    if (searchCategoryText.checked === false || model.name_matching_index === -1) {
-                        return model.verbose_name
-                    } else {
-                        let txt = model.verbose_name
-                        let idx = model.name_matching_index
-                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    if (matchName) {
+                        return highlightPatternInText(model.verbose_name, highlightPattern)
                     }
+
+                    return model.verbose_name
                 }
                 color: Theme.palette.onsemiDark
                 font {
@@ -105,13 +116,11 @@ Item {
             Text {
                 id: productId
                 text: {
-                    if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
-                        return model.opn
-                    } else {
-                        let txt = model.opn
-                        let idx = model.opn_matching_index
-                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    if (matchOpn) {
+                        return highlightPatternInText(model.opn, highlightPattern)
                     }
+
+                    return model.opn
                 }
 
                 Layout.fillWidth: true
@@ -129,6 +138,7 @@ Item {
 
             Text {
                 id: info
+
                 text: {
                     if (model.program_controller_error_string) {
                         return "Programming of controller failed.\n" + model.program_controller_error_string
@@ -138,13 +148,11 @@ Item {
                         return "Programming controller. Do not unplug device."
                     }
 
-                    if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
-                        return model.description
-                    } else {
-                        let txt = model.description
-                        let idx = model.desc_matching_index
-                        return txt.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    if (matchDescription) {
+                        return highlightPatternInText(model.description, highlightPattern)
                     }
+
+                    return model.description
                 }
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -165,28 +173,12 @@ Item {
             Text {
                 id: parts
                 text: {
-                    if (searchCategoryPartsList.checked === true) {
-                        let str = "Matching Part OPNs: ";
-                        if (model.parts_list !== undefined) {
-                            for (let i = 0; i < model.parts_list.count; i++) {
-                                if (model.parts_list.get(i).matchingIndex > -1) {
-                                    let idx = model.parts_list.get(i).matchingIndex
-                                    let part = model.parts_list.get(i).opn
-                                    if (str !== "Matching Part OPNs: ") {
-                                        str += ", "
-                                    }
-                                    str += part.substring(0, idx) + `<font color="${Theme.palette.onsemiOrange}">` + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
-                                } else {
-                                    continue
-                                }
-                            }
-                        }
-                        return str
-                    } else {
-                        return ""
+                    if (matchedPartList.length) {
+                        return "Matching Part OPNs: " + matchedPartList.join(", ")
                     }
+                    return ""
                 }
-                visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+                visible: text.length
                 Layout.fillWidth: true
                 font {
                     pixelSize: 12
@@ -196,6 +188,21 @@ Item {
                 textFormat: Text.StyledText
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
+
+                property var matchedPartList: {
+                    var list = []
+                    if (matchPartList && model.parts_list) {
+                        for (let i = 0; i < model.parts_list.count; i++) {
+                            var opn = model.parts_list.get(i).opn
+                            var highlightedOpn  = highlightPatternInText(opn, highlightPattern);
+                            if (opn !== highlightedOpn) {
+                                list.push(highlightedOpn)
+                            }
+                        }
+                    }
+
+                    return list
+                }
             }
         }
 
@@ -205,107 +212,101 @@ Item {
             Layout.preferredWidth: 200
             Layout.minimumWidth: 300
 
-            ColumnLayout {
+            Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 Flickable {
-                    id: segmentCategoryScrollView
+                    id: flickable
+                    height: maxRows * dummyFilterButton.height + (maxRows - 1) * flow.spacing
+                    anchors {
+                        top: parent.top
+                        left: parent.left
+                        right: parent.right
+                        rightMargin: segmentCategoryScrollBar.width
+                    }
+
                     clip: true
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    contentHeight: segmentCategoryList.height
+                    contentWidth: flow.width
+                    contentHeight: flow.childrenRect.height
                     interactive: segmentCategoryScrollBar.visible
                     flickableDirection: Flickable.VerticalFlick
                     boundsBehavior: Flickable.StopAtBounds
 
+                    property int maxRows: 5
+
                     ScrollBar.vertical: ScrollBar {
                         id: segmentCategoryScrollBar
+                        parent: flickable.parent
+                        anchors {
+                            left: flickable.right
+                            top: flickable.top
+                            bottom: flickable.bottom
+                        }
+
                         minimumSize: 0.1
                         policy: ScrollBar.AlwaysOn
-                        visible: segmentCategoryScrollView.height < segmentCategoryScrollView.contentHeight
+                        visible: model.show_overflow_buttons && flickable.height < flickable.contentHeight
                     }
 
-                    ColumnLayout {
-                        id: segmentCategoryList
-                        width: segmentCategoryScrollView.width -
-                               (segmentCategoryScrollBar.visible ? segmentCategoryScrollBar.width : 0)
+                    Flow {
+                        id: flow
+                        width: flickable.width
+                        height: flickable.height
 
-                        property real delegateHeight: 25
+                        spacing: 3
 
-                        Flow {
-                            id: flow
-                            Layout.fillWidth: true
-                            spacing: 2
+                        Repeater {
+                            id: segmentCategoryRepeater
+                            model: segmentsCategories
 
-                            property int rows: Math.ceil(implicitHeight/(segmentCategoryList.delegateHeight + spacing))
-                            property int maxRows: 3
-
-                            onRowsChanged: {
-                                if (rows < maxRows) {
-                                    reset()
+                            delegate: SGWidgets2.SGButton {
+                                id: tagButton
+                                text: textMetrics.elidedText
+                                buttonSize: SGWidgets2.SGButton.Tiny
+                                isSecondary: true
+                                font.bold: false
+                                hintText: {
+                                    if (model.type === "category") {
+                                        return "Filter platforms in this category"
+                                    } else {
+                                        return "Filter platforms in this Segment"
+                                    }
                                 }
-                            }
 
-                            function reset () {
-                                for (let i = 0; i < filters.count; i++) {
-                                    filters.get(i).row = -1
+                                onClicked: {
+                                    PlatformFilters.setFilterActive(model.filterId, true)
                                 }
-                            }
 
-                            Repeater {
-                                id: segmentCategoryRepeater
-                                model: visibleButtons
-                                delegate: iconDelegate
-                            }
-                        }
-
-                        SGSortFilterProxyModel {
-                            id: segmentsCategories
-                            sourceModel: filters
-                            sortEnabled: true
-                            sortRole: "type"
-                        }
-
-                        SGSortFilterProxyModel {
-                            id: visibleButtons
-                            sourceModel: segmentsCategories
-                            invokeCustomFilter: true
-
-                            function filterAcceptsRow (index) {
-                                if (model.show_overflow_buttons === false) {
-                                    var listing = sourceModel.get(index)
-                                    return listing.row < flow.maxRows
-                                } else {
-                                    return true
+                                TextMetrics {
+                                    id: textMetrics
+                                    text: model.name
+                                    font: tagButton.font
+                                    elide: Qt.ElideRight
+                                    elideWidth: flickable.width - tagButton.leftPadding - tagButton.rightPadding
                                 }
                             }
                         }
+                    }
 
-                        SGSortFilterProxyModel {
-                            id: remainingButtons
-                            sourceModel: segmentsCategories
-                            invokeCustomFilter: true
-
-                            function filterAcceptsRow (index) {
-                                var listing = sourceModel.get(index)
-                                return listing.row >= flow.maxRows
-                            }
-                        }
-
-                        Component {
-                            id: iconDelegate
-
-                            PlatformFilterButton { }
-                        }
+                    SGSortFilterProxyModel {
+                        id: segmentsCategories
+                        sourceModel: filters
+                        sortEnabled: true
+                        sortRole: "type"
                     }
                 }
 
-                SGText {
+                SGWidgets2.SGText {
                     id: remainingText
-                    visible: remainingButtons.count > 0
-                    text: model.show_overflow_buttons ? "Show less..." : "Show " + remainingButtons.count + " more..."
-                    Layout.alignment: Qt.AlignHCenter
+                    anchors {
+                        top: flickable.bottom
+                        topMargin: 1
+                        horizontalCenter: parent.horizontalCenter
+                    }
+
+                    visible: flickable.height < flickable.contentHeight
+                    text: model.show_overflow_buttons ? "Show less..." : "Show more..."
                     font.underline: moreFiltersMouse.containsMouse
 
                     MouseArea {
@@ -316,7 +317,7 @@ Item {
 
                         onClicked: {
                             model.show_overflow_buttons = !model.show_overflow_buttons
-                            visibleButtons.invalidate()
+                            flickable.contentY = 0
                             root.updateIndex()
                         }
                     }
@@ -351,7 +352,7 @@ Item {
                     function openView(view) {
                         var sourceIndex = filteredPlatformSelectorModel.mapIndexToSource(model.index)
                         if (sourceIndex < 0) {
-                            console.error(Logger.devStudioCategory, "Index out of scope.")
+                            console.error(Logger.devStudioCategory, "index out of range")
                             return
                         }
                         let data = {
@@ -370,39 +371,57 @@ Item {
                         PlatformSelection.openPlatformView(data)
                     }
 
-                    PlatformControlButton {
-                        id: openControls
-                        text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
-                        buttonEnabled: model.connected && model.available.control
+                    Item {
+                        Layout.fillWidth: true
+                        implicitHeight: openControls.implicitHeight
 
-                        toolTipText: {
-                            if (model.connected && model.available.control === false) {
-                                return "No control software found"
+                        SGWidgets2.SGButton {
+                            id: openControls
+                            width: parent.width
+
+                            text: model.view_open ? "Return to Controls" : "Open Hardware Controls"
+                            enabled: model.connected && model.available.control
+
+                            onClicked: controlButtonClicked()
+
+                            Accessible.role: Accessible.Button
+                            Accessible.name: "Open Hardware Controls"
+                            Accessible.onPressAction: controlButtonClicked()
+
+                            function controlButtonClicked() {
+                                root.updateIndex()
+                                buttonColumn.openView("control")
                             }
-                            if (model.connected && model.available.control) { // buttonEnabled === true
-                                return ""
-                            }
-                            return "Hardware not connected"
                         }
 
-                        onClicked: controlButtonClicked()
+                        //custom tooltip so it can be visible even when button itself is not enabled
+                        MouseArea {
+                            id: openControlsMouseArea
+                            anchors.fill: parent
+                            enabled: openControls.enabled === false
+                            hoverEnabled: true
+                            cursorShape: openControls.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                        }
 
-                        Accessible.role: Accessible.Button
-                        Accessible.name: buttonEnabled ? "HwControlsEnabled" : "HwControlsDisabled"
-                        Accessible.description: "'Hardware Controls' helper for automated GUI testing."
-                        Accessible.onPressAction: controlButtonClicked()
+                        ToolTip {
+                            id: toolTip
+                            visible: openControlsMouseArea.containsMouse && toolTip.text !== ""
+                            delay: 500
+                            text: {
+                                if (model.connected && model.available.control === false) {
+                                    return "No control software found"
+                                }
 
-                        function controlButtonClicked() {
-                            root.updateIndex()
-                            buttonColumn.openView("control")
+                                return "Hardware not connected"
+                            }
                         }
                     }
 
-                    PlatformControlButton {
+                    SGWidgets2.SGButton {
                         id: select
                         text: model.view_open ? "Return to Documentation" : "Browse Documentation"
-                        buttonEnabled: model.available.documents
-                        toolTipText: buttonEnabled ? "" : "No documentation found"
+                        enabled: model.available.documents
+                        hintText: enabled ? "" : "No documentation found"
 
                         onClicked: {
                             root.updateIndex()
@@ -410,10 +429,11 @@ Item {
                         }
                     }
 
-                    PlatformControlButton {
+                    SGWidgets2.SGButton {
                         id: order
                         text: "Contact Sales"
-                        buttonEnabled: model.available.order
+                        enabled: model.available.order
+                        Layout.fillWidth: true
 
                         onClicked: {
                             root.updateIndex()
@@ -431,7 +451,7 @@ Item {
 
                 visible: model.program_controller
                 value: model.program_controller_progress
-                highlightColor: Theme.palette.orange
+                highlightColor: Theme.palette.onsemiOrange
             }
         }
     }

@@ -27,9 +27,22 @@ MouseArea { // MouseArea is needed to prevent any cursor hover effects from item
     property int shadowVerticalOffset: 3
     property int shadowHorizontalOffset: 1
     property int shadowRadius: 8
+    property var source: model.source
 
     Component.onCompleted: {
         opacity = 1
+    }
+
+    onSourceChanged: {
+        if (source === null) {
+            closeTimer.stop()
+            if (model.saveToDisk) {
+                model.hidden = true
+                model.actions = []
+            } else {
+                Notifications.model.remove(visibleNotifications.mapIndex(modelIndex))
+            }
+        }
     }
 
     Behavior on opacity {

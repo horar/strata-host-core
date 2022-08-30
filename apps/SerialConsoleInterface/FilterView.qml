@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -73,6 +74,12 @@ FocusScope {
         }
     }
 
+    TextMetrics {
+        id: textMetricsForComboBox
+        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+        text: "is equal to"
+    }
+
     FocusScope {
         id: content
         anchors {
@@ -86,7 +93,6 @@ FocusScope {
             id: titleText
             anchors {
                 top: parent.top
-                topMargin: contentSpacing
                 left: parent.left
             }
 
@@ -217,6 +223,8 @@ FocusScope {
                         id: typeComboBox
                         model: conditionTypeModel
                         textRole: "text"
+                        width: textMetricsForComboBox.width + indicator.width + leftPadding + rightPadding
+                        font.pixelSize: SGWidgets.SGSettings.fontPixelSize
 
                         onCurrentIndexChanged: {
                             if (currentIndex < 0) {
@@ -281,7 +289,7 @@ FocusScope {
                         onSuggestionDelegateSelected: {
                             var sourceIndex = sortFilterModel.mapIndexToSource(index)
                             if (sourceIndex < 0) {
-                                console.error(Logger.sciCategory, "Index out of scope.")
+                                console.error(Logger.sciCategory, "index out of range")
                                 return
                             }
                             text = filterSuggestionModel.get(sourceIndex)["suggestion"]
@@ -345,7 +353,7 @@ FocusScope {
 
                 SGWidgets.SGButton {
                     id: addButton
-                    iconColor: "green"
+                    iconColor: TangoTheme.palette.chameleon2
                     icon.source: "qrc:/sgimages/plus.svg"
                     enabled: disableAllFiltering === false
 

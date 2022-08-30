@@ -12,11 +12,12 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.notifications 1.0 as PlatformNotifications
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/js/login_utilities.js" as SessionUtils
+import "qrc:/js/login_utilities.js" as LoginUtils
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/core_update.js" as CoreUpdate
 import "qrc:/partial-views/platform-view"
@@ -28,13 +29,16 @@ import "qrc:/partial-views/debug-bar"
 import "partial-views/notifications"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
 import tech.strata.notifications 1.0
+import tech.strata.signals 1.0
 
 SGWidgets.SGMainWindow {
     id: mainWindow
 
+    property alias mainWindow: mainWindow
     readonly property int defaultWidth: 1024
     readonly property int defaultHeight: 768-40 // -40 for Win10 taskbar height
 
@@ -46,9 +50,10 @@ SGWidgets.SGMainWindow {
     title: Qt.application.displayName
 
     property alias notificationsInbox: notificationsInbox
-
     signal initialized()
+
     property bool hcsReconnecting: false
+    property var privacyPolicyDialog: null
 
     function resetWindowSize()
     {
@@ -85,6 +90,7 @@ SGWidgets.SGMainWindow {
                             qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
                             Notifications.Info,
                             "current",
+                            null,
                             {
                                 "singleton": true,
                                 "timeout": 4000
@@ -127,7 +133,7 @@ SGWidgets.SGMainWindow {
             controlViewCreatorLoader.visible = false
         }
 
-        SessionUtils.close_session((sessionClosed) => {
+        LoginUtils.close_session((sessionClosed) => {
                                        if (sessionClosed) {
                                            // block window close for 100ms to give time for asynchronous XHR to send
                                            close.accepted = false
@@ -135,9 +141,9 @@ SGWidgets.SGMainWindow {
                                            return
                                        } else {
                                            // End session with HCS
-                                           sdsModel.strataClient.sendRequest("unregister", {});
-                                           if (SessionUtils.settings.rememberMe === false) {
-                                               SessionUtils.settings.clear()
+                                           sdsModel.coreInterface.unregisterClient()
+                                           if (LoginUtils.settings.rememberMe === false) {
+                                               LoginUtils.settings.clear()
                                            }
                                        }
                                    })
@@ -160,6 +166,7 @@ SGWidgets.SGMainWindow {
                     Notifications.createNotification(`Host Controller Service reconnected`,
                                                      Notifications.Info,
                                                      "all",
+                                                     null,
                                                      {
                                                          "singleton": true,
                                                          "timeout": 0
@@ -170,6 +177,7 @@ SGWidgets.SGMainWindow {
                 Notifications.createNotification(`Host Controller Service disconnected`,
                                                  Notifications.Critical,
                                                  "all",
+                                                 null,
                                                  {
                                                      "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
                                                      "singleton": true
@@ -177,7 +185,7 @@ SGWidgets.SGMainWindow {
                 hcsReconnecting = true
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()
-                SessionUtils.initialized = false
+                LoginUtils.initialized = false
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
@@ -205,14 +213,42 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    Connections {
+        target: (sdsModel.bleDeviceModel === undefined)?(null):(sdsModel.bleDeviceModel)
+        onTryConnectFinished: {
+            if (errorString.length > 0) {
+                showBleNotification("BLE device connection atempt failed", errorString);
+            }
+        }
+
+        onTryDisconnectFinished: {
+            if (errorString.length > 0) {
+                showBleNotification("BLE device disconnection atempt failed", errorString);
+            }
+        }
+
+        function showBleNotification(title, description) {
+            Notifications.createNotification(
+                        title,
+                        Notifications.Warning,
+                        "current",
+                        null,
+                        {
+                            "description": description,
+                            "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                        }
+                        )
+        }
+    }
+
     Loader {
         id: updateLoader
         active: false
         anchors {
             centerIn: parent
         }
-        width: 500
-        height: 300
+        width: 450
+        height: 400
         visible: active
     }
 
@@ -284,7 +320,7 @@ SGWidgets.SGMainWindow {
         onPlatformListChanged: {
             //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", platformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.generatePlatformSelectorModel(platformList)
+                PlatformSelection.generatePlatformSelectorModel(sdsModel.coreInterface.platformList)
             }
         }
 
@@ -292,7 +328,7 @@ SGWidgets.SGMainWindow {
             //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", connectedPlatformList)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
-                PlatformSelection.parseConnectedPlatforms(connectedPlatformList)
+                PlatformSelection.parseConnectedPlatforms(sdsModel.coreInterface.connectedPlatformList)
             }
         }
 
@@ -303,8 +339,57 @@ SGWidgets.SGMainWindow {
         }
     }
 
+    Connections {
+        target: Signals
+
+        onPrivacyPolicyUpdate: {
+            showPrivacyPolicyDialog()
+        }
+
+        onSessionExpired: {
+            PlatformNotifications.Notifications.createNotification(
+                        "Session Expired",
+                        PlatformNotifications.Notifications.Critical,
+                        "all",
+                        Qt.application,
+                        {
+                            "description": "Please login again",
+                        })
+
+            logout()
+        }
+    }
+
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
+    }
+
+    function showPrivacyPolicyDialog() {
+        if (privacyPolicyDialog !== null) {
+            return
+        }
+
+        privacyPolicyDialog = SGWidgets.SGDialogJS.createDialog(mainWindow, "qrc:partial-views/SGPolicyUpdateDialog.qml")
+        privacyPolicyDialog.accepted.connect(function() {
+            privacyPolicyDialog.destroy()
+        })
+
+        privacyPolicyDialog.rejected.connect(function() {
+            logout()
+            privacyPolicyDialog.destroy()
+        })
+
+        privacyPolicyDialog.open()
+    }
+
+    function logout() {
+        sdsModel.coreInterface.unregisterClient();
+        controlViewCreatorLoader.active = false
+        Signals.logout()
+        PlatformFilters.clearActiveFilters()
+        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+        LoginUtils.logout()
+        PlatformSelection.logout()
     }
 
     SGDebugBar {
@@ -312,5 +397,17 @@ SGWidgets.SGMainWindow {
         anchors {
             fill: parent
         }
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            bottomMargin: 60
+            leftMargin: 20
+            bottom: parent.bottom
+            left: parent.left
+        }
+
+        signalTarget: sdsModel
     }
 }

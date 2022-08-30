@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/tech/strata/sgwidgets/debug.1.0">
+        <file>qmldir</file>
+        <file>SGQmlDebug/SGQmlErrorListButton.qml</file>
+        <file>SGQmlDebug/SGQmlErrorListPopUp.qml</file>
+        <file>SGQmlDebug/SGQmlErrorListView.qml</file>
+        <file>SGQmlDebug/SGQmlErrorListViewDelegate.qml</file>
+    </qresource>
+</RCC>
+

@@ -252,8 +252,10 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
     switch (replicatorType) {
         case ReplicatorType::Pull:
             _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+            break;
         case ReplicatorType::Push:
             _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
+            break;
         default:
             _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
     }
@@ -352,8 +354,10 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
     switch (replicatorType) {
         case ReplicatorType::Pull:
             _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+            break;
         case ReplicatorType::Push:
             _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
+            break;
         default:
             _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
     }

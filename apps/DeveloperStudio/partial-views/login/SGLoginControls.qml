@@ -12,7 +12,7 @@ import QtQuick.Controls 2.0
 import Qt.labs.settings 1.0
 import QtGraphicalEffects 1.12
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/login_utilities.js" as LoginUtils
 import "qrc:/js/login_storage.js" as UsernameStorage
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/general/"
@@ -140,6 +140,7 @@ Item {
 
         SGNotificationToast {
             id: loginErrorRect
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: usernameField.width
         }
 
@@ -150,10 +151,10 @@ Item {
             CheckBox {
                 id: rememberCheckBox
                 text: qsTr("Remember Me")
-                checked: Authenticator.settings.rememberMe
+                checked: LoginUtils.settings.rememberMe
                 KeyNavigation.tab: loginButton.enabled ? loginButton : usernameField
                 onCheckedChanged: {
-                    Authenticator.settings.rememberMe = checked
+                    LoginUtils.settings.rememberMe = checked
                 }
                 padding: 0
                 palette.highlight: Theme.palette.onsemiOrange
@@ -237,8 +238,8 @@ Item {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
-                    connectionStatus.currentId = Authenticator.getNextId()
-                    Authenticator.login(login_info)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.login(login_info)
                 }
 
                 Keys.onReturnPressed:{
@@ -299,24 +300,59 @@ Item {
             var resultObject = JSON.parse(result)
             //console.log(Logger.devStudioCategory, "Login result received")
             if (resultObject.response === "Connected") {
-                connectionStatus.text = "Connected, Loading UI..."
-                usernameField.updateModel()
-                sessionControls.loginSuccess(resultObject)
-                let data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
-                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                connectionStatus.text = "Registering Client..."
+                console.log(Logger.devStudioLoginCategory, "Registering client with hcs")
+
+                registerClient(
+                            function(result) {
+                                console.log(Logger.devStudioLoginCategory, "Registration with server was successful")
+
+                                connectionStatus.text = "Connected, Loading UI..."
+                                usernameField.updateModel()
+                                sessionControls.loginSuccess(resultObject)
+
+                                let data = {
+                                    "user_id": resultObject.user_id,
+                                    "first_name":resultObject.first_name,
+                                    "last_name": resultObject.last_name
+                                }
+                                NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                            },
+                            function(error) {
+                                console.log("Registration with server failed", JSON.stringify(error))
+                                showLoginError("Registration with HCS failed.")
+                            })
             } else {
-                loginControls.visible = true
-                connectionStatus.text = ""
-                loginErrorRect.color = "red"
                 if (resultObject.response === "No Connection") {
-                    loginErrorRect.text = "Connection to authentication server failed. Please check your internet connection and try again."
+                    var errorString = "Connection to authentication server failed. Please check your internet connection and try again."
                 } else if (resultObject.response === "Server Error") {
-                    loginErrorRect.text = "Authentication server is unable to process your request at this time. Please try again later."
+                    errorString = "Authentication server is unable to process your request at this time. Please try again later."
                 } else {
-                    loginErrorRect.text = "Username and/or password is incorrect. Please try again."
+                    errorString = "Username and/or password is incorrect. Please try again."
                 }
-                loginErrorRect.show()
+
+                showLoginError(errorString);
             }
         }
+    }
+
+    function showLoginError(errorString) {
+        loginControls.visible = true
+        connectionStatus.text = ""
+        loginErrorRect.color = Theme.palette.error
+        loginErrorRect.text = errorString
+        loginErrorRect.show()
+    }
+
+    function registerClient(callbackResult, callbackError) {
+        var reply = sdsModel.strataClient.sendRequest("register_client", {"api_version":"2.0"});
+
+        reply.finishedSuccessfully.connect(function(result) {
+            callbackResult(result)
+        })
+
+        reply.finishedWithError.connect(function(error) {
+            callbackError(error)
+        })
     }
 }

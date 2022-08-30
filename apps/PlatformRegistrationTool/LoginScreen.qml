@@ -22,8 +22,11 @@ FocusScope {
         Logout,
         InProgress,
         LoginSucceed,
-        LoginFailed
+        LoginFailed,
+        SessionExpired
     }
+
+    signal pushSettingsPageRequested
 
     Component.onCompleted: {
         if (prtModel.authenticator.xAccessToken.byteLength > 0) {
@@ -50,6 +53,7 @@ FocusScope {
             statusText.text = ""
             if (status === true) {
                 loginStatus = LoginScreen.LoginSucceed
+                delayWizardPushTimer.start()
             } else {
                 if (errorString.length > 0) {
                     loginStatus = LoginScreen.LoginFailed
@@ -69,6 +73,7 @@ FocusScope {
             if (status === true) {
                 loginStatus = LoginScreen.LoginSucceed
                 passwordEdit.text = ""
+                delayWizardPushTimer.start()
             } else {
                 loginStatus = LoginScreen.LoginFailed
                 statusText.text = errorString
@@ -78,11 +83,18 @@ FocusScope {
         onLogoutStarted: {
             statusText.text = "Disconnecting..."
             loginStatus = LoginScreen.InProgress
+            loginScreen.pop()
         }
 
         onLogoutFinished: {
             loginStatus = LoginScreen.Logout
             statusText.text = ""
+        }
+
+        onSessionExpired: {
+            statusText.text = "Session expired, please login again"
+            loginStatus = LoginScreen.SessionExpired
+            loginScreen.pop()
         }
     }
 
@@ -120,6 +132,7 @@ FocusScope {
             text: prtModel.authenticator.username
             enabled: loginStatus === LoginScreen.Logout
                      || loginStatus === LoginScreen.LoginFailed
+                     || loginStatus === LoginScreen.SessionExpired
         }
 
         SGWidgets.SGTextFieldEditor {
@@ -178,7 +191,7 @@ FocusScope {
 
                     iconColor: {
                         if (loginStatus === LoginScreen.LoginSucceed) {
-                            return Theme.palette.green
+                            return TangoTheme.palette.chameleon2
                         } else if (loginStatus === LoginScreen.LoginFailed) {
                             return TangoTheme.palette.scarletRed2
                         }
@@ -199,7 +212,7 @@ FocusScope {
                 horizontalAlignment: Text.AlignHCenter
                 font.bold: true
                 textColor: {
-                    if (loginStatus === LoginScreen.LoginFailed) {
+                    if (loginStatus === LoginScreen.LoginFailed || loginStatus === LoginScreen.SessionExpired) {
                         return "white"
                     }
 
@@ -207,7 +220,7 @@ FocusScope {
                 }
 
                 color: {
-                    if (loginStatus === LoginScreen.LoginFailed) {
+                    if (loginStatus === LoginScreen.LoginFailed || loginStatus === LoginScreen.SessionExpired) {
                         return TangoTheme.palette.error
                     }
 
@@ -227,11 +240,24 @@ FocusScope {
         }
     }
 
+    //some delay to finish login animation
+    Timer {
+        id: delayWizardPushTimer
+        interval: 500
+        onTriggered: {
+            pushSettingsPageRequested()
+        }
+    }
+
     function login() {
         if (usernameEdit.enabled === false) {
             return
         }
 
         prtModel.authenticator.login(usernameEdit.text, passwordEdit.text, autoLoginCheckbox.checked);
+    }
+
+    function pop() {
+        StackView.view.pop(null)
     }
 }

@@ -40,7 +40,9 @@ StackLayout {
     property alias controlViewContainer: controlViewContainer
     property bool controlViewIsOutOfDate: false
     property bool firmwareIsOutOfDate: false
-    property bool platformMetaDataInitialized: sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized;
+    property bool platformMetaDataInitialized: (model.is_assisted && model.class_id.length === 0)
+                                               ? sdsModel.documentManager.getClassDocuments(model.controller_class_id).metaDataInitialized
+                                               : sdsModel.documentManager.getClassDocuments(model.class_id).metaDataInitialized
     property bool platformStackInitialized: false
     property bool userSettingsInitialized: false
     property string controller_class_id: model.controller_class_id
@@ -57,7 +59,9 @@ StackLayout {
     onPlatformOutOfDateChanged: {
         // Both of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' can be changed right after each other,
         // so we need to use 'Qt.callLater' for showing proper notification.
-        Qt.callLater(launchOutOfDateNotificationLater)
+        if (platformOutOfDate) {
+            Qt.callLater(launchOutOfDateNotificationLater)
+        }
     }
 
     onFullyInitializedChanged: {
@@ -80,12 +84,6 @@ StackLayout {
 
     Component.onDestruction: {
         controlViewContainer.removeControl()
-        if(documentNotificationUUID !== ""){
-            Notifications.destroyNotification(documentNotificationUUID)
-        }
-        if(updateNotificationUUID !== ""){
-            Notifications.destroyNotification(updateNotificationUUID)
-        }
     }
 
     function initialize () {
@@ -100,7 +98,13 @@ StackLayout {
     }
 
     function openSettings() {
+        NavigationControl.switchToSelectedView(model.device_id)
         model.view = "settings"
+    }
+
+    function openDocuments() {
+        NavigationControl.switchToSelectedView(model.device_id)
+        model.view = "collateral"
     }
 
     ControlViewContainer {
@@ -116,13 +120,15 @@ StackLayout {
 
         ContentView {
             class_id: model.class_id
+            controller_class_id: model.controller_class_id
+            is_assisted: model.is_assisted
         }
 
         Action {
             id: documentsHistoryShowDocumentsView
             text: "View documents"
             onTriggered: {
-                model.view = "collateral"
+                openDocuments()
             }
         }
 
@@ -142,24 +148,30 @@ StackLayout {
         }
 
         function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
-            if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate == false) {
+            if (NavigationControl.userSettings.notifyOnCollateralDocumentUpdate === false) {
                 return
             }
 
+            let description = ""
             if (Object.keys(unseenPdfItems).length == 1 && Object.keys(unseenDownloadItems).length == 0) {
-                var description = "A document has been updated:\n" + unseenPdfItems[0]
+                description = "A document has been updated:\n" + unseenPdfItems[0]
             } else if (Object.keys(unseenPdfItems).length == 0 && Object.keys(unseenDownloadItems).length == 1) {
-                var description = "A document has been updated:\n" + unseenDownloadItems[0]
+                description = "A document has been updated:\n" + unseenDownloadItems[0]
             } else {
                 var numberDocumentsUpdated = Number(Object.keys(unseenPdfItems).length) + Number(Object.keys(unseenDownloadItems).length)
-                var description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
+                description = "Multiple documents have been updated (" + numberDocumentsUpdated + " total)"
             }
 
-            if (platformStack.currentIndex == 0) { // check if control view is displayed
-              documentNotificationUUID = Notifications.createNotification(
+            if (platformStack.currentIndex !== 1 || platformStack.visible === false) { // check if collateral is already not displayed
+                if (documentNotificationUUID !== "") {
+                    // remove previous notification
+                    Notifications.destroyNotification(documentNotificationUUID)
+                }
+                documentNotificationUUID = Notifications.createNotification(
                     "Document updates for this platform",
                     Notifications.Info,
                     "current",
+                    platformStack,
                     {
                         "description": description,
                         "iconSource": "qrc:/sgimages/exclamation-circle.svg",
@@ -213,23 +225,28 @@ StackLayout {
     }
 
     function launchOutOfDateNotification(controlViewOutOfDate,firmwareOutOfDate){
-        if((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && model.view !== "settings" && platformStack.visible){
+        if ((controlViewOutOfDate || firmwareOutOfDate) && NavigationControl.userSettings.notifyOnFirmwareUpdate && (platformStack.currentIndex !== 2 || platformStack.visible === false)) {
             var description = ""
-            if(firmwareOutOfDate && controlViewOutOfDate){
+            if (firmwareOutOfDate && controlViewOutOfDate) {
                 description = "Newer versions of firmware and software are available."
-            } else if(firmwareOutOfDate){
+            } else if (firmwareOutOfDate) {
                 description = "A newer version of firmware is available."
-            } else{
+            } else {
                 description = "A newer version of software is available."
             }
 
-           updateNotificationUUID = Notifications.createNotification("Update available",
+            if (updateNotificationUUID !== "") {
+                // remove previous notification
+                Notifications.destroyNotification(updateNotificationUUID)
+            }
+            updateNotificationUUID = Notifications.createNotification("Update available",
                                                 Notifications.Info,
                                                 "current",
+                                                platformStack,
                                                 {
                                                     "description": description,
                                                     "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                                                    "actions": [close,goToSettings,disableNotifyOnFirmwareUpdate],
+                                                    "actions": [close, goToSettings, disableNotifyOnFirmwareUpdate],
                                                     "timeout": 0
                                                 }
                                              )

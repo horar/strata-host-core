@@ -13,9 +13,9 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/js/platform_selection.js" as PlatformSelection
 
 ColumnLayout {
     id: software
@@ -27,7 +27,7 @@ ColumnLayout {
     property var latestVersion: ({})
     property bool downloadError: false
     property string activeDownloadUri: ""
-    property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
+    property string timestampFormat: "MMM dd yyyy, hh:mm:ss"
 
     Component.onCompleted: {
         if (platformMetaDataInitialized) {
@@ -117,7 +117,12 @@ ColumnLayout {
         if (objectIsEmpty(latestVersion)) {
             // upToDate remains true
             console.warn(Logger.devStudioCategory, "Could not find any control views on server for class id:", platformStack.class_id)
-            return;
+            return
+        }
+
+        if (SGVersionUtils.valid(latestVersion.version) === false) {
+            console.warn(Logger.devStudioCategory, "Invalid software version", latestVersion.version, "for class id:", platformStack.class_id)
+            return
         }
 
         if (installedVersion.version === "") {
@@ -128,7 +133,8 @@ ColumnLayout {
             return
         }
 
-        if (SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
+        if ((SGVersionUtils.valid(installedVersion.version) === false) ||
+            SGVersionUtils.greaterThan(latestVersion.version, installedVersion.version)) {
             upToDate = false
             controlViewIsOutOfDate = true
         }
@@ -195,7 +201,9 @@ ColumnLayout {
                 Layout.leftMargin: 10
             }
 
-            Text {
+            SGText {
+                fontSizeMultiplier: 1.38
+                color: "#666"
                 text: {
                     if (installedVersion.version === "" && objectIsEmpty(latestVersion)) {
                         return "No software version available for download"
@@ -227,7 +235,7 @@ ColumnLayout {
                 Layout.leftMargin: 10
 
                 SGIcon {
-                    iconColor: "lime"
+                    iconColor: Theme.palette.success
                     source: "qrc:/sgimages/exclamation-circle.svg"
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
@@ -336,7 +344,7 @@ ColumnLayout {
 
                             Rectangle {
                                 id: progressBar
-                                color: downloadError ? "red" : "#57d445"
+                                color: downloadError ? Theme.palette.error : Theme.palette.success
                                 height: barBackground1.height
                                 width: 0
 

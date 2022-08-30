@@ -14,13 +14,30 @@ project(StrataDeveloperStudio
 set(PROJECT_WIN32_ICO resources/icons/app/on-logo.ico)
 set(PROJECT_MACOS_ICNS on-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.devstudio)
+if(APPS_FEATURE_BLE)
+    string(CONCAT PROJECT_BUNDLE_ADDON
+        "<key>NSBluetoothAlwaysUsageDescription</key>"
+        "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
+    )
+    set(BLUETOOTH_SOURCES
+        source/BleDeviceModel.cpp
+    )
+endif()
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
 set(QT5_MINIMUM_VERSION 5.12.4)
+
+if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+    if(WIN32)
+        set(PROJECT_DEPENDENCIES "com.onsemi.strata.hcs,com.onsemi.strata.libs,com.onsemi.strata.utils")
+    else()
+        set(PROJECT_DEPENDENCIES "com.onsemi.strata.hcs,com.onsemi.strata.libs")
+    endif()
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml Xml WebEngine Charts RemoteObjects Svg
+    COMPONENTS Core Gui Widgets Quick Qml Xml WebEngine RemoteObjects Svg
     REQUIRED
 )
 
@@ -32,7 +49,6 @@ qt5_generate_repc(NODE_RO_SRCS ${CMAKE_SOURCE_DIR}/apps/hcs3/src/HostControllerS
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
-    source/AppUi.cpp
     source/SDSModel.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
@@ -40,6 +56,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DownloadDocumentListModel.cpp
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
+    source/FileDownloader.cpp
     source/FirmwareUpdater.cpp
     source/SGQrcTreeModel.cpp
     source/SGQrcTreeNode.cpp
@@ -64,16 +81,17 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     partial-views/control-view-creator/template-views.qrc
 
     qml-dev-studio.qrc
-    qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
+    ${BLUETOOTH_SOURCES}
 )
 
 set(${PROJECT_NAME}_ENABLED_PLUGINS "")
 add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "DEBUGBAR" PLUGIN_NAME "debugbar")
 add_sds_plugin(PROJ_NAME ${PROJECT_NAME} PLUGIN_OPTION_SUFFIX "CVC" PLUGIN_NAME "cvc")
+add_qml_debug_plugin_to_version(PROJ_NAME ${PROJECT_NAME} PLUGIN_NAME "qmldebug")
 
 generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
 generate_app_build_timestamp()
@@ -102,6 +120,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::SGUtilsCpp
     strata::SGVersionUtils
     strata::StrataRPC-StrataClient
+    strata::SGCore
 
     strata::QtLogger
 )
@@ -190,5 +209,9 @@ if(APPS_CORESW_SDS_PLUGIN_CVC)
       message(WARNING "Could not locate Qt RCC compiler executable.")
     else()
        target_compile_definitions(${PROJECT_NAME} PRIVATE -DQT_RCC_EXECUTABLE="${QT_RCC_EXECUTABLE}")
+    endif()
+
+    if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+        add_subdirectory(cvc)
     endif()
 endif()

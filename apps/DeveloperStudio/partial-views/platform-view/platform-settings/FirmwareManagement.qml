@@ -14,18 +14,23 @@ import QtGraphicalEffects 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.logger 1.0
+import tech.strata.theme 1.0
 
 ColumnLayout {
     id: firmwareColumn
 
+    // do not display firmwares for controller without platform
+
     Component.onCompleted: {
-        firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
+        firmwareListModel = (platformStack.is_assisted && platformStack.class_id.length === 0)
+                            ? null
+                            : sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
         firmwareSortFilterModel.sourceModel = firmwareListModel
         firmwareList.firmwareModel = firmwareSortFilterModel
     }
 
     property var firmwareListModel: null
-    property int firmwareCount: firmwareListModel.count
+    property int firmwareCount: (firmwareListModel !== null) ? firmwareListModel.count : 0
 
     onFirmwareCountChanged: {
         checkForNewerVersion()
@@ -46,7 +51,7 @@ ColumnLayout {
     }
 
     function matchVersion() {
-        for (let i = 0; i < firmwareListModel.count; i++) {
+        for (let i = 0; i < firmwareCount; i++) {
             if (SGVersionUtils.equalTo(firmwareListModel.version(i), platformStack.firmware_version)) {
                 firmwareListModel.setInstalled(i, true)
             } else {
@@ -57,18 +62,31 @@ ColumnLayout {
 
     function checkForNewerVersion() {
         matchVersion()
-        for (let i = 0; i < firmwareListModel.count; i++) {
 
+        if (platformStack.connected === false) {
+            platformStack.firmwareIsOutOfDate = false
+            return
+        }
+
+        let isOutOfDate = false
+        for (let i = 0; i < firmwareCount; i++) {
             if (platformStack.is_assisted === true &&
                     (platformStack.controller_class_id.length === 0 ||
                      platformStack.controller_class_id !== firmwareListModel.controller_class_id(i))) {
                 continue
             }
 
-            if (SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
-                firmwareIsOutOfDate = true
+            if (SGVersionUtils.valid(firmwareListModel.version(i)) === false) {
+                console.warn(Logger.devStudioCategory, "Invalid firmware version", firmwareListModel.version(i), "for class id:", platformStack.class_id)
+                continue
+            }
+
+            if ((SGVersionUtils.valid(platformStack.firmware_version) === false) ||
+                SGVersionUtils.lessThan(platformStack.firmware_version, firmwareListModel.version(i))) {
+                isOutOfDate = true
             }
         }
+        platformStack.firmwareIsOutOfDate = isOutOfDate
     }
 
     SGText {
@@ -117,7 +135,7 @@ ColumnLayout {
             source: "qrc:/sgimages/exclamation-triangle.svg"
             Layout.preferredHeight: 30
             Layout.preferredWidth: 30
-            iconColor: "#f53847"
+            iconColor: Theme.palette.error
         }
 
         SGText {
@@ -153,7 +171,7 @@ ColumnLayout {
         sortEnabled: false
 
         function filterAcceptsRow(row) {
-            console.log(row, firmwareListModel.controller_class_id(row), platformStack.controller_class_id)
+            console.log(Logger.devStudioCategory, row, firmwareListModel.controller_class_id(row), platformStack.controller_class_id)
 
             if (platformStack.connected === false) {
                 return false //platform not connected, no firmware displayed
@@ -167,6 +185,10 @@ ColumnLayout {
 
             if (platformStack.controller_class_id.length == 0) {
                 return false //unregistered assisted platform
+            }
+
+            if (platformStack.class_id.length == 0) {
+                return false //controller without platform
             }
 
             if (firmwareListModel.controller_class_id(row) !== platformStack.controller_class_id) {

@@ -12,6 +12,7 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sglayout 1.0
+import tech.strata.theme 1.0
 
 // "layout mode" overlay that appears on top of handled objects
 
@@ -46,7 +47,7 @@ LayoutContainer {
 
         onMultiObjectsDragged: {
             if (objectInitiated != layoutOverlayRoot.objectName) {
-                rect.color = "red"
+                rect.color = Theme.palette.error
                 rect.x += x
                 rect.y += y
             }
@@ -54,7 +55,7 @@ LayoutContainer {
 
         onMultiObjectsResizeDragged: {
             if (objectInitiated != layoutOverlayRoot.objectName) {
-                rect.color = "red"
+                rect.color = Theme.palette.error
                 rect.width += width
                 rect.height += height
             }
@@ -196,7 +197,7 @@ LayoutContainer {
         Rectangle {
             id: rect
             opacity: .25
-            color: dragMouseArea.drag.active || resizeMouseArea.drag.active ? "red" : "transparent"
+            color: dragMouseArea.drag.active || resizeMouseArea.drag.active ? Theme.palette.error : "transparent"
             border.width: 1
             width: parent.width
             height: parent.height
@@ -206,7 +207,7 @@ LayoutContainer {
             id: border
             color: "transparent"
             border.width: 2
-            border.color: "#00A6CC"
+            border.color: Theme.palette.onsemiLightBlue
             visible: dragMouseArea.containsMouse && (dragMouseArea.drag.active || resizeMouseArea.drag.active) === false
             width: parent.width
             height: parent.height
@@ -216,7 +217,7 @@ LayoutContainer {
             id: selectedBorder
             color: "transparent"
             border.width: 3
-            border.color: "#0087A6"
+            border.color: Theme.palette.onsemiDarkBlue 
             visible: layoutOverlayRoot.isSelected
             width: parent.width
             height: parent.height

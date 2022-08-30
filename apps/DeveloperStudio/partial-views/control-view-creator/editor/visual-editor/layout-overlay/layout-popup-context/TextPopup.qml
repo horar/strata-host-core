@@ -11,6 +11,9 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.0
 
+import tech.strata.theme 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
+
 GenericPopup {
     id: textPopup
 
@@ -38,10 +41,12 @@ GenericPopup {
 
     DoubleValidator {
         id: doubleValidator
+        locale: "C"
     }
 
     IntValidator {
         id: intValidator
+        locale: "C"
     }
 
     RegExpValidator {
@@ -67,13 +72,17 @@ GenericPopup {
             Layout.maximumWidth: textField.implicitWidth
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
-            color: "red"
+            color: Theme.palette.error
             visible: !textPopup.validInput
         }
 
         TextField {
             id: textField
             implicitWidth: 400
+            selectByMouse: true
+            focus: true
+            persistentSelection: true
+            palette.highlight: Theme.palette.onsemiOrange
 
             onAccepted: {
                 if (okButton.enabled) {
@@ -84,6 +93,34 @@ GenericPopup {
             onTextChanged: {
                 if (textPopup.sourceProperty == "id") {
                     textPopup.validInput = !textPopup.invalidInputs.includes(text)
+                }
+            }
+
+            onActiveFocusChanged: {
+                if ((activeFocus === false) && (contextMenuPopup.visible === false)) {
+                    textField.deselect()
+                }
+            }
+
+            SGWidgets.SGContextMenuEditActions {
+                id: contextMenuPopup
+                textEditor: textField
+                copyEnabled: textField.echoMode !== TextField.Password
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.IBeamCursor
+                acceptedButtons: Qt.RightButton
+
+                onReleased: {
+                    if (containsMouse) {
+                        contextMenuPopup.popup(null)
+                    }
+                }
+
+                onClicked: {
+                    textField.forceActiveFocus()
                 }
             }
         }

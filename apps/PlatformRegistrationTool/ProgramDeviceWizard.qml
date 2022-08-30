@@ -23,7 +23,6 @@ FocusScope {
     property var assistedData: ({})
     property var controllerData: ({})
 
-    property QtObject prtModel
     property QtObject taskbarButton
 
     property int spacing: 10
@@ -114,7 +113,6 @@ FocusScope {
         id: embeddedStateMachine
 
         running: false
-        prtModel: wizard.prtModel
         jLinkConnector: wizard.jLinkConnector
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
@@ -151,7 +149,6 @@ FocusScope {
         id: assistedStateMachine
 
         running: false
-        prtModel: wizard.prtModel
         jLinkConnector: wizard.jLinkConnector
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
@@ -188,7 +185,6 @@ FocusScope {
         id: controllerStateMachine
 
         running: false
-        prtModel: wizard.prtModel
         jLinkConnector: wizard.jLinkConnector
         jlinkExePath: wizard.jlinkExePath
         breakButton: breakBtn
@@ -354,7 +350,7 @@ FocusScope {
 
                 iconColor: {
                     if (wizard.stateLoopSucceedActive) {
-                        return Theme.palette.green
+                        return TangoTheme.palette.chameleon2
                     } else if (wizard.stateLoopFailedActive || wizard.stateErrorActive) {
                         return TangoTheme.palette.scarletRed2
                     }

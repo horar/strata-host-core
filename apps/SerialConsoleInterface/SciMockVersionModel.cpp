@@ -115,8 +115,8 @@ void SciMockVersionModel::setModelRoles()
 void SciMockVersionModel::setModelData()
 {
     versions_.clear();
-    QList<MockVersion> versions = mockSupportedVersions();
+    QList<MockVersion> versions = MockUtils::supportedVersions();
     foreach(auto version, versions) {
-        versions_.push_back({version, mockVersionConvertEnumToString(version)});
+        versions_.push_back({version, MockVersionUtils::convertEnumToString(version)});
     }
 }

@@ -21,7 +21,7 @@ file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/qtQuick.js
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/
 )
 
-file(COPY  ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtItemModel.js
+file(COPY ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtItemModel.js
     ${SOURCE_DIR_EXTERN}/monaco-editor-${MONACO_TAG}/model/qtQuickModel.js
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../components/monaco/qml/tech/strata/monaco/minified/model/
 )

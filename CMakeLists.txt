@@ -54,6 +54,7 @@ add_qml_import_path(PATH ":/")
 
 if(CMAKE_BUILD_TYPE STREQUAL "OTA")
     add_custom_target(${PROJECT_NAME})
+    set(PROJECT_DEPENDENCIES "com.onsemi.strata.devstudio,com.onsemi.strata.hcs")
     generate_ifw_version(GITTAG_PREFIX "ifw_")
 endif()
 
@@ -63,6 +64,12 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 set(CMAKE_PLUGINS_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins")
 file(MAKE_DIRECTORY "${CMAKE_PLUGINS_OUTPUT_DIRECTORY}")
+
+option(APPS_FEATURE_BLE "Build DevStudio 'BLE' plugin" ON)
+add_feature_info(APPS_FEATURE_BLE APPS_FEATURE_BLE "DevStudio 'Bluetooth Low Energy' plugin")
+if(APPS_FEATURE_BLE)
+    add_compile_definitions(APPS_FEATURE_BLE=true)
+endif()
 
 option(BUILD_TESTING "Build the testing tree" ON)
 add_feature_info(BUILD_TESTING BUILD_TESTING "Build the testing tree.")

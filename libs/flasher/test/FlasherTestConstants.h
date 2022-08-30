@@ -13,7 +13,9 @@
 // data for fake firmware/bootloader
 namespace strata::FlasherTestConstants {
 
-// default timeout for QTRY_COMPARE_WITH_TIMEOUT
-constexpr int TEST_TIMEOUT = 1000;
+// default timeout for QTRY_COMPARE_WITH_TIMEOUT (maximum wait time if condition is not true)
+// - it constantly checks for condition and if it is true, it breaks the wait
+// - will reach timeout only if condition failed (therefore the whole test fails and gets aborted)
+constexpr int TEST_TIMEOUT = 3000;
 
 } // namespace strata::FlasherTestConstants

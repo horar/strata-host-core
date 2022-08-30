@@ -17,9 +17,8 @@ class CoreInterface : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(CoreInterface)
-    Q_PROPERTY(QString platformList_ READ platformList NOTIFY platformListChanged)
-    Q_PROPERTY(QString connectedPlatformList_ READ connectedPlatformList NOTIFY
-                   connectedPlatformListChanged)
+    Q_PROPERTY(QString platformList READ platformList NOTIFY platformListChanged)
+    Q_PROPERTY(QString connectedPlatformList READ connectedPlatformList NOTIFY connectedPlatformListChanged)
 
 public:
     /**
@@ -49,6 +48,11 @@ public:
     Q_INVOKABLE void sendNotification(const QString &handler, const QJsonObject &payload);
 
     /**
+     * Unregisters client from StrataRpc server
+     */
+    Q_INVOKABLE void unregisterClient();
+
+    /**
      * Function to access PlatformList_
      * @return QString of all platform list.
      */
@@ -68,16 +72,20 @@ public:
 
 signals:
     /**
-     * Signal emitted when platformList_ is updated.
-     * @param [in] platformList QString of the all platform
+     * Signal emitted when platformList is updated.
      */
-    void platformListChanged(const QString &platformList);
+    void platformListChanged();
 
     /**
-     * Signal emitted when connectedPlatformList_ is updated.
-     * @param [in] connectedPlatformList QString of the all connected platforms
+     * Signal emitted when connectedPlatformList is updated.
      */
-    bool connectedPlatformListChanged(const QString &connectedPlatformList);
+    bool connectedPlatformListChanged();
+
+    /**
+     * Signal emitted when connected_platforms notification is received (regardless if connectedPlatformList_ did changed).
+     * @param [in] payload QJsonObject of connected_platforms notification payload.
+     */
+    void connectedPlatformListMessage(const QJsonObject &payload);
 
     /**
      * Signal emitted when a platform notification is received
@@ -141,6 +149,26 @@ signals:
      */
     void downloadPlatformFilesFinished(const QJsonObject &payload);
 
+#ifdef APPS_FEATURE_BLE
+    /**
+     * Signal emitted when bluetooth_scan notification is received.
+     * @param [in] payload QJsonObject of bluetooth_scan notification payload.
+     */
+    void bluetoothScan(const QJsonObject &payload);
+#endif // APPS_FEATURE_BLE
+
+    /**
+     * Signal emitted when connect_device notification is received.
+     * @param [in] payload QJsonObject of connect_device notification payload.
+     */
+    void connectDevice(const QJsonObject &payload);
+
+    /**
+     * Signal emitted when disconnect_device notification is received.
+     * @param [in] payload QJsonObject of disconnect_device notification payload.
+     */
+    void disconnectDevice(const QJsonObject &payload);
+
 private:
     void processPlatformNotification(const QJsonObject &payload);
     void processAllPlatformsNotification(const QJsonObject &payload);
@@ -154,8 +182,13 @@ private:
     void processDownloadPlatformSingleFileProgressNotification(const QJsonObject &payload);
     void processDownloadPlatformSingleFileFinishedNotification(const QJsonObject &payload);
     void processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload);
+#ifdef APPS_FEATURE_BLE
+    void processBluetoothScanNotification(const QJsonObject &payload);
+#endif // APPS_FEATURE_BLE
+    void processConnectDeviceNotification(const QJsonObject &payload);
+    void processDisconnectDeviceNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};
-    QString platformList_{"{ \"list\":[]}"};
-    QString connectedPlatformList_{"{ \"list\":[]}"};
+    QString platformList_{"[]"};
+    QString connectedPlatformList_{"[]"};
 };

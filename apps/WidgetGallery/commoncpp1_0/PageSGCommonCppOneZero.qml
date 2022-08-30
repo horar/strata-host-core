@@ -64,7 +64,7 @@ FocusScope {
 
             Rectangle {
                 anchors.fill: parent
-                color: Theme.palette.darkBlue
+                color:TangoTheme.palette.skyBlue3
             }
 
             SGWidgets.SGIconButton {
@@ -78,7 +78,7 @@ FocusScope {
                 icon.source: "qrc:/sgimages/chevron-left.svg"
                 backgroundOnlyOnHovered: true
                 iconColor: "white"
-                highlightImplicitColor: Theme.palette.green
+                highlightImplicitColor: TangoTheme.palette.chameleon2
 
                 onClicked: {
                     pop()
@@ -109,7 +109,7 @@ FocusScope {
 
             Rectangle {
                 anchors.fill: parent
-                color: Theme.palette.darkBlue
+                color:TangoTheme.palette.skyBlue3
             }
 
             SGWidgets.SGText {
@@ -137,7 +137,7 @@ FocusScope {
 
         Rectangle {
             anchors.fill: parent
-            color: Theme.palette.darkBlue
+            color:TangoTheme.palette.skyBlue3
         }
 
         Flickable {
@@ -187,7 +187,7 @@ FocusScope {
                             checkable: true
                             ButtonGroup.group: group
                             minimumContentWidth: 240
-                            color: Theme.palette.green
+                            color: TangoTheme.palette.chameleon2
 
                             onClicked: {
                                 setPage(index)

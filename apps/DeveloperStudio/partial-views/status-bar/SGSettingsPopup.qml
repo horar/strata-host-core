@@ -10,6 +10,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
+import tech.strata.logconf 1.0 as LcuPlugin
 import "../"
 import "../general/"
 
@@ -106,7 +107,7 @@ SGStrataPopup {
         }
 
         SGText {
-            text: "Other Settings"
+            text: "Logging configuration"
             fontSizeMultiplier: 1.3
         }
 
@@ -117,22 +118,10 @@ SGStrataPopup {
             color: "#666"
         }
 
-        SGSettingsCheckbox {
-            text: "Request to opt-out of data collection"
-            checked: userSettings.hasOptedOut
-
-            onCheckedChanged: {
-                userSettings.hasOptedOut = checked
-                userSettings.saveSettings()
-            }
-        }
-
-        SGText {
-            text: "* Request to opt-out will take effect after logout or app close"
+        LcuPlugin.LogLevel {
+            id: logLevel
             Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            fontSizeMultiplier: 0.9
-            horizontalAlignment: Text.AlignHCenter
+            fileName: ""
         }
     }
 }

@@ -15,6 +15,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 import "../general"
 import "components/"
@@ -33,7 +34,7 @@ Item {
 
     onVisibleChanged: {
         if (!openProjectContainer.visible) {
-            alertMessage.Layout.preferredHeight = 0
+            alertMessage.hideInstantly()
         }
     }
 
@@ -72,7 +73,7 @@ Item {
         if (!SGUtilsCpp.exists(localFile)) {
             console.warn("Tried to open non-existent QRC file/project")
             if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
+                alertMessage.hideInstantly()
             }
             if (inRecentProjects) {
                 alertMessage.text = "QRC file does not exist anymore. Removed from your recent projects."
@@ -184,8 +185,9 @@ Item {
 
         SGNotificationToast {
             id: alertMessage
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width/1.5
-            color: "red"
+            color: Theme.palette.error
         }
 
         SGText {

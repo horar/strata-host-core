@@ -42,6 +42,8 @@ private slots:
     void switchToBootloaderAndBackEmbeddedTest();
     void switchToBootloaderAndBackAssistedTest();
 
+    void switchToBootloaderAndSendNotificationTest();
+
     void cancelOperationEmbeddedTest();
     void cancelOperationAssistedTest();
 

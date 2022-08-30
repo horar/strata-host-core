@@ -8,19 +8,15 @@
  */
 #pragma once
 
-#include <QCoreApplication>
-#include <QEventLoop>
 #include <QObject>
-
-#include "ClientConnector.h"
 #include "QtTest.h"
-#include "ServerConnector.h"
 
 class ConnectorsTest : public QObject
 {
     Q_OBJECT
 
 private slots:
+    void initTestCase();
     void testOpenServerConnectorFaild();
     void testServerAndClient();
     void testMultipleClients();
@@ -32,6 +28,7 @@ private slots:
     void testClientConnectorErrorSignals();
 
 private:
-    void waitForZmqMessages(int delay = 100);
+    void waitForZmqMessages(int delay);
+
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
 };

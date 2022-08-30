@@ -37,8 +37,6 @@ class SGSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserSt
     /* When sort is disabled, order from source model is used */
     Q_PROPERTY(bool sortEnabled READ sortEnabled WRITE setSortEnabled NOTIFY sortEnabledChanged)
 
-    Q_ENUMS(FilterSyntax)
-
 public:
     explicit SGSortFilterProxyModel(QObject *parent = nullptr);
 
@@ -55,6 +53,7 @@ public:
     void setFilterPattern(const QString &filter);
 
     enum FilterSyntax { RegExp, Wildcard, FixedString };
+    Q_ENUM(FilterSyntax)
 
     FilterSyntax filterPatternSyntax() const;
     void setFilterPatternSyntax(FilterSyntax syntax);
@@ -78,6 +77,7 @@ public:
     Q_INVOKABLE int mapIndexToSource(int i);
     Q_INVOKABLE int mapIndexFromSource(int i);
     Q_INVOKABLE bool matches(const QString &text) const;
+    Q_INVOKABLE void invalidateFilter();
 
 signals:
     void countChanged();

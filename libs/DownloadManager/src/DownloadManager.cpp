@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #include "DownloadManager.h"
 #include "logging/LoggingQtCategories.h"
 #include "InternalDownloadRequest.h"
@@ -33,7 +32,7 @@ DownloadManager::DownloadManager(QNetworkAccessManager *manager, QObject *parent
 
 DownloadManager::~DownloadManager()
 {
-    for (QNetworkReply* reply : currentDownloads_) {
+    for (QNetworkReply* reply : qAsConst(currentDownloads_)) {
         reply->abort();
         reply->deleteLater();
     }
@@ -61,7 +60,7 @@ QString DownloadManager::download(
     qCDebug(lcDownloadManager) << "new download request" << groupId;
 
     if (itemList.isEmpty()) {
-        QTimer::singleShot(1ms, [this, groupId]() {
+        QTimer::singleShot(1ms, this, [this, groupId]() {
             emit groupDownloadFinished(groupId, "Nothing to download");
         });
 
@@ -86,7 +85,7 @@ QString DownloadManager::download(
     }
 
     //to make sure response is always asynchronious
-    QTimer::singleShot(1ms, [this, oneValidRequest]() {
+    QTimer::singleShot(1ms, this, [this, oneValidRequest]() {
         if (oneValidRequest) {
             for (int i = 0; i < maxDownloadCount_; ++i) {
                 startNextDownload();
@@ -139,7 +138,7 @@ QString DownloadManager::resolveUniqueFilePath(const QString &filePath)
 QList<DownloadManager::DownloadResponseItem> DownloadManager::getResponseList(const QString &groupId)
 {
     QList<DownloadResponseItem> list;
-    for (const auto item : internalRequestList_) {
+    for (const auto item : qAsConst(internalRequestList_)) {
 
         if (item->groupId != groupId) {
             continue;
@@ -171,7 +170,7 @@ void DownloadManager::abortAll(const QString &groupId)
     group->aborted = true;
 
     //stops pending requests
-    for (auto item : internalRequestList_) {
+    for (auto item : qAsConst(internalRequestList_)) {
         if (item->groupId != groupId) {
             continue;
         }
@@ -182,7 +181,7 @@ void DownloadManager::abortAll(const QString &groupId)
     }
 
     //stops running requests
-    for (auto const &reply : currentDownloads_) {
+    for (auto const &reply : qAsConst(currentDownloads_)) {
         InternalDownloadRequest *internalRequest = qobject_cast<InternalDownloadRequest*>(reply->request().originatingObject());
         if (internalRequest == nullptr) {
             qCCritical(lcDownloadManager) << "cannot cast originating object";
@@ -272,33 +271,27 @@ void DownloadManager::networkReplyFinishedHandler()
     internalRequest->savedFile.close();
 
     QString errorString;
-    if (reply->error() == QNetworkReply::NoError) {
-        if (isHttpRedirect(reply)) {
+    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if (reply->error() != QNetworkReply::NoError) {
+        errorString = "Network error: " + reply->errorString();
+    } else if (statusCode < 200 || statusCode >= 300) {
+        errorString = "Reply error, status code is " + QString::number(statusCode);
+    } else {
+        QByteArray data = reply->readAll();
+        if (data.size() > 0) {
+            errorString = writeToFile(internalRequest->savedFile, data);
+        }
 
-            qCWarning(lcDownloadManager)
-                    << "Download request redirected"
-                    << reply->url().toString();
-
-            errorString = "request redirected";
+        if (internalRequest->md5.isEmpty()) {
+            qCDebug(lcDownloadManager) << "hash not provided, cannot verify downloaded file";
         } else {
-            QByteArray data = reply->readAll();
-            if (data.size() > 0) {
-                errorString = writeToFile(internalRequest->savedFile, data);
-            }
-
-            if (internalRequest->md5.isEmpty()) {
-                qCDebug(lcDownloadManager) << "hash not provided, cannot verify downloaded file";
+            if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5)) {
+                qCDebug(lcDownloadManager) << "hash verification successful";
             } else {
-                if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5)) {
-                    qCDebug(lcDownloadManager) << "hash verification successful";
-                } else {
-                    errorString = "hash verification failed";
-                    qCWarning(lcDownloadManager) << errorString;
-                }
+                errorString = "hash verification failed";
+                qCWarning(lcDownloadManager) << errorString;
             }
         }
-    } else {
-        errorString = "Network Error: " + reply->errorString();
     }
 
     prepareResponse(internalRequest, errorString);
@@ -307,6 +300,26 @@ void DownloadManager::networkReplyFinishedHandler()
     reply->deleteLater();
 
     startNextDownload();
+}
+
+void DownloadManager::networkReplyRedirectedHandler()
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    if (reply == nullptr) {
+        return;
+    }
+
+    InternalDownloadRequest *internalRequest = qobject_cast<InternalDownloadRequest*>(reply->request().originatingObject());
+    if (internalRequest == nullptr) {
+        qCCritical(lcDownloadManager) << "cannot cast originating object";
+        return;
+    }
+
+    qCInfo(lcDownloadManager)
+            << "request redirected"
+            << internalRequest->url.toString()
+            << "->"
+            << reply->url().toString();
 }
 
 void DownloadManager::startNextDownload()
@@ -410,7 +423,7 @@ void DownloadManager::processRequest(InternalDownloadRequest *internalRequest, c
 
 InternalDownloadRequest* DownloadManager::findNextPendingDownload()
 {
-    for (InternalDownloadRequest *item : internalRequestList_) {
+    for (InternalDownloadRequest *item : qAsConst(internalRequestList_)) {
         if (item->state == InternalDownloadRequest::DownloadState::Pending) {
             return item;
         }
@@ -430,6 +443,7 @@ QNetworkReply* DownloadManager::postNetworkRequest(const QUrl &url, QObject *ori
 {
     QNetworkRequest request(url);
     request.setOriginatingObject(originatingObject);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
 
     QNetworkReply *reply = networkManager_->get(request);
 
@@ -441,21 +455,13 @@ QNetworkReply* DownloadManager::postNetworkRequest(const QUrl &url, QObject *ori
     reply->setProperty("newProgress", false);
 
     connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::networkReplyReadyReadHandler);
-
     connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::networkReplyProgressHandler);
-
     connect(reply, &QNetworkReply::finished, this, &DownloadManager::networkReplyFinishedHandler);
+    connect(reply, &QNetworkReply::redirected, this, &DownloadManager::networkReplyRedirectedHandler);
 
     currentDownloads_.append(reply);
 
     return reply;
-}
-
-bool DownloadManager::isHttpRedirect(QNetworkReply *reply)
-{
-    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    return statusCode == 301 || statusCode == 302 || statusCode == 303
-            || statusCode == 305 || statusCode == 307 || statusCode == 308;
 }
 
 QString DownloadManager::writeToFile(QFile &file, const QByteArray &data)
@@ -549,7 +555,7 @@ void DownloadManager::resolveGroupProgress(
     filesCompleted = 0;
     filesTotal = 0;
 
-    for (auto const item : internalRequestList_) {
+    for (auto const item : qAsConst(internalRequestList_)) {
         if (item->groupId == groupId) {
             ++filesTotal;
             if (item->state == InternalDownloadRequest::DownloadState::Finished
@@ -587,6 +593,5 @@ void DownloadManager::abortReply(QNetworkReply *reply)
 
     reply->abort();
 }
-
 
 } //namespace

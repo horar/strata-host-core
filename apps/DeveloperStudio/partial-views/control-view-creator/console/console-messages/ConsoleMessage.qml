@@ -21,7 +21,7 @@ TextEdit {
     color: current ? "black" : "#777"
     readOnly: true
     selectByMouse: false // selection determined by dragArea
-    selectionColor: Theme.palette.highlight
+    selectionColor: Theme.palette.onsemiOrange
     persistentSelection: true
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontMultiplier
 

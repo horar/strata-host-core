@@ -10,7 +10,8 @@
 
 #include <QObject>
 
-#include "Message.h"
+#include "RpcError.h"
+#include "RpcRequest.h"
 
 class QThread;
 
@@ -20,7 +21,6 @@ template <class HandlerArgument>
 class Dispatcher;
 class ServerConnector;
 class ClientsController;
-enum class ServerConnectorError : short;
 
 class StrataServer : public QObject
 {
@@ -28,19 +28,7 @@ class StrataServer : public QObject
     Q_DISABLE_COPY(StrataServer);
 
 public:
-    /**
-     * Enum to describe errors
-     */
-    enum class ServerError {
-        FailedToInitializeServer,
-        FailedToRegisterHandler,
-        FailedToUnregisterHandler,
-        FailedToRegisterClient,
-        FailedToUnregisterClient,
-        FailedToBuildClientMessage,
-        HandlerNotFound
-    };
-    Q_ENUM(ServerError);
+    typedef std::function<void(const RpcRequest &)> ServerHandler;
 
     /**
      * StrataServer constructor
@@ -48,7 +36,9 @@ public:
      * @param [in] useDefaultHandlers boolean to use the built in handlers for register_client and
      * unregister commands. The default value is true.
      */
-    StrataServer(const QString &address, bool useDefaultHandlers = true, QObject *parent = nullptr);
+    StrataServer(
+            const QString &address,
+            QObject *parent = nullptr);
 
     /**
      * StrataServer destructor
@@ -69,7 +59,9 @@ public:
      * @param [in] handler function pointer to function of type StrataHandler.
      * @return True if the handler is added to the handlers list. False otherwise.
      */
-    bool registerHandler(const QString &handlerName, StrataHandler handler);
+    bool registerHandler(
+            const QString &handlerName,
+            ServerHandler handler);
 
     /**
      * Remove a handler from the registered handlers in the server's dispatcher.
@@ -80,72 +72,53 @@ public:
      */
     bool unregisterHandler(const QString &handlerName);
 
+    /**
+     * Cliend Id of the first client.
+     * @return client id if client exists, otherwise empty QByteArray
+     */
+    QByteArray firstClientId() const;
+
 public slots:
     /**
-     * Slot to send a message to a client. This overload is used when responding to a prevues client
-     * message.
-     * @param [in] clientMessage Message struct that have information about the client original
-     * client message. This will be used to determine the client and message ids.
-     * @param [in] jsonObject QJsonObject of response/notification payload.
-     * @param [in] responseType The type of the server message.
+     * Sends json-rpc reply to specified client
      */
-    void notifyClient(const Message &clientMessage, const QJsonObject &jsonObject,
-                      const ResponseType responseType);
+    void sendReply(
+            const QByteArray &clientId,
+            const QJsonValue &id,
+            const QJsonObject &result);
 
     /**
-     * Slot to send a message to a client. This overload is used to send unsolicited notifications
-     * from the server where there is no corresponding client message.
-     * @param [in] clientId client id.
-     * @param [in] handlerName The name of the handler in the client side.
-     * @param [in] jsonObject QJsonObject of response/notification payload.
-     * @param [in] responseType The type of the server message.
+     * Sends json-rpc notification to specified client
      */
-    void notifyClient(const QByteArray &clientId, const QString &handlerName,
-                      const QJsonObject &jsonObject, const ResponseType responseType);
+    void sendNotification(
+            const QByteArray &clientId,
+            const QString &method,
+            const QJsonObject &params);
 
     /**
-     * Slot to notify all connected clients.
-     * @param [in] handlerName The name of the handler in the client side.
-     * @param [in] jsonObject QJsonObject of response/notification payload.
+     * Sends json-rpc notification to all clients
      */
-    void notifyAllClients(const QString &handlerName, const QJsonObject &jsonObject);
+    void broadcastNotification(
+            const QString &method,
+            const QJsonObject &params);
+
+    /**
+     * Sends json-rpc error to specified client
+     */
+    void sendError(
+            const QByteArray &clientId,
+            const QJsonValue &id,
+            const strata::strataRPC::RpcError &error);
 
 private slots:
     /**
-     * Slot to handler new incoming messages.
+     * Process new incoming request from client
      * @param [in] clientId client id of the sender
      * @param [in] message QByteArray of the message json string.
      */
-    void messageReceived(const QByteArray &clientId, const QByteArray &message);
-
-    /**
-     * Slot to handle dispatching client notification/requests handlers.
-     * @note This will emit errorOccurred signal if the handler is not registered.
-     * @param [in] clientMessage parsed server message.
-     */
-    void dispatchHandler(const Message &clientMessage);
-
-    /**
-     * Slot to handle errors from the ServerConnector.
-     * @param [in] errorType enum of the the error.
-     * @param [in] errorMessage description of the error.
-     */
-    void connectorErrorHandler(const ServerConnectorError &errorType, const QString &errorMessage);
+    void processRequest(const QByteArray &clientId, const QByteArray &message);
 
 signals:
-    /**
-     * Signal emitted when a new client message is parsed and ready to be dispatched
-     * @param [in] clientMessage populated Message object with the command/notification metadata.
-     */
-    void MessageParsed(const Message &clientMessage);
-
-    /**
-     * Emitted when an error has occurred.
-     * @param [in] errorType error category description.
-     * @param [in] errorMessage QString of the actual error.
-     */
-    void errorOccurred(const StrataServer::ServerError &errorType, const QString &errorMessage);
-
     /**
      * Signal to initialize the server.
      */
@@ -164,61 +137,33 @@ signals:
     void sendMessage(const QByteArray &clientId, const QByteArray &message);
 
 private:
-    /**
-     * Parse json client message based on API v2.
-     * @param [in] jsonObject QJsonObject of the json message received from the client.
-     * @param [out] clientMessage Populated Message object containing the message meta data.
-     * @return True if the message is parsed successfully, False otherwise.
-     */
-    bool buildClientMessageAPIv2(const QJsonObject &jsonObject, Message *clientMessage);
+    RpcErrorCode parseRpcRequest(const QByteArray &message, RpcRequest &request);
 
-    /**
-     * Parse json client message based on API v1.
-     * @param [in] jsonObject QJsonObject of the json message received from the client.
-     * @param [out] clientMessage Populated Message object containing the message meta data.
-     * @return True if the message is parsed successfully, False otherwise.
-     */
-    bool buildClientMessageAPIv1(const QJsonObject &jsonObject, Message *clientMessage);
+    QByteArray buildReplyMessage(
+            const QJsonValue &id,
+            const QJsonObject &result);
 
-    /**
-     * Build server message to be sent to clients using API v2.
-     * @param [in] clientMessage Message struct that have information about the client original
-     * client message. This will be used to determine the client and message ids.
-     * @param [in] payload QJsonObject of response/notification payload.
-     * @param [in] responseType The type of the server message.
-     * @return QByteArray of the json message. Empty QByteArray when there is an error while
-     * building the message.
-     */
-    [[nodiscard]] QByteArray buildServerMessageAPIv2(const Message &clientMessage,
-                                                     const QJsonObject &payload,
-                                                     const ResponseType responseType);
+    QByteArray buildNotificationMessage(
+            const QString &method,
+            const QJsonObject &params);
 
-    /**
-     * Build server message to be sent to clients using API v1.
-     * @param [in] clientMessage Message struct that have information about the client original
-     * client message. This will be used to determine the client and message ids.
-     * @param [in] payload QJsonObject of response/notification payload.
-     * @param [in] responseType The type of the server message.
-     * @return QByteArray of the json message. Empty QByteArray when there is an error while
-     * building the message.
-     */
-    [[nodiscard]] QByteArray buildServerMessageAPIv1(const Message &clientMessage,
-                                                     const QJsonObject &payload,
-                                                     const ResponseType responseType);
+    QByteArray buildErrorMessage(
+            const QJsonValue &id,
+            const strata::strataRPC::RpcError &error);
 
     /**
      * StrataServer handler for client registration.
      * @param [in] clientMessage Message object containing the client request metadata
      */
-    void registerNewClientHandler(const Message &clientMessage);
+    void registerNewClientHandler(const RpcRequest &request);
 
     /**
      * StrataServer handler for client unregistration.
      * @param [in] clientMessage Message object containing the client request metadata
      */
-    void unregisterClientHandler(const Message &clientMessage);
+    void unregisterClientHandler(const RpcRequest &request);
 
-    std::unique_ptr<Dispatcher<const Message &>> dispatcher_;
+    std::unique_ptr<Dispatcher<const RpcRequest &>> dispatcher_;
     std::unique_ptr<ClientsController> clientsController_;
     std::unique_ptr<ServerConnector> connector_;
     std::unique_ptr<QThread> connectorThread_;

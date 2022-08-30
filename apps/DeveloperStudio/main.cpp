@@ -23,7 +23,7 @@
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
-#include <StrataRPC/DeferredRequest.h>
+#include <SGCore/AppUi.h>
 
 #include "Version.h"
 #include "Timestamp.h"
@@ -35,6 +35,7 @@
 
 #include "SDSModel.h"
 #include "DocumentManager.h"
+#include "FileDownloader.h"
 #include "ResourceLoader.h"
 #include "CoreUpdate.h"
 #include "SGQrcTreeModel.h"
@@ -45,10 +46,12 @@
 #include "RunGuard.h"
 #include "FirmwareUpdater.h"
 #include "PlatformInterfaceGenerator.h"
+#ifdef APPS_FEATURE_BLE
+#include "BleDeviceModel.h"
+#endif // APPS_FEATURE_BLE
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
 
-#include "AppUi.h"
 #include "config/AppConfig.h"
 
 using strata::loggers::QtLoggerSetup;
@@ -59,10 +62,10 @@ static QJSValue appVersionSingletonProvider(QQmlEngine *engine, QJSEngine *scrip
     Q_UNUSED(engine)
 
     QJSValue appInfo = scriptEngine->newObject();
-    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data()).arg(AppInfo::versionMinor.data()).arg(AppInfo::versionPatch.data()));
+    appInfo.setProperty("version", QStringLiteral("%1.%2.%3").arg(AppInfo::versionMajor.data(), AppInfo::versionMinor.data(), AppInfo::versionPatch.data()));
     appInfo.setProperty("buildId", AppInfo::buildId.data());
     appInfo.setProperty("gitRevision", AppInfo::gitRevision.data());
-    appInfo.setProperty("countOfCommits", AppInfo::countOfCommits.data());
+    appInfo.setProperty("numberOfCommits", AppInfo::numberOfCommits.data());
     appInfo.setProperty("stageOfDevelopment", AppInfo::stageOfDevelopment.data());
     appInfo.setProperty("fullVersion", AppInfo::version.data());
     return appInfo;
@@ -86,6 +89,17 @@ void addImportPaths(QQmlApplicationEngine *engine)
     engine->addImportPath(applicationDir.path());
 
     engine->addImportPath("qrc:///");
+}
+
+void addSupportedPlugins(QQmlFileSelector *selector)
+{
+    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    supportedPlugins.removeAll(QString(""));
+
+    if (supportedPlugins.empty() == false) {
+        qCDebug(lcDevStudio) << "Supported plugins:" << supportedPlugins.join(", ");
+        selector->setExtraSelectors(supportedPlugins);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -137,7 +151,20 @@ int main(int argc, char *argv[])
     qCInfo(lcDevStudio) << QString("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
     qCInfo(lcDevStudio) << QString(logConsts::LOGLINE_LENGTH, logConsts::LOGLINE_CHAR_MINOR);
     qCInfo(lcDevStudio) << QString("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+
+#if defined(Q_OS_WIN)
+    QVersionNumber kernelVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
+    if ((kernelVersion.majorVersion() == 10) &&
+        (kernelVersion.minorVersion() == 0) &&
+        (kernelVersion.microVersion() >= 21996)) {
+        qCInfo(lcDevStudio).nospace() << "Running on Windows 11 (" << kernelVersion.majorVersion() << "." << kernelVersion.minorVersion() << ")";
+    } else {
+        qCInfo(lcDevStudio) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+    }
+#else
     qCInfo(lcDevStudio) << QString("Running on %1").arg(QSysInfo::prettyProductName());
+#endif
+
     if (QSslSocket::supportsSsl()) {
         qCInfo(lcDevStudio) << QString("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString(), QSslSocket::sslLibraryBuildVersionString());
     } else {
@@ -165,6 +192,7 @@ int main(int argc, char *argv[])
     }
 
     qmlRegisterUncreatableType<ResourceLoader>("tech.strata.ResourceLoader", 1, 0, "ResourceLoader", "You can't instantiate ResourceLoader in QML");
+    qmlRegisterUncreatableType<FileDownloader>("tech.strata.FileDownloader", 1, 0, "FileDownloader", QStringLiteral("You can't instantiate FileDownloader in QML"));
     qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
     qmlRegisterUncreatableType<DocumentManager>("tech.strata.DocumentManager", 1, 0, "DocumentManager", QStringLiteral("You can't instantiate DocumentManager in QML"));
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");
@@ -180,11 +208,21 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
     qmlRegisterUncreatableType<VisualEditorUndoStack>("tech.strata.VisualEditorUndoStack", 1, 0, "VisualEditorUndoStack", "You can't instantiate VisualEditorUndoStack in QML");
     qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
+#ifdef APPS_FEATURE_BLE
+    qmlRegisterUncreatableType<BleDeviceModel>("tech.strata.BleDeviceModel", 1, 0, "BleDeviceModel", "You can't instantiate BleDeviceModel in QML");
+#endif // APPS_FEATURE_BLE
     qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterUncreatableType<PlatformOperation>("tech.strata.PlatformOperation", 1, 0, "PlatformOperation", "You can't instantiate PlatformOperation in QML");
-    qmlRegisterInterface<strata::strataRPC::DeferredRequest>("DeferredRequest");
+    qmlRegisterInterface<strata::strataRPC::DeferredReply>("DeferredReply");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
+
+    qmlRegisterUncreatableMetaObject(
+                strata::strataRPC::staticMetaObject,
+                "tech.strata.StrataRpc",
+                1, 0,
+                "StrataRPC",
+                "You can't instantiate StrataRPC in QML");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
@@ -198,12 +236,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
-    const QStringList supportedPLugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
-    if (supportedPLugins.empty() == false) {
-        qCDebug(lcDevStudio) << "Supportrd plugins:" << supportedPLugins.join(", ");
-        selector.setExtraSelectors(supportedPLugins);
-    }
-
+    addSupportedPlugins(&selector);
     addImportPaths(&engine);
 
     engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
@@ -213,24 +246,21 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
 
-    AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+#ifdef APPS_FEATURE_BLE
+    engine.rootContext()->setContextProperty ("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
+#endif // APPS_FEATURE_BLE
+
+    strata::SGCore::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(
-        &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
         Qt::QueuedConnection);
 
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-                     [&sdsModel](const QList<QQmlError> &warnings) {
-                         QStringList msg;
-                         foreach (const QQmlError &error, warnings) {
-                             msg << error.toString();
-                         }
-                         emit sdsModel->notifyQmlError(msg.join(QStringLiteral("\n")));
-                     });
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings, sdsModel.get(), &SDSModel::handleQmlWarning);
 
     // Starting services this build?
 #ifdef START_SERVICES
     QObject::connect(
-        &ui, &AppUi::uiLoaded, &app,
+        &ui, &strata::SGCore::AppUi::uiLoaded, &app,
         [&sdsModel]() {
             bool started = sdsModel->startHcs();
             qCDebug(lcDevStudioHcs) << "hcs started =" << started;

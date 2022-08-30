@@ -1,0 +1,15 @@
+<RCC>
+    <qresource>
+        <file>assets/circuits-background-tiled.png</file>
+        <file>assets/chevron-up.png</file>
+        <file>assets/chevron-up-disabled.png</file>
+        <file>assets/chevron-down.png</file>
+        <file>assets/chevron-down-disabled.png</file>
+        <file>assets/chevron-left.png</file>
+        <file>assets/chevron-right.png</file>
+        <file>assets/checkbox_checked.png</file>
+        <file>assets/checkbox_checked_disabled.png</file>
+        <file>assets/checkbox_indeterminate.png</file>
+        <file>assets/checkbox_indeterminate_disabled.png</file>
+    </qresource>
+</RCC>

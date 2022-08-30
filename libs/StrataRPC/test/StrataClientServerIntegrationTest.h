@@ -22,11 +22,26 @@ class StrataClientServerIntegrationTest : public QObject
     Q_OBJECT
 
 private slots:
-    void testSingleClient();
-    void testMultipleClients();
-    void testCallbacks();
+
+    void init();
+    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
+
+
+    void testUnregisteredClient();
+    void testTimeoutRequest();
+    void testClientRegistration();
+    void testNotification();
+    void testBroadcastToAll();
 
 private:
     static constexpr char address_[] = "tcp://127.0.0.1:5564";
-    void waitForZmqMessages(int delay = 100);
+    void waitForMessages(int delay);
+
+    StrataServer *server;
+    StrataClient *client1;
+
+    void callRegisterClient(StrataClient *client);
+    void callUnregisterClient(strata::strataRPC::StrataClient *client);
 };

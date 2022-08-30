@@ -8,11 +8,141 @@
  */
 function Component() {}
 
+Component.prototype.createOperations = function()
+{
+    // call default implementation to actually install the content
+    component.createOperations();
+
+    let home_dir = installer.value("HomeDir");
+    let target_dir = installer.value("TargetDir");
+    if (systemInfo.productType == "windows") {
+        target_dir = target_dir.split("/").join("\\");
+        
+        let cleanup_file = target_dir + "\\cleanup_sds.bat";
+        home_dir = home_dir.split("/").join("\\");
+        let ini_dir = home_dir + "\\AppData\\Roaming\\onsemi";
+        let config_dir = getProgramDataDirectory() + "\\onsemi";
+
+        let file_content = '@echo off\n';
+        let target_file = target_dir + "\\uninstall.lock";
+        file_content += 'IF NOT EXIST "' + target_file + '" EXIT /b 0\n';
+        target_file = ini_dir + "\\Strata Developer Studio.ini";
+        file_content += 'IF EXIST "' + target_file + '" del /q "' + target_file + '"\n';
+        target_file = ini_dir + "\\desktop.ini";                // erases hidden file in case it was created
+        file_content += 'IF EXIST "' + target_file + '" del /q /a:h "' + target_file + '"\n';
+        target_file = ini_dir + "\\Strata Developer Studio";    // erases all files inside
+        file_content += 'IF EXIST "' + target_file + '" rd /s /q "' + target_file + '"\n';
+        target_file = ini_dir;                                  // erases only if it was empty
+        file_content += 'IF EXIST "' + target_file + '" rd /q "' + target_file + '"\n';
+
+        target_file = config_dir + "\\desktop.ini";             // erases hidden file in case it was created
+        file_content += 'IF EXIST "' + target_file + '" del /q /a:h "' + target_file + '"\n';
+        target_file = config_dir;                               // erases only if it was empty
+        file_content += 'IF EXIST "' + target_file + '" rd /q "' + target_file + '"\n';
+        file_content += 'EXIT /b 0\n';
+
+        component.addOperation("AppendFile", cleanup_file, file_content);
+        component.addOperation("Execute", "cmd", ["/c", "echo", "nothing to do"], "UNDOEXECUTE", "cmd", ["/c", cleanup_file]);
+
+        let sdsConfigFolder = config_dir + "\\Strata Developer Studio";
+        component.addOperation("Mkdir", sdsConfigFolder);
+        // Do not use Move, because it will fail with error if file was deleted
+        component.addOperation("Copy", target_dir + "\\sds.config", sdsConfigFolder + "\\sds.config");
+        component.addOperation("Delete", target_dir + "\\sds.config");
+
+        if (installer.value("add_start_menu_shortcut", "true") == "true") {
+            let strata_ds_shortcut_dst1 = "";
+            let start_menu_folder = installer.value("StartMenuDir_internal");
+            if ((start_menu_folder != "") && (start_menu_folder.endsWith("\\") == false)) {
+                start_menu_folder += "\\";
+            }
+            if (installer.value("add_public_shortcuts", "true") == "true") {
+                strata_ds_shortcut_dst1 = installer.value("AllUsersStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + "Strata Developer Studio.lnk";
+                // will point to public Start Menu in this case
+                component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
+                                               "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+            } else {
+                strata_ds_shortcut_dst1 = installer.value("UserStartMenuProgramsPath").split("/").join("\\") + "\\" + start_menu_folder + "Strata Developer Studio.lnk";
+                component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
+                                       "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+            }
+            console.log("will add Start Menu shortcut to: " + strata_ds_shortcut_dst1);
+        }
+        if (installer.value("add_desktop_shortcut", "true") == "true") {
+            let desktop_path = "";
+            if (installer.value("add_public_shortcuts", "true") == "true") {
+                desktop_path = getSpecialFolderLocation("CommonDesktopDirectory");
+            } else {
+                desktop_path = getSpecialFolderLocation("DesktopDirectory");
+            }
+            if (desktop_path == "") {
+                desktop_path = installer.value("DesktopDir");   // fallback
+            }
+
+            let strata_ds_shortcut_dst2 = desktop_path.split("/").join("\\") + "\\Strata Developer Studio.lnk";
+            // workaround for Parallels https://bugreports.qt.io/browse/QTIFW-1106
+            if (strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
+                console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
+                try {
+                    let public_desktop_path = getSpecialFolderLocation("CommonDesktopDirectory"); // usually "C:\Users\Public\Desktop", but can be different (i.e. non-english OS)
+                    if (public_desktop_path !== "") {
+                        strata_ds_shortcut_dst2 = public_desktop_path + "\\Strata Developer Studio.lnk";
+                        component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+                        console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
+                    } else {
+                        console.log("unable to detect correct Public Desktop path");
+                    }
+                } catch(e) {
+                    console.log("unable to detect correct Public Desktop path");
+                    console.log(e);
+                }
+            } else {
+                if (installer.value("add_public_shortcuts", "true") == "true") {
+                    // will point to public Desktop in this case
+                    component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+                } else {
+                    component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
+                }
+                console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
+            }
+        }
+    } else if (systemInfo.productType == "osx") {
+        let cleanup_file = target_dir + "/cleanup_sds.sh";
+        let ini_dir = home_dir + "/.config/onsemi";
+        let log_dir = home_dir + "/Library/Application Support/onsemi";
+
+        let file_content = '';
+        let target_file = target_dir + "/uninstall.lock";
+        file_content += 'if [ ! -f "' + target_file + '" ]; then exit 0; fi\n';
+        target_file = ini_dir + "/Strata Developer Studio.ini";
+        file_content += 'if [ -f "' + target_file + '" ]; then rm -f "' + target_file + '"; fi\n';
+        target_file = ini_dir + "/.DS_Store";                   // in case it was created
+        file_content += 'if [ -f "' + target_file + '" ]; then rm -f "' + target_file + '"; fi\n';
+        target_file = ini_dir;                                  // erases only if it was empty
+        file_content += 'if [ -d "' + target_file + '" ]; then rm -f -d "' + target_file + '"; fi\n';
+
+        target_file = log_dir + "/Strata Developer Studio";
+        file_content += 'if [ -d "' + target_file + '" ]; then rm -f -r "' + target_file + '"; fi\n';
+        target_file = log_dir + "/.DS_Store";                   // in case it was created
+        file_content += 'if [ -f "' + target_file + '" ]; then rm -f "' + target_file + '"; fi\n';
+        target_file = log_dir;                                  // erases only if it was empty
+        file_content += 'if [ -d "' + target_file + '" ]; then rm -f -d "' + target_file + '"; fi\n';
+        file_content += 'exit 0\n';
+
+        component.addOperation("AppendFile", cleanup_file, file_content);
+        component.addOperation("Execute", "echo", ["nothing to do"], "UNDOEXECUTE", "sh", [cleanup_file]);
+    }
+}
+
 Component.prototype.beginInstallation = function()
 {
     if (systemInfo.productType == "windows") {
-        component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "\\Strata Developer Studio.exe");
-        component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "\\hcs.exe");
+        let target_dir = installer.value("TargetDir").split("/").join("\\");
+        component.addStopProcessForUpdateRequest(target_dir + "\\Strata Developer Studio.exe");
+        component.addStopProcessForUpdateRequest(target_dir + "\\hcs.exe");
     } else if (systemInfo.productType == "osx") {
         component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "/Strata Developer Studio.app/Contents/MacOS/Strata Developer Studio");
         component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "/hcs");
@@ -22,83 +152,52 @@ Component.prototype.beginInstallation = function()
     component.beginInstallation();
 }
 
-Component.prototype.createOperations = function()
+function getProgramDataDirectory()
 {
-    // call default implementation to actually install the content
-    component.createOperations();
+    let programDataPath = installer.value("RootDir").split("/").join("\\") + "\\ProgramData";
+    try {
+        let programDataPathEnv = installer.environmentVariable("ProgramData");
+        if (programDataPathEnv !== "") {
+            programDataPath = programDataPathEnv;
+            console.log("detected ProgramData path: " + programDataPath);
+        } else {
+            console.log("unable to detect correct ProgramData path, trying default one: " + programDataPath);
+        }
+    } catch(e) {
+        console.log("error while detecting correct ProgramData path, trying default one: " + programDataPath);
+        console.log(e);
+    }
 
-    if (systemInfo.productType == "windows") {
-        var programDataShortcut = installer.value("RootDir").split("/").join("\\") + "ProgramData";
-        console.log("default ProgramData path: " + programDataShortcut);
-        try {
-            var programDataFolder = installer.execute("cmd", ["/c", "echo", "%ProgramData%"]);
-            // the output of command is the first item, and the return code is the second
-            if ((programDataFolder != undefined) && (programDataFolder != null) && (programDataFolder[0] != undefined) && (programDataFolder[0] != null) && (programDataFolder[0] != "")) {
-                programDataShortcut = programDataFolder[0].trim();
-                console.log("detected ProgramData path: " + programDataShortcut);
-            } else {
-                console.log("unable to detect correct ProgramData path, trying default one: " + programDataShortcut);
-            }
-        } catch(e) {
-            console.log("error while detecting correct ProgramData path, trying default one: " + programDataShortcut);
-            console.log(e);
-        }
-        var onsemiConfigFolder = programDataShortcut + "\\onsemi";
-        var sdsConfigFolder = onsemiConfigFolder + "\\Strata Developer Studio";
-        component.addOperation("Mkdir", sdsConfigFolder);
-        // Do not use Move, because it will fail with error if file was deleted
-        component.addOperation("Copy", installer.value("TargetDir").split("/").join("\\") + "\\sds.config", sdsConfigFolder + "\\sds.config");
-        component.addOperation("Delete", installer.value("TargetDir").split("/").join("\\") + "\\sds.config");
+    return programDataPath;
+}
 
-        if (installer.isInstaller() == true) {
-            try {
-                if (installer.gainAdminRights() == true) {
-                    if (installer.fileExists(onsemiConfigFolder) == true) {
-                        console.log("changing access rights for Strata config folder: " + onsemiConfigFolder);
-                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/grant", "Users:(OI)(CI)(F)"]);
-                        installer.execute("cmd", ["/c", "icacls", onsemiConfigFolder, "/setowner", "Users"]);
-                    }
-                    // do not drop admin rights in this function, will break installer
-                    //installer.dropAdminRights();
-                }
-            } catch(e) {
-                console.log("unable to change access rights for Strata config folder");
-                console.log(e);
-            }
-        }
+function getSpecialFolderLocation(folder_name)
+{
+    // Note: old Powershell 2.0 on Windows 7 needs the "[Environment]::Exit(0)", because it is waiting for input and not terminating
+    var powerShellCommand = "[Environment]::GetFolderPath('" + folder_name + "'); [Environment]::Exit(0)";
+    
+    console.log("executing powershell command '" + powerShellCommand + "'");
+    var specialFolder = installer.execute("powershell", ["-NoProfile", "-Command", powerShellCommand]);
 
-        var target_dir = installer.value("TargetDir").split("/").join("\\");
-        if (installer.value("add_start_menu_shortcut", "true") == "true") {
-            var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
-            component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst1,
-                                    "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
-            console.log("will add Start Menu shortcut to: " + strata_ds_shortcut_dst1);
-        }
-        if (installer.value("add_desktop_shortcut", "true") == "true", "true") {
-            var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
-            // workaround for Parallels https://bugreports.qt.io/browse/QTIFW-1106
-            if (strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
-                console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
-                try {
-                    var desktopFolder = installer.execute("cmd", ["/c", "echo", "%Public%\\Desktop"]);
-                    // the output of command is the first item, and the return code is the second
-                    if ((desktopFolder != undefined) && (desktopFolder != null) && (desktopFolder[0] != undefined) && (desktopFolder[0] != null) && (desktopFolder[0] != "")) {
-                        strata_ds_shortcut_dst2 = desktopFolder[0].trim() + "\\Strata Developer Studio.lnk";
-                        component.addElevatedOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
-                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
-                        console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
-                    } else {
-                        console.log("unable to detect correct Desktop path");
-                    }
-                } catch(e) {
-                    console.log("unable to detect correct Desktop path");
-                    console.log(e);
-                }
-            } else {
-                component.addOperation("CreateShortcut", target_dir + "\\Strata Developer Studio.exe", strata_ds_shortcut_dst2,
-                                        "workingDirectory=" + target_dir, "description=Open Strata Developer Studio");
-                console.log("will add Desktop shortcut to: " + strata_ds_shortcut_dst2);
-            }
-        }
-     }
+    // the output of command is the first item, and the return code is the second
+    // console.log("execution result code: " + specialFolder[1] + ", result: '" + specialFolder[0] + "'");
+
+    if ((specialFolder == undefined) || (specialFolder == null)) {
+        console.log("Error: powershell command failed to execute");
+        return "";
+    }
+
+    if ((specialFolder[0] == undefined) || (specialFolder[0] == null) || (specialFolder[0] == "")) {
+        console.log("Error: powershell command failed to return valid output:", specialFolder);
+        return "";
+    }
+
+    if ((specialFolder[1] == undefined) || (specialFolder[1] == null) || (specialFolder[1] != 0)) {
+        console.log("Error: powershell command returned bad exit code:", specialFolder);
+        return "";
+    }
+
+    var lines = specialFolder[0].split('\r\n');
+    console.log("returning: " + lines[0]);
+    return lines[0];
 }

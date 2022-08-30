@@ -13,13 +13,13 @@ import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
 import "qrc:/js/utilities.js" as Utility
-import "qrc:/js/login_utilities.js" as Authenticator
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.signals 1.0
 import tech.strata.theme 1.0
+
 Item {
     id: root
     clip: true
@@ -223,7 +223,7 @@ Item {
 
     Rectangle {
         id: testServerWarningContainer
-        color: "red"
+        color: Theme.palette.error
         anchors {
             left: parent.left
             right: parent.right

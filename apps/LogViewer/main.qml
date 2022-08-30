@@ -9,6 +9,7 @@
 import QtQuick 2.12
 import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import Qt.labs.platform 1.0 as QtLabsPlatform
 import QtQuick.Controls 2.12
 import QtQml 2.12
@@ -74,6 +75,13 @@ SGWidgets.SGMainWindow {
                 text: qsTr("&Close All Files")
                 onTriggered: {
                     logViewerMain.closeAllFiles()
+                }
+            }
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Settings")
+                onTriggered:  {
+                    showSettingsDialog()
                 }
             }
 
@@ -151,5 +159,28 @@ SGWidgets.SGMainWindow {
 
     function showAboutWindow() {
         SGWidgets.SGDialogJS.createDialog(root, "qrc:/LogViewerAboutWindow.qml")
+    }
+
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/LogViewerSettingsDialog.qml"
+                    )
+        dialog.accepted.connect(function() {
+            dialog.destroy()
+        })
+        dialog.open()
+    }
+
+    SGDebugWidgets.SGQmlDebug {
+        id: qmlDebug
+        anchors {
+            bottomMargin: 60
+            rightMargin: 170
+            right: parent.right
+            bottom: parent.bottom
+        }
+
+        signalTarget: logModel
     }
 }

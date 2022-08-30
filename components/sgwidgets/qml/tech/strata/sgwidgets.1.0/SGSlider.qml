@@ -12,6 +12,7 @@ import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.theme 1.0
 
 GridLayout {
     id: root
@@ -94,7 +95,7 @@ GridLayout {
         property int tickmarkCount: stepSize === 0.0 ? 2 : ((to - from) + stepSize) / stepSize
         property real grooveHandleRatio: .2
         property color grooveColor: "#bbb"
-        property color fillColor: "#21be2b"
+        property color fillColor: TangoTheme.palette.chameleon2
         property bool mirror: false
         property bool showToolTip: true
         property real handleSize: -1
@@ -342,6 +343,7 @@ GridLayout {
             decimals: slider.decimals
             bottom: slider.from
             top: slider.to
+            locale: "C"
         }
 
         onEditingFinished: slider.userSetValue(parseFloat(text))

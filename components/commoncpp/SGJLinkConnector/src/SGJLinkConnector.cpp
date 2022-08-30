@@ -79,8 +79,8 @@ bool SGJLinkConnector::programBoardRequested(const QString &binaryPath)
 
     QString startAddressHex = SGUtilsCpp::toHex(startAddress_, 8);
 
-    cmd += QString("loadbin \"%1\", %2\n").arg(internalBinaryFilename_). arg(startAddressHex);
-    cmd += QString("verifybin \"%1\", %2\n").arg(internalBinaryFilename_).arg(startAddressHex);
+    cmd += QString("loadbin \"%1\", %2\n").arg(internalBinaryFilename_, startAddressHex);
+    cmd += QString("verifybin \"%1\", %2\n").arg(internalBinaryFilename_, startAddressHex);
     cmd += QString("r\n");
     cmd += QString("go\n");
     cmd += QString("exit\n");

@@ -10,6 +10,7 @@
 #include "LoggingQtCategories.h"
 
 #include <QJsonDocument>
+#include <QJsonArray>
 
 CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObject *parent)
     : QObject(parent), strataClient_(strataClient)
@@ -55,6 +56,20 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
         "download_platform_files_finished",
         std::bind(&CoreInterface::processDownloadPlatformFilesFinishedNotification, this,
                   std::placeholders::_1));
+#ifdef APPS_FEATURE_BLE
+    strataClient_->registerHandler(
+        "bluetooth_scan",
+        std::bind(&CoreInterface::processBluetoothScanNotification, this,
+                  std::placeholders::_1));
+#endif // APPS_FEATURE_BLE
+    strataClient_->registerHandler(
+        "connect_device",
+        std::bind(&CoreInterface::processConnectDeviceNotification, this,
+                  std::placeholders::_1));
+    strataClient_->registerHandler(
+        "disconnect_device",
+        std::bind(&CoreInterface::processDisconnectDeviceNotification, this,
+                  std::placeholders::_1));
 }
 
 CoreInterface::~CoreInterface()
@@ -77,23 +92,41 @@ void CoreInterface::sendNotification(const QString &method, const QJsonObject &p
     strataClient_->sendNotification(method, payload);
 }
 
+void CoreInterface::unregisterClient()
+{
+    strata::strataRPC::DeferredReply *reply = strataClient_->sendRequest("unregister_client", {});
+    if (reply == nullptr) {
+        qCCritical(lcCoreInterface) << "failed to send 'unregister_client' request";
+        return;
+    }
+
+    connect(reply, &strata::strataRPC::DeferredReply::finishedSuccessfully, this, [](){
+        qCDebug(lcCoreInterface) << "client unregistered from StrataRpc server successfully";
+    });
+
+    connect(reply, &strata::strataRPC::DeferredReply::finishedWithError, this, [](QJsonObject error){
+        qCCritical(lcCoreInterface) << "client unregistration from StrataRpc server failed" << error;
+    });
+}
+
 void CoreInterface::processAllPlatformsNotification(const QJsonObject &payload)
 {
-    QString newPlatformList = QJsonDocument(payload).toJson(QJsonDocument::Compact);
+    QString newPlatformList = QJsonDocument(payload.value("list").toArray()).toJson(QJsonDocument::Compact);
     if (platformList_ != newPlatformList) {
         platformList_ = newPlatformList;
     }
-    emit platformListChanged(platformList_);
+    emit platformListChanged();
 }
 
 void CoreInterface::processConnectedPlatformsNotification(const QJsonObject &payload)
 {
-    QString newConnectedPlatformList = QJsonDocument(payload).toJson(QJsonDocument::Compact);
-    if (connectedPlatformList_ == newConnectedPlatformList) {
-        return;
+    QString newConnectedPlatformList = QJsonDocument(payload.value("list").toArray()).toJson(QJsonDocument::Compact);
+    if (connectedPlatformList_ != newConnectedPlatformList) {
+        connectedPlatformList_ = newConnectedPlatformList;
+        emit connectedPlatformListChanged();
     }
-    connectedPlatformList_ = newConnectedPlatformList;
-    emit connectedPlatformListChanged(connectedPlatformList_);
+
+    emit connectedPlatformListMessage(payload);
 }
 
 void CoreInterface::processUpdatesAvailableNotification(const QJsonObject &payload)
@@ -139,4 +172,21 @@ void CoreInterface::processDownloadPlatformSingleFileFinishedNotification(const 
 void CoreInterface::processDownloadPlatformFilesFinishedNotification(const QJsonObject &payload)
 {
     emit downloadPlatformFilesFinished(payload);
+}
+
+#ifdef APPS_FEATURE_BLE
+void CoreInterface::processBluetoothScanNotification(const QJsonObject &payload)
+{
+    emit bluetoothScan(payload);
+}
+#endif // APPS_FEATURE_BLE
+
+void CoreInterface::processConnectDeviceNotification(const QJsonObject &payload)
+{
+    emit connectDevice(payload);
+}
+
+void CoreInterface::processDisconnectDeviceNotification(const QJsonObject &payload)
+{
+    emit disconnectDevice(payload);
 }

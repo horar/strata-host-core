@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #pragma once
 
 #include <PlatformInterface/core/CoreInterface.h>
@@ -47,6 +46,8 @@ signals:
 
 private slots:
     void replyHandler(QJsonObject payload);
+    void errorHandler(QJsonObject payload);
+
     void jobUpdateHandler(QJsonObject payload);
 
 private:

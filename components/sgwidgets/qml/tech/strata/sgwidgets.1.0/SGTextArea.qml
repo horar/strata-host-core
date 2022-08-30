@@ -28,6 +28,8 @@ FocusScope {
     property bool isValid: true
     property bool contextMenuEnabled: false
     property alias palette: dummyControl.palette
+    property alias activeFocusOnPress: edit.activeFocusOnPress
+    clip: true
 
     // This is to match look and feel of other controls
     Control {
@@ -98,8 +100,9 @@ FocusScope {
             cursorShape: Qt.IBeamCursor
             acceptedButtons: (contextMenuEnabled === true) ? (Qt.LeftButton | Qt.RightButton) : Qt.LeftButton
             onClicked: {
-                edit.forceActiveFocus()
-                edit.cursorPosition = edit.text.length
+                if (activeFocusOnPress) {
+                    edit.forceActiveFocus()
+                }
             }
             onReleased: {
                 if ((contextMenuEnabled === true) && containsMouse && (mouse.button === Qt.RightButton)) {

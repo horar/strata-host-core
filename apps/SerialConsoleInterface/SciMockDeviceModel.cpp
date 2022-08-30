@@ -66,7 +66,9 @@ void SciMockDeviceModel::handleDeviceDetected(PlatformPtr platform) {
     emit countChanged();
 }
 
-void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId) {
+void SciMockDeviceModel::handleDeviceLost(QByteArray deviceId, QString errorString) {
+    Q_UNUSED(errorString)
+
     for (int index = 0; index < platforms_.count(); ++index) {
         if (platforms_[index].deviceId_ == deviceId) {
             beginRemoveRows(QModelIndex(), index, index);

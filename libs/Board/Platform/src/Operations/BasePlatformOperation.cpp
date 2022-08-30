@@ -34,6 +34,11 @@ BasePlatformOperation::BasePlatformOperation(const PlatformPtr& platform, Type t
 
 BasePlatformOperation::~BasePlatformOperation()
 {
+    if (currentCommand_ != commandList_.end()) {
+        (*currentCommand_)->disconnect(this);
+        (*currentCommand_)->cancel();
+    }
+
     platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 
     //qCDebug(lcPlatformOperation) << platform_ << "Deleted platform operation (" << static_cast<int>(type_) << ").";
@@ -139,7 +144,9 @@ void BasePlatformOperation::handleCommandFinished(CommandResult result, int stat
     switch (result) {
     case CommandResult::Done :
     case CommandResult::DoneAndWait :
-        ++currentCommand_;  // move to next command
+        if (currentCommand_ < commandList_.end()) {
+            ++currentCommand_;  // move to next command
+        }
         if (currentCommand_ == commandList_.end()) {  // end of command list - finish operation
             finishOperation(Result::Success, QString());
         } else {
@@ -205,7 +212,10 @@ void BasePlatformOperation::finishOperation(Result result, const QString &errorS
         return;
     }
 
-    reset();
+    commandList_.clear();
+    currentCommand_ = commandList_.end();
+    platform_->unlockDevice(reinterpret_cast<quintptr>(this));
+
     finished_ = true;
 
     if (result == Result::Success) {
@@ -235,13 +245,6 @@ void BasePlatformOperation::resume()
 void BasePlatformOperation::setPlatformRecognized(bool isRecognized)
 {
     platform_->setRecognized(isRecognized);
-}
-
-void BasePlatformOperation::reset()
-{
-    commandList_.clear();
-    currentCommand_ = commandList_.end();
-    platform_->unlockDevice(reinterpret_cast<quintptr>(this));
 }
 
 }  // namespace

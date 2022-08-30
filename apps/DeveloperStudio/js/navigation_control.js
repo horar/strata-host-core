@@ -30,8 +30,6 @@ var screens = {
     SPLASH_SCREEN: "qrc:/SplashScreen.qml",
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
     PLATFORM_SELECTOR: "qrc:/SGPlatformSelector.qml",
-    PLATFORM_VIEW: "qrc:/partial-views/platform-view/SGPlatformView.qml",
-    CONTENT_SCREEN: "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml",
     LOAD_ERROR: "qrc:/partial-views/SGLoadError.qml"
 }
@@ -268,12 +266,18 @@ function updateState(event, data)
         case states.CONTROL_STATE:
             switch(event) {
                 case events.OPEN_PLATFORM_VIEW_EVENT:
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
+                    // even if 'class_id' is not defined, it is contained in 'data' as empty string
+                    let openStr = "Opening Platform View, device_id: " + data.device_id + ", class_id: " + data.class_id
+                    if (data.is_assisted) {
+                        openStr += ", controller_class_id: " + data.controller_class_id
+                    }
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, openStr)
 
+                    const opened_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     // If matching view exists, bring it back into focus
                     for (let i = 0; i < platform_view_model_.count; i++) {
                         let open_view = platform_view_model_.get(i)
-                        if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
+                        if (open_view.class_id === opened_class_id && open_view.device_id === data.device_id) {
                             updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
                             open_view.view = data.view
                             return
@@ -285,8 +289,13 @@ function updateState(event, data)
                     break;
 
                 case events.PLATFORM_CONNECTED_EVENT:
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
+                    let connectedStr = "Platform connected, device_id: " + data.device_id + ", class_id: " + data.class_id
+                    if (data.is_assisted) {
+                        connectedStr += ", controller_class_id: " + data.controller_class_id
+                    }
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, connectedStr)
 
+                    const connected_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     let view_index = -1
                     let connected_view
 
@@ -294,7 +303,7 @@ function updateState(event, data)
                     // OR if none found, find view matching class_id, bind to it, set connected
                     for (let j = 0; j < platform_view_model_.count; j++) {
                         connected_view = platform_view_model_.get(j)
-                        if (connected_view.class_id === data.class_id) {
+                        if (connected_view.class_id === connected_class_id) {
                             if (connected_view.device_id === data.device_id) {
                                 view_index = j
                                 break
@@ -323,11 +332,17 @@ function updateState(event, data)
                     break;
 
                 case events.PLATFORM_DISCONNECTED_EVENT:
-                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
+                    let disconnectedStr = "Platform disconnected, device_id: " + data.device_id + ", class_id: " + data.class_id
+                    if (data.is_assisted) {
+                        disconnectedStr += ", controller_class_id: " + data.controller_class_id
+                    }
+                    const disconnected_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
+                    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, disconnectedStr)
                     // Disconnect any matching open platform view
                     for (let k = 0; k < platform_view_model_.count; k++) {
                         let disconnected_view = platform_view_model_.get(k)
-                        if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
+                        if (disconnected_view.class_id === disconnected_class_id && disconnected_view.device_id === data.device_id)
+                        {
                             disconnected_view.connected = false
                             disconnected_view.firmware_version = ""
                             disconnected_view.controller_class_id = ""
@@ -338,14 +353,15 @@ function updateState(event, data)
                     break;
 
                 case events.CLOSE_PLATFORM_VIEW_EVENT:
+                    const closed_class_id = (data.class_id !== undefined) ? data.class_id : data.controller_class_id
                     let l
                     for (l = 0; l < platform_view_model_.count; l++) {
                         let closed_view = platform_view_model_.get(l)
-                        if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
+                        if (closed_view.class_id === closed_class_id && closed_view.device_id === data.device_id) {
                             platform_view_model_.remove(l)
 
                             // Unregister all related control views
-                            resource_loader_.unregisterAllRelatedViews(data.class_id, main_qml_object_);
+                            resource_loader_.unregisterAllRelatedViews(closed_class_id, main_qml_object_);
                             break
                         }
                     }
@@ -382,5 +398,22 @@ function updateState(event, data)
         default:
             globalEventHandler(event, data)
             break;
+    }
+}
+
+function switchToSelectedView(device_id) {
+    let view_index = -1
+    let connected_view
+
+    for (let j = 0; j < platform_view_model_.count; j++) {
+        connected_view = platform_view_model_.get(j)
+        if (connected_view.device_id === device_id) {
+            view_index = j
+            break
+        }
+    }
+
+    if (view_index !== -1) {
+        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index + 1})
     }
 }

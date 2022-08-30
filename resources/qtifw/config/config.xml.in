@@ -13,13 +13,14 @@
     <Title>onsemi: Strata</Title>
     <Publisher>onsemi</Publisher>
     <ProductUrl>https://www.onsemi.com/strata</ProductUrl>
-    <InstallerApplicationIcon>ON_button_blk_vector</InstallerApplicationIcon>
-    <InstallerWindowIcon>ON_button_blk_vector.png</InstallerWindowIcon>
+    <InstallerApplicationIcon>onsemi-icon</InstallerApplicationIcon>
+    <InstallerWindowIcon>onsemi-icon.png</InstallerWindowIcon>
     <Logo>strata-logo.png</Logo>
-    <Watermark>strata-watermark.png</Watermark>
     <WizardStyle>Modern</WizardStyle>
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
+    <WizardMinimumWidth>840</WizardMinimumWidth>
+    <WizardMinimumHeight>480</WizardMinimumHeight>
     <StartMenuDir>onsemi</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/onsemi/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
@@ -27,11 +28,12 @@
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
     <DisableAuthorizationFallback>true</DisableAuthorizationFallback>
     <ControlScript>installscript.qs</ControlScript>
-    <RemoteRepositories>
-        <Repository>
-            <Url>@STRATA_OTA_REPOSITORY@</Url>
-            <Enabled>@STRATA_OTA_REPOSITORY_ENABLED@</Enabled>
-            <DisplayName>Strata Repository</DisplayName>
-        </Repository>
-    </RemoteRepositories>
+    <StyleSheet>style.qss</StyleSheet>
+    @STRATA_OTA_REPOSITORIES@
+    <ProductImages>
+        <Image>onsemi-banner-1.png</Image>
+        <Image>onsemi-banner-2.png</Image>
+        <Image>onsemi-banner-3.png</Image>
+        <Image>onsemi-banner-4.png</Image>
+    </ProductImages>
 </Installer>

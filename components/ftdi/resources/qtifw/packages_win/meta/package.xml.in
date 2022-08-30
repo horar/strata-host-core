@@ -10,11 +10,9 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>40</SortingPriority>
-    <!--we need admin rights to install this component-->
-    <RequiresAdminRights>true</RequiresAdminRights>
+    <SortingPriority>58</SortingPriority>
     <Script>installscript.js</Script>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Licenses>

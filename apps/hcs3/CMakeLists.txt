@@ -12,7 +12,21 @@ project(HostControllerService
 )
 
 set(PROJECT_BUNDLE_ID com.onsemi.strata.hcs)
+if(APPS_FEATURE_BLE)
+    string(CONCAT PROJECT_BUNDLE_ADDON
+        "<key>NSBluetoothAlwaysUsageDescription</key>"
+        "<string>Bluetooth access is necessary to communicate with Bluetooth Low Energy devices</string>"
+    )
+endif()
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2022 ${PROJECT_COMPANY}")
+
+if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+    if(WIN32)
+        set(PROJECT_DEPENDENCIES "com.onsemi.strata.libs,com.onsemi.strata.utils")
+    else()
+        set(PROJECT_DEPENDENCIES "com.onsemi.strata.libs")
+    endif()
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

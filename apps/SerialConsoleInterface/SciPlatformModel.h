@@ -66,6 +66,7 @@ public:
     void setCondensedAtStartup(bool condensedAtStartup);
 
     Q_INVOKABLE void releasePort(int index, int disconnectDuration=0);
+    Q_INVOKABLE bool acquirePort(int index);
     Q_INVOKABLE void removePlatform(int index);
     Q_INVOKABLE void reconnect(int index);
 
@@ -75,7 +76,7 @@ signals:
     void maxCmdInHistoryCountChanged();
     void condensedAtStartupChanged();
     void platformConnected(int index);
-    void platformReady(int index);
+    void platformReady(int index, bool recognized);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

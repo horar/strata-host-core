@@ -64,7 +64,7 @@ Item {
                 height: 12
                 SGIcon {
                     anchors.fill: parent
-                    iconColor: expandIconMouseArea.containsMouse ? "green" : "grey"
+                    iconColor: expandIconMouseArea.containsMouse ? Theme.palette.success : "grey"
                     source: styleData.isExpanded ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
 
                     MouseArea {
@@ -187,7 +187,7 @@ Item {
         closePolicy: Popup.NoAutoClose
         anchors.centerIn: Overlay.overlay
 
-        acceptButtonColor: Theme.palette.red
+        acceptButtonColor: Theme.palette.error
         acceptButtonHoverColor: Qt.darker(acceptButtonColor, 1.25)
         acceptButtonText: "Permanently delete"
         cancelButtonText: "Cancel"

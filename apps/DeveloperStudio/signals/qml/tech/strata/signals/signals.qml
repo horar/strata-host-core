@@ -63,12 +63,17 @@ QtObject {
     signal getProfileResult(string result, var user)
 
     /*
-      Feedback result signals
-    */
-    signal feedbackResult(string result)
-
-    /*
       Misc Signal for CVC
     */
     signal loadCVC()
+
+    /*
+      Privacy Policy Update signal
+    */
+    signal privacyPolicyUpdate()
+
+    /*
+      When login session expires
+    */
+    signal sessionExpired()
 }

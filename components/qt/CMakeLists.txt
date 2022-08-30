@@ -12,7 +12,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "OTA")
         LANGUAGES NONE
     )
 
-    set(PROJECT_BUNDLE_ID com.onsemi.strata.qt)
+    set(PROJECT_BUNDLE_ID com.onsemi.strata.libs.qt)
 
     # LC: only to load a Qt version to 'Qt5Core_VERSION_STRING' variable
     find_package(Qt5 ${VERSION_QT5}

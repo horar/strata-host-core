@@ -16,13 +16,17 @@
 #include "SciFilterScrollbackModel.h"
 #include "SciSearchScrollbackModel.h"
 #include "SciMessageQueueModel.h"
+#include "SciPlatformTestModel.h"
+#include "SciPlatformTestMessageModel.h"
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
 #include <Mock/MockDevice.h>
 #include <QObject>
 #include <QPointer>
+#include <QJsonParseError>
 #include <chrono>
+#include <QSettings>
 
 
 class SciPlatform: public QObject {
@@ -43,10 +47,15 @@ class SciPlatform: public QObject {
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(SciFilterSuggestionModel* filterSuggestionModel READ filterSuggestionModel CONSTANT)
     Q_PROPERTY(SciMessageQueueModel* messageQueueModel READ messageQueueModel CONSTANT)
+
+    Q_PROPERTY(SciPlatformTestModel* platformTestModel READ platformTestModel CONSTANT)
+    Q_PROPERTY(SciPlatformTestMessageModel* platformTestMessageModel READ platformTestMessageModel CONSTANT)
+
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
     Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
     Q_PROPERTY(bool sendMessageInProgress READ sendMessageInProgress NOTIFY sendMessageInProgressChanged)
     Q_PROPERTY(bool sendQueueInProgress READ sendQueueInProgress NOTIFY sendQueueInProgressChanged)
+    Q_PROPERTY(bool acquirePortInProgress READ acquirePortInProgress NOTIFY acquirePortInProgressChanged)
 
 public:
     SciPlatform(SciPlatformSettings *settings, strata::PlatformManager *platformManager, QObject *parent = nullptr);
@@ -93,6 +102,8 @@ public:
     SciFilterScrollbackModel* filterScrollbackModel() const;
     SciSearchScrollbackModel* searchScrollbackModel() const;
     SciMessageQueueModel* messageQueueModel() const;
+    SciPlatformTestModel* platformTestModel() const;
+    SciPlatformTestMessageModel* platformTestMessageModel() const;
     QString errorString() const;
     void setErrorString(const QString &errorString);
     bool programInProgress() const;
@@ -100,6 +111,7 @@ public:
     void setDeviceName(const QString &deviceName);
     bool sendMessageInProgress();
     bool sendQueueInProgress();
+    bool acquirePortInProgress();
 
     void resetPropertiesFromDevice();
     Q_INVOKABLE void sendMessage(const QString &message, bool onlyValidJson);
@@ -108,6 +120,7 @@ public:
 
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
     Q_INVOKABLE QString saveDeviceFirmware(QString filePath);
+    Q_INVOKABLE bool acquirePort();
 
     //settings handlers
     void storeCommandHistory(const QStringList &list);
@@ -138,6 +151,8 @@ signals:
     void messageReceived();
     void sendMessageInProgressChanged();
     void sendQueueInProgressChanged();
+    void acquirePortInProgressChanged();
+    void acquirePortRequestFailed();
 
 private slots:
     void messageFromDeviceHandler(strata::platform::PlatformMessage message);
@@ -158,6 +173,7 @@ private:
     void setProgramInProgress(bool programInProgress);
     void setSendMessageInProgress(bool sendMessageInProgress);
     void setSendQueueInProgress(bool sendQueueInProgress);
+    void setAcquirePortInProgress(bool acquirePortInProgress);
     bool sendNextInQueue();
     QVariantMap extractJsonError(const QJsonParseError &error);
 
@@ -181,8 +197,12 @@ private:
     SciMessageQueueModel *messageQueueModel_;
     QPointer<strata::FlasherConnector> flasherConnector_;
     strata::PlatformManager *platformManager_;
+    SciPlatformTestModel *platformTestModel_;
+    SciPlatformTestMessageModel *platformTestMessageModel_;
     uint currentMessageId_ = 0;
     bool sendMessageInProgress_ = false;
     bool sendQueueInProgress_ = false;
-    std::chrono::milliseconds sendQueueDelay_ = std::chrono::milliseconds(50);
+    std::chrono::milliseconds sendQueueDelay_;
+    bool acquirePortInProgress_ = false;
+    QSettings appSettings_;
 };

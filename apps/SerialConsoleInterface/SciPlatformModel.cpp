@@ -13,7 +13,7 @@ SciPlatformModel::SciPlatformModel(strata::PlatformManager *platformManager, QOb
     : QAbstractListModel(parent),
       platformManager_(platformManager)
 {
-    connect(platformManager_, &strata::PlatformManager::platformAdded, this, &SciPlatformModel::boardConnectedHandler);
+    connect(platformManager_, &strata::PlatformManager::platformOpened, this, &SciPlatformModel::boardConnectedHandler);
     connect(platformManager_, &strata::PlatformManager::platformRecognized, this, &SciPlatformModel::boardReadyHandler);
     connect(platformManager_, &strata::PlatformManager::platformAboutToClose, this, &SciPlatformModel::boardDisconnectedHandler);
 }
@@ -79,7 +79,7 @@ void SciPlatformModel::setMaxScrollbackCount(int maxScrollbackCount)
         maxScrollbackCount_ = maxScrollbackCount;
         emit maxScrollbackCountChanged();
 
-        for (auto *platform : platformList_) {
+        for (auto *platform : qAsConst(platformList_)) {
             platform->scrollbackModel()->setMaximumCount(maxScrollbackCount_);
         }
     }
@@ -96,7 +96,7 @@ void SciPlatformModel::setMaxCmdInHistoryCount(int maxCmdInHistoryCount)
         maxCmdInHistoryCount_ = maxCmdInHistoryCount;
         emit maxCmdInHistoryCountChanged();
 
-        for (auto *platform : platformList_) {
+        for (auto *platform : qAsConst(platformList_)) {
             platform->commandHistoryModel()->setMaximumCount(maxCmdInHistoryCount_);
         }
     }
@@ -129,6 +129,16 @@ void SciPlatformModel::releasePort(int index, int disconnectDuration)
     platformManager_->disconnectPlatform(
                 platformList_.at(index)->deviceId(),
                 std::chrono::milliseconds(disconnectDuration));
+}
+
+bool SciPlatformModel::acquirePort(int index)
+{
+    if (index < 0 || index >= platformList_.count()) {
+        qCCritical(lcSci) << "index out of range";
+        return false;
+    }
+
+    return platformList_.at(index)->acquirePort();
 }
 
 void SciPlatformModel::removePlatform(int index)
@@ -211,7 +221,7 @@ void SciPlatformModel::boardReadyHandler(const QByteArray& deviceId, bool recogn
         platform->setStatus(SciPlatform::PlatformStatus::NotRecognized);
     }
 
-    emit platformReady(index);
+    emit platformReady(index, recognized);
 }
 
 void SciPlatformModel::boardDisconnectedHandler(const QByteArray& deviceId)

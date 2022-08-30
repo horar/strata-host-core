@@ -8,16 +8,17 @@
  */
 import QtQuick 2.12
 import QtQml 2.12
-import tech.strata.sgwidgets 1.0
-import tech.strata.fonts 1.0
 import QtQuick.Layouts 1.3
+
+import tech.strata.sgwidgets 1.0
+import tech.strata.theme 1.0
+import tech.strata.fonts 1.0
 
 Rectangle {
     id: alertToast
-    Layout.alignment: Qt.AlignHCenter
-    Layout.preferredHeight: 0
-    color: "red"
-    visible: Layout.preferredHeight > 0
+    implicitHeight: 0
+    color: Theme.palette.error
+    visible: implicitHeight > 0
     clip: true
     Accessible.name: text
     Accessible.role: Accessible.AlertMessage
@@ -34,7 +35,7 @@ Rectangle {
 
     SGIcon {
         id: alertIcon
-        source: Qt.colorEqual(alertToast.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
+        source: Qt.colorEqual(alertToast.color, Theme.palette.error) ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
         anchors {
             left: alertToast.left
             verticalCenter: alertToast.verticalCenter
@@ -85,7 +86,7 @@ Rectangle {
     NumberAnimation {
         id: alertAnimation
         target: alertToast
-        property: "Layout.preferredHeight"
+        property: "implicitHeight"
         to: alertIcon.height + 10
         duration: 100
 
@@ -99,7 +100,7 @@ Rectangle {
     NumberAnimation {
         id: hideAlertAnimation
         target: alertToast
-        property: "Layout.preferredHeight"
+        property: "implicitHeight"
         to: 0
         duration: 100
         onStarted: alertToast.text = ""
@@ -115,6 +116,6 @@ Rectangle {
 
     function hideInstantly () {
         alertToast.text = ""
-        alertToast.Layout.preferredHeight = 0
+        alertToast.implicitHeight = 0
     }
 }

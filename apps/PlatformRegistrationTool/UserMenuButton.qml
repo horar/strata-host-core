@@ -26,12 +26,13 @@ SGWidgets.SGButton {
         }
     }
 
-    Popup {
+    SGWidgets.SGPopup {
         id: popupMenu
         x: -popupMenu.width + parent.width
         y: 0
 
         padding: 2
+        position: Item.Bottom
 
         contentItem: Item {
             implicitHeight: logoutMenuItem.y + logoutMenuItem.height
@@ -70,9 +71,9 @@ SGWidgets.SGButton {
             }
 
             Item {
-                id: logoutMenuItem
+                id: settingsMenuItem
 
-                height: logoutRow.height + 12
+                height: settingsRow.height + 12
                 width: parent.width
                 anchors {
                     top: header.bottom
@@ -93,11 +94,83 @@ SGWidgets.SGButton {
                 }
 
                 Rectangle {
-                    id: bg
+                    id: settingsBg
                     anchors {
                         left: parent.left
                         right: parent.right
                         top: divider.bottom
+                        topMargin: 1
+                        bottom: parent.bottom
+                    }
+
+                    color: {
+                        if (settingsMouseArea.containsPress) {
+                            return userMenuButton.palette.highlight
+                        } else if (settingsMouseArea.containsMouse) {
+                            return Qt.lighter(userMenuButton.palette.highlight, 1.2)
+                        }
+
+                        return "transparent"
+                    }
+                }
+
+                Row {
+                    id: settingsRow
+                    anchors {
+                        verticalCenter: settingsBg.verticalCenter
+                        left: parent.left
+                        leftMargin: 4
+                    }
+
+                    spacing: 6
+
+                    SGWidgets.SGIcon {
+                        width: height
+                        height: settingsText.contentHeight
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        source: "qrc:/sgimages/tools.svg"
+                        iconColor: settingsMouseArea.containsMouse ? "white" : userMenuButton.palette.text
+                    }
+
+                    SGWidgets.SGText {
+                        id: settingsText
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        alternativeColorEnabled: settingsMouseArea.containsMouse
+                        font.bold: settingsMouseArea.containsMouse
+                        text: "Settings"
+                    }
+                }
+
+                MouseArea {
+                    id: settingsMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onClicked: {
+                        showSettingsDialog()
+                        popupMenu.close()
+                    }
+                }
+            }
+
+            Item {
+                id: logoutMenuItem
+
+                height: logoutRow.height + 12
+                width: parent.width
+                anchors {
+                    top: settingsMenuItem.bottom
+                    topMargin: 6
+                }
+
+                Rectangle {
+                    id: logoutBg
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        top: parent.top
                         topMargin: 1
                         bottom: parent.bottom
                     }
@@ -116,7 +189,7 @@ SGWidgets.SGButton {
                 Row {
                     id: logoutRow
                     anchors {
-                        verticalCenter: parent.verticalCenter
+                        verticalCenter: logoutBg.verticalCenter
                         left: parent.left
                         leftMargin: 4
                     }
@@ -148,30 +221,22 @@ SGWidgets.SGButton {
                     hoverEnabled: true
 
                     onClicked: {
-                        prtModel.authenticator.logout();
+                        prtModel.authenticator.logout()
+                        popupMenu.close()
                     }
                 }
             }
         }
+    }
 
-        background: Item {
-            RectangularGlow {
-                id: effect
-                anchors {
-                    fill: parent
-                    topMargin: glowRadius - 2
-                    bottomMargin: 0
-                }
-                glowRadius: 8
-                color: userMenuButton.palette.mid
-            }
-
-            Rectangle {
-                anchors.fill: parent
-                color: "white"
-                border.color: userMenuButton.palette.mid
-                border.width: 1
-            }
-        }
+    function showSettingsDialog() {
+        var dialog = SGWidgets.SGDialogJS.createDialog(
+                    root,
+                    "qrc:/PrtSettingsDialog.qml"
+                    )
+        dialog.accepted.connect(function() {
+            dialog.destroy()
+        })
+        dialog.open()
     }
 }

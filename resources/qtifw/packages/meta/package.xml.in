@@ -1,4 +1,4 @@
-<?xml version="2.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Copyright (c) 2018-2022 onsemi.
 
@@ -10,15 +10,16 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>The Strata package installs components required to access Strata platforms documentation and platforms control</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
+    <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
-    <Checkable>false</Checkable>
+    <ForcedInstallation>true</ForcedInstallation>
+    <Dependencies>@PROJECT_DEPENDENCIES@</Dependencies>
     <Script>installscript.js</Script>
     <SortingPriority>100</SortingPriority>
     <UserInterfaces>
         <UserInterface>shortcutcheckboxwidget.ui</UserInterface>
     </UserInterfaces>
     <Licenses>
-        <License name="onsemi License Agreement" file="onsemi_license.txt" />
+        <License name="onsemi License Agreement" file="onsemi_license.txt" priority="100" />
     </Licenses>
 </Package>

@@ -18,8 +18,6 @@ SGCircularGauge 0.9 SGCircularGauge/SGCircularGauge.qml
 SGComboBox 0.9 SGComboBox/SGComboBox.qml
 SGDrawerMenu 0.9 SGDrawerMenu/SGDrawerMenu.qml
 SGDrawerMenuItem 0.9 SGDrawerMenu/SGDrawerMenuItem.qml
-SGGraphStatic 0.9 SGGraphStatic/SGGraphStatic.qml
-SGGraphTimed 0.9 SGGraphTimed/SGGraphTimed.qml
 SGHelpTour 0.9 SGHelpTour/SGHelpTour.qml
 SGHueSlider 0.9 SGHueSlider/SGHueSlider.qml
 SGIcon 0.9 SGIcon/SGIcon.qml

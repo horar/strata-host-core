@@ -8,7 +8,6 @@
  */
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import tech.strata.prt 1.0 as PrtCommon
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
 
@@ -18,45 +17,11 @@ Item {
     id: prtMain
 
     property int currentPage: PrtMain.LoginPage
-    property alias prtModel: prtModel
     property QtObject taskbarButtonHelper
 
     enum LoginStatus {
         LoginPage,
         WizardPage
-    }
-
-    PrtCommon.PrtModel {
-        id: prtModel
-    }
-
-    Connections {
-        target: prtModel.authenticator
-
-        onLoginFinished: {
-            if (status === true) {
-                delayWizardPushTimer.start()
-            }
-        }
-
-        onLogoutStarted: {
-            stackView.pop(null)
-        }
-
-        onRenewSessionFinished: {
-            if (status === true) {
-                delayWizardPushTimer.start()
-            }
-        }
-    }
-
-    //some delay to finish login animation
-    Timer {
-        id: delayWizardPushTimer
-        interval: 500
-        onTriggered: {
-            stackView.push(settingsComponent)
-        }
     }
 
     StackView {
@@ -76,6 +41,10 @@ Item {
 
         LoginScreen {
             focus: true
+
+            onPushSettingsPageRequested: {
+                stackView.push(settingsComponent)
+            }
         }
     }
 
@@ -85,7 +54,6 @@ Item {
         ProgramSettingsWizard {
             id: settingsWizard
             focus: true
-            prtModel: prtMain.prtModel
 
             onRegistrationEmbeddedRequested: {
                 var properties = {
@@ -129,7 +97,6 @@ Item {
 
         ProgramDeviceWizard {
             focus: true
-            prtModel: prtMain.prtModel
             taskbarButton: prtMain.taskbarButtonHelper
 
             StackView.onActivated: {

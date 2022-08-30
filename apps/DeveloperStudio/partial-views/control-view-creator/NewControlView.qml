@@ -13,6 +13,7 @@ import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "utils/template_selection.js" as TemplateSelection
 import "components/"
@@ -28,7 +29,7 @@ Item {
 
     onVisibleChanged: {
         if (!visible) {
-            alertMessage.Layout.preferredHeight = 0
+            alertMessage.hideInstantly()
         } else {
             if (fileOutput.text === "") {
                 fileOutput.text = openProjectContainer.fileDialogFolder()
@@ -45,9 +46,10 @@ Item {
 
         SGNotificationToast {
             id: alertMessage
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width * 0.7
             interval: 0
-            color: "red"
+            color: Theme.palette.error
         }
 
         SGText {
@@ -64,14 +66,20 @@ Item {
             border.color: "#444"
             border.width: 0.5
 
-            TextInput {
+            SGTextInput {
                 id: projectName
 
-                anchors.fill: parent
+                anchors {
+                    fill: parent
+                    leftMargin: 10
+                    rightMargin: 10
+                }
                 color: "#333"
                 verticalAlignment: Text.AlignVCenter
                 selectByMouse: true
-                leftPadding: 10
+                selectionColor: Theme.palette.onsemiOrange
+                contextMenuEnabled: true
+                clip: true
             }
         }
 
@@ -234,7 +242,7 @@ Item {
                 text: "Create Project"
                 enabled: projectName.text !== "" && projectNameValid && fileOutput.text !== "" && fileOutput.text !== fileOutput.defaultText
 
-                property bool projectNameValid: projectName.text.match(/^[a-zA-Z0-9_.-]*$/)
+                property bool projectNameValid: projectName.text.match(/^[a-zA-Z0-9_\.\+\-]*$/)
 
                 onClicked: {
                     if (enabled) {
@@ -309,7 +317,7 @@ Item {
         if (!SGUtilsCpp.exists(path)) {
             console.warn("Tried to open non-existent project")
             if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
+                alertMessage.hideInstantly()
             }
             alertMessage.text = "Cannot create project. Destination folder does not exist"
             alertMessage.show()
@@ -320,7 +328,7 @@ Item {
         if (projectExists) {
             console.warn("Identically-named project already exists in this location")
             if (alertMessage.visible) {
-                alertMessage.Layout.preferredHeight = 0
+                alertMessage.hideInstantly()
             }
             alertMessage.text = "A non-empty project '" + projectName.text + "' already exists in the selected location"
             alertMessage.show()

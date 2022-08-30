@@ -22,6 +22,11 @@ Item {
         }
 
         ListElement {
+            name: "SGWidgets 2.0"
+            page: "widgets2_0/PageSGWidgetsTwoZero.qml"
+        }
+
+        ListElement {
             name: "CommonCpp 1.0"
             page: "commoncpp1_0/PageSGCommonCppOneZero.qml"
         }
@@ -49,7 +54,7 @@ Item {
                         minimumContentHeight: 100
                         minimumContentWidth: 200
                         fontSizeMultiplier: 1.6
-                        color: Theme.palette.green
+                        color: TangoTheme.palette.chameleon2
                         text: model.name
                         onClicked: {
                             stackView.push(model.page)

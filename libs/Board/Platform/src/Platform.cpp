@@ -15,19 +15,20 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-#include <rapidjson/document.h>
-#include <rapidjson/schema.h>
-
 #include <stdexcept>
 
 namespace strata::platform {
 
-QDebug operator<<(QDebug dbg, const Platform* d) {
-    return dbg.nospace().noquote() << d->device_;
+QDebug operator<<(QDebug dbg, const Platform* p) {
+    if (p) {
+        return dbg.nospace().noquote() << p->device_;
+    } else {
+        return dbg.nospace().noquote() << QStringLiteral("No platform: ");
+    }
 }
 
-QDebug operator<<(QDebug dbg, const PlatformPtr& d) {
-    return dbg << d.get();
+QDebug operator<<(QDebug dbg, const PlatformPtr& p) {
+    return dbg << p.get();
 }
 
 Platform::Platform(const device::DevicePtr& device) :
@@ -60,7 +61,7 @@ Platform::~Platform() {
     // no need to close device here (if close was not called before), will be done in device
 }
 
-const rapidjson::SchemaDocument platformIdChangedSchema(
+const rapidjson::SchemaDocument Platform::platformIdChangedSchema_(
     CommandValidator::parseSchema(
 R"(
 {
@@ -81,8 +82,32 @@ R"(
     )
 );
 
+const rapidjson::SchemaDocument Platform::bootloaderActiveSchema_(
+    CommandValidator::parseSchema(
+R"(
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "notification": {
+      "type": "object",
+      "properties": {
+        "value": {"type": "string", "pattern": "^bootloader_active$"}
+      },
+      "required": ["value"]
+    }
+  },
+  "required": ["notification"]
+}
+)"
+    )
+);
+
 void Platform::messageReceivedHandler(QByteArray rawMsg) {
-    // re-emit the message first, then validate for platform_id_changed
+    // ignore empty messages
+    if (rawMsg.isEmpty() || rawMsg == "\n") {
+        return;
+    }
 
     PlatformMessage message(rawMsg);
 
@@ -91,13 +116,16 @@ void Platform::messageReceivedHandler(QByteArray rawMsg) {
             << message.jsonErrorOffset() << ": " << message.jsonErrorString();
     }
 
+    // re-emit the message first, then validate for 'platform_id_changed' or 'bootloader_active'
     emit messageReceived(message);
 
     if (message.isJsonValidObject()) {
-        if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema, message.json(), true)) {
+        if (CommandValidator::validateJsonWithSchema(platformIdChangedSchema_, message.json(), true)) {
             qCInfo(lcPlatform) << this << "Received 'platform_id_changed' notification";
-
             emit platformIdChanged();
+        } else if (CommandValidator::validateJsonWithSchema(bootloaderActiveSchema_, message.json(), true)) {
+            qCInfo(lcPlatform) << this << "Received 'bootloader_active' notification";
+            emit bootloaderActive();
         }
     }
 }
@@ -270,6 +298,14 @@ bool Platform::deviceConnected() const {
 
 void Platform::resetReceiving() {
     device_->resetReceiving();
+}
+
+void Platform::setTerminationCause(const QString& terminationCause) {
+    terminationCause_ = terminationCause;
+}
+
+QString Platform::getTerminationCause() const {
+    return terminationCause_;
 }
 
 void Platform::setVersions(const char* bootloaderVer, const char* applicationVer) {

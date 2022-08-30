@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #include "SerialPortWorker.h"
 #include "SerialDeviceConstants.h"
 
@@ -72,6 +71,7 @@ void SerialPortWorker::openPort()
         if (serialPort_->open(QIODevice::ReadWrite)) {
             // clear() should be called right after open()
             serialPort_->clear(QSerialPort::AllDirections);
+            clearReadBuffer();
             serialPortOpened = true;
             qCDebug(lcDeviceSerial).noquote().nospace() << "Serial port '" << portName_ << "' opened.";
             remainingRetries_ = openRetries_;  // set retries count for next attempt to open serial port
@@ -125,7 +125,7 @@ void SerialPortWorker::readData()
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
         from = end;
 
-        // qCDebug(lcDeviceSerial).noquote().nospace() << "Received message (" << portName_ << "): " << QString::fromStdString(readBuffer_);
+        // qCDebug(lcDeviceSerial).noquote().nospace() << "Received message ('" << portName_ << "'): '" << QString::fromStdString(readBuffer_) << '\'';
         emit messageObtained(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string

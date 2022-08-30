@@ -30,14 +30,10 @@ function login(login_info) {
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
     userSettings.user = login_info.user
-    const anonymousSettings = userSettings.readFile("general-settings.json")
 
     let headers = {
         "app": "strata",
         "version": Rest.versionNumber(),
-    }
-    if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
-        headers.anonymous = 1
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, headers)
@@ -80,12 +76,17 @@ function login_result(response)
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
     }
+    if (response.hasOwnProperty("privacy_policy_changed") && response.privacy_policy_changed == true ) {
+        console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
+        SignalsModule.Signals.privacyPolicyUpdate()
+    }
     var result = {
         "response":"Connected",
         "jwt": response.token,
         "first_name": response.firstname,
         "last_name": response.lastname,
-        "user_id": response.user
+        "user_id": response.user,
+        "consent_data_collection": response.consent_data_collection
     }
 
     // [TODO][prasanth]: jwt will be created/received in the hcs
@@ -164,7 +165,9 @@ function logout_error(error){
 */
 function close_session(callback) {
     if (Rest.session !== '' && Rest.jwt !== ''){
-        var headers = {"app": "strata"}
+        var headers = {
+            "app": "strata"
+        }
         Rest.xhr("get", "session/close?session=" + Rest.session, "", close_session_result, close_session_result, headers)
         Rest.session = ""
         callback(true)
@@ -192,12 +195,16 @@ function close_session(callback) {
       *   - unable to close session, session id is missing
       * message: "unauthorized request"
       *   - unable to close session, authorization failed
+      * message: "closing request received"
+      *   - heartbeat acknowledged improperly, session not closed
     */
 }
 
 function close_session_result(response) {
     if (response.message ==="session closed"){
         console.log(LoggerModule.Logger.devStudioLoginCategory, "Session Close Successful")
+    } else if (response.message === "closing request received") {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Heartbeat improperly acknowldeged, session not closed")
     } else {
         console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
     }
@@ -380,6 +387,8 @@ function close_account_result(response) {
             SignalsModule.Signals.closeAccountResult("Bad Request");
         }
     } else {
+        Rest.jwt = ""
+        Rest.session = ""
         SignalsModule.Signals.closeAccountResult("Success");
     }
 }
@@ -448,6 +457,8 @@ function update_profile(username, updated_properties) {
 
     if (updated_properties.hasOwnProperty("password")) {
        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result)
+    } else if(updated_properties.hasOwnProperty("consent_privacy_policy")) {
+        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     } else {
        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result)
     }
@@ -524,14 +535,10 @@ function validate_token()
 {
     if (Rest.jwt !== "" && settings.user !== ""){
         userSettings.user = settings.user
-        const anonymousSettings = userSettings.readFile("general-settings.json")
 
         let headers = {
             "app": "strata",
             "version": Rest.versionNumber(),
-        }
-        if (anonymousSettings.hasOwnProperty("hasOptedOut") && anonymousSettings.hasOptedOut) {
-            headers.anonymous = 1
         }
 
         Rest.xhr("get", "session/init", "", validation_result, validation_result, headers)
@@ -566,6 +573,12 @@ function validation_result (response) {
     if (response.hasOwnProperty("session")) {
         Rest.session = response.session;
         SignalsModule.Signals.validationResult("Current token is valid")
+
+        if (response.hasOwnProperty("privacy_policy_changed") && response.privacy_policy_changed == true ) {
+            console.warn(LoggerModule.Logger.devStudioLoginCategory, "Privacy Policy Update!")
+            SignalsModule.Signals.privacyPolicyUpdate()
+        }
+
     } else {
         Rest.jwt = ""
         if (response.message === "No connection") {
@@ -582,6 +595,53 @@ function validation_result (response) {
     }
 }
 
+
+function heartbeat () {
+    if (Rest.session !== '' && Rest.jwt !== ''){
+        var headers = {
+            "app": "strata",
+            "heartbeat": 1
+        }
+        Rest.xhr("get", "session/close?session=" + Rest.session, "", heartbeat_result, heartbeat_result, headers)
+    }
+
+    /*
+      * Possible valid outcomes:
+      *
+      * message: "closing request received"
+      *   - heartbeat acknowledged
+      *
+      * Possible invalid outcomes:
+      *
+      * message: "session closed"
+      *   - heartbeat header not set, session closed instead of heartbeat acknowledged
+      * message: "session id required"
+      *   - session string not sent
+      * message: "No connection"
+      *   - no connection to server, user should check internet connection
+      * message: "Response not valid", status:<status code>, data:<response data>
+      *   - non-json response, server is accesible, but authorization not running/broken, user should retry later
+      * message: "Invalid authentication token", success: false
+      *   - unable to authenticate user
+      * message: "No authentication token provided", success: false
+      *   - unable to authenticate user
+      * message: "unauthorized request"
+      *   - unable to close session, authorization failed
+    */
+}
+
+function heartbeat_result (response) {
+    if (response.hasOwnProperty("message")) {
+        if (response.message === "closing request received") {
+            // console.log(LoggerModule.Logger.devStudioLoginCategory, "Heartbeat acknowledged")
+        } else if (response.message === 'session closed') {
+            console.error(LoggerModule.Logger.devStudioLoginCategory, "Heartbeat closed session improperly")
+        } else {
+            console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Session error:", JSON.stringify(response))
+        }
+    }
+}
+
 function set_token (token) {
     Rest.jwt = token
 }
@@ -589,4 +649,3 @@ function set_token (token) {
 function getNextId() {
    return Rest.getNextRequestId();
 }
-

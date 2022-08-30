@@ -14,13 +14,14 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import '../'
 import '../login/registration'
 import "../general"
 import '../login'
-import 'qrc:/js/login_utilities.js' as LoginUtil
-import 'qrc:/js/navigation_control.js' as NavigationControl
+import 'qrc:/js/login_utilities.js' as LoginUtils
+import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/constants.js" as Constants
@@ -43,6 +44,7 @@ SGStrataPopup {
     property string company: "N/A"
     property string jobTitle: "N/A"
     property int offset: 50
+    property bool consentDataCollection: true
 
     onOpened: {
         basicInfoControls.editing = false
@@ -56,7 +58,7 @@ SGStrataPopup {
     }
 
     onClosed: {
-        alertRect.Layout.preferredHeight = 0
+        alertRect.hideInstantly()
         basicInfoControls.editing = false
         basicInfoControls.resetHeight()
         firstNameColumn.editable = false
@@ -95,8 +97,8 @@ SGStrataPopup {
 
             cancelButtonText: "Cancel"
             acceptButtonText: "Close Account"
-            acceptButtonColor: "#CC0000"
-            acceptButtonHoverColor: "#990000"
+            acceptButtonColor: Theme.palette.error
+            acceptButtonHoverColor: Qt.darker(Theme.palette.error, 1.15)
 
             titleText: "Close Account"
             popupText: "Are you sure you want to close your account?"
@@ -106,8 +108,8 @@ SGStrataPopup {
                     var user = {
                         username: NavigationControl.context.user_id
                     }
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.close_account(user)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.close_account(user)
                     spinnerDialog.open()
                 }
             }
@@ -150,16 +152,16 @@ SGStrataPopup {
                 }
 
                 if (guestUser === false) {
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.get_profile(NavigationControl.context.user_id)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.get_profile(NavigationControl.context.user_id)
                 }
             }
 
             SGNotificationToast {
                  id: alertRect
 
+                 Layout.alignment: Qt.AlignHCenter
                  Layout.fillWidth: true
-                 Layout.preferredHeight: 0
                  Layout.columnSpan: 3
             }
 
@@ -187,8 +189,8 @@ SGStrataPopup {
                     spinnerDialog.open()
                     firstNameColumn.editable = false;
                     lastNameColumn.editable = false;
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
                 onCanceled: {
@@ -248,8 +250,8 @@ SGStrataPopup {
                     spinnerDialog.open()
                     companyColumn.editable = false
                     jobTitleColumn.editable = false
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     resetHeight();
                 }
                 onCanceled: {
@@ -322,8 +324,8 @@ SGStrataPopup {
                         timezone = Math.floor(timezone)
                     }
                     var login_info = { user: NavigationControl.context.user_id, password: currentPasswordField.text, timezone: timezone }
-                    connectionStatus.currentId = LoginUtil.getNextId()
-                    LoginUtil.login(login_info)
+                    connectionStatus.currentId = LoginUtils.getNextId()
+                    LoginUtils.login(login_info)
                     currentPasswordRow.editable = false
                     newPasswordRow.editable = false
                     spinnerDialog.open()
@@ -394,8 +396,8 @@ SGStrataPopup {
 
                     width: 250
                     placeholderText: "Current Password"
-                    echoMode: TextInput.Password
                     showIcon: false
+                    passwordMode: true
                     visible: currentPasswordRow.editable
                 }
             }
@@ -427,37 +429,9 @@ SGStrataPopup {
                     width: 250
 
                     placeholderText: "New password"
-                    echoMode: TextInput.Password
                     showIcon: false
+                    passwordMode: true
                     visible: newPasswordRow.editable
-
-                    SGIcon {
-                        id: showPasswordIcon
-                        source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
-                        iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
-                        anchors {
-                            verticalCenter: passwordField.verticalCenter
-                            rightMargin: 5
-                            right: passwordField.right
-                        }
-                        height: passwordField.height*.75
-                        width: height
-
-                        MouseArea {
-                            id: showPassword
-                            anchors.fill: showPasswordIcon
-                            hoverEnabled: true
-                            onPressedChanged: {
-                                if(alertRect.visible) alertRect.hide();
-                                if (passwordField.echoMode === TextInput.Password) {
-                                    passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
-                                } else {
-                                    passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Password
-                                }
-                            }
-                            cursorShape: Qt.PointingHandCursor
-                        }
-                    }
 
                     onPressed: {
                         passReqsPopup.openPopup()
@@ -473,7 +447,7 @@ SGStrataPopup {
                     }
 
                     placeholderText: "Confirm password"
-                    echoMode: TextInput.Password
+                    echoMode: passwordField.echoMode
                     valid: passReqs.passwordValid
                     width: 250
 
@@ -532,6 +506,37 @@ SGStrataPopup {
                 }
             }
 
+            ProfileSectionDivider {}
+
+            RowLayout {
+                spacing: 8
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.columnSpan: 3
+
+                SGSwitch {
+                    id: dataCollectionSwitch
+                    checked: !root.consentDataCollection
+                    grooveFillColor: Theme.palette.onsemiOrange
+
+                    onToggled: {
+                        let data = {
+                            "consent_data_collection": !checked
+                        };
+                        LoginUtils.update_profile(NavigationControl.context.user_id, data)
+                    }
+                }
+
+                SGText {
+                    id: dataCollectionText
+                    text: qsTr("Opt-out Data Collection (change will take effect after logout or app close)")
+                }
+           }
+
+            Rectangle {
+                height: 8
+            }
+
             ProfileSectionHeader {
                 text: "Close Account"
             }
@@ -567,7 +572,7 @@ SGStrataPopup {
                     id: closeAccountBtnBg
                     implicitWidth: 100
                     implicitHeight: 40
-                    color: "#CC0000"
+                    color: Theme.palette.error
                 }
 
                 onClicked: {
@@ -583,11 +588,11 @@ SGStrataPopup {
                     cursorShape: Qt.PointingHandCursor
 
                     onEntered: {
-                        closeAccountBtnBg.color = "#990000"
+                        closeAccountBtnBg.color = Qt.darker(Theme.palette.error, 1.15)
                     }
 
                     onExited: {
-                        closeAccountBtnBg.color = "#CC0000"
+                        closeAccountBtnBg.color = Theme.palette.error
                     }
                 }
             }
@@ -601,12 +606,12 @@ SGStrataPopup {
                         let data = {
                             "password": passwordField.text
                         };
-                        connectionStatus.currentId = LoginUtil.getNextId()
-                        LoginUtil.update_profile(NavigationControl.context.user_id, data)
+                        connectionStatus.currentId = LoginUtils.getNextId()
+                        LoginUtils.update_profile(NavigationControl.context.user_id, data)
                     } else {
                         passwordControls.expandAnimation.start()
                         passwordControls.editing = true
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                         if (resultObject.response === "No Connection") {
                             alertRect.text = "Connection to authentication server failed. Please check your internet connection and try again.";
                         } else if (resultObject.response === "Server Error") {
@@ -622,7 +627,7 @@ SGStrataPopup {
                 onChangePasswordResult: {
                     if (result === "Success") {
                         alertRect.text = "Successfully changed your password!"
-                        alertRect.color = "#57d445"
+                        alertRect.color = Theme.palette.success
                         resetFields()
                     } else {
                         console.error(result)
@@ -635,7 +640,7 @@ SGStrataPopup {
                         } else {
                             alertRect.text = "Unable to update password. Please try again."
                         }
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                     }
                     spinnerDialog.close()
                     alertRect.show()
@@ -660,13 +665,16 @@ SGStrataPopup {
                             case "title":
                                 root.jobTitle = value
                                 break;
+                            case "consent_data_collection":
+                                root.consentDataCollection = value
+                                break;
                             default:
                                 break;
                             }
                         }
 
                         alertRect.text = "Successfully updated your account information!"
-                        alertRect.color = "#57d445"
+                        alertRect.color = Theme.palette.success
 
                         resetFields()
                     } else {
@@ -680,7 +688,7 @@ SGStrataPopup {
                         } else {
                             alertRect.text = "Unable to update profile. Please try again."
                         }
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                     }
                     spinnerDialog.close()
                     alertRect.show()
@@ -692,15 +700,9 @@ SGStrataPopup {
                         userNames = userNames.filter(username => username !== NavigationControl.context.user_id);
                         userStoreSettings.setValue("userNameStore", JSON.stringify(userNames));
                         userStoreSettings.setValue("userNameIndex", -1);
-                        spinnerDialog.close()
 
                         resetFields()
-
-                        PlatformFilters.clearActiveFilters()
-                        LoginUtil.logout()
-                        PlatformSelection.logout()
-                        sdsModel.strataClient.sendRequest("unregister", {})
-                        NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
+                        mainWindow.logout()
                     } else {
                         if (result === "No Connection") {
                             alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
@@ -712,7 +714,7 @@ SGStrataPopup {
                             alertRect.text = "Unable to close account. Please try again later."
                         }
 
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                         alertRect.show()
                     }
                     spinnerDialog.close()
@@ -731,6 +733,8 @@ SGStrataPopup {
 
                         root.company = user.company
                         root.jobTitle = user.title
+
+                        root.consentDataCollection = user.consent_data_collection
                     } else {
                         if (result === "No Connection") {
                             alertRect.text = "Connection to registration server failed. Please check your internet connection and try again."
@@ -742,7 +746,7 @@ SGStrataPopup {
                             alertRect.text = "Unable to aquire your profile data. Please try again later."
                         }
 
-                        alertRect.color = "red"
+                        alertRect.color = Theme.palette.error
                         alertRect.show()
                     }
                     spinnerDialog.close()

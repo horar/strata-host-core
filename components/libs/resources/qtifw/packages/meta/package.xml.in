@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (c) 2018-2022 onsemi.
+
+   All rights reserved. This software and/or documentation is licensed by onsemi under
+   limited terms and conditions. The terms and conditions pertaining to the software and/or
+   documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
+   Terms and Conditions of Sale, Section 8 Software”).
+  -->
+<Package>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>Libraries and components needed by Strata applications</Description>
+    <Version>@MODULE_VERSION@</Version>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Script>installscript.js</Script>
+    <ExpandedByDefault>true</ExpandedByDefault>
+    <ForcedInstallation>true</ForcedInstallation>
+    <Dependencies>@PROJECT_DEPENDENCIES@</Dependencies>
+    <SortingPriority>70</SortingPriority>
+</Package>

@@ -32,9 +32,8 @@ bool ServerConnector::initialize()
     }
 
     if (false == connector_->open(serverAddress_.toStdString())) {
-        QString errorMessage(QStringLiteral("Failed to open ServerConnector."));
-        qCCritical(lcStrataClientConnector) << errorMessage;
-        emit errorOccurred(ServerConnectorError::FailedToInitialize, errorMessage);
+        qCCritical(lcStrataClientConnector) << "Failed to open ServerConnector";
+        emit errorOccurred(strata::strataRPC::ServerInitialializationError);
         return false;
     }
 
@@ -54,7 +53,7 @@ void ServerConnector::readNewMessages(/*int socket*/)
 {
     readSocketNotifier_->setEnabled(false);
     std::string message;
-    while (true == connector_->read(message)) {
+    while (connector_->read(message)) {
         qCDebug(lcStrataServerConnector).nospace().noquote()
             << "message received. ClientID: 0x"
             << QByteArray::fromStdString(connector_->getDealerID()).toHex() << ", Message: '"
@@ -81,10 +80,8 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
         << "Sending message. ClientID: 0x" << clientId.toHex() << ", Message: '" << message << "'";
 
     if (nullptr == connector_) {
-        QString errorMessage(
-            QStringLiteral("Failed to send message. Connector is not initialized."));
-        qCCritical(lcStrataClientConnector) << errorMessage;
-        emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
+        qCCritical(lcStrataClientConnector) << "Failed to send message. Connector is not initialized.";
+        emit errorOccurred(strata::strataRPC::TransportError);
         return false;
     }
 
@@ -93,14 +90,13 @@ bool ServerConnector::sendMessage(const QByteArray &clientId, const QByteArray &
     connector_->setDealerID(clientId.toStdString());
 
     if (false == connector_->send(message.toStdString())) {
-        QString errorMessage(QStringLiteral("Failed to send message to client."));
         qCCritical(lcStrataClientConnector).noquote().nospace()
-            << errorMessage << " ClientID 0x:" << clientId.toHex();
-        emit errorOccurred(ServerConnectorError::FailedToSend, errorMessage);
+            << "Failed to send message to client. ClientID 0x:" << clientId.toHex();
+        emit errorOccurred(strata::strataRPC::TransportError);
         return false;
     }
 
-    if (true == connector_->hasReadEvent()) {
+    if (connector_->hasReadEvent()) {
         emit messagesQueued(QPrivateSignal());
     }
 

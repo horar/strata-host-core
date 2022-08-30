@@ -54,8 +54,10 @@ void PlatformManagerTest::cleanup()
                &PlatformManagerTest::onBoardDisconnected);
 }
 
-void PlatformManagerTest::onBoardDisconnected(const QByteArray& deviceId)
+void PlatformManagerTest::onBoardDisconnected(const QByteArray& deviceId, const QString& errorString)
 {
+    Q_UNUSED(errorString)
+
     onBoardDisconnectedCalls_++;
     lastOnBoardDisconnectedDeviceId_ = deviceId;
 }
@@ -64,7 +66,8 @@ strata::platform::PlatformPtr PlatformManagerTest::addMockDevice(const QByteArra
                                                                  const QString& deviceName)
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
-    QSignalSpy platformAddedSignal(platformManager_.get(), SIGNAL(platformAdded(QByteArray)));
+    QSignalSpy platformAddedSignal(platformManager_.get(), &PlatformManager::platformOpened);
+    QVERIFY_(platformAddedSignal.isValid());
     QVERIFY_(static_cast<MockDeviceScanner*>(mockDeviceScanner_.get())->mockDeviceDetected(deviceId, deviceName, true).isEmpty());
     QVERIFY_((platformAddedSignal.count() == 1) || (platformAddedSignal.wait(250) == true));
     QVERIFY_(platformManager_->getDeviceIds().contains(deviceId));
@@ -83,8 +86,10 @@ void PlatformManagerTest::removeMockDevice(const QByteArray& deviceId)
 {
     auto devicesCount = platformManager_->getDeviceIds().count();
     auto platform = platformManager_->getPlatform(deviceId);
-    QSignalSpy platformAboutToCloseSignal(platformManager_.get(), SIGNAL(platformAboutToClose(QByteArray)));
-    QSignalSpy platformRemovedSignal(platformManager_.get(), SIGNAL(platformRemoved(QByteArray)));
+    QSignalSpy platformAboutToCloseSignal(platformManager_.get(), &PlatformManager::platformAboutToClose);
+    QSignalSpy platformRemovedSignal(platformManager_.get(), &PlatformManager::platformRemoved);
+    QVERIFY(platformAboutToCloseSignal.isValid());
+    QVERIFY(platformRemovedSignal.isValid());
     if (platformManager_->disconnectPlatform(deviceId)) {
         QVERIFY((platformAboutToCloseSignal.count() == 1) || (platformAboutToCloseSignal.wait(250) == true));
         QVERIFY((platformRemovedSignal.count() == 1) || (platformRemovedSignal.wait(250) == true));
@@ -170,7 +175,8 @@ void PlatformManagerTest::connectMultipleTest()
 
 void PlatformManagerTest::identifyNewPlatformTest()
 {
-    QSignalSpy platformRecognizedSignal(platformManager_.get(), SIGNAL(platformRecognized(QByteArray, bool, bool)));
+    QSignalSpy platformRecognizedSignal(platformManager_.get(), &PlatformManager::platformRecognized);
+    QVERIFY(platformRecognizedSignal.isValid());
 
     const QByteArray deviceId("mock");
     addMockDevice(deviceId, "Mock device");

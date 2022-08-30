@@ -12,9 +12,6 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 
-import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/platform_filters.js" as PlatformFilters
-
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
@@ -32,8 +29,12 @@ Rectangle {
     property alias text: title.text
     property alias textBgColor: textBg.color
 
-    readonly property string defaultText: "CONNECTED"
-    readonly property color defaultTextBg: Theme.palette.green
+    readonly property string connectedText: "CONNECTED"
+    readonly property string recentlyReleasedText: "RECENTLY \n RELEASED"
+    readonly property string comingSoonText: "COMING SOON"
+    readonly property color connectedTextBg: Theme.palette.onsemiLightBlue
+    readonly property color comingSoonTextBg: Theme.palette.onsemiBrown
+    readonly property color recentlyReleasedTextBg: Theme.palette.onsemiYellow
 
     Image {
         id: image
@@ -93,24 +94,6 @@ Rectangle {
                 }
             }
         }
-
-        Image {
-            id: comingSoon
-            sourceSize.height: image.sourceSize.height
-            height: parent.paintedHeight
-            fillMode: Image.PreserveAspectFit
-            source: visible ? "images/platform-images/comingsoon.png" : ""
-            visible: model.coming_soon
-        }
-
-        Image {
-            id: recentlyReleased
-            sourceSize.height: image.sourceSize.height
-            height: parent.paintedHeight
-            fillMode: Image.PreserveAspectFit
-            source: visible ? "images/platform-images/recentlyReleased.png" : ""
-            visible: model.recently_released
-        }
     }
 
     AnimatedImage {
@@ -142,7 +125,7 @@ Rectangle {
 
     Rectangle {
         id: textBg
-        color: defaultTextBg
+        color: connectedTextBg
         width: imageContainer.width
         anchors {
             bottom: imageContainer.bottom
@@ -151,15 +134,78 @@ Rectangle {
         visible: model.connected
         clip: true
 
+        Accessible.role: Accessible.Graphic
+        Accessible.name: "ConnectedRectangle"
+
         SGText {
             id: title
             color: "white"
             anchors {
                 centerIn: parent
             }
-            text: defaultText
+            text: connectedText
             font.bold: true
             fontSizeMultiplier: 1.4
+        }
+    }
+
+    Rectangle {
+        id: transparentRRBg
+        color: "transparent"
+        width: imageContainer.width
+        height: imageContainer.height
+        visible: model.recently_released
+        clip: true
+
+        Rectangle {
+            id: recentlyReleasedBg
+            color: recentlyReleasedTextBg
+            width: transparentRRBg.width
+            anchors {
+                top: transparentRRBg.top
+            }
+            height: 40
+            transform: Rotation { origin.x: 80; origin.y: 80; angle: -45}
+
+            SGText {
+                id: rrText
+                color: "white"
+                anchors {
+                    centerIn: parent
+                }
+                text: recentlyReleasedText
+                font.bold: true
+            }
+        }
+    }
+
+    Rectangle {
+        id: transparentCSBg
+        color: "transparent"
+        width: imageContainer.width
+        height: imageContainer.height
+        visible: model.coming_soon
+        clip: true
+
+        Rectangle {
+            id: comingSoonBg
+            color: comingSoonTextBg
+            width: transparentCSBg.width
+            anchors {
+                top: transparentCSBg.top
+            }
+            height: 25
+            transform: Rotation { origin.x: 100; origin.y: 80; angle: -45}
+
+            SGText {
+                id: csText
+                color: "white"
+                anchors {
+                    centerIn: parent
+                }
+                text: comingSoonText
+                font.bold: true
+            }
         }
     }
 }

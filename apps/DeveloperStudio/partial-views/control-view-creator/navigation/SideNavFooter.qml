@@ -12,7 +12,6 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.theme 1.0
 
-import "qrc:/js/navigation_control.js" as NavigationControl
 import "../components"
 
 Item {
@@ -28,7 +27,7 @@ Item {
             id: cleanupProjectNecessary
             iconText: "Clean"
             iconSource: "qrc:/sgimages/exclamation-triangle.svg"
-            iconColor: "#ffc107"
+            iconColor: Theme.palette.warning
             tooltipDescription: "The QRC file for this project contains files that no longer exist. Cleaning the project will remove these files from the QRC file."
             visible: editor.fileTreeModel.needsCleaning
             color: "transparent"

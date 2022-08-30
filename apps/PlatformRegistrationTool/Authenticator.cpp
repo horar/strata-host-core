@@ -34,7 +34,7 @@ void Authenticator::renewSession()
 
     Deferred *deferred = restClient_->get(QUrl("session/init"));
 
-    connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
+    connect(deferred, &Deferred::finishedSuccessfully, this, [this] (int status, QByteArray data) {
         Q_UNUSED(status)
 
         bool isOk = parseRenewSessionReply(data);
@@ -48,7 +48,7 @@ void Authenticator::renewSession()
         writeSettings(true);
     });
 
-    connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
+    connect(deferred, &Deferred::finishedWithError, this, [this] (int status, QString errorString) {
         qCInfo(lcPrtAuth) << "session renewal failed" << username_ << status << errorString;
 
         setSessionId(QByteArray());
@@ -82,7 +82,7 @@ void Authenticator::login(
                 QVariantMap(),
                 doc.toJson(QJsonDocument::Compact));
 
-    connect(deferred, &Deferred::finishedSuccessfully, [this, storeXAccessToken] (int status, QByteArray data) {
+    connect(deferred, &Deferred::finishedSuccessfully, this, [this, storeXAccessToken] (int status, QByteArray data) {
         Q_UNUSED(status)
 
         bool isOk = parseLoginReply(data);
@@ -97,7 +97,7 @@ void Authenticator::login(
         writeSettings(storeXAccessToken);
     });
 
-    connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
+    connect(deferred, &Deferred::finishedWithError, this, [this] (int status, QString errorString) {
         qCInfo(lcPrtAuth) << "login failed" << status << errorString;
 
         setSessionId(QByteArray());
@@ -118,25 +118,21 @@ void Authenticator::logout()
 
     Deferred *deferred = restClient_->get(QUrl("logout?session="+sessionId_));
 
-    connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
+    connect(deferred, &Deferred::finishedSuccessfully, this, [this] (int status, QByteArray data) {
         Q_UNUSED(status)
         Q_UNUSED(data)
 
         qCInfo(lcPrtAuth) << "logout success";
         emit logoutFinished(true);
 
-        setSessionId(QByteArray());
-        setXAccessToken(QByteArray());
-        writeSettings();
+        clearCredentials();
     });
 
-    connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
+    connect(deferred, &Deferred::finishedWithError, this, [this] (int status, QString errorString) {
         qCCritical(lcPrtAuth) << "logout failed" << status << errorString;
         emit logoutFinished(false);
 
-        setSessionId(QByteArray());
-        setXAccessToken(QByteArray());
-        writeSettings();
+        clearCredentials();
     });
 }
 
@@ -163,6 +159,13 @@ QString Authenticator::firstname() const
 QString Authenticator::lastname() const
 {
     return lastname_;
+}
+
+void Authenticator::handleSessionExpiration()
+{
+    clearCredentials();
+
+    emit sessionExpired();
 }
 
 void Authenticator::writeSettings(bool storeXAccessToken)
@@ -287,4 +290,11 @@ bool Authenticator::parseRenewSessionReply(const QByteArray &data)
     setUsername(doc.object().value("user").toString());
 
     return true;
+}
+
+void Authenticator::clearCredentials()
+{
+    setSessionId(QByteArray());
+    setXAccessToken(QByteArray());
+    writeSettings();
 }

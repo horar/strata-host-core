@@ -11,10 +11,11 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import "qrc:/partial-views"
 import "qrc:/partial-views/general/"
-import "qrc:/js/login_utilities.js" as Password
+import "qrc:/js/login_utilities.js" as LoginUtils
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 import tech.strata.signals 1.0
+import tech.strata.theme 1.0
 
 SGStrataPopup {
     id: root
@@ -98,7 +99,7 @@ SGStrataPopup {
 
                     background: Rectangle {
                         color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
-                        border.color: submitButton.activeFocus ? "#219647" : "transparent"
+                        border.color: submitButton.activeFocus ? Theme.palette.success : "transparent"
                     }
 
                     contentItem: Text {
@@ -122,8 +123,8 @@ SGStrataPopup {
 
                     onClicked: {
                         var reset_info = {username:emailField.text}
-                        submitStatus.currentId = Password.getNextId()
-                        Password.password_reset_request(reset_info)
+                        submitStatus.currentId = LoginUtils.getNextId()
+                        LoginUtils.password_reset_request(reset_info)
                         alertRect.hide()
                         fieldGrid.visible = false
                     }
@@ -169,7 +170,7 @@ SGStrataPopup {
             submitStatus.text = ""
             fieldGrid.visible = true
             if (result === "Reset Requested") {
-                alertRect.color = "#0ec40c"
+                alertRect.color = Theme.palette.success
                 alertRect.text = "Email with password reset instructions is being sent to " + emailField.text
                 root.resetForm()
             } else {
@@ -182,7 +183,7 @@ SGStrataPopup {
                 } else {
                     alertRect.text = "No user found with email " + emailField.text
                 }
-                alertRect.color = "red"
+                alertRect.color =  Theme.palette.error
             }
             alertRect.show()
         }

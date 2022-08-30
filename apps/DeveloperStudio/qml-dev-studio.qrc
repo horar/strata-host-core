@@ -4,32 +4,31 @@
         <file>SGStatusBar.qml</file>
         <file>SGPlatformSelector.qml</file>
         <file>js/core_platform_interface.js</file>
-        <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
         <file>js/navigation_control.js</file>
         <file>js/platform_selection.js</file>
         <file>js/restclient.js</file>
         <file>main.qml</file>
         <file>SplashScreen.qml</file>
-        <file>partial-views/help-tour/SGPeekThroughOverlay.qml</file>
-        <file>partial-views/help-tour/SGTourControl.qml</file>
+        <file>partial-views/help-tour/HelpTourPeekThroughOverlay.qml</file>
+        <file>partial-views/help-tour/HelpTourControl.qml</file>
+        <file>partial-views/help-tour/HelpTourPopup.qml</file>
         <file>partial-views/help-tour/images/corner-fade.png</file>
         <file>partial-views/help-tour/images/side-fade.png</file>
         <file>partial-views/help-tour/images/top-fade.png</file>
         <file>partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/comingsoon.png</file>
         <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
         <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
         <file>partial-views/SGStrataPopup.qml</file>
+        <file>partial-views/FeedbackDialog.qml</file>
         <file>partial-views/login/SGRegistrationControls.qml</file>
         <file>partial-views/login/ValidationField.qml</file>
         <file>partial-views/login/SGForgotPassword.qml</file>
         <file>partial-views/login/LoginComboBox.qml</file>
-        <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
         <file>partial-views/status-bar/SGMenuItem.qml</file>
         <file>partial-views/status-bar/SGSubmitInfoBox.qml</file>
         <file>partial-views/status-bar/SGToolButton.qml</file>
@@ -53,7 +52,6 @@
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
-        <file>partial-views/platform-selector/SegmentFilterDelegate.qml</file>
         <file>js/platform_filters.js</file>
         <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
@@ -80,8 +78,6 @@
         <file>partial-views/platform-view/platform-settings/FirmwareManagement.qml</file>
         <file>partial-views/platform-view/platform-settings/FirmwareVersionList.qml</file>
         <file>js/constants.js</file>
-        <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
-        <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
         <file>partial-views/distribution-portal/SGBaseDistributionButton.qml</file>
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
@@ -97,15 +93,13 @@
         <file>partial-views/general/web-popup/SGWebControls.qml</file>
         <file>partial-views/general/web-popup/SGWebView.qml</file>
         <file>partial-views/notifications/NotificationDelegate.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/recentlyReleased.png</file>
-        <file>partial-views/platform-selector/PlatformControlButton.qml</file>
-        <file>partial-views/platform-selector/PlatformFilterButton.qml</file>
         <file>partial-views/notifications/NotificationsContainer.qml</file>
         <file>partial-views/notifications/NotificationsInbox.qml</file>
         <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
         <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
-        <file>partial-views/help-tour/SGToolTipPopup.qml</file>
+        <file>partial-views/BleScanDialog.qml</file>
         <file>partial-views/general/SGSettingsCheckbox.qml</file>
+        <file>partial-views/SGPolicyUpdateDialog.qml</file>
     </qresource>
 </RCC>

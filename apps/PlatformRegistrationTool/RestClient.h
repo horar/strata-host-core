@@ -28,12 +28,12 @@ public:
 
 signals:
     void finishedSuccessfully(int status, QByteArray data);
-    void finishedWithError(int status, QString errorString);
+    void finishedWithError(int status, QString errorString, QByteArray data);
 
 private:
     friend class RestClient;
     void callSuccess(int status, QByteArray data);
-    void callError(int status, QString errorString);
+    void callError(int status, QString errorString, QByteArray data);
 };
 
 class RestClient: public QObject {

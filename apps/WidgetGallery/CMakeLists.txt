@@ -26,12 +26,16 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
+    WgModel.cpp
     qml.qrc
     images/images.qrc
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
 )
+
+set(${PROJECT_NAME}_ENABLED_PLUGINS "")
+add_qml_debug_plugin_to_version(PROJ_NAME ${PROJECT_NAME} PLUGIN_NAME "qmldebug")
 
 generate_app_version(GITTAG_PREFIX "wg_" MACBUNDLE ON)
 
@@ -50,6 +54,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     Qt5::Widgets
     strata::QtLogger
+    strata::SGCore
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
