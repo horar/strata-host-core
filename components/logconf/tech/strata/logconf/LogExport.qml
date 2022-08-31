@@ -25,6 +25,8 @@ GridLayout {
                                                QtLabsPlatform.StandardPaths.DesktopLocation))
     property int innerSpacing: 5
 
+    property bool logExportInProgress: false
+
     columns: 3
     rows: 3
     columnSpacing: innerSpacing
@@ -44,10 +46,6 @@ GridLayout {
         id: logFilesCompress
     }
 
-    Timer {
-        id: timer
-    }
-
     SGWidgets.SGText {
         text: "Export log files"
         Layout.columnSpan: 3
@@ -62,18 +60,11 @@ GridLayout {
 
         onTextChanged: {
             warningText.visible = false
-            if (text.length == 0) {
-                logExportButton.enabled = false
-            } else {
-                logExportButton.enabled = true
-            }
         }
     }
 
     SGWidgets.SGIconButton {
         icon.source: "qrc:/sgimages/folder-open.svg"
-        icon.width: logExportButton.height -2
-        icon.height: logExportButton.height - 2
         hintText: "Select export path"
         onClicked: {
             if (exportPathField.text.length === 0) {
@@ -91,12 +82,10 @@ GridLayout {
 
         Layout.maximumWidth: height + 2
         text: "Export"
+        enabled: logExportInProgress === false && exportPathField.text.length > 0
 
         onClicked: {
-            logExportButton.enabled = false
-            timer.interval = 100  // a short delay, enabled status would change properly.
-            timer.triggered.connect(logExportInProgress)
-            timer.start()
+            exportLogs()
         }
     }
 
@@ -104,9 +93,23 @@ GridLayout {
         id: warningText
         Layout.columnSpan: 3
 
-        color: "red"
-        text: "Non-existent or non-writable directory.  Log-export unsuccessful."
         visible: false
+
+        Connections {
+            target: logFilesCompress
+            onShowExportMessage: {
+                if (error) {
+                    warningText.color = "red"
+                    console.warn(Logger.lcuCategory, errorMsg)
+                } else {
+                    warningText.color = "green"
+                    console.info(Logger.lcuCategory, errorMsg)
+                }
+
+                warningText.text = errorMsg
+                warningText.visible = true
+            }
+        }
     }
 
     SGWidgets.SGCheckBox {
@@ -114,7 +117,7 @@ GridLayout {
         Layout.columnSpan: 3
 
         text: "Open folder after saving"
-        checked: settings.value("openFolder",false)
+        checked: settings.value("openFolder", false)
     }
 
     QtLabsPlatform.FolderDialog {
@@ -126,15 +129,17 @@ GridLayout {
         }
     }
 
+    function exportLogs() {
+        logExportInProgress = true
 
-    function logExportInProgress() {
-        if (logFilesCompress.logExport(exportPathField.text) === false) {
-            warningText.visible = true
+        var fileNamesToZip  = [appName]
+        if (Qt.application.name === "Strata Developer Studio") {
+            fileNamesToZip.push("Host Controller Service")
         }
-        timer.triggered.disconnect(logExportInProgress) // remove the callback
-        logExportButton.enabled = true
-        if (openFolderCheckBox.checked && warningText.visible === false) {
+        if (logFilesCompress.logExport(exportPathField.text, fileNamesToZip) && openFolderCheckBox.checked) {
             Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(exportPathField.text))
         }
+
+        logExportInProgress = false
     }
 }

@@ -7,6 +7,7 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include "LogFilesCompress.h"
+#include "QtCore/qregularexpression.h"
 #include "logging/LoggingQtCategories.h"
 #include <QFile>
 #include <QStandardPaths>
@@ -25,13 +26,22 @@ bool LogFilesCompress::logExport(QString exportPath)
     //check export path
     QDir exportDir(exportPath);
     if (exportDir.exists() == false || QFileInfo(exportPath).isWritable() == false) {
-        qCWarning(lcLcu) << "Non-existent or non-writable directory";
+        emit showExportMessage("Log-export failed.  Non-existent or non-writable directory.", true);
         return false;
     }
-    const QString timeStamp = QDateTime::currentDateTime().toString("dd-MM-yyyy-hh-mm-ss");
-    const QString zipName(exportDir.path() + "/strata-logs-" + timeStamp + ".zip");
+    const QString timeStamp = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+    QString zipName(exportDir.path() + "/strata-logs-" + timeStamp);
 
-    QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+    while (QFile::exists(zipName + ".zip")) {
+        QStringList nameSplit = zipName.split("_");
+        if (nameSplit.length() == 1) {
+            zipName.replace(timeStamp, timeStamp + "_1");
+        } else {
+            int newSuffix = nameSplit.at(1).toInt() + 1;
+            zipName.replace(QRegularExpression("_\\d"), "_" + QString::number(newSuffix));
+        }
+    }
+    zipName.append(".zip");
 
     //LCU app compresses log files of app that is chosen in comboBox
     if (QCoreApplication::applicationName() == "Logging Configuration Utility") {
@@ -48,23 +58,25 @@ bool LogFilesCompress::logExport(QString exportPath)
         fileInfoList << hcsLogDir.entryInfoList({"Host Controller Service*.log"}, QDir::Files);
     }
 
-    if (compress (fileInfoList, zipName)) {
-        qCDebug(lcLcu) << "Compressing succesfully completed";
-        qCDebug(lcLcu) << "Path to strata-log archive: " << zipName;
+    int zipError = compress (fileInfoList, zipName);
+
+    if ( zipError == 0) {
+        qCDebug(lcLcu) << "Compressing succesfully completed ";
+        QFileInfo zipFile(zipName);
+        emit showExportMessage("Logs exported successfully as: " + zipFile.fileName(), false);
         return true;
     } else {
-        qCWarning(lcLcu) << "Compressing unsuccessful";
+        emit showExportMessage("Compressing unsuccessful.  ERROR: " + QString::number(zipError), true);
         return false;
     }
-
 }
 
-bool LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
+int LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
 {
     QuaZip zip(zipName);
     if (!zip.open(QuaZip::mdCreate)) {
         qCWarning(lcLcu) << "Couldn't open " << zipName;
-        return false;
+        return zip.getZipError();
     }
 
     foreach (QFileInfo fileInfo, filesToZip) {
@@ -75,24 +87,24 @@ bool LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
 
         if (!zipFile.open(QIODevice::WriteOnly, newInfo, NULL, 0, fileInfo.isDir() ? 0 : 8)) {
             qCWarning(lcLcu) << "Couldn't open " << fileName << " in " << zipName;
-            return false;
+            return zipFile.getZipError();
         }
         if (!fileInfo.isDir()) {
             QFile file(filePath);
             if (!file.open(QIODevice::ReadOnly)) {
                 qCWarning(lcLcu) << "Couldn't open " << filePath;
-                return false;
+                return file.error();
             }
             while (!file.atEnd()) {
                 char buf[4096];
                 qint64 l = file.read(buf, 4096);
                 if (l <= 0) {
                     qCWarning(lcLcu) << "Couldn't read " << filePath;
-                    return false;
+                    return file.error();
                 }
                 if (zipFile.write(buf, l) != l) {
                     qCWarning(lcLcu) << "Couldn't write to " << filePath << " in " << zipName;
-                    return false;
+                    return zipFile.getZipError();
                 }
             }
             file.close();
@@ -103,12 +115,7 @@ bool LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
     zip.setComment(applicationName +" log files archive");
     zip.close();
 
-    if (zipName.startsWith("<")) { // something like "<QIODevice pointer>"
-        return false;
-    } else {
-        qCDebug(lcLcu) << "ZipFile exists: " << QFileInfo::exists(zipName);
-        return true;
-    }
+    return  zip.getZipError();
 }
 
 QString LogFilesCompress::appName() const

@@ -25,14 +25,11 @@ public:
 
 
 
-    bool compress (QFileInfoList filesToZip, QString zipName);
+    int compress (QFileInfoList filesToZip, QString zipName);
     QString appName() const;
 
     void setAppName(const QString& appName);
 
 signals:
-    void appNameChanged();
-
-private:
-    QString applicationName;
+    void showExportMessage(QString errorMsg, bool error);
 };
