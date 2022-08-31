@@ -398,7 +398,6 @@ Item {
                         MouseArea {
                             id: openControlsMouseArea
                             anchors.fill: parent
-                            onPressed: openControlsMouseArea.accepted = false
                             enabled: openControls.enabled === false
                             hoverEnabled: true
                             cursorShape: openControls.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
