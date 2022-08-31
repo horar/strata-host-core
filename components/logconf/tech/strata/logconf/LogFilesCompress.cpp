@@ -21,7 +21,7 @@ LogFilesCompress::LogFilesCompress(QObject *parent)
 
 }
 
-bool LogFilesCompress::logExport(QString exportPath)
+bool LogFilesCompress::logExport(QString exportPath, QStringList fileNamesToZip)
 {
     //check export path
     QDir exportDir(exportPath);
@@ -43,19 +43,13 @@ bool LogFilesCompress::logExport(QString exportPath)
     }
     zipName.append(".zip");
 
-    //LCU app compresses log files of app that is chosen in comboBox
-    if (QCoreApplication::applicationName() == "Logging Configuration Utility") {
-        logPath.replace(QCoreApplication::applicationName(), applicationName);
-    }
+    QFileInfoList fileInfoList;
 
-    //SDS, PRT (or any other app) compresses their own log files
-    QDir logDir(logPath);
-    QFileInfoList fileInfoList(logDir.entryInfoList({applicationName + "*.log"}, QDir::Files));
-
-    //SDS compresses also HCS log files
-    if (QCoreApplication::applicationName() == "Strata Developer Studio") {
-        QDir hcsLogDir(logPath.replace(applicationName, "Host Controller Service"));
-        fileInfoList << hcsLogDir.entryInfoList({"Host Controller Service*.log"}, QDir::Files);
+    foreach (QString fileName, fileNamesToZip) {
+        QString logPath{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+        logPath.replace(QCoreApplication::applicationName(), fileName);
+        QDir logDir(logPath);
+        fileInfoList << QFileInfoList(logDir.entryInfoList({fileName + "*.log"}, QDir::Files));
     }
 
     int zipError = compress (fileInfoList, zipName);
@@ -112,20 +106,8 @@ int LogFilesCompress::compress(QFileInfoList filesToZip, QString zipName)
         zipFile.close();
     }
 
-    zip.setComment(applicationName +" log files archive");
+    zip.setComment("Strata-log archive");
     zip.close();
 
     return  zip.getZipError();
-}
-
-QString LogFilesCompress::appName() const
-{
-    return applicationName;
-}
-
-void LogFilesCompress::setAppName(const QString &appName)
-{
-    applicationName = appName;
-
-    emit appNameChanged();
 }

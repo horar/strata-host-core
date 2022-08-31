@@ -19,7 +19,7 @@ import tech.strata.pluginLogger 1.0
 GridLayout {
     id: logExportGrid
 
-    property alias appName: logFilesCompress.appName
+    property string appName
     property string defaultExportPath: CommonCpp.SGUtilsCpp.urlToLocalFile(
                                            QtLabsPlatform.StandardPaths.writableLocation(
                                                QtLabsPlatform.StandardPaths.DesktopLocation))
@@ -32,7 +32,7 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
 
-    enabled: logFilesCompress.appName !== ""
+    enabled: appName !== ""
 
     QtLabsSettings.Settings {
         id: settings
