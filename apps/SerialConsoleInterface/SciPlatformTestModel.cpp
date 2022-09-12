@@ -6,7 +6,6 @@
  * documentation are available at http://www.onsemi.com/site/pdf/ONSEMI_T&C.pdf (“onsemi Standard
  * Terms and Conditions of Sale, Section 8 Software”).
  */
-
 #include "SciPlatformTestModel.h"
 #include "SciPlatformTestMessageModel.h"
 #include "SciPlatformTests.h"
