@@ -1,0 +1,326 @@
+diff --git a/web/annotation_layer_builder.css b/web/annotation_layer_builder.css
+index 7384f4115..72a757e41 100644
+--- a/web/annotation_layer_builder.css
++++ b/web/annotation_layer_builder.css
+@@ -44,7 +44,7 @@
+ .annotationLayer .choiceWidgetAnnotation select,
+ .annotationLayer .buttonWidgetAnnotation.checkBox input,
+ .annotationLayer .buttonWidgetAnnotation.radioButton input {
+-  background-color: rgba(0, 54, 255, 0.13);
++  background-color: rgba(56, 128, 246, 0.2); /*lighter onsemiBlue*/
+   border: 1px solid transparent;
+   box-sizing: border-box;
+   font-size: 9px;
+@@ -157,8 +157,8 @@
+   position: absolute;
+   z-index: 200;
+   max-width: 20em;
+-  background-color: #FFFF99;
+-  box-shadow: 0px 2px 5px #888;
++  background-color: #DBAC17; /*onsemi Yellow*/
++  box-shadow: 0px 2px 5px #a7a9ac; /*gray*/
+   border-radius: 2px;
+   padding: 6px;
+   margin-left: 5px;
+diff --git a/web/text_layer_builder.css b/web/text_layer_builder.css
+index 83c2beda4..92f6aac47 100644
+--- a/web/text_layer_builder.css
++++ b/web/text_layer_builder.css
+@@ -20,7 +20,7 @@
+   right: 0;
+   bottom: 0;
+   overflow: hidden;
+-  opacity: 0.2;
++  opacity: 0.25;
+   line-height: 1.0;
+ }
+ 
+@@ -36,7 +36,7 @@
+   margin: -1px;
+   padding: 1px;
+ 
+-  background-color: rgb(180, 0, 170);
++  background-color: #3880F6; /*onsemiBlue*/
+   border-radius: 4px;
+ }
+ 
+@@ -53,10 +53,10 @@
+ }
+ 
+ .textLayer .highlight.selected {
+-  background-color: rgb(0, 100, 0);
++  background-color: #E97D2E; /*onsemiOrange*/
+ }
+ 
+-.textLayer ::selection { background: rgb(0,0,255); }
++.textLayer ::selection { background: #3880F6; } /*onsemiBlue*/
+ 
+ .textLayer .endOfContent {
+   display: block;
+diff --git a/web/viewer.css b/web/viewer.css
+index 04f7f938a..d4170bf94 100644
+--- a/web/viewer.css
++++ b/web/viewer.css
+@@ -59,13 +59,13 @@ select {
+ }
+ 
+ #viewerContainer.pdfPresentationMode:-ms-fullscreen::-ms-backdrop {
+-  background-color: #000;
++  background-color: white;
+ }
+ 
+ #viewerContainer.pdfPresentationMode:fullscreen {
+   top: 0px;
+   border-top: 2px solid transparent;
+-  background-color: #000;
++  background-color: white;
+   width: 100%;
+   height: 100%;
+   overflow: hidden;
+@@ -155,15 +155,15 @@ html[dir='rtl'] #outerContainer.sidebarOpen #sidebarContainer {
+   -webkit-overflow-scrolling: touch;
+   position: absolute;
+   width: 100%;
+-  background-color: hsla(0,0%,0%,.1);
++  background-color: #d3d4d6; /*light gray*/
+ }
+ html[dir='ltr'] #sidebarContent {
+   left: 0;
+-  box-shadow: inset -1px 0 0 hsla(0,0%,0%,.25);
++  box-shadow: inset -2px 0 0 #E97D2E; /*onsemi orange*/
+ }
+ html[dir='rtl'] #sidebarContent {
+   right: 0;
+-  box-shadow: inset 1px 0 0 hsla(0,0%,0%,.25);
++  box-shadow: inset 2px 0 0 #E97D2E; /*onsemi orange*/
+ }
+ 
+ #viewerContainer {
+@@ -181,10 +181,10 @@ html[dir='rtl'] #sidebarContent {
+   transition-timing-function: ease;
+ }
+ html[dir='ltr'] #viewerContainer {
+-  box-shadow: inset 1px 0 0 hsla(0,0%,100%,.05);
++  box-shadow: inset 2px 0 0 #E97D2E;
+ }
+ html[dir='rtl'] #viewerContainer {
+-  box-shadow: inset -1px 0 0 hsla(0,0%,100%,.05);
++  box-shadow: inset -2px 0 0 #E97D2E;
+ }
+ 
+ #outerContainer.sidebarResizing #viewerContainer {
+@@ -218,9 +218,9 @@ html[dir='rtl'] #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentatio
+ #toolbarSidebar {
+   width: 100%;
+   height: 32px;
+-  background-color: #424242; /* fallback */
++  background-color: white; /* fallback */
+   background-image: url(images/texture.png),
+-                    linear-gradient(hsla(0,0%,30%,.99), hsla(0,0%,25%,.95));
++                    linear-gradient(#a7a9ac, #66686A);
+ }
+ html[dir='ltr'] #toolbarSidebar {
+   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25),
+@@ -255,7 +255,7 @@ html[dir='rtl'] #sidebarResizer {
+   height: 32px;
+   background-color: #474747; /* fallback */
+   background-image: url(images/texture.png),
+-                    linear-gradient(hsla(0,0%,32%,.99), hsla(0,0%,27%,.95));
++                    linear-gradient(#a7a9ac, #66686A);
+ }
+ html[dir='ltr'] #toolbarContainer, .findbar, .secondaryToolbar {
+   box-shadow: inset 0 1px 1px hsla(0,0%,0%,.15),
+@@ -278,8 +278,8 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
+   position: relative;
+   width: 100%;
+   height: 4px;
+-  background-color: #333;
+-  border-bottom: 1px solid #333;
++  background-color: #E97D2E; /*onsemi Orange*/
++  border-bottom: 1px solid #E97D2E; /*onsemi Orange*/
+ }
+ 
+ #loadingBar .progress {
+@@ -288,7 +288,7 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
+   left: 0;
+   width: 0%;
+   height: 100%;
+-  background-color: #ddd;
++  background-color: #66686A; /*onsemiSecondaryLightBlue*/
+   overflow: hidden;
+   transition: width 200ms;
+ }
+@@ -312,8 +312,8 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
+ 
+   background: repeating-linear-gradient(135deg,
+                                         #bbb 0, #999 5px,
+-                                        #999 45px, #ddd 55px,
+-                                        #ddd 95px, #bbb 100px);
++                                        #999 45px, #E97D2E 55px,
++                                        #E97D2E 95px, #bbb 100px);
+ 
+   animation: progressIndeterminate 950ms linear infinite;
+ }
+@@ -326,7 +326,7 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
+   min-width: 16px;
+   padding: 0px 6px 0px 6px;
+   margin: 4px 2px 4px 2px;
+-  color: hsl(0,0%,85%);
++  color: white;
+   font-size: 12px;
+   line-height: 14px;
+   text-align: left;
+@@ -357,16 +357,22 @@ html[dir='rtl'] .findbar {
+ }
+ 
+ #findInput {
++  background-color: white;
+   width: 200px;
++  color: #66686A; /*dark gray*/
+ }
+ #findInput::-webkit-input-placeholder {
+-  color: hsl(0, 0%, 75%);
++  color: black;
++  background-color: white;
+ }
+ #findInput::placeholder {
+   font-style: italic;
++  color: black;
++  background-color: white;
+ }
+ #findInput[data-status="pending"] {
+   background-image: url(images/loading-small.png);
++                    linear-gradient(#d3d4d6, #a7a9ac);
+   background-repeat: no-repeat;
+   background-position: right;
+ }
+@@ -392,6 +398,7 @@ html[dir='rtl'] .secondaryToolbar {
+   overflow-y: auto;
+   -webkit-overflow-scrolling: touch;
+   margin-bottom: -4px;
++  background-color: #E97D2E; /*onremi orange*/
+ }
+ 
+ #secondaryToolbarButtonContainer.hiddenScrollModeButtons > .scrollModeButtons,
+@@ -417,37 +424,37 @@ html[dir='rtl'] .secondaryToolbar {
+ }
+ .doorHanger:after,
+ .doorHangerRight:after {
+-  border-bottom-color: hsla(0,0%,32%,.99);
+-  border-width: 8px;
++  border-bottom-color: #a7a9ac; /*gray*/
++  border-width: 6px;
+ }
+ .doorHanger:before,
+ .doorHangerRight:before {
+-  border-bottom-color: hsla(0,0%,0%,.5);
+-  border-width: 9px;
++  border-bottom-color: #a7a9ac; /*gray*/
++  border-width: 7px;
+ }
+ 
+ html[dir='ltr'] .doorHanger:after,
+ html[dir='rtl'] .doorHangerRight:after {
+-  left: 13px;
+-  margin-left: -8px;
++  left: 11px;
++  margin-left: -6px;
+ }
+ 
+ html[dir='ltr'] .doorHanger:before,
+ html[dir='rtl'] .doorHangerRight:before {
+-  left: 13px;
+-  margin-left: -9px;
++  left: 11px;
++  margin-left: -7px;
+ }
+ 
+ html[dir='rtl'] .doorHanger:after,
+ html[dir='ltr'] .doorHangerRight:after {
+-  right: 13px;
+-  margin-right: -8px;
++  right: 11px;
++  margin-right: -6px;
+ }
+ 
+ html[dir='rtl'] .doorHanger:before,
+ html[dir='ltr'] .doorHangerRight:before {
+-  right: 13px;
+-  margin-right: -9px;
++  right: 11px;
++  margin-right: -7px;
+ }
+ 
+ #findResultsCount {
+@@ -459,14 +466,16 @@ html[dir='ltr'] .doorHangerRight:before {
+ 
+ #findMsg {
+   font-style: italic;
+-  color: #A6B7D0;
++  color: #cc0000; /*scarletRed2*/
+ }
+ #findMsg:empty {
+   display: none;
+ }
+ 
+ #findInput.notFound {
+-  background-color: rgb(255, 102, 102);
++  background-color: rgba(204,0,0,0.25); /*scarletRed2*/
++  border-color: #cc0000; /*scarletRed2*/
++  color: black
+ }
+ 
+ #toolbarViewerMiddle {
+@@ -1101,7 +1110,7 @@ html[dir='rtl'] .verticalToolbarSeparator {
+ 
+ .toolbarField:focus {
+   background-color: hsla(0,0%,100%,.15);
+-  border-color: hsla(204,100%,65%,.8) hsla(204,100%,65%,.85) hsla(204,100%,65%,.9);
++  border-color: border-color: #E97D2E; /*onsemi Orange*/
+ }
+ 
+ .toolbarLabel {
+@@ -1279,6 +1288,7 @@ html[dir='rtl'] .attachmentsItem > button {
+   content: url(images/treeitem-expanded.png);
+   display: inline-block;
+   position: absolute;
++  filter: brightness(0);
+ }
+ html[dir='ltr'] .outlineItemToggler.outlineItemsHidden::before {
+   content: url(images/treeitem-collapsed.png);
+@@ -1307,24 +1317,23 @@ html[dir='rtl'] .outlineItemToggler::before {
+ .outlineItemToggler:hover ~ .outlineItems,
+ .outlineItem > a:hover,
+ .attachmentsItem > button:hover {
+-  background-color: hsla(0,0%,100%,.02);
+-  background-image: linear-gradient(hsla(0,0%,100%,.05), hsla(0,0%,100%,0));
++  background-image: linear-gradient(#d3d4d6, #a7a9ac);
+   background-clip: padding-box;
+-  box-shadow: 0 1px 0 hsla(0,0%,100%,.05) inset,
+-              0 0 1px hsla(0,0%,100%,.2) inset,
+-              0 0 1px hsla(0,0%,0%,.2);
++  box-shadow: 0 1px 0 #d3d4d6 inset, /*light gray*/
++              0 0 1px #a7a9ac inset, /*gray*/
++              0 0 1px #66686A;       /*dark gray*/
+   border-radius: 2px;
+-  color: hsla(0,0%,100%,.9);
++  color: black;
+ }
+ 
+ .outlineItem.selected {
+-  background-color: hsla(0,0%,100%,.08);
+-  background-image: linear-gradient(hsla(0,0%,100%,.05), hsla(0,0%,100%,0));
++  background-image: linear-gradient(#a7a9ac, #66686A);
+   background-clip: padding-box;
+-  box-shadow: 0 1px 0 hsla(0,0%,100%,.05) inset,
+-              0 0 1px hsla(0,0%,100%,.1) inset,
+-              0 0 1px hsla(0,0%,0%,.2);
+-  color: hsla(0,0%,100%,1);
++  ox-shadow: 0 1px 0 #d3d4d6 inset, /*light gray*/
++             0 0 1px #a7a9ac inset, /*gray*/
++             0 0 1px #66686A;       /*dark gray*/
++  color: black;
++  font-style: bold;
+ }
+ 
+ .noResults {
