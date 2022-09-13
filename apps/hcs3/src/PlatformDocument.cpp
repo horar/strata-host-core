@@ -15,6 +15,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+constexpr int CONTROLLER_TYPE_NOT_APPLICABLE(0);
 constexpr int CONTROLLER_TYPE_EMBEDDED(1);
 constexpr int CONTROLLER_TYPE_ASSISTED(2);
 constexpr int CONTROLLER_TYPE_CONTROLLER(3);
@@ -63,10 +64,11 @@ bool PlatformDocument::parseDocument(const QByteArray &document)
             qCCritical(lcHcsPlatformDocument) << this << "key '" << JSON_CONTROLLER_TYPE << "' is not a number / is missing";
             return false;
         }
-        controllerType = controllerValue.toInt(0);
+        controllerType = controllerValue.toInt(-1);
         if (controllerType != CONTROLLER_TYPE_EMBEDDED
                 && controllerType != CONTROLLER_TYPE_ASSISTED
-                && controllerType != CONTROLLER_TYPE_CONTROLLER) {
+                && controllerType != CONTROLLER_TYPE_CONTROLLER
+                && controllerType != CONTROLLER_TYPE_NOT_APPLICABLE) {
             qCCritical(lcHcsPlatformDocument) << this << "unsupported value ("
                 << controllerValue.toDouble() << ") of '" << JSON_CONTROLLER_TYPE << "' key";
             return false;
