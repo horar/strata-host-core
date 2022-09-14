@@ -184,8 +184,6 @@ int main(int argc, char *argv[]) {
 
     QObject::connect(&engine, &QQmlApplicationEngine::warnings, &logModel_, &LogModel::handleQmlWarning);
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-
     strata::SGCore::AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
     QObject::connect(
         &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
