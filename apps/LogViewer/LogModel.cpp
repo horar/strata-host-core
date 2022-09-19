@@ -31,21 +31,24 @@ LogModel::~LogModel()
     delete timer_;
 }
 
-QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
+QString LogModel::populateModel(const QString &path)
 {
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qCWarning(lcLogViewer) << "cannot open file with path " + path + " " + file.errorString();
+        qCWarning(lcLogViewer).nospace().noquote() << "Cannot open file '" + path + "': " + file.errorString();
         return file.errorString();
     }
-    if (fileModel_.containsFilePath(path) == false) {
-        fileModel_.append(path);
+
+    int fileIndex = fileModel_.getFileIndex(path);
+    if (fileIndex < 0) {
+        fileIndex = fileModel_.append(path);
+        // TODO - previous for each file
         clearPrevious();
     }
 
     QTextStream stream(&file);
-    stream.seek(lastPosition);
+    stream.seek(fileModel_.getLastPositionAt(fileIndex));
 
     QList<LogItem*> chunk;
     bool chunkReady = false;
@@ -80,9 +83,8 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
         insertChunk(chunkIter, chunk);
     }
 
-    if (lastPositions_.length() < fileModel_.count()) {
-        lastPositions_.append(stream.pos());
-    }
+    fileModel_.setLastPositionAt(fileIndex, stream.pos());
+
     if (followingInitialized_ == false) {
         timer_->start(std::chrono::milliseconds(500));
         followingInitialized_ = true;
@@ -107,10 +109,10 @@ void LogModel::insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> 
 QString LogModel::followFile(const QString &path)
 {
     if (fileModel_.containsFilePath(path)) {
-        qCWarning(lcLogViewer) << "cannot open file with path " + path + " " + "file is already opened";
-        return "file is already opened";
+        qCWarning(lcLogViewer).nospace().noquote() << "Cannot open file '" + path + "': file is already opened";
+        return "File is already opened";
     } else {
-        return populateModel(path, 0);
+        return populateModel(path);
     }
 }
 
@@ -118,10 +120,9 @@ void LogModel::removeFile(const QString &path)
 {
     int removedAt = fileModel_.remove(path);
     if (removedAt >= 0) {
-        lastPositions_.removeAt(removedAt);
         removeRowsFromModel(qHash(path));
     } else {
-        qCCritical(lcLogViewer) << "path not found";
+        qCCritical(lcLogViewer) << "Path not found";
     }
 }
 
@@ -364,23 +365,22 @@ void LogModel::checkFile()
 {
     for (int i = 0; i < fileModel_.count(); i++) {
         const QString filePath = fileModel_.getFilePathAt(i);
+        const qint64 lastPosition = fileModel_.getLastPositionAt(i);
         QFile file(filePath);
 
-        if (file.size() != lastPositions_[i]) {
-            if (file.size() < lastPositions_[i]) {
-                QFile rotatedFile(getRotatedFilePath(filePath));
+        if (file.size() != lastPosition) {
+            if (file.size() < lastPosition) {
+                const QString rotatedFilePath = getRotatedFilePath(filePath);
+                QFile rotatedFile(rotatedFilePath);
                 if (rotatedFile.exists()) {
-                    qCDebug(lcLogViewer) << filePath << "has rotated into" << getRotatedFilePath(filePath) ;
-                    populateModel(getRotatedFilePath(filePath), lastPositions_[i]);
+                    qCDebug(lcLogViewer) << filePath << "has rotated into" << rotatedFilePath;
+                    int rotatedIndex = fileModel_.append(rotatedFilePath);
+                    fileModel_.copyFileMetadata(i, rotatedIndex);
+                    populateModel(rotatedFilePath);
                 }
-                populateModel(filePath, 0);
-                lastPositions_[i] = file.size();
+                fileModel_.setLastPositionAt(i, 0);
             }
-
-            if (file.size() > lastPositions_[i]) {
-                populateModel(filePath, lastPositions_[i]);
-                lastPositions_[i] = file.size();
-            }
+            populateModel(filePath);
         }
     }
 }

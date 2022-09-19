@@ -89,9 +89,8 @@ private:
     QString previousTid_;
     LogModel::LogLevel previousLevel_;
     QList<LogItem*> data_;
-    QVector<qint64> lastPositions_;
     LogItem* parseLine(const QString &line);
-    QString populateModel(const QString &path, const qint64 &lastPosition);
+    QString populateModel(const QString &path);
     void updateTimestamps();
     FileModel fileModel_;
     void setOldestTimestamp(const QDateTime &timestamp);
@@ -106,8 +105,7 @@ struct LogItem {
 
     LogItem()
         : level(LogModel::LogLevel::LevelUnknown)
-    {
-    }
+    { }
 
     bool operator<(const LogItem& second) const {
         return (timestamp < second.timestamp);

@@ -20,36 +20,39 @@ FileModel::~FileModel()
 {
 }
 
-void FileModel::append(const QString &path)
+int FileModel::append(const QString &path)
 {
-    beginInsertRows(QModelIndex(),data_.length(),data_.length());
-    data_.append(path);
-    endInsertRows();
-    emit countChanged();
+    if (getDataIndex(path) < 0) {
+        beginInsertRows(QModelIndex(),data_.length(),data_.length());
+        data_.append(FileData(path));
+        endInsertRows();
+        emit countChanged();
+        return data_.size() - 1;
+    } else {
+        return -1;
+    }
 }
 
 int FileModel::remove(const QString &path)
 {
-    for (int i = 0; i < data_.length(); i++) {
-        if (data_.at(i) == path) {
-            beginRemoveRows(QModelIndex(), i,i);
-            data_.removeAt(i);
-            endRemoveRows();
-            emit countChanged();
-            return i;
-        }
+    const int index = getDataIndex(path);
+    if (index >= 0) {
+        beginRemoveRows(QModelIndex(), index, index);
+        data_.removeAt(index);
+        endRemoveRows();
+        emit countChanged();
     }
-    return -1;
+    return index;
 }
 
 QVariant FileModel::data(const QModelIndex &index, int role) const
 {
-    int row = index.row();
+    const int row = index.row();
 
-    if (row < 0 || row >= data_.count()) {
+    if (row < 0 || row >= data_.size()) {
         return QVariant();
     }
-    QString filepath = data_.at(row);
+    const QString filepath = data_.at(row).path;
 
     switch (role) {
     case FileNameRole:
@@ -62,23 +65,54 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
 
 int FileModel::count() const
 {
-    return data_.length();
+    return data_.size();
 }
 
 int FileModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return data_.length();
+    return data_.size();
 }
 
-QString FileModel::getFilePathAt(const int &pos) const
+QString FileModel::getFilePathAt(int index) const
 {
-    return data_[pos];
+    return ((index >= 0) && (index < data_.size()))
+        ? data_.at(index).path
+        : QString();
 }
 
-bool FileModel::containsFilePath(const QString &path)
+qint64 FileModel::getLastPositionAt(int index) const
 {
-    return data_.contains(path);
+    return ((index >= 0) && (index < data_.size()))
+        ? data_.at(index).lastPosition
+        : -1;
+}
+
+void FileModel::setLastPositionAt(int index, qint64 filePosition)
+{
+    if ((index >= 0) && (index < data_.size())) {
+        data_[index].lastPosition = filePosition;
+    }
+}
+
+bool FileModel::containsFilePath(const QString &path) const
+{
+    return (getDataIndex(path) >= 0);
+}
+
+int FileModel::getFileIndex(const QString &path) const
+{
+    return getDataIndex(path);
+}
+
+void FileModel::copyFileMetadata(int fromIndex, int toIndex)
+{
+    if ((fromIndex != toIndex)
+        && (fromIndex >= 0) && (fromIndex < data_.size())
+        && (toIndex >= 0) && (toIndex < data_.size()))
+    {
+        data_[toIndex].lastPosition = data_.at(fromIndex).lastPosition;
+    }
 }
 
 void FileModel::clear()
@@ -94,4 +128,15 @@ QHash<int, QByteArray> FileModel::roleNames() const
     names[FileNameRole] = "filename";
     names[FilePathRole] = "filepath";
     return names;
+}
+
+int FileModel::getDataIndex(const QString &path) const {
+    int index = -1;
+    for (int i = 0; i < data_.size(); ++i) {
+        if (data_.at(i).path == path) {
+            index = i;
+            break;
+        }
+    }
+    return index;
 }

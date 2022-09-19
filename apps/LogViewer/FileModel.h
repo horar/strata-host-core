@@ -27,14 +27,18 @@ public:
         FilePathRole,
     };
 
-    void append(const QString &path);
+    int append(const QString &path);
     int remove(const QString &path); /*returns index at which the file was removed*/
     void clear();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QString getFilePathAt(const int &pos) const;
-    Q_INVOKABLE bool containsFilePath(const QString &path);
+    QString getFilePathAt(int index) const;
+    qint64 getLastPositionAt(int index) const;
+    void setLastPositionAt(int index, qint64 filePosition);
+    Q_INVOKABLE bool containsFilePath(const QString &path) const;
+    int getFileIndex(const QString &path) const;
+    void copyFileMetadata(int fromIndex, int toIndex);
 
 signals:
     void countChanged();
@@ -43,7 +47,17 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QStringList data_;
+    struct FileData {
+        explicit FileData(const QString &path)
+            : path(path),
+              lastPosition(0)
+        { }
+        QString path;
+        qint64 lastPosition;
+    };
+    QList<FileData> data_;
+
+    int getDataIndex(const QString &path) const;  // returns -1 if nothing was found
 };
 
 #endif
