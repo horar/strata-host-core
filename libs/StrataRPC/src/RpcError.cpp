@@ -73,6 +73,19 @@ void RpcError::setData(const QJsonObject &data) {
     sharedDataPtr_->data = data;
 }
 
+QJsonObject RpcError::toJsonObject() const
+{
+    QJsonObject errorObject;
+    errorObject.insert("code", code());
+    errorObject.insert("message", message());
+
+    if (data().isEmpty() == false) {
+        errorObject.insert("data", data());
+    }
+
+    return errorObject;
+}
+
 QString RpcError::defaultMessage(RpcErrorCode code)
 {
     switch(code) {

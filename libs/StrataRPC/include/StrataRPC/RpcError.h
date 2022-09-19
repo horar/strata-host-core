@@ -69,6 +69,8 @@ public:
     QJsonObject data() const;
     void setData(const QJsonObject &data);
 
+    QJsonObject toJsonObject() const;
+
     static QString defaultMessage(RpcErrorCode code);
 
     friend QDebug operator<<(QDebug debug, const RpcError &error);
