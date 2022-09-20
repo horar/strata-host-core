@@ -115,11 +115,16 @@ function getQMLFile(filename, class_id, version = "")
 /*
   Dynamically load qml controls by qml filename
 */
-function createView(name, parent)
+function createView(name, parent, properties)
 {
-    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", parameters =", JSON.stringify(context))
+    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", properties =", JSON.stringify(properties))
     // parent must be a Loader
-    parent.setSource(name, context)
+
+    if (properties === undefined) {
+        properties  = {}
+    }
+
+    parent.setSource(name, properties)
     parent.active = true
 }
 
@@ -140,7 +145,7 @@ function globalEventHandler(event, data)
     switch(event) {
         case events.PROMPT_SPLASH_SCREEN_EVENT:
             navigation_state_ = states.NOT_CONNECTED_STATE
-            createView(screens.SPLASH_SCREEN, main_container_)
+            createView(screens.SPLASH_SCREEN, main_container_, data)
 
             // Remove StatusBar
             removeView(status_bar_container_)
@@ -151,7 +156,7 @@ function globalEventHandler(event, data)
             navigation_state_ = states.LOGIN_STATE
 
             // Show login, reset stack
-            createView(screens.LOGIN_SCREEN, main_container_)
+            createView(screens.LOGIN_SCREEN, main_container_, context)
 
             // Remove StatusBar at Login
             removeView(status_bar_container_)
@@ -187,7 +192,7 @@ function globalEventHandler(event, data)
             // Unregister all control views
             resource_loader_.unregisterAllViews(main_qml_object_);
 
-            updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
+            updateState(events.PROMPT_SPLASH_SCREEN_EVENT, data)
             break;
 
         default:
@@ -244,10 +249,10 @@ function updateState(event, data)
                     context.last_name = data.last_name
 
                     // Update StatusBar
-                    createView(screens.STATUS_BAR, status_bar_container_)
+                    createView(screens.STATUS_BAR, status_bar_container_, context)
                     platform_tab_list_view_ = status_bar_container_.item.platformTabListView
 
-                    createView(screens.PLATFORM_SELECTOR, main_container_)
+                    createView(screens.PLATFORM_SELECTOR, main_container_, context)
 
                     // Progress to next state
                     navigation_state_ = states.CONTROL_STATE
