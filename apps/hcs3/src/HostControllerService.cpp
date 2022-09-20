@@ -36,10 +36,10 @@ HostControllerService::~HostControllerService()
     stop();
 }
 
-bool HostControllerService::initialize(const QString &config)
+HostControllerService::InitializeErrorCode HostControllerService::initialize(const QString &config)
 {
     if (parseConfig(config) == false) {
-        return false;
+        return FailureParseConfig;
     }
 
     // strataServer_ setup
@@ -48,7 +48,7 @@ bool HostControllerService::initialize(const QString &config)
     if (false == serverConfig.contains("subscriber_address") ||
         false == serverConfig.value("subscriber_address").isString()) {
         qCCritical(lcHcs) << "Invalid subscriber_address.";
-        return false;
+        return FailureSubscriberAddress;
     }
 
     strataServer_ = std::make_shared<strataRPC::StrataServer>(
@@ -175,6 +175,7 @@ bool HostControllerService::initialize(const QString &config)
             qCDebug(lcHcs) << "Creating base folder" << baseFolder;
             if (false == baseFolderDir.mkpath(baseFolder)) {
                 qCCritical(lcHcs) << "Failed to create base folder" << baseFolder;
+                return FailureBaseFolder;
             }
         }
     }
@@ -186,7 +187,7 @@ bool HostControllerService::initialize(const QString &config)
 
     if (db_.open(baseFolder, "strata_db") == false) {
         qCCritical(lcHcs) << "Failed to open database.";
-        return false;
+        return FailureOpenDatabase;
     }
 
     // TODO: Will resolved in SCT-517
@@ -198,12 +199,12 @@ bool HostControllerService::initialize(const QString &config)
 
     if (baseUrl.isValid() == false) {
         qCCritical(lcHcs) << "Provided file_server url is not valid";
-        return false;
+        return FailureFileServerUrlNotValid;
     }
 
     if (baseUrl.scheme().isEmpty()) {
         qCCritical(lcHcs) << "file_server url does not have scheme";
-        return false;
+        return FailureFileServerUrlNoScheme;
     }
 
     storageManager_.setBaseUrl(baseUrl);
@@ -217,7 +218,7 @@ bool HostControllerService::initialize(const QString &config)
 
     updateController_.initialize(&platformController_, &downloadManager_);
 
-    return true;
+    return Success;
 }
 
 void HostControllerService::start()

@@ -40,14 +40,26 @@ class HostControllerService : public QObject
     Q_OBJECT
 
 public:
+
+    enum InitializeErrorCode {
+        Success = EXIT_SUCCESS,
+        FailureAppGuard = EXIT_FAILURE + 1,
+        FailureParseConfig,
+        FailureSubscriberAddress,
+        FailureBaseFolder,
+        FailureOpenDatabase,
+        FailureFileServerUrlNotValid,
+        FailureFileServerUrlNoScheme,
+    };
+
     HostControllerService(QObject* parent = nullptr);
     ~HostControllerService() override;
 
     /**
      * Initializes the HCS
-     * @return returns true when succeeded otherwise false
+     * @return returns error code
      */
-    bool initialize(const QString& config);
+    InitializeErrorCode initialize(const QString& config);
 
     /**
      * Starts the HCS - dispatching thread
