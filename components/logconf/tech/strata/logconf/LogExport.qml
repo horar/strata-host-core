@@ -47,6 +47,7 @@ GridLayout {
 
     SGWidgets.SGText {
         text: "Export log files"
+        fontSizeMultiplier: 1.1
         Layout.columnSpan: 3
     }
 

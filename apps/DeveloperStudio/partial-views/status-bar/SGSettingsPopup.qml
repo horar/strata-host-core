@@ -21,7 +21,7 @@ SGStrataPopup {
     headerText: "General Settings"
     closePolicy: Popup.CloseOnEscape
     focus: true
-    width: 400
+    width: 450
     x: container.width/2 - root.width/2
     y: mainWindow.height/2 - root.height/2
 
@@ -138,6 +138,24 @@ SGStrataPopup {
             id: logLevelHCS
             Layout.fillWidth: true
             fileName: "Host Controller Service"
+        }
+
+        SGText {
+            text: "Export log files"
+            fontSizeMultiplier: 1.3
+        }
+
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: "#666"
+        }
+
+        LcuPlugin.LogExport {
+            id: logExportPane
+            Layout.fillWidth: true
+            appName: Qt.application.name
         }
     }
 }
