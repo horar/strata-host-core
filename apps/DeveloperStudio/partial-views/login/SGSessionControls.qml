@@ -89,6 +89,7 @@ Item {
                                     "last_name": LoginUtils.settings.last_name
                                 }
                                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                                LoginUtils.checkHcsStatus()
                             },
                             function(error) {
                                 console.info(LoggerModule.Logger.devStudioLoginCategory, "Registration with server failed", JSON.stringify(JSON.stringify(error)))
