@@ -51,37 +51,24 @@ QString LogModel::populateModel(const QString &path)
     stream.seek(fileModel_.getLastPositionAt(fileIndex));
 
     QList<LogItem*> chunk;
-    bool chunkReady = false;
+    QList<LogItem*>::iterator chunkIter = data_.begin();
 
-    QList<LogItem*>::iterator up = data_.begin();
-    QList<LogItem*>::iterator chunkIter = up;
+    uint hash = qHash(path);
 
     while (stream.atEnd() == false) {
-
         LogItem *item = parseLine(stream.readLine());
-        item->filehash = qHash(path);
+        item->filehash = hash;
 
-        up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
+        QList<LogItem*>::iterator up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
 
         if (up != chunkIter) {
-            chunkReady = true;
-        }
-
-        if (chunkReady) {
-            if (chunk.isEmpty() == false) {
-                insertChunk(chunkIter, chunk);
-            }
+            insertChunk(chunkIter, chunk);
             chunk.clear();
-            chunkReady = false;
-            up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
-            chunkIter = up;
+            chunkIter = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
         }
         chunk.append(item);
     }
-
-    if (chunk.isEmpty() == false) {
-        insertChunk(chunkIter, chunk);
-    }
+    insertChunk(chunkIter, chunk);
 
     fileModel_.setLastPositionAt(fileIndex, stream.pos());
 
@@ -95,15 +82,17 @@ QString LogModel::populateModel(const QString &path)
     return "";
 }
 
-void LogModel::insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> chunk)
+void LogModel::insertChunk(const QList<LogItem*>::iterator &chunkIter, QList<LogItem*> chunk)
 {
-    int position = chunkIter - data_.begin();
+    if (chunk.isEmpty() == false) {
+        int position = chunkIter - data_.begin();
 
-    beginInsertRows(QModelIndex(), position, position + chunk.length() - 1);
-    for (int i = 0; i < chunk.length(); ++i) {
-        data_.insert(position + i, chunk.at(i));
+        beginInsertRows(QModelIndex(), position, position + chunk.length() - 1);
+        for (int i = 0; i < chunk.length(); ++i) {
+            data_.insert(position + i, chunk.at(i));
+        }
+        endInsertRows();
     }
-    endInsertRows();
 }
 
 QString LogModel::followFile(const QString &path)
