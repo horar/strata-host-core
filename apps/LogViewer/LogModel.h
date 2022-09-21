@@ -104,7 +104,8 @@ private:
 struct LogItem {
 
     LogItem()
-        : level(LogModel::LogLevel::LevelUnknown)
+        : level(LogModel::LogLevel::LevelUnknown),
+          isMarked(false)
     { }
 
     bool operator<(const LogItem& second) const {
@@ -121,7 +122,7 @@ struct LogItem {
     QString message;
     LogModel::LogLevel level;
     uint filehash;
-    bool isMarked = false;
+    bool isMarked;
 };
 
 #endif
