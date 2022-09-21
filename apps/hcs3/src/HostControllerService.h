@@ -205,7 +205,7 @@ private:
             const QByteArray& deviceId,
             const QByteArray& clientId);
 
-    void processCmdRequestHcsStatus(const strata::strataRPC::RpcRequest &request);
+    void processCmdHcsStatus(const strata::strataRPC::RpcRequest &request);
     void processCmdLoadDocuments(const strata::strataRPC::RpcRequest &request);
     void processCmdDownloadDatasheetFile(const strata::strataRPC::RpcRequest &request);
     void processCmdDownloadPlatformFiles(const strata::strataRPC::RpcRequest &request);

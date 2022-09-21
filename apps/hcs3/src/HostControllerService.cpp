@@ -57,8 +57,8 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
 
     // Register handlers in strataServer_
     strataServer_->registerHandler(
-                "request_hcs_status",
-                std::bind(&HostControllerService::processCmdRequestHcsStatus, this, std::placeholders::_1));
+                "hcs_status",
+                std::bind(&HostControllerService::processCmdHcsStatus, this, std::placeholders::_1));
 
     strataServer_->registerHandler(
                 "load_documents",
@@ -523,7 +523,7 @@ void HostControllerService::disconnectDeviceFinished(
     }
 }
 
-void HostControllerService::processCmdRequestHcsStatus(const strataRPC::RpcRequest &request)
+void HostControllerService::processCmdHcsStatus(const strataRPC::RpcRequest &request)
 {
     strataServer_->sendReply(request.clientId(), request.id(), {{"status", "hcs_active"}});
 }
