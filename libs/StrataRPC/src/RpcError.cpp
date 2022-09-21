@@ -110,6 +110,7 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case ClientAlreadyRegisteredError: return "client already registered";
     case ClientUnregistrationError: return "client unregistration error";
     case ClientNotRegistered: return "client not registered error";
+    case ReplicatorRunError: return "database replicator not running";
     default:
         return "error message for this error not available";
     }

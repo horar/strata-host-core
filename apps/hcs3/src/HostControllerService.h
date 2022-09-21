@@ -22,6 +22,7 @@
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
 #include "ComponentUpdateInfo.h"
+#include "ErrorTracker.h"
 
 #include <DownloadManager.h>
 #include <StrataRPC/StrataServer.h>
@@ -231,6 +232,7 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
     ComponentUpdateInfo componentUpdateInfo_;
+    ErrorTracker errorTracker_;
 
     QJsonObject config_;
     std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;

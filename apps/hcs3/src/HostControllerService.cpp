@@ -210,9 +210,16 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
 
-    db_.initReplicator(databaseConfig.value("gateway_sync").toString().toStdString(),
-                       std::string(ReplicatorCredentials::replicator_username).c_str(),
-                       std::string(ReplicatorCredentials::replicator_password).c_str());
+
+    bool replicatorInitResult = db_.initReplicator(
+                databaseConfig.value("gateway_sync").toString().toStdString(),
+                std::string(ReplicatorCredentials::replicator_username),
+                std::string(ReplicatorCredentials::replicator_password));
+
+    if (replicatorInitResult == false) {
+        qCCritical(lcHcs) << "Database replicator not initialized";
+        errorTracker_.reportError(strataRPC::ReplicatorRunError);
+    }
 
     platformController_.initialize();
 
@@ -525,7 +532,15 @@ void HostControllerService::disconnectDeviceFinished(
 
 void HostControllerService::processCmdHcsStatus(const strataRPC::RpcRequest &request)
 {
-    strataServer_->sendReply(request.clientId(), request.id(), {{"status", "hcs_active"}});
+    auto errors = errorTracker_.errors();
+
+    QJsonArray jsonErrorList;
+    for (const auto errorCode : errors) {
+        strataRPC::RpcError error(errorCode);
+        jsonErrorList.append(error.toJsonObject());
+    }
+
+    strataServer_->sendReply(request.clientId(), request.id(), {{"error_list", jsonErrorList}});
 }
 
 void HostControllerService::processCmdDynamicPlatformList(const strataRPC::RpcRequest &request)

@@ -44,6 +44,7 @@ enum RpcErrorCode {
     ClientAlreadyRegisteredError,
     ClientUnregistrationError,
     ClientNotRegistered,
+    ReplicatorRunError,
     };
 Q_ENUM_NS(RpcErrorCode)
 
