@@ -13,6 +13,17 @@
 
 using namespace strata::strataRPC;
 
+ClientConnector::ClientConnector(
+        const QString &serverAddress,
+        const QByteArray &dealerId,
+        QObject *parent)
+    : QObject(parent),
+      serverAddress_(serverAddress),
+      dealerId_(dealerId)
+{
+    qRegisterMetaType<strata::strataRPC::RpcErrorCode>("RpcErrorCode");
+}
+
 ClientConnector::~ClientConnector()
 {
     if (isConnected()) {

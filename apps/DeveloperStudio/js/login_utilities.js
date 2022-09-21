@@ -11,6 +11,8 @@
 .import "restclient.js" as Rest
 .import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
+.import "qrc:/js/platform_selection.js" as PlatformSelection
+.import tech.strata.notifications 1.0 as PlatformNotifications
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.signals 1.0 as SignalsModule
@@ -648,4 +650,40 @@ function set_token (token) {
 
 function getNextId() {
    return Rest.getNextRequestId();
+}
+
+function checkHcsStatus() {
+    var reply = PlatformSelection.sdsModel.strataClient.sendRequest("hcs_status", {});
+
+    reply.finishedSuccessfully.connect(function(result) {
+        let errorList = result["error_list"]
+        if (errorList && errorList.length > 0) {
+            console.warn(LoggerModule.Logger.devStudioLoginCategory, "HCS status:", errorList.length, "issue(s) found:")
+            for (var i = 0; i < errorList.length; ++i) {
+                console.warn(LoggerModule.Logger.devStudioLoginCategory, errorList[i].code, errorList[i].message)
+                PlatformNotifications.Notifications.createNotification(
+                            "Host Controller Service issue found",
+                            PlatformNotifications.Notifications.Warning,
+                            "all",
+                            null,
+                            {
+                                "description": formatIssueText(errorList[i].message),
+                                "timeout": 0,
+                                "singleton": true
+                            })
+            }
+
+        } else {
+            console.info(LoggerModule.Logger.devStudioLoginCategory, "HCS status: everything ok")
+        }
+    })
+
+    reply.finishedWithError.connect(function(error) {
+        console.warn(LoggerModule.Logger.devStudioLoginCategory, "Request for HCS status failed", JSON.stringify(error))
+    })
+}
+
+function formatIssueText(text) {
+    var t = text.charAt(0).toUpperCase() + text.slice(1)
+    return t
 }

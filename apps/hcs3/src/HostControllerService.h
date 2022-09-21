@@ -22,6 +22,7 @@
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
 #include "ComponentUpdateInfo.h"
+#include "ErrorTracker.h"
 
 #include <DownloadManager.h>
 #include <StrataRPC/StrataServer.h>
@@ -40,14 +41,26 @@ class HostControllerService : public QObject
     Q_OBJECT
 
 public:
+
+    enum InitializeErrorCode {
+        Success = EXIT_SUCCESS,
+        FailureAppGuard = EXIT_FAILURE + 1,
+        FailureParseConfig,
+        FailureSubscriberAddress,
+        FailureBaseFolder,
+        FailureOpenDatabase,
+        FailureFileServerUrlNotValid,
+        FailureFileServerUrlNoScheme,
+    };
+
     HostControllerService(QObject* parent = nullptr);
     ~HostControllerService() override;
 
     /**
      * Initializes the HCS
-     * @return returns true when succeeded otherwise false
+     * @return returns error code
      */
-    bool initialize(const QString& config);
+    InitializeErrorCode initialize(const QString& config);
 
     /**
      * Starts the HCS - dispatching thread
@@ -193,7 +206,7 @@ private:
             const QByteArray& deviceId,
             const QByteArray& clientId);
 
-    void processCmdRequestHcsStatus(const strata::strataRPC::RpcRequest &request);
+    void processCmdHcsStatus(const strata::strataRPC::RpcRequest &request);
     void processCmdLoadDocuments(const strata::strataRPC::RpcRequest &request);
     void processCmdDownloadDatasheetFile(const strata::strataRPC::RpcRequest &request);
     void processCmdDownloadPlatformFiles(const strata::strataRPC::RpcRequest &request);
@@ -219,6 +232,7 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
     ComponentUpdateInfo componentUpdateInfo_;
+    ErrorTracker errorTracker_;
 
     QJsonObject config_;
     std::shared_ptr<strata::strataRPC::StrataServer> strataServer_;

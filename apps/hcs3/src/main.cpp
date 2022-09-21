@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 
     if (appGuard.tryToRun() == false) {
         qCCritical(lcHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
-        return EXIT_FAILURE + 1; // LC: todo..
+        return HostControllerService::FailureAppGuard;
     }
 
     unsigned hcsIdentifier = 0;
@@ -171,8 +171,9 @@ int main(int argc, char *argv[])
     std::unique_ptr<HostControllerService> hcs{std::make_unique<HostControllerService>()};
 
     const QString config{parser.value(QStringLiteral("f"))};
-    if (hcs->initialize(config) == false) {
-        return EXIT_FAILURE;
+    HostControllerService::InitializeErrorCode initCode = hcs->initialize(config);
+    if (initCode != HostControllerService::Success) {
+        return initCode;
     }
 
     QObject::connect(&app, &QCoreApplication::aboutToQuit, hcs.get(), &HostControllerService::onAboutToQuit);

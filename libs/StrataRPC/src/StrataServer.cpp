@@ -322,16 +322,9 @@ QByteArray StrataServer::buildErrorMessage(
         const QJsonValue &id,
         const RpcError &error)
 {
-    QJsonObject errorObject;
-    errorObject.insert("code", error.code());
-    errorObject.insert("message", error.message());
-    if (error.data().isEmpty() == false) {
-        errorObject.insert("data", error.data());
-    }
-
     QJsonObject jsonObject;
     jsonObject.insert("jsonrpc", "2.0");
-    jsonObject.insert("error", errorObject);
+    jsonObject.insert("error", error.toJsonObject());
     jsonObject.insert("id", id);
 
     return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);

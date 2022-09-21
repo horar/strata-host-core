@@ -33,11 +33,10 @@ public:
      * @param [in] serverAddress sets the server address.
      * @param [in] dealerId sets the client id.
      */
-    ClientConnector(const QString &serverAddress,const QByteArray &dealerId = "StrataClient",
-                    QObject *parent = nullptr)
-        : QObject(parent), serverAddress_(serverAddress), dealerId_(dealerId)
-    {
-    }
+    ClientConnector(
+            const QString &serverAddress,
+            const QByteArray &dealerId = "StrataClient",
+            QObject *parent = nullptr);
 
     /**
      * ClientConnector destructor

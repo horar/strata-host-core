@@ -159,35 +159,41 @@ SGWidgets.SGMainWindow {
 
     Connections {
         target: sdsModel
-        onHcsConnectedChanged: {
-            if (sdsModel.hcsConnected) {
-                NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                if (hcsReconnecting) {
-                    Notifications.createNotification(`Host Controller Service reconnected`,
-                                                     Notifications.Info,
-                                                     "all",
-                                                     null,
-                                                     {
-                                                         "singleton": true,
-                                                         "timeout": 0
-                                                     })
-                    hcsReconnecting = false
-                }
-            } else {
-                Notifications.createNotification(`Host Controller Service disconnected`,
-                                                 Notifications.Critical,
+
+        onHcsConnectionEstablished: {
+            NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
+            if (hcsReconnecting) {
+                Notifications.createNotification(`Host Controller Service reconnected`,
+                                                 Notifications.Info,
                                                  "all",
                                                  null,
                                                  {
-                                                     "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
-                                                     "singleton": true
+                                                     "singleton": true,
+                                                     "timeout": 0
                                                  })
-                hcsReconnecting = true
-                PlatformFilters.clearActiveFilters()
-                PlatformSelection.logout()
-                LoginUtils.initialized = false
-                NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
+                hcsReconnecting = false
             }
+        }
+
+        onHcsConnectionLost: {
+            Notifications.createNotification(`Host Controller Service disconnected`,
+                                             Notifications.Critical,
+                                             "all",
+                                             null,
+                                             {
+                                                 "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
+                                                 "singleton": true
+                                             })
+            hcsReconnecting = true
+            PlatformFilters.clearActiveFilters()
+            PlatformSelection.logout()
+            LoginUtils.initialized = false
+            NavigationControl.updateState(
+                        NavigationControl.events.CONNECTION_LOST_EVENT,
+                        {
+                            "exitStatus": exitStatus,
+                            "exitCode": exitCode
+                        })
         }
     }
 

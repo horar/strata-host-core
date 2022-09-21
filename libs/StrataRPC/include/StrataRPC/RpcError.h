@@ -44,6 +44,7 @@ enum RpcErrorCode {
     ClientAlreadyRegisteredError,
     ClientUnregistrationError,
     ClientNotRegistered,
+    ReplicatorRunError,
     };
 Q_ENUM_NS(RpcErrorCode)
 
@@ -68,6 +69,8 @@ public:
 
     QJsonObject data() const;
     void setData(const QJsonObject &data);
+
+    QJsonObject toJsonObject() const;
 
     static QString defaultMessage(RpcErrorCode code);
 

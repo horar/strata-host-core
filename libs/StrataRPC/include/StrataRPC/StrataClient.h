@@ -152,8 +152,6 @@ private:
             const QString &method,
             const QJsonObject &params);
 
-    QJsonObject buildErrorPayload(const RpcError &error);
-
     void processResult(int id, const QJsonObject &result);
     void processError(int id, const QJsonObject &error);
     void processNotification(const QString &method, const QJsonObject &params);

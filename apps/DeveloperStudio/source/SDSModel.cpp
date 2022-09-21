@@ -278,31 +278,33 @@ void SDSModel::startedProcess()
     qCInfo(lcDevStudio) << "HCS started";
 
     setHcsConnected(true);
+    emit hcsConnectionEstablished();
 }
 
 void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qCDebug(lcDevStudio)
+    qCInfo(lcDevStudio)
         << "exitStatus=" << exitStatus
-        << "exitCode=" << exitCode;
+        << ", exitCode=" << exitCode;
 
     hcsProcess_->deleteLater();
     hcsProcess_.clear();
 
     if (exitStatus == QProcess::NormalExit && exitCode == (EXIT_FAILURE + 1)) {
         // LC: todo; there was another HCS instance; new one is going down
-        qCDebug(lcDevStudio) << "Quitting - another HCS instance was running";
+        qCInfo(lcDevStudio) << "New HCS instance finished. Another HCS instance is running";
         return;
     }
 
     if (killHcsSilently == false) {
         setHcsConnected(false);
+        emit hcsConnectionLost(exitStatus, exitCode);
     }
 }
 
 void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 {
-    qCDebug(lcDevStudio) << error << hcsProcess_->errorString();
+    qCCritical(lcDevStudio) << error << hcsProcess_->errorString();
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)

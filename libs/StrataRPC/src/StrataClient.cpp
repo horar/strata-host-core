@@ -267,15 +267,6 @@ QByteArray StrataClient::buildNotificationMessage(const QString &method, const Q
     return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);
 }
 
-QJsonObject StrataClient::buildErrorPayload(const RpcError &error)
-{
-    QJsonObject jsonObject;
-    jsonObject.insert("code", error.code());
-    jsonObject.insert("message", error.message());
-
-    return jsonObject;
-}
-
 void StrataClient::processResult(int id, const QJsonObject &result)
 {
     if (replies_.contains(id) == false) {
@@ -343,7 +334,7 @@ void StrataClient::removeExpiredReplies()
         if (duration > replyExpirationTime_.count()) {
             qCInfo(lcStrataClient) << "reply timeout expired, id=" << iter.value()->id();
             RpcError error(RpcErrorCode::ReplyTimeoutError);
-            processError(iter.value()->id(), buildErrorPayload(error));
+            processError(iter.value()->id(), error.toJsonObject());
         }
     }
 }

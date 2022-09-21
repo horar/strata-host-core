@@ -97,6 +97,8 @@ signals:
     void hcsConnectedChanged();
     void debugFeaturesEnabledChanged();
     void notifyQmlError(QString notifyQmlError);
+    void hcsConnectionEstablished();
+    void hcsConnectionLost(int exitStatus, int exitCode);
 
 private slots:
     void startedProcess();
