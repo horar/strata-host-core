@@ -45,12 +45,6 @@ GridLayout {
         id: logFilesCompress
     }
 
-    SGWidgets.SGText {
-        text: "Export log files"
-        fontSizeMultiplier: 1.1
-        Layout.columnSpan: 3
-    }
-
     SGWidgets.SGTextField {
         id: exportPathField
         Layout.fillWidth: true
@@ -92,8 +86,29 @@ GridLayout {
     SGWidgets.SGText {
         id: warningText
         Layout.columnSpan: 3
+        Layout.maximumWidth: 280
+        Layout.preferredHeight: 35
 
         visible: false
+        wrapMode: Text.Wrap
+        maximumLineCount: 2
+        elide: Text.ElideRight
+
+        Connections {
+            target: logFilesCompress
+            onShowExportMessage: {
+                if (error) {
+                    warningText.color = "red"
+                    console.warn(Logger.lcuCategory, errorMsg)
+                } else {
+                    warningText.color = "green"
+                    console.info(Logger.lcuCategory, errorMsg)
+                }
+
+                warningText.text = errorMsg
+                warningText.visible = true
+            }
+        }
     }
 
     SGWidgets.SGCheckBox {
