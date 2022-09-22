@@ -81,17 +81,30 @@ QString FileModel::getFilePathAt(int index) const
         : QString();
 }
 
+FileModel::FileMetadata FileModel::getFileMetadataAt(int index) const
+{
+    return ((index >= 0) && (index < data_.size()))
+        ? data_.at(index).metadata
+        : FileMetadata();
+}
+
+void FileModel::setFileMetadataAt(int index, const FileMetadata &metadata) {
+    if ((index >= 0) && (index < data_.size())) {
+        data_[index].metadata = metadata;
+    }
+}
+
 qint64 FileModel::getLastPositionAt(int index) const
 {
     return ((index >= 0) && (index < data_.size()))
-        ? data_.at(index).lastPosition
+        ? data_.at(index).metadata.lastPosition
         : -1;
 }
 
 void FileModel::setLastPositionAt(int index, qint64 filePosition)
 {
     if ((index >= 0) && (index < data_.size())) {
-        data_[index].lastPosition = filePosition;
+        data_[index].metadata.lastPosition = filePosition;
     }
 }
 
@@ -111,7 +124,7 @@ void FileModel::copyFileMetadata(int fromIndex, int toIndex)
         && (fromIndex >= 0) && (fromIndex < data_.size())
         && (toIndex >= 0) && (toIndex < data_.size()))
     {
-        data_[toIndex].lastPosition = data_.at(fromIndex).lastPosition;
+        data_[toIndex].metadata = data_.at(fromIndex).metadata;
     }
 }
 

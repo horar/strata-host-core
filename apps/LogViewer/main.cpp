@@ -8,6 +8,7 @@
  */
 #include "LogModel.h"
 #include "FileModel.h"
+#include "LogLevel.h"
 
 #include <SGCore/AppUi.h>
 
@@ -175,6 +176,7 @@ int main(int argc, char *argv[]) {
 
     qmlRegisterUncreatableType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel", "You can't instantiate LogModel in QML");
     qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
+    qmlRegisterUncreatableType<LogLevel>("tech.strata.logviewer.models", 1, 0, "LogLevel", "You can't instantiate LogLevel in QML");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
     addSupportedPlugins(&selector);

@@ -10,7 +10,9 @@
 #define FILEMODEL_H
 
 #include <QAbstractListModel>
+#include <QDateTime>
 
+#include "LogLevel.h"
 
 class FileModel : public QAbstractListModel
 {
@@ -27,6 +29,20 @@ public:
         FilePathRole,
     };
 
+    struct FileMetadata {
+        FileMetadata()
+            : lastPosition(0),
+              lastTimestamp(),
+              lastLogLevel(LogLevel::Value::LevelUnknown)
+        { }
+        qint64 lastPosition;         // last read position in file
+        QByteArray lastPartialLine;  // last read line which is not ended by new line character
+        QDateTime lastTimestamp;
+        QByteArray lastPid;
+        QByteArray lastTid;
+        LogLevel::Value lastLogLevel;
+    };
+
     int append(const QString &path);
     int remove(const QString &path); /*returns index at which the file was removed*/
     void clear();
@@ -34,6 +50,8 @@ public:
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QString getFilePathAt(int index) const;
+    FileMetadata getFileMetadataAt(int index) const;
+    void setFileMetadataAt(int index, const FileMetadata &metadata);
     qint64 getLastPositionAt(int index) const;
     void setLastPositionAt(int index, qint64 filePosition);
     Q_INVOKABLE bool containsFilePath(const QString &path) const;
@@ -49,11 +67,10 @@ protected:
 private:
     struct FileData {
         explicit FileData(const QString &path)
-            : path(path),
-              lastPosition(0)
+            : path(path)
         { }
         QString path;
-        qint64 lastPosition;
+        FileMetadata metadata;
     };
     QList<FileData> data_;
 

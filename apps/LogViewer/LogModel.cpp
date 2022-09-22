@@ -43,20 +43,33 @@ QString LogModel::populateModel(const QString &path)
     int fileIndex = fileModel_.getFileIndex(path);
     if (fileIndex < 0) {
         fileIndex = fileModel_.append(path);
-        // TODO - previous for each file
-        clearPrevious();
     }
 
-    QTextStream stream(&file);
-    stream.seek(fileModel_.getLastPositionAt(fileIndex));
+    FileModel::FileMetadata metadata = fileModel_.getFileMetadataAt(fileIndex);
+
+    file.seek(metadata.lastPosition);
 
     QList<LogItem*> chunk;
     QList<LogItem*>::iterator chunkIter = data_.begin();
 
     uint hash = qHash(path);
 
-    while (stream.atEnd() == false) {
-        LogItem *item = parseLine(stream.readLine());
+    while (file.atEnd() == false) {
+        QByteArray line = file.readLine();
+
+        if (metadata.lastPartialLine.isEmpty() == false) {
+            line = metadata.lastPartialLine + line;
+            metadata.lastPartialLine.clear();
+        }
+
+        if (line.endsWith('\n')) {
+            line.chop(1);  // remove new-line character
+        } else {
+            metadata.lastPartialLine = line;
+            continue;  // skip incomplete lines
+        }
+
+        LogItem *item = parseLine(line, metadata);
         item->filehash = hash;
 
         QList<LogItem*>::iterator up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
@@ -70,7 +83,8 @@ QString LogModel::populateModel(const QString &path)
     }
     insertChunk(chunkIter, chunk);
 
-    fileModel_.setLastPositionAt(fileIndex, stream.pos());
+    metadata.lastPosition = file.pos();
+    fileModel_.setFileMetadataAt(fileIndex, metadata);
 
     if (followingInitialized_ == false) {
         timer_->start(std::chrono::milliseconds(500));
@@ -87,8 +101,8 @@ void LogModel::insertChunk(const QList<LogItem*>::iterator &chunkIter, QList<Log
     if (chunk.isEmpty() == false) {
         int position = chunkIter - data_.begin();
 
-        beginInsertRows(QModelIndex(), position, position + chunk.length() - 1);
-        for (int i = 0; i < chunk.length(); ++i) {
+        beginInsertRows(QModelIndex(), position, position + chunk.size() - 1);
+        for (int i = 0; i < chunk.size(); ++i) {
             data_.insert(position + i, chunk.at(i));
         }
         endInsertRows();
@@ -136,7 +150,7 @@ void LogModel::clear()
 {
     beginResetModel();
 
-    for (int i = 0; i < data_.length(); i++) {
+    for (int i = 0; i < data_.size(); i++) {
         delete data_.at(i);
     }
     data_.clear();
@@ -160,7 +174,6 @@ void LogModel::updateTimestamps() {
 
     setNewestTimestamp(QDateTime());
     setOldestTimestamp(QDateTime());
-    previousTimestamp_ = QDateTime();
 
     const auto validTimestamp = [](const LogItem* item) {
         return item->timestamp.isNull() == false;
@@ -183,13 +196,13 @@ void LogModel::updateTimestamps() {
 
 int LogModel::rowCount(const QModelIndex &) const
 {
-    return data_.length();
+    return data_.size();
 }
 
 QVariant LogModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
-    if (row < 0 || row >= data_.count()) {
+    if (row < 0 || row >= data_.size()) {
         return QVariant();
     }
     LogItem* item = data_.at(row);
@@ -239,60 +252,50 @@ void LogModel::setModelRoles()
     }
 }
 
-void LogModel::clearPrevious()
-{
-     previousTimestamp_ = QDateTime();
-     previousPid_ = "";
-     previousTid_ = "";
-     previousLevel_ = LogModel::LevelUnknown;
-}
-
 int LogModel::count() const
 {
-    return data_.length();
+    return data_.size();
 }
 
-LogItem* LogModel::parseLine(const QString &line)
+LogItem* LogModel::parseLine(const QByteArray &line, FileModel::FileMetadata &metadata)
 {
     LogItem* item = new LogItem;
-    QStringList splitIt = line.split('\t');
+    QList<QByteArray> splitIt = line.split('\t');
 
-    if (splitIt.length() >= 5) {
-        item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
-        previousTimestamp_ = item->timestamp;
-        item->pid = splitIt.takeFirst().replace("PID:","");
-        previousPid_ = item->pid;
-        item->tid = splitIt.takeFirst().replace("TID:","");
-        previousTid_ = item->tid;
-        QString level = splitIt.takeFirst();
+    if (splitIt.size() >= 5) {
+        metadata.lastTimestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
 
-        if (level == "[D]") {
-            item->level = LevelDebug;
-        } else if (level == "[I]") {
-            item->level = LevelInfo;
-        } else if (level == "[W]") {
-            item->level = LevelWarning;
-        } else if (level == "[E]") {
-            item->level = LevelError;
+        metadata.lastPid = splitIt.takeFirst().mid(4);  // remove "PID:" prefix
+
+        metadata.lastTid = splitIt.takeFirst().mid(4);  // remove "TID:" prefix
+
+        QByteArray level = splitIt.takeFirst();
+        if ((level.size() == 3) && (level[0] == '[') && (level[2] == ']')) {
+            switch (level[1]) {
+            case 'D':
+                metadata.lastLogLevel = LogLevel::Value::LevelDebug;
+                break;
+            case 'I':
+                metadata.lastLogLevel = LogLevel::Value::LevelInfo;
+                break;
+            case 'W':
+                metadata.lastLogLevel = LogLevel::Value::LevelWarning;
+                break;
+            case 'E':
+                metadata.lastLogLevel = LogLevel::Value::LevelError;
+                break;
+            }
         }
-        previousLevel_ = item->level;
+
         item->message = splitIt.join('\t');
     } else {
         item->message = line;
     }
 
-    if (item->timestamp.isNull()) {
-        item->timestamp = previousTimestamp_;
-    }
-    if (item->pid.isEmpty()) {
-        item->pid = previousPid_;
-    }
-    if (item->tid.isEmpty()) {
-        item->tid = previousTid_;
-    }
-    if (item->level == LogLevel::LevelUnknown) {
-        item->level = previousLevel_;
-    }
+    item->timestamp = metadata.lastTimestamp;
+    item->pid = metadata.lastPid;
+    item->tid = metadata.lastTid;
+    item->level = metadata.lastLogLevel;
 
     return item;
 }

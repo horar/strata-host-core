@@ -11,9 +11,10 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
-#include <FileModel.h>
 #include <QQmlError>
 
+#include "FileModel.h"
+#include "LogLevel.h"
 
 struct LogItem;
 class QTimer;
@@ -40,14 +41,6 @@ public:
         IsMarkedRole,
     };
 
-    enum LogLevel {
-        LevelUnknown,
-        LevelDebug,
-        LevelInfo,
-        LevelWarning,
-        LevelError
-    };
-    Q_ENUM(LogLevel)
     Q_INVOKABLE QString followFile(const QString &path);
     Q_INVOKABLE void removeFile(const QString &path);
     Q_INVOKABLE void removeAllFiles();
@@ -84,19 +77,14 @@ private:
     QTimer *timer_;
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
-    QDateTime previousTimestamp_;
-    QString previousPid_;
-    QString previousTid_;
-    LogModel::LogLevel previousLevel_;
     QList<LogItem*> data_;
-    LogItem* parseLine(const QString &line);
+    LogItem* parseLine(const QByteArray &line, FileModel::FileMetadata &metadata);
     QString populateModel(const QString &path);
     void updateTimestamps();
     FileModel fileModel_;
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
     void setModelRoles();
-    void clearPrevious();
     QHash<QByteArray, int> roleByNameHash_;
     QHash<int, QByteArray> roleByEnumHash_;
 };
@@ -104,7 +92,7 @@ private:
 struct LogItem {
 
     LogItem()
-        : level(LogModel::LogLevel::LevelUnknown),
+        : level(LogLevel::Value::LevelUnknown),
           isMarked(false)
     { }
 
@@ -120,7 +108,7 @@ struct LogItem {
     QString pid;
     QString tid;
     QString message;
-    LogModel::LogLevel level;
+    LogLevel::Value level;
     uint filehash;
     bool isMarked;
 };
