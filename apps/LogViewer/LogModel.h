@@ -102,6 +102,10 @@ struct LogItem {
         return (timestamp < second.timestamp);
     }
 
+    bool operator>=(const LogItem& second) const {
+        return (timestamp >= second.timestamp);
+    }
+
     static bool comparator(const LogItem* first, const LogItem* second) {
         return *first < *second;
     }

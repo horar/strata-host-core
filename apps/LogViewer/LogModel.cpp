@@ -51,9 +51,8 @@ QString LogModel::populateModel(const QString &path)
     file.seek(metadata.lastPosition);
 
     QList<LogItem*> chunk;
-    QList<LogItem*>::iterator insertIter = data_.begin();
-
-    uint hash = qHash(path);
+    QList<LogItem*>::iterator upperBound = data_.begin();
+    const uint hash = qHash(path);
 
     while (file.atEnd() == false) {
         QByteArray line = file.readLine();
@@ -73,16 +72,14 @@ QString LogModel::populateModel(const QString &path)
         LogItem *item = parseLine(line, metadata);
         item->filehash = hash;
 
-        QList<LogItem*>::iterator up = std::upper_bound(insertIter, data_.end(), item, LogItem::comparator);
-
-        if (up != insertIter) {
-            insertIter = insertChunk(insertIter, chunk);
+        if ((upperBound != data_.end()) && (*item >= **upperBound)) {
+            QList<LogItem*>::iterator afterChunk = insertChunk(upperBound, chunk);
+            upperBound = std::upper_bound(afterChunk, data_.end(), item, LogItem::comparator);
             chunk.clear();
-            insertIter = std::upper_bound(insertIter, data_.end(), item, LogItem::comparator);
         }
         chunk.append(item);
     }
-    insertChunk(insertIter, chunk);
+    insertChunk(upperBound, chunk);
 
     metadata.lastPosition = file.pos();
     fileModel_.setFileMetadataAt(fileIndex, metadata);
