@@ -30,7 +30,7 @@ class LogModel : public QAbstractListModel
 
 public:
     explicit LogModel(QObject *parent = nullptr);
-    virtual ~LogModel() override;
+    ~LogModel();
 
     enum ModelRole {
         TimestampRole = Qt::UserRole,
