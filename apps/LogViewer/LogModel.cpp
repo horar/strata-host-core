@@ -76,7 +76,7 @@ QString LogModel::populateModel(const QString &path)
         QList<LogItem*>::iterator up = std::upper_bound(insertIter, data_.end(), item, LogItem::comparator);
 
         if (up != insertIter) {
-            insertChunk(insertIter, chunk);
+            insertIter = insertChunk(insertIter, chunk);
             chunk.clear();
             insertIter = std::upper_bound(insertIter, data_.end(), item, LogItem::comparator);
         }
@@ -97,17 +97,19 @@ QString LogModel::populateModel(const QString &path)
     return "";
 }
 
-void LogModel::insertChunk(const QList<LogItem*>::iterator &insertIter, const QList<LogItem*> &chunk)
+QList<LogItem*>::iterator LogModel::insertChunk(QList<LogItem*>::iterator insertIter, const QList<LogItem*> &chunk)
 {
     if (chunk.isEmpty() == false) {
         int position = insertIter - data_.begin();
 
         beginInsertRows(QModelIndex(), position, position + chunk.size() - 1);
         for (int i = 0; i < chunk.size(); ++i) {
-            data_.insert(position + i, chunk.at(i));
+            insertIter = data_.insert(insertIter, chunk.at(i)) + 1;
         }
         endInsertRows();
     }
+
+    return insertIter;
 }
 
 QString LogModel::followFile(const QString &path)

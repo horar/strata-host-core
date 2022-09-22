@@ -72,7 +72,7 @@ signals:
 private:
     QString getRotatedFilePath(const QString &path) const;
     void removeRowsFromModel(const uint pathHash);
-    void insertChunk(const QList<LogItem*>::iterator &insertIter, const QList<LogItem*> &chunk);
+    QList<LogItem*>::iterator insertChunk(const QList<LogItem*>::iterator insertIter, const QList<LogItem*> &chunk);
     QList<LogItem*>::iterator removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd);
     LogItem* parseLine(const QByteArray &line, FileModel::FileMetadata &metadata);
     QString populateModel(const QString &path);
