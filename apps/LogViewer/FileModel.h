@@ -22,7 +22,7 @@ class FileModel : public QAbstractListModel
 
 public:
     explicit FileModel(QObject *parent = nullptr);
-    virtual ~FileModel() override;
+    ~FileModel();
 
     enum {
         FileNameRole = Qt::UserRole,
