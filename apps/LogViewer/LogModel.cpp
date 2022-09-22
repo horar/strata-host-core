@@ -50,7 +50,7 @@ QString LogModel::populateModel(const QString &path)
     file.seek(metadata.lastPosition);
 
     QList<LogItem*> chunk;
-    QList<LogItem*>::iterator chunkIter = data_.begin();
+    QList<LogItem*>::iterator insertIter = data_.begin();
 
     uint hash = qHash(path);
 
@@ -72,16 +72,16 @@ QString LogModel::populateModel(const QString &path)
         LogItem *item = parseLine(line, metadata);
         item->filehash = hash;
 
-        QList<LogItem*>::iterator up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
+        QList<LogItem*>::iterator up = std::upper_bound(insertIter, data_.end(), item, LogItem::comparator);
 
-        if (up != chunkIter) {
-            insertChunk(chunkIter, chunk);
+        if (up != insertIter) {
+            insertChunk(insertIter, chunk);
             chunk.clear();
-            chunkIter = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
+            insertIter = std::upper_bound(insertIter, data_.end(), item, LogItem::comparator);
         }
         chunk.append(item);
     }
-    insertChunk(chunkIter, chunk);
+    insertChunk(insertIter, chunk);
 
     metadata.lastPosition = file.pos();
     fileModel_.setFileMetadataAt(fileIndex, metadata);
@@ -96,10 +96,10 @@ QString LogModel::populateModel(const QString &path)
     return "";
 }
 
-void LogModel::insertChunk(const QList<LogItem*>::iterator &chunkIter, QList<LogItem*> chunk)
+void LogModel::insertChunk(const QList<LogItem*>::iterator &insertIter, const QList<LogItem*> &chunk)
 {
     if (chunk.isEmpty() == false) {
-        int position = chunkIter - data_.begin();
+        int position = insertIter - data_.begin();
 
         beginInsertRows(QModelIndex(), position, position + chunk.size() - 1);
         for (int i = 0; i < chunk.size(); ++i) {
