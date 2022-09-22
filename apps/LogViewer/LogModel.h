@@ -46,22 +46,19 @@ public:
     Q_INVOKABLE void removeAllFiles();
     Q_INVOKABLE void clear();
     Q_INVOKABLE void toggleIsMarked(int position);
-
-    QString getRotatedFilePath(const QString &path) const;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Q_INVOKABLE QVariant data(int row, const QByteArray &role) const;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     FileModel *fileModel();
-    void removeRowsFromModel(const uint pathHash);
-    void insertChunk(const QList<LogItem*>::iterator &insertIter, const QList<LogItem*> &chunk);
-    QList<LogItem*>::iterator removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd);
 
 public slots:
-    void checkFile();
     void handleQmlWarning(const QList<QQmlError> &warnings);
+
+private slots:
+    void checkFile();
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
@@ -73,18 +70,23 @@ signals:
     void notifyQmlError(QString notifyQmlError);
 
 private:
+    QString getRotatedFilePath(const QString &path) const;
+    void removeRowsFromModel(const uint pathHash);
+    void insertChunk(const QList<LogItem*>::iterator &insertIter, const QList<LogItem*> &chunk);
+    QList<LogItem*>::iterator removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd);
+    LogItem* parseLine(const QByteArray &line, FileModel::FileMetadata &metadata);
+    QString populateModel(const QString &path);
+    void updateTimestamps();
+    void setOldestTimestamp(const QDateTime &timestamp);
+    void setNewestTimestamp(const QDateTime &timestamp);
+    void setModelRoles();
+
     bool followingInitialized_ = false;
     QTimer *timer_;
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
     QList<LogItem*> data_;
-    LogItem* parseLine(const QByteArray &line, FileModel::FileMetadata &metadata);
-    QString populateModel(const QString &path);
-    void updateTimestamps();
     FileModel fileModel_;
-    void setOldestTimestamp(const QDateTime &timestamp);
-    void setNewestTimestamp(const QDateTime &timestamp);
-    void setModelRoles();
     QHash<QByteArray, int> roleByNameHash_;
     QHash<int, QByteArray> roleByEnumHash_;
 };

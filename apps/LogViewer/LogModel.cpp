@@ -28,6 +28,7 @@ LogModel::LogModel(QObject *parent)
 LogModel::~LogModel()
 {
     clear();
+    timer_->stop();
     delete timer_;
 }
 
