@@ -19,13 +19,13 @@ SGWidgets.SGDialog {
     modal: true
     focus: true
     destroyOnClose: true
+    height: 350
 
     property int innerSpacing: 10
 
     ColumnLayout {
         id: prtSettings
-        //anchors.fill: parent
-        spacing: innerSpacing
+        anchors.fill: parent
 
         SGWidgets.SGText {
             text: "Logging Configuration"
@@ -49,6 +49,7 @@ SGWidgets.SGDialog {
             id: logExportPane
             Layout.fillWidth: true
             appName: Qt.application.name
+            maximumWidth: 280
         }
 
         SGWidgets.SGButton {

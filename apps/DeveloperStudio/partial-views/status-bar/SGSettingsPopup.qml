@@ -21,7 +21,8 @@ SGStrataPopup {
     headerText: "General Settings"
     closePolicy: Popup.CloseOnEscape
     focus: true
-    width: 450
+    width: 400
+    height: 700
     x: container.width/2 - root.width/2
     y: mainWindow.height/2 - root.height/2
 
@@ -156,6 +157,7 @@ SGStrataPopup {
             id: logExportPane
             Layout.fillWidth: true
             appName: Qt.application.name
+            maximumWidth: column.width
         }
     }
 }

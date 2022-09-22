@@ -25,6 +25,7 @@ GridLayout {
                                            QtLabsPlatform.StandardPaths.writableLocation(
                                                QtLabsPlatform.StandardPaths.DesktopLocation))
     property int innerSpacing: 5
+    property int maximumWidth: 300
     property bool logExportInProgress: false
 
     columns: 3
@@ -86,29 +87,12 @@ GridLayout {
     SGWidgets.SGText {
         id: warningText
         Layout.columnSpan: 3
-        Layout.maximumWidth: 280
-        Layout.preferredHeight: 35
+        Layout.maximumWidth: maximumWidth
 
         visible: false
         wrapMode: Text.Wrap
         maximumLineCount: 2
         elide: Text.ElideRight
-
-        Connections {
-            target: logFilesCompress
-            onShowExportMessage: {
-                if (error) {
-                    warningText.color = "red"
-                    console.warn(Logger.lcuCategory, errorMsg)
-                } else {
-                    warningText.color = "green"
-                    console.info(Logger.lcuCategory, errorMsg)
-                }
-
-                warningText.text = errorMsg
-                warningText.visible = true
-            }
-        }
     }
 
     SGWidgets.SGCheckBox {

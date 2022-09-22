@@ -96,11 +96,16 @@ Item {
             lcuApp: true
         }
 
+        SGWidgets.SGText {
+            text: "Export log files"
+        }
+
         LogExport {
             id: logExportPane
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignRight
             appName: iniFileComboBox.currentText
+            maximumWidth: lcuMain.width
         }
     }
 }
