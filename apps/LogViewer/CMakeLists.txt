@@ -29,6 +29,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     LogModel.cpp
     FileModel.cpp
+    LogLevel.cpp
     logging/LoggingQtCategories.cpp
 
     images/images.qrc

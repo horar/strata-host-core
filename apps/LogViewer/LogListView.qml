@@ -693,8 +693,8 @@ Item {
                     visible: levelColumnVisible
                     color: {
                         if (delegate.ListView.isCurrentItem
-                                || (model.level === LogViewModels.LogModel.LevelWarning
-                                    || model.level === LogViewModels.LogModel.LevelError)) {
+                                || (model.level === LogViewModels.LogLevel.LevelWarning
+                                    || model.level === LogViewModels.LogLevel.LevelError)) {
                             return "white"
                         } else {
                             return "black"
@@ -704,13 +704,13 @@ Item {
                     text: {
                         if (visible) {
                             switch (model.level) {
-                            case LogViewModels.LogModel.LevelDebug:
+                            case LogViewModels.LogLevel.LevelDebug:
                                 return "DEBUG"
-                            case LogViewModels.LogModel.LevelInfo:
+                            case LogViewModels.LogLevel.LevelInfo:
                                 return "INFO"
-                            case LogViewModels.LogModel.LevelWarning:
+                            case LogViewModels.LogLevel.LevelWarning:
                                 return "WARN"
-                            case LogViewModels.LogModel.LevelError:
+                            case LogViewModels.LogLevel.LevelError:
                                 return "ERROR"
                             }
                             return ""
@@ -734,10 +734,10 @@ Item {
                         radius: 4
                         z: -1
                         color: {
-                            if (model.level === LogViewModels.LogModel.LevelWarning) {
+                            if (model.level === LogViewModels.LogLevel.LevelWarning) {
                                 return TangoTheme.palette.warning
                             }
-                            if (model.level === LogViewModels.LogModel.LevelError) {
+                            if (model.level === LogViewModels.LogLevel.LevelError) {
                                 return TangoTheme.palette.error
                             } else {
                                 return cell.color

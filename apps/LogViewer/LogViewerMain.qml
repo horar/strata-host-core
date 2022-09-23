@@ -254,15 +254,15 @@ FocusScope {
         function filterAcceptsRow(row) {
             var logLevelMsg = logModel.data(row, "level")
 
-            if (checkBoxInfo.checked && logLevelMsg === LogViewModels.LogModel.LevelInfo) {
+            if (checkBoxInfo.checked && logLevelMsg === LogViewModels.LogLevel.LevelInfo) {
                 return true
-            } else if (checkBoxWarning.checked && logLevelMsg === LogViewModels.LogModel.LevelWarning) {
+            } else if (checkBoxWarning.checked && logLevelMsg === LogViewModels.LogLevel.LevelWarning) {
                 return true
-            } else if (checkBoxError.checked && logLevelMsg === LogViewModels.LogModel.LevelError) {
+            } else if (checkBoxError.checked && logLevelMsg === LogViewModels.LogLevel.LevelError) {
                 return true
-            } else if (checkBoxDebug.checked && logLevelMsg === LogViewModels.LogModel.LevelDebug) {
+            } else if (checkBoxDebug.checked && logLevelMsg === LogViewModels.LogLevel.LevelDebug) {
                 return true
-            } else if (checkBoxUnknown.checked && logLevelMsg === LogViewModels.LogModel.LevelUnknown) {
+            } else if (checkBoxUnknown.checked && logLevelMsg === LogViewModels.LogLevel.LevelUnknown) {
                 return true
             } else {
                 return false
