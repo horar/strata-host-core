@@ -7,33 +7,31 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 import QtQuick 2.12
+import tech.strata.theme 1.0
 
 Item {
     id: control
 
-    height: parent.height
+    height: 6
     width: 1
 
-    property alias color: divider.color
-    property alias mouseArea: mouseArea
     property alias mouseX: mouseArea.mouseX
-    property bool clickable: false
+    property color color:  "black"
+    property color highlightCcolor:  Theme.palette.highlight
 
     Rectangle {
         id: divider
-        width: parent.width
-        anchors.verticalCenter: parent.verticalCenter
-        height: mouseArea.pressed ? parent.height : parent.height/1.5
-        color: mouseArea.pressed ? highlightColor : "black"
+        width: 1
+        anchors.centerIn: parent
+        height: mouseArea.pressed ? parent.height - 2 : parent.height*0.6
 
-        MouseArea {
-            id: mouseArea
-            height: parent.height
-            width: parent.width + 7
-            anchors.centerIn: parent
-            visible: clickable
-            cursorShape: Qt.SplitHCursor
-            acceptedButtons: Qt.LeftButton
-        }
+        color: mouseArea.pressed ? highlightCcolor :control.color
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        cursorShape: Qt.SplitHCursor
+        acceptedButtons: Qt.LeftButton
     }
 }
