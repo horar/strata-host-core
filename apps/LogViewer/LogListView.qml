@@ -66,7 +66,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 +UTC99:99"
+        text: "9999-99-99 99:99.99.999 +UTC99:99x"
     }
 
     TextMetrics {
@@ -90,7 +90,7 @@ Item {
     TextMetrics {
         id: textMetricsLevelTag
         font: timestampHeaderText.font
-        text: "DEBUG"
+        text: "DEBUGx"
     }
 
     TextMetrics {
