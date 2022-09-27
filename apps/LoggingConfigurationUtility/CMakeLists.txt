@@ -68,7 +68,6 @@ target_link_libraries(${PROJECT_NAME}
 
     strata::QtLogger
     strata::SGCore
-    QuaZip::QuaZip
 )
 
 set(${PROJECT_NAME}_ENABLED_PLUGINS "")

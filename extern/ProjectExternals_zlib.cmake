@@ -8,24 +8,29 @@
 ##
 
 #
-# zlib
+# zlib - required for Quazip, need to build on windows
 #
-get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/zlib" "${EXTERN_INSTALL_DIR_PATH}/zlib")
-ExternalProject_Add(zlib
-    INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/zlib-${GIT_HASH}
-    SOURCE_DIR ${SOURCE_DIR_EXTERN}/zlib
-    EXCLUDE_FROM_ALL ON
-    CMAKE_ARGS "${CMAKE_ARGS}"
-        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DQt5_DIR=${Qt5_DIR}
-)
+if(WIN32)
+    get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/Zlib" "${EXTERN_INSTALL_DIR_PATH}/Zlib")
+    if(NOT LIB_INSTALLED)
+        file(MAKE_DIRECTORY "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/include")
+        ExternalProject_Add(Zlib
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/Zlib
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+                -DQt5_DIR=${Qt5_DIR}
+        )
+    endif()
+        add_library(ZLIB::ZLIB INTERFACE IMPORTED GLOBAL)
 
-add_library(ZLIB::ZLIB INTERFACE IMPORTED GLOBAL)
+        set_target_properties(ZLIB::ZLIB PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/include"
+            IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Zlib${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Zlibd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+            ROOT_LOCATION "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}"
+        )
 
-set_target_properties(ZLIB::ZLIB PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/zlib-${GIT_HASH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/zlib-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlib${CMAKE_STATIC_LIBRARY_SUFFIX}"
-    IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/zlib-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlib${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
-
-add_dependencies(ZLIB::ZLIB DEPENDS ZLIB)
+        add_dependencies(ZLIB::ZLIB DEPENDS ZLIB)
+endif()
