@@ -12,7 +12,7 @@ Strata Host Core contains all the applications and dependencies necessary for St
 * Visual Studio Build Tools 2017
 * OpenSSL (not needed when secure connection is not used)
 
-### MacOS
+### macOS
 
 * Xcode and Command Line Tools
 * Git >= 2.28.0
@@ -33,7 +33,7 @@ The following Qt5 components are required:
 * Qt WebEngine
 * Qt Developer and Designer Tools -> OpenSSL Toolkit
 
-### MacOS
+### macOS
 
 * macOS
 * Qt WebEngine
@@ -61,7 +61,7 @@ and added to the path if needed.
 
 Open `Command Prompt`, navigate to strata-host-core root directory and run `bootstrap-host.bat`
 
-### MacOS
+### macOS
 
 make sure Qt directory is added into the path
 if not, open `Terminal` and run the following command:
