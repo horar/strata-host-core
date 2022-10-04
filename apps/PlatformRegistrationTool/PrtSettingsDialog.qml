@@ -19,7 +19,8 @@ SGWidgets.SGDialog {
     modal: true
     focus: true
     destroyOnClose: true
-    height: 350
+    width: 400
+    height: 320
 
     property int innerSpacing: 10
 
@@ -49,7 +50,7 @@ SGWidgets.SGDialog {
             id: logExportPane
             Layout.fillWidth: true
             appName: Qt.application.name
-            maximumWidth: 280
+            maximumWidth: 380
         }
 
         SGWidgets.SGButton {
