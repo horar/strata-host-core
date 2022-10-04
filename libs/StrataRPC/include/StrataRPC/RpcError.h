@@ -45,6 +45,8 @@ enum RpcErrorCode {
     ClientUnregistrationError,
     ClientNotRegistered,
     ReplicatorRunError,
+    FileServerNotAccessible,
+    GatewaySyncNotAccessible,
     };
 Q_ENUM_NS(RpcErrorCode)
 

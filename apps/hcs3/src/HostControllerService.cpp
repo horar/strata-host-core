@@ -193,26 +193,34 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     // TODO: Will resolved in SCT-517
     // db_.addReplChannel("platform_list");
 
-    QUrl baseUrl = databaseConfig.value("file_server").toString();
+    const QUrl fileServerUrl(databaseConfig.value("file_server").toString());
+    const QUrl gatewaySyncUrl(databaseConfig.value("gateway_sync").toString());
 
-    qCInfo(lcHcs) << "file_server url:" << baseUrl.toString();
+    qCInfo(lcHcs) << "file_server url:" << fileServerUrl.toString();
 
-    if (baseUrl.isValid() == false) {
+    if (fileServerUrl.isValid() == false) {
         qCCritical(lcHcs) << "Provided file_server url is not valid";
         return FailureFileServerUrlNotValid;
     }
 
-    if (baseUrl.scheme().isEmpty()) {
+    if (fileServerUrl.scheme().isEmpty()) {
         qCCritical(lcHcs) << "file_server url does not have scheme";
         return FailureFileServerUrlNoScheme;
     }
 
-    storageManager_.setBaseUrl(baseUrl);
+    if (urlAccessible(fileServerUrl) == false) {
+        errorTracker_.reportError(strataRPC::FileServerNotAccessible);
+    }
+
+    if (urlAccessible(gatewaySyncUrl) == false) {
+        errorTracker_.reportError(strataRPC::GatewaySyncNotAccessible);
+    }
+
+    storageManager_.setBaseUrl(fileServerUrl);
     storageManager_.setDatabase(&db_);
 
-
     bool replicatorInitResult = db_.initReplicator(
-                databaseConfig.value("gateway_sync").toString().toStdString(),
+                gatewaySyncUrl.toString().toStdString(),
                 std::string(ReplicatorCredentials::replicator_username),
                 std::string(ReplicatorCredentials::replicator_password));
 
@@ -226,6 +234,33 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     updateController_.initialize(&platformController_, &downloadManager_);
 
     return Success;
+}
+
+bool HostControllerService::urlAccessible(const QUrl& url) const
+{
+    constexpr int timeoutMsec(10000);
+    QTcpSocket socket;
+
+    socket.connectToHost(url.host(), 80);
+    if (socket.waitForConnected(timeoutMsec)) {
+        socket.write("HEAD " + url.path().toUtf8() + " HTTP/1.1\r\nHost: " + url.host().toUtf8() + "\r\n\r\n");
+        if (socket.waitForReadyRead(timeoutMsec)) {
+            // read first line from reply - this line contains status code
+            QByteArray replyLine = socket.readLine();
+            if (replyLine.contains("301") ||  // Moved Permanently
+                replyLine.contains("200") ||  // OK
+                replyLine.contains("302"))    // Found
+            {
+                return true;
+            } else {
+                qCWarning(lcHcs) << "URL" << url.toString() << "is not accesible. Reply begins with:" << replyLine;
+                return false;
+            }
+        }
+    }
+
+    qCWarning(lcHcs) << "Cannot connect to" << url.toString();
+    return false;
 }
 
 void HostControllerService::start()
