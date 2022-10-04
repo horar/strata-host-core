@@ -111,6 +111,8 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case ClientUnregistrationError: return "client unregistration error";
     case ClientNotRegistered: return "client not registered error";
     case ReplicatorRunError: return "database replicator not running";
+    case FileServerNotAccessible: return "file server is not accessible";
+    case GatewaySyncNotAccessible: return "gateway synchronization is not accessible";
     default:
         return "error message for this error not available";
     }
