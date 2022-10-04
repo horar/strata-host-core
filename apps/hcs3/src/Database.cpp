@@ -75,7 +75,7 @@ bool Database::open(const QString& db_path, const QString& db_name)
 
 void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)
 {
-    qCCritical(lcHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
+    qCInfo(lcHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
     for (unsigned i = 0; i < documents.size(); ++i) {
         emit documentUpdated(documents[i].id);
     }
