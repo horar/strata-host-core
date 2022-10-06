@@ -626,4 +626,39 @@ QtObject {
 
         return [maxX, minX, maxY, minY]
     }
+
+    function selectObjectsUnderRect(startColumn, startRow, endColumn, endRow, originalSelectedMultiObjectsUuid) {
+        // restore original selected list and select objects anew
+        visualEditor.selectedMultiObjectsUuid = [...originalSelectedMultiObjectsUuid]
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            obj.isSelected = isUuidSelected(obj.layoutInfo.uuid)
+
+            // find if the two rectangles overlap
+            // if one rectangle is on left / right side of other, ignore
+            if (startColumn > (obj.layoutInfo.xColumns + obj.layoutInfo.columnsWide - 1) || obj.layoutInfo.xColumns > endColumn) {
+                continue
+            }
+
+            // If one rectangle is above / below other, ignore
+            if (startRow > (obj.layoutInfo.yRows + obj.layoutInfo.rowsTall - 1) || obj.layoutInfo.yRows > endRow) {
+                continue
+            }
+
+            if (originalSelectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                // inverse selection
+                if (isUuidSelected(obj.layoutInfo.uuid)) {
+                    obj.isSelected = false
+                    removeUuidFromMultiObjectSelection(obj.layoutInfo.uuid)
+                }
+            } else {
+                // if not yet selected, select
+                if (isUuidSelected(obj.layoutInfo.uuid) === false) {
+                    obj.isSelected = true
+                    addUuidToMultiObjectSelection(obj.layoutInfo.uuid)
+                }
+            }
+        }
+    }
 }
