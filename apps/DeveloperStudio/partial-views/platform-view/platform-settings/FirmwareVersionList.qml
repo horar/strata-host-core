@@ -88,6 +88,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: contentHeight
+            enabled: platformStack.bootloader_version.length !== 0
 
             ScrollBar.vertical: ScrollBar {
                 id: firmwareScrollbar
@@ -105,6 +106,7 @@ ColumnLayout {
                 id: firmwareRow
                 width: firmwareHeader.width
                 height: firmwareDataColumn.height
+                color: firmwareListView.enabled ? "white" : "#eee"
 
                 property bool flashingFirmwareInProgress: false // this particular firmware is being flashed to device
 
@@ -155,6 +157,7 @@ ColumnLayout {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignRight
                             color: "#666"
+                            visible: firmwareListView.enabled
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignRight
                             text: currentStatus !== "" ? currentStatus : (installMouse.enabled ? "Download and flash firmware" : "")
@@ -192,7 +195,7 @@ ColumnLayout {
                                         return "#666" // enabled - dark grey
                                     }
                                 }
-                                visible: firmwareRow.flashingFirmwareInProgress === false
+                                visible: firmwareListView.enabled && firmwareRow.flashingFirmwareInProgress === false
 
                                 MouseArea {
                                     id: installMouse
@@ -202,7 +205,7 @@ ColumnLayout {
                                     enabled: model.installed === false && !firmwareListView.flashingDeviceInProgress && platformStack.connected
 
                                     onClicked: {
-                                        if (platformStack.firmware_version !== "") {
+                                        if (platformStack.firmware_version.length !== 0) {
                                             if (SGVersionUtils.greaterThan(model.version, platformStack.firmware_version)) {
                                                 flashStatus.startFlash(false)
                                                 return
@@ -227,7 +230,7 @@ ColumnLayout {
                                     fill: parent
                                 }
                                 source: "qrc:/images/loading.gif"
-                                visible: !installIcon.visible
+                                visible: firmwareListView.enabled && !installIcon.visible
 
                                 onVisibleChanged: {
                                     if (visible) {

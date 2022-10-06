@@ -326,6 +326,7 @@ function updateState(event, data)
                         if (data.controller_class_id !== undefined) {
                             connected_view.controller_class_id = data.controller_class_id
                         }
+                        connected_view.bootloader_version = data.bootloader_version
                         connected_view.firmware_version = data.firmware_version
                         //IMPORTANT: firmware_version must be last - it triggers firmware list update, other data must already be set
 
@@ -349,6 +350,7 @@ function updateState(event, data)
                         if (disconnected_view.class_id === disconnected_class_id && disconnected_view.device_id === data.device_id)
                         {
                             disconnected_view.connected = false
+                            disconnected_view.bootloader_version = ""
                             disconnected_view.firmware_version = ""
                             disconnected_view.controller_class_id = ""
                             //IMPORTANT: If you add deinitialization here, don't forget to add initialization to case events.PLATFORM_CONNECTED_EVENT

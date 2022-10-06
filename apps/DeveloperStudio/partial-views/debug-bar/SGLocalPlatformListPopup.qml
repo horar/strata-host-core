@@ -315,7 +315,7 @@ Window {
             ColumnLayout {
                 id: injectPlatform
                 Layout.fillWidth: true
-                
+
                 RowLayout {
 
                     Item {
@@ -388,8 +388,8 @@ Window {
                         property var class_id: model.class_id
                         property var opn: model.opn
                         property string device_id: model.device_id
-                        property string firmware_version: model.firmware_version
                         property string bootloader_version: model.bootloader_version
+                        property string firmware_version: model.firmware_version
                         property string controller_class_id: model.controller_class_id
                         property int controller_type: model.controller_type
                         property bool connected: model.connected
@@ -473,7 +473,7 @@ Window {
                                 Layout.fillWidth: true
                                 enabled: !platformRow.connected
                                 palette.highlight: Theme.palette.onsemiOrange
-                                
+
                                 property bool textChanged: false
 
                                 onTextChanged: {
@@ -841,7 +841,7 @@ Window {
             for (var i = 0; i < 5; i++){
                 controllerClassIdModel.append({controller: SGUtilsCpp.generateUuid()})
             }
-            
+
             const platformTypes = Object.keys(Constants.DEVICE_CONTROLLER_TYPES)
             for(var i = 0; i < platformTypes.length; i++){
                 controllerTypeModel.append({type: platformTypes[i], value: Constants.DEVICE_CONTROLLER_TYPES[platformTypes[i]]})
@@ -868,6 +868,7 @@ Window {
                 injectList.push({
                                          "class_id": updatedPlatform.class_id,
                                          "device_id": updatedPlatform.device_id + Constants.DEBUG_DEVICE_ID,
+                                         "bootloader_version": updatedPlatform.bootloader_version,
                                          "firmware_version": updatedPlatform.firmware_version,
                                          "controller_class_id":isAssisted ? updatedPlatform.controller_class_id : undefined,
                                      })

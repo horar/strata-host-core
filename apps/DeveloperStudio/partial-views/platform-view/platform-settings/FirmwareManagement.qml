@@ -128,7 +128,7 @@ ColumnLayout {
         id: errorResponse
         spacing: 10
         Layout.topMargin: 10
-        visible: platformStack.connected && platformStack.firmware_version === ""
+        visible: platformStack.connected && platformStack.firmware_version.length === 0
 
         SGIcon {
             id: errorIcon
@@ -147,7 +147,7 @@ ColumnLayout {
 
     ColumnLayout {
         id: connectedFirmwareColumn
-        visible: platformStack.connected && platformStack.firmware_version !== ""
+        visible: platformStack.connected && platformStack.firmware_version.length !== 0
         Layout.topMargin: 10
 
         SGText {

@@ -176,6 +176,7 @@ function createPlatformSelectorModelItem(base_data) {
     platform.device_id = Constants.NULL_DEVICE_ID
     platform.visible = true
     platform.view_open = false
+    platform.bootloader_version = ""
     platform.firmware_version = ""
     platform.program_controller = false
     platform.program_controller_progress = 0.0
@@ -451,6 +452,7 @@ function connectListing(platform) {
 
     selector_listing = platformSelectorModel.get(selector_index)
     selector_listing.connected = true
+    selector_listing.bootloader_version = platform.bootloader_version
     selector_listing.firmware_version = platform.firmware_version
     selector_listing.device_id = platform.device_id
     selector_listing.visible = true
@@ -471,6 +473,7 @@ function connectListing(platform) {
                 "available": selector_listing.available,
                 "class_id": selector_listing.class_id,
                 "device_id": selector_listing.device_id,
+                "bootloader_version": selector_listing.bootloader_version,
                 "firmware_version": selector_listing.firmware_version,
                 "index": selector_index,
                 "view": "control",
@@ -497,12 +500,13 @@ function openPlatformView(platform) {
         "view": platform.view,
         "connected": platform.connected,
         "available": platform.available,
+        "bootloader_version": platform.bootloader_version,
         "firmware_version": platform.firmware_version,
         "controller_class_id": platform.controller_class_id,
         "is_assisted": platform.is_assisted
     }
 
-    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
+    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT, data)
 }
 
 /*
@@ -713,6 +717,7 @@ function generateErrorListing (platform, listing_data) {
         "visible": true,
         "view_open": false,
         "parts_list": [],
+        "bootloader_version": platform.bootloader_version,
         "firmware_version": platform.firmware_version,
         "program_controller": false,
         "program_controller_progress": 0.0,
