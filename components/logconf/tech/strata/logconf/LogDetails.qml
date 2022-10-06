@@ -243,7 +243,14 @@ GridLayout {
     SGWidgets.SGText {
         id: qtFilterRulesText
         text: "Qt filter rules"
-        Layout.columnSpan: 2
+    }
+
+    SGWidgets.SGIconButton {
+        icon.source: "qrc:/sgimages/edit.svg"
+        icon.width: infoButtonSize
+        icon.height: infoButtonSize
+        hintText: "Open dialog for editing qtFilterRules"
+        onClicked: showQtFilterRulesDialog()
     }
 
     SGWidgets.SGTextField {
@@ -390,6 +397,20 @@ GridLayout {
         onCorruptedFile: {
             showCorruptedFileDialog(param, errorString)
         }
+    }
+
+    function showQtFilterRulesDialog() {
+        var dialog = SGDialogJS.createDialog(
+                    logDetailsGrid,
+                    "qrc:/QtFilterRulesDialog.qml",
+                    )
+
+        dialog.accepted.connect(function() {
+            console.log(Logger.lcuCategory, "Filter rules edited")
+            dialog.destroy()
+        })
+
+        dialog.open()
     }
 
     function showCorruptedFileDialog(parameter, string) {
