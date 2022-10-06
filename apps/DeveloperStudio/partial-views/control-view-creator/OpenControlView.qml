@@ -354,7 +354,7 @@ Item {
                 enabled: fileOutput.text !== ""
 
                 onClicked: {
-                    openProject(fileOutput.text, false)
+                    openProject(SGUtilsCpp.pathToUrl(fileOutput.text).toString(), false)
                 }
             }
 
@@ -384,7 +384,7 @@ Item {
         folder: fileDialog.shortcuts.home
         onAccepted: {
             if (fileDialog.fileUrl.toString() !== "") {
-                fileOutput.text = fileDialog.fileUrl
+                fileOutput.text = SGUtilsCpp.urlToLocalFile(fileDialog.fileUrl)
             }
         }
     }
