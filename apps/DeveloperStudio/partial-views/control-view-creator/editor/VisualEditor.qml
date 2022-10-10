@@ -268,6 +268,18 @@ ColumnLayout {
                 functions.resizeItem(uuid, x, y, false)
             }
         }
+
+        onUndoItemMovedFront: {
+            if (visualEditor.file == file) {
+                functions.bringToFrontMultiple(objectList, false)
+            }
+        }
+
+        onUndoItemMovedBack: {
+            if (visualEditor.file == file) {
+                functions.sendToBackMultiple(objectList, false)
+            }
+        }
     }
 
     Connections {
