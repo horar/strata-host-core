@@ -64,11 +64,31 @@ ColumnLayout {
         id: loaderContainer
         Layout.fillHeight: true
         Layout.fillWidth: true
+        hoverEnabled: true
+        enabled: layoutDebugMode
 
-        onClicked: {
+        property bool activeSelection: false
+        property real startX: 0
+        property real startY: 0
+        property real endX: Math.min(Math.max(0, mouseX), width)
+        property real endY: Math.min(Math.max(0, mouseY), height)
+        property var originalSelectedMultiObjectsUuid: []
+
+        onPressed: {
             if ((mouse.modifiers & Qt.ShiftModifier) == false) {
                 multiObjectsDeselectAll()
             }
+            startX = mouse.x
+            startY = mouse.y
+            originalSelectedMultiObjectsUuid = [...visualEditor.selectedMultiObjectsUuid]
+            activeSelection = true
+        }
+
+        onReleased: {
+            activeSelection = false
+            originalSelectedMultiObjectsUuid = []
+            startX = 0
+            startY = 0
         }
 
         Loader {
@@ -141,6 +161,64 @@ ColumnLayout {
                     property int rowCount: overlayContainer.rowCount
                     property real columnSize: overlayContainer.columnSize
                     property real rowSize: overlayContainer.rowSize
+                }
+            }
+        }
+
+        Rectangle {
+            id: selectionRectangle
+            visible: loaderContainer.activeSelection
+            x: Math.min(loaderContainer.endX, loaderContainer.startX)
+            y: Math.min(loaderContainer.endY, loaderContainer.startY)
+            width: Math.abs(loaderContainer.endX - loaderContainer.startX)
+            height: Math.abs(loaderContainer.endY - loaderContainer.startY)
+
+            color: "lightgray"
+            border.color: "gray"
+            border.width: 2
+            opacity: 0.3
+
+            property int startColumn: overlayContainer.columnSize > 0 ? (selectionRectangle.x / overlayContainer.columnSize) : 0
+            property int startRow: overlayContainer.rowSize > 0 ? (selectionRectangle.y / overlayContainer.rowSize) : 0
+            property int endColumn: overlayContainer.columnSize > 0 ? ((selectionRectangle.x + selectionRectangle.width) / overlayContainer.columnSize) : 0
+            property int endRow: overlayContainer.rowSize > 0 ? ((selectionRectangle.y + selectionRectangle.height) / overlayContainer.rowSize) : 0
+
+            onVisibleChanged: {
+                if (loaderContainer.activeSelection) {
+                    updateSelectionTimer.restart()
+                }
+            }
+
+            onStartColumnChanged: {
+                if (loaderContainer.activeSelection) {
+                    updateSelectionTimer.restart()
+                }
+            }
+
+            onStartRowChanged: {
+                if (loaderContainer.activeSelection) {
+                    updateSelectionTimer.restart()
+                }
+            }
+
+            onEndColumnChanged: {
+                if (loaderContainer.activeSelection) {
+                    updateSelectionTimer.restart()
+                }
+            }
+
+            onEndRowChanged: {
+                if (loaderContainer.activeSelection) {
+                    updateSelectionTimer.restart()
+                }
+            }
+
+            Timer {
+                id: updateSelectionTimer
+                interval: 1
+
+                onTriggered: {
+                    functions.selectObjectsUnderRect(selectionRectangle.startColumn, selectionRectangle.startRow, selectionRectangle.endColumn, selectionRectangle.endRow, loaderContainer.originalSelectedMultiObjectsUuid)
                 }
             }
         }
