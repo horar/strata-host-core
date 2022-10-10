@@ -182,7 +182,7 @@ var rawData = [
                 "parentCategory": "category-sensor"
             },
             {
-                "filterId": "subcategory-sensor-light",
+                "filterId": "subcategory-sensor-image",
                 "name": "Image Sensors & Processors",
                 "parentCategory": "category-sensor"
             },
