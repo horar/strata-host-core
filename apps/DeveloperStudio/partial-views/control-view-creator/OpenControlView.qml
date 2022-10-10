@@ -176,7 +176,7 @@ Item {
     }
 
     ColumnLayout {
-        id: recentProjColumn
+        id: recentProjectsColumn
         anchors {
             fill: parent
             margins: 20
@@ -191,7 +191,7 @@ Item {
         }
 
         SGText {
-            id: recentProjText
+            id: recentProjectsText
             color: "#666"
             fontSizeMultiplier: 1.25
             text: "Recent Projects:"
@@ -216,7 +216,7 @@ Item {
                 id: projectUrlContainer
                 implicitHeight: 40
                 width: listView.width
-                color: removeProjectMenu.opened ? "#aaa" : urlMouseArea.containsMouse || removeProjMouseArea.containsMouse ? "#eee" : "#ddd"
+                color: removeProjectMenu.opened ? "#aaa" : urlMouseArea.containsMouse || removeProjectMouseArea.containsMouse ? "#eee" : "#ddd"
 
                 RowLayout {
                     id: row
@@ -237,20 +237,20 @@ Item {
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
-                        font.underline: urlMouseArea.containsMouse || removeProjMouseArea.containsMouse
+                        font.underline: urlMouseArea.containsMouse || removeProjectMouseArea.containsMouse
                         maximumLineCount: 1
                         color: urlMouseArea.containsPress ? "#555" : "black"
                     }
 
                     SGIcon {
-                        id: removeProjIcon
+                        id: removeProjectIcon
                         Layout.preferredHeight: projectUrlContainer.height * .5
                         Layout.preferredWidth: Layout.preferredHeight
                         source: "qrc:/sgimages/times-circle.svg"
-                        iconColor: removeProjMouseArea.containsMouse ? "darkred" : "grey"
+                        iconColor: removeProjectMouseArea.containsMouse ? "darkred" : "grey"
 
                         ToolTip {
-                            visible: removeProjMouseArea.containsMouse
+                            visible: removeProjectMouseArea.containsMouse
                             text: "Remove Project From Recent Projects"
                             delay: 500
                             timeout: 4000
@@ -305,11 +305,11 @@ Item {
                 }
 
                 MouseArea {
-                    id: removeProjMouseArea
-                    x: removeProjIcon.x
-                    y: removeProjIcon.y
-                    width: removeProjIcon.width
-                    height: removeProjIcon.height
+                    id: removeProjectMouseArea
+                    x: removeProjectIcon.x
+                    y: removeProjectIcon.y
+                    width: removeProjectIcon.width
+                    height: removeProjectIcon.height
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     acceptedButtons: Qt.LeftButton
@@ -327,8 +327,6 @@ Item {
             }
 
             SGButton {
-                id: clearRecentProjButton
-                height: recentProjText.height
                 text: "Clear Projects"
                 hintText: "Clear Recent Project List"
                 Layout.preferredHeight: 25
