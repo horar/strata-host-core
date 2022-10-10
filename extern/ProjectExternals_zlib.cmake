@@ -10,6 +10,7 @@
 #
 # zlib - required for Quazip, need to build on windows
 #
+
 if(WIN32)
     get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/Zlib" "${EXTERN_INSTALL_DIR_PATH}/Zlib")
     if(NOT LIB_INSTALLED)
@@ -30,8 +31,8 @@ if(WIN32)
         INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/include"
         IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Zlib${CMAKE_STATIC_LIBRARY_SUFFIX}"
         IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Zlibd${CMAKE_STATIC_LIBRARY_SUFFIX}"
-        ROOT_LOCATION "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}"
+        ZLIB_ROOT_3P "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}"
     )
 
-    add_dependencies(ZLIB::ZLIB DEPENDS ZLIB)
+    add_dependencies(ZLIB::ZLIB DEPENDS Zlib)
 endif()

@@ -9,8 +9,9 @@
 #
 # QuaZip (file compression into .zip archive)
 #
+
 if(WIN32)
-    get_target_property(ZLIB_ROOT ZLIB::ZLIB ROOT_LOCATION)
+    get_target_property(ZLIB_ROOT ZLIB::ZLIB ZLIB_ROOT_3P)
     message(STATUS "'ZLIB_ROOT' set to: ${ZLIB_ROOT}")
 endif()
 
