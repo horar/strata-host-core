@@ -216,7 +216,7 @@ Item {
                 id: projectUrlContainer
                 implicitHeight: 40
                 width: listView.width
-                color: removeProjectMenu.opened ? "#aaa" : urlMouseArea.containsMouse ? "#eee" : "#ddd"
+                color: removeProjectMenu.opened ? "#aaa" : urlMouseArea.containsMouse || removeProjMouseArea.containsMouse ? "#eee" : "#ddd"
 
                 RowLayout {
                     id: row
@@ -237,9 +237,25 @@ Item {
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
-                        font.underline: urlMouseArea.containsMouse
+                        font.underline: urlMouseArea.containsMouse || removeProjMouseArea.containsMouse
                         maximumLineCount: 1
                         color: urlMouseArea.containsPress ? "#555" : "black"
+                    }
+
+                    SGIcon {
+                        id: removeProjIcon
+                        Layout.preferredHeight: projectUrlContainer.height * .5
+                        Layout.preferredWidth: Layout.preferredHeight
+                        source: "qrc:/sgimages/times-circle.svg"
+                        iconColor: removeProjMouseArea.containsMouse ? "darkred" : "grey"
+
+                        ToolTip {
+                            visible: removeProjMouseArea.containsMouse
+                            text: "Remove Project From Recent Projects"
+                            delay: 500
+                            timeout: 4000
+                            font.pixelSize: SGSettings.fontPixelSize
+                        }
                     }
                 }
 
@@ -286,6 +302,41 @@ Item {
                             openProject(model.url, true)
                         }
                     }
+                }
+
+                MouseArea {
+                    id: removeProjMouseArea
+                    x: removeProjIcon.x
+                    y: removeProjIcon.y
+                    width: removeProjIcon.width
+                    height: removeProjIcon.height
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton
+                    onClicked: {
+                        removeFromProjectList(model.url)
+                    }
+                }
+            }
+        }
+
+        RowLayout {
+            visible: listModelForUrl.count > 0
+            Item {
+                Layout.fillWidth: true
+            }
+
+            SGButton {
+                id: clearRecentProjButton
+                height: recentProjText.height
+                text: "Clear Projects"
+                hintText: "Clear Recent Project List"
+                Layout.preferredHeight: 25
+                Layout.preferredWidth:100
+                onClicked: {
+                    previousFileURL.projects = []
+                    listModelForUrl.clear()
+                    saveSettings()
                 }
             }
         }
