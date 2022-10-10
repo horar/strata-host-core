@@ -250,7 +250,7 @@ GridLayout {
         icon.width: infoButtonSize
         icon.height: infoButtonSize
         hintText: "Open dialog for editing qtFilterRules"
-        onClicked: showQtFilterRulesDialog()
+        onClicked: showQtFilterRulesDialog(qtFilterRulesTextField.text)
     }
 
     SGWidgets.SGTextField {
@@ -399,13 +399,15 @@ GridLayout {
         }
     }
 
-    function showQtFilterRulesDialog() {
+    function showQtFilterRulesDialog(string) {
         var dialog = SGDialogJS.createDialog(
-                    logDetailsGrid,
-                    "qrc:/QtFilterRulesDialog.qml",
-                    )
+                    logDetailsGrid.parent,
+                    "qrc:/QtFilterRulesDialog.qml", {
+                        "filterRulesString": string
+                    })
 
         dialog.accepted.connect(function() {
+            configFileSettings.qtFilterRules = dialog.filterRulesString
             console.log(Logger.lcuCategory, "Filter rules edited")
             dialog.destroy()
         })
@@ -415,7 +417,7 @@ GridLayout {
 
     function showCorruptedFileDialog(parameter, string) {
         var dialog = SGDialogJS.createDialog(
-                    logDetailsGrid,
+                    logDetailsGrid.parent,
                     "qrc:/CorruptedFileDialog.qml", {
                         "corruptedString": string,
                         "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")

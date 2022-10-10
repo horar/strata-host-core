@@ -11,9 +11,13 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.theme 1.0
+import tech.strata.logconf 1.0
 
 SGWidgets.SGDialog {
     id: qtFilterRulesDialog
+
+    property string filterRulesString
+
 
     title: "Edit qtFilterRules"
     modal: true
@@ -22,36 +26,44 @@ SGWidgets.SGDialog {
     closePolicy: Dialog.NoAutoClose
     headerIcon: "qrc:/sgimages/edit.svg"
 
-    ListModel {
-        id: sampleModel
-        ListElement { imageName: "flower" }
-        ListElement { imageName: "house" }
-        ListElement { imageName: "water" }
+
+    QtFilterRulesModel {
+        id: filterRulesModel
+    }
+
+    Component.onCompleted: {
+        filterRulesModel.createModel(filterRulesString)
     }
 
     Item {
         id: dialogContent
-        implicitWidth: 400
-        implicitHeight: 200
+        implicitWidth: 250
+        implicitHeight: 250
 
         ListView {
-            id: sampleListView
+            id: filterRulesListView
             anchors.top: dialogContent.top
             width: dialogContent.width
-            implicitHeight: 150
-            model: sampleModel
+            height: 150
+            spacing: 2
+
+            model: filterRulesModel
             delegate: SGWidgets.SGTextField {
                 width: parent.width
-                text: imageName
+                text: filterName
+
+                onTextEdited: filterRulesModel.modifyList(index, text)
             }
-            spacing: 2
         }
 
         SGWidgets.SGButton {
             text: "Apply"
-            anchors.top: sampleListView.bottom
+            anchors.bottom: dialogContent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: qtFilterRulesDialog.accepted()
+            onClicked: {
+                filterRulesString = filterRulesModel.joinItems()
+                qtFilterRulesDialog.accepted()
+            }
         }
     }
 }
