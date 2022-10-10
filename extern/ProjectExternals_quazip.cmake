@@ -27,9 +27,10 @@ if(NOT LIB_INSTALLED)
             CMAKE_ARGS "${CMAKE_ARGS}"
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
                 -DQt5_DIR=${Qt5_DIR}
-                -DQUAZIP_ENABLE_TESTS=OFF
+                -DBUILD_SHARED_LIBS=OFF
                 -DQT_VERSION_MAJOR=5
                 -DZLIB_ROOT=${ZLIB_ROOT}
+                -DZLIB_USE_STATIC_LIBS=ON
         )
     else()
         ExternalProject_Add(QuaZip
