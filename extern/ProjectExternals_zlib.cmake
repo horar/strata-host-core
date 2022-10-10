@@ -24,7 +24,7 @@ if(WIN32)
         )
     endif()
 
-    add_library(ZLIB::ZLIB INTERFACE IMPORTED GLOBAL)
+    add_library(ZLIB::ZLIB STATIC IMPORTED GLOBAL)
 
     set_target_properties(ZLIB::ZLIB PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/Zlib-${GIT_HASH}/include"
