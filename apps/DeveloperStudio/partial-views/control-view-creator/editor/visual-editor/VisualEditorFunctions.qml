@@ -159,6 +159,38 @@ QtObject {
         }
     }
 
+    function insertTextAtStartOfFile(text, save = true) {
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+            // we need to find first object if any
+            if (loader.children[0].children.length > 0) {
+                let done = false
+                for (let i = 0; i < loader.children[0].children.length; i++) {
+                    if (loader.children[0].children[i].hasOwnProperty("layoutInfo")) {
+                        let regex = new RegExp(startOfObjectRegexString(loader.children[0].children[i].layoutInfo.uuid)) // insert text before first object start
+                        let startOfFile = fileContents.match(regex)
+                        if (startOfFile === null) {
+                            continue
+                        }
+                        fileContents = fileContents.replace(startOfFile, text + "\n\n" + startOfFile)
+
+                        if (save) {
+                            saveFile()
+                        }
+                        done = true
+                        break
+                    }
+                }
+                if (done === false) {
+                    insertTextAtEndOfFile(text, save)
+                }
+            } else {
+                insertTextAtEndOfFile(text, save)
+            }
+        } else {
+            insertTextAtEndOfFile(text, save)
+        }
+    }
+
     function removeControl(uuid, addToUndoCommandStack = true, save = true, deselect = true) {
         const objectString = getObjectFromString(uuid)
         if (objectString === null) {
@@ -263,6 +295,23 @@ QtObject {
         for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
             const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
             bringToFront(selectedUuid, false)
+        }
+        saveFile()
+    }
+
+    function sendToBack(uuid, save = true) {
+        let copy = getObjectFromString(uuid)
+        if (copy === null) {
+            return
+        }
+        fileContents = fileContents.replace(copy, "\n")
+        insertTextAtStartOfFile(copy, save)
+    }
+
+    function sendToBackSelected() {
+        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
+            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
+            sendToBack(selectedUuid, false)
         }
         saveFile()
     }
