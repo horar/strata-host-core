@@ -57,8 +57,15 @@ Rectangle {
         }
 
         // Example url: "qrc:/minified/web/viewer.html?file=file://localhost/Users/zbgzzh/Desktop/layout.pdf"
-        url: root.url === "datasheet-unavailable" ? "qrc:/tech/pdfjs/minified/web/viewer.html?file=" :"qrc:/tech/pdfjs/minified/web/viewer.html?file=" + root.url
-        enabled: url != "qrc:/tech/pdfjs/minified/web/viewer.html?file="
+        url: {
+            if (root.url.length === 0 || root.url === "datasheet-unavailable") {
+                return ""
+            }
+
+            return "qrc:/tech/pdfjs/minified/web/viewer.html?file=" + root.url
+        }
+
+        enabled: url != ""
 
         onNavigationRequested: {
             if (request.url.toString().startsWith("qrc:")) {
