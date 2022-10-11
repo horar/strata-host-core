@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QStack>
 #include <QHash>
+#include <QList>
 
 enum class CommandType
 {
@@ -18,7 +19,9 @@ enum class CommandType
     itemAdded,
     itemDeleted,
     itemMoved,
-    itemResized
+    itemResized,
+    itemMovedFront,
+    itemMovedBack
 };
 
 struct UndoCommand
@@ -29,6 +32,7 @@ struct UndoCommand
     QString value;
     QString undoValue;
     QString objectString;
+    QList<QString> objectList;
 
     int x;
     int y;
@@ -57,6 +61,10 @@ public:
 
     Q_INVOKABLE void removeItem(const QString &file, const QString &uuid, const QString &objectString);
 
+    Q_INVOKABLE void moveItemFront(const QString &file, const QString &uuid, const QList<QString> &objectList);
+
+    Q_INVOKABLE void moveItemBack(const QString &file, const QString &uuid, const QList<QString> &objectList);
+
     Q_INVOKABLE void clearStack(const QString &file);
 
     Q_INVOKABLE bool isUndoPossible(const QString &file);
@@ -75,6 +83,10 @@ signals:
     void undoItemMoved(QString file, QString uuid, int x, int y, int undoX, int undoY);
 
     void undoItemResized(QString file, QString uuid, int x, int y, int undoX, int undoY);
+
+    void undoItemMovedFront(QString file, QList<QString> objectList);
+
+    void undoItemMovedBack(QString file, QList<QString> objectList);
 
     void undoRedoState(QString file, bool undo, bool redo);
 
