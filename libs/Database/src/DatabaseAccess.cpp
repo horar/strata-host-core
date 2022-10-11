@@ -298,7 +298,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
         if (change_listener_callback_) {
             change_listener_callback_(activityLevel);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
+            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status =" << activityLevelStr;
         }
     };
 
@@ -313,7 +313,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
             }
             document_listener_callback_(isPush, SGDocuments);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
+            qCInfo(lcCouchbaseDatabase) << "---" << documents.size() << "docs" << (isPush ? "pushed." : "pulled.");
         }
     };
 
@@ -400,7 +400,7 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
         if (change_listener_callback_) {
             change_listener_callback_(activityLevel);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
+            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status =" << activityLevelStr;
         }
     };
 
@@ -415,7 +415,7 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
             }
             document_listener_callback_(isPush, SGDocuments);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
+            qCInfo(lcCouchbaseDatabase) << "---" << documents.size() << "docs" << (isPush ? "pushed." : "pulled.");
         }
     };
 
