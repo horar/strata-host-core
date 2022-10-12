@@ -13,6 +13,7 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.theme 1.0
 import tech.strata.logconf 1.0
 import tech.strata.pluginLogger 1.0
 
@@ -97,10 +98,10 @@ GridLayout {
             target: logFilesCompress
             onShowExportMessage: {
                 if (error) {
-                    warningText.color = "red"
+                    warningText.color = Theme.palette.error
                     console.warn(Logger.lcuCategory, errorMsg)
                 } else {
-                    warningText.color = "green"
+                    warningText.color = Theme.palette.success
                     console.info(Logger.lcuCategory, errorMsg)
                 }
 
