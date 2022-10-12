@@ -26,7 +26,7 @@ bool LogFilesCompress::logExport(QString exportPath, QStringList fileNamesToZip)
     //check export path
     QDir exportDir(exportPath);
     if (exportDir.exists() == false || QFileInfo(exportPath).isWritable() == false) {
-        emit showExportMessage("Log-export failed.  Non-existent or non-writable directory.", true);
+        emit showExportMessage("Log export failed.  Non-existent or non-writable directory.", true);
         return false;
     }
     const QString timeStamp = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
@@ -60,7 +60,7 @@ bool LogFilesCompress::logExport(QString exportPath, QStringList fileNamesToZip)
         emit showExportMessage("Logs exported successfully as: " + zipFile.fileName(), false);
         return true;
     } else {
-        emit showExportMessage("Compressing unsuccessful.  ERROR: " + QString::number(zipError), true);
+        emit showExportMessage("Log export failed.  ERROR: " + QString::number(zipError), true);
         return false;
     }
 }
