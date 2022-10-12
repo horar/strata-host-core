@@ -24,14 +24,12 @@ GridLayout {
                                            QtLabsPlatform.StandardPaths.writableLocation(
                                                QtLabsPlatform.StandardPaths.DesktopLocation))
     property int innerSpacing: 5
-
     property bool logExportInProgress: false
 
     columns: 3
     rows: 3
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
-
     enabled: appName !== ""
 
     QtLabsSettings.Settings {
