@@ -23,6 +23,19 @@ void QtFilterRulesModel::addItem(const QString newRule)
     emit countChanged();
 }
 
+void QtFilterRulesModel::removeItem(int index) {
+    if(index >= 0 && index < filterRulesList_.length()) {
+        beginRemoveRows(QModelIndex(), index, index);
+        filterRulesList_.removeAt(index);
+        endRemoveRows();
+
+        emit countChanged();
+    } else {
+        qCDebug(lcLcu) << "Item not selected or index out of range";
+        return;
+    }
+}
+
 void QtFilterRulesModel::createModel(QString qtFilterRules)
 {
     beginResetModel();
@@ -79,7 +92,7 @@ QVariant QtFilterRulesModel::data(const QModelIndex & index, int role) const
 
 int QtFilterRulesModel::count() const
 {
-    return filterRulesList_.count();
+    return filterRulesList_.length();
 }
 
 QHash<int, QByteArray> QtFilterRulesModel::roleNames() const

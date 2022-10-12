@@ -18,8 +18,7 @@ SGWidgets.SGDialog {
 
     property string filterRulesString
 
-
-    title: "Edit qtFilterRules"
+    title: "Edit qtFilterRules "
     modal: true
     focus: true
     destroyOnClose: true
@@ -35,31 +34,89 @@ SGWidgets.SGDialog {
         filterRulesModel.createModel(filterRulesString)
     }
 
-    Item {
+    ColumnLayout {
         id: dialogContent
-        implicitWidth: 250
-        implicitHeight: 250
+        anchors.fill: parent
 
-        ListView {
-            id: filterRulesListView
-            anchors.top: dialogContent.top
-            width: dialogContent.width
-            height: 150
-            spacing: 2
+        Rectangle {
+            id: listViewRectangle
+            Layout.minimumWidth: 250
+            Layout.minimumHeight: {
+                if (filterRulesModel.count <= 4) {
+                    45 * filterRulesModel.count + filterRulesListView.topMargin + filterRulesListView.bottomMargin
+                } else {
+                    200
+                }
+            }
 
-            model: filterRulesModel
-            delegate: SGWidgets.SGTextField {
-                width: parent.width
-                text: filterName
+            border.color: Theme.palette.gray
+            color: Theme.palette.lightGray
 
-                onTextEdited: filterRulesModel.modifyList(index, text)
+            ListView {
+                id: filterRulesListView
+
+                anchors {
+                    fill: listViewRectangle
+                    margins: 5
+                }
+                clip: true
+                ScrollBar.vertical: ScrollBar {}
+                spacing: 2
+                model: filterRulesModel
+
+                delegate: SGWidgets.SGTextField {
+                    width: parent.width
+                    text: filterName
+                    placeholderText: "Filter rule input..."
+                    onTextEdited: filterRulesModel.modifyList(index, text)
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            forceActiveFocus()
+                            filterRulesListView.currentIndex = index
+                        }
+                    }
+                }
+            }
+
+            Connections {
+                target: filterRulesModel
+
+                onCountChanged: {
+                    console.log("Number of qtFilterRules:", filterRulesModel.count)
+                }
+            }
+        }
+
+        Row {
+            spacing: 5
+            Layout.alignment: Qt.AlignHCenter
+
+            SGWidgets.SGIconButton {
+                icon.source: "qrc:/sgimages/minus.svg"
+                hintText: "Remove selected filter rule"
+                onClicked: {
+                    filterRulesModel.removeItem(filterRulesListView.currentIndex)
+                    filterRulesListView.currentIndex = -1
+                    console.log("Current index:", filterRulesListView.currentIndex)
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                icon.source: "qrc:/sgimages/plus.svg"
+                hintText: "Add new filter rule"
+                onClicked: {
+                    filterRulesModel.addItem("")
+                    filterRulesListView.currentIndex = filterRulesModel.count - 1
+                    console.log("Current index:", filterRulesListView.currentIndex)
+                }
             }
         }
 
         SGWidgets.SGButton {
             text: "Apply"
-            anchors.bottom: dialogContent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             onClicked: {
                 filterRulesString = filterRulesModel.joinItems()
                 qtFilterRulesDialog.accepted()

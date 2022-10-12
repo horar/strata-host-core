@@ -31,15 +31,14 @@ public:
     Q_INVOKABLE void createModel(QString qtFilterRules);
     Q_INVOKABLE void modifyList(int index, QString newText);
     Q_INVOKABLE QString joinItems();
+    Q_INVOKABLE void addItem(const QString newRule);
+    Q_INVOKABLE void removeItem(int index);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 signals:
     void countChanged();
-
-private slots:
-    void addItem(const QString newRule);
 
 private:
     QStringList filterRulesList_;
