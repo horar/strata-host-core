@@ -45,6 +45,10 @@ enum RpcErrorCode {
     ClientUnregistrationError,
     ClientNotRegistered,
     ReplicatorRunError,
+    ReplicatorStopped,
+    ReplicatorOffline,
+    ReplicatorWebSocketFailed,
+    ReplicatorWrongCredentials,
     FileServerNotAccessible,
     GatewaySyncNotAccessible,
     };

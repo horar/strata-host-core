@@ -169,6 +169,8 @@ private slots:
             const QByteArray &clientId,
             const QString &errorMessage);
 
+    void handleReplicatorError(bool isOffline, int errorCode);
+
 private:
     enum class RpcMethodName {
         DownloadPlatformFilepathChanged,

@@ -163,6 +163,8 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this,
             &HostControllerService::sendUpdateInfoMessage);
 
+    connect(&db_, &Database::replicatorError, this, &HostControllerService::handleReplicatorError);
+
     // create base folder
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (config_.contains("stage") && config_.value("stage").isString()) {
@@ -563,6 +565,24 @@ void HostControllerService::disconnectDeviceFinished(
     } else {
         sendDeviceError(RpcMethodName::DisconnectDevice, deviceId, clientId, errorMessage);
     }
+}
+
+void HostControllerService::handleReplicatorError(bool isOffline, int errorCode)
+{
+    strataRPC::RpcErrorCode rpcError = isOffline
+                                     ? strataRPC::RpcErrorCode::ReplicatorOffline
+                                     : strataRPC::RpcErrorCode::ReplicatorStopped;
+
+    // specific errors
+    if (errorCode == 108) {
+        rpcError = strataRPC::RpcErrorCode::ReplicatorWebSocketFailed;
+    } else if (errorCode == 401) {
+        rpcError = strataRPC::RpcErrorCode::ReplicatorWrongCredentials;
+    }
+
+    qCWarning(lcHcs) << "DB replicator is not accessible. Reporting error:" << rpcError;
+
+    errorTracker_.reportError(rpcError);
 }
 
 void HostControllerService::processCmdHcsStatus(const strataRPC::RpcRequest &request)
