@@ -110,7 +110,7 @@ public:
         const QString &username = "",
         const QString &password = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(const ActivityLevel &status)> changeListener = nullptr,
+        std::function<void(ActivityLevel status, int errorCode)> changeListener = nullptr,
         std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
         bool continuous = false);
 
@@ -129,7 +129,7 @@ public:
         const QString &token = "",
         const QString &cookieName = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(const ActivityLevel &status)> changeListener = nullptr,
+        std::function<void(ActivityLevel status, int errorCode)> changeListener = nullptr,
         std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
         bool continuous = false);
 
@@ -138,6 +138,8 @@ public:
     QString getReplicatorStatus(const QString &bucket);
 
     int getReplicatorError(const QString &bucket);
+
+    static QString activityLevelToString(ActivityLevel activitylevel);
 
 private:
     QString name_;
@@ -148,7 +150,7 @@ private:
 
     std::vector<std::unique_ptr<CouchbaseDatabase>> database_map_;
 
-    std::function<void(const ActivityLevel &status)> change_listener_callback_ = nullptr;
+    std::function<void(ActivityLevel status, int errorCode)> change_listener_callback_ = nullptr;
 
     std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
 

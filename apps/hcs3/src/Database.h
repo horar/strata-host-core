@@ -72,6 +72,7 @@ public:
 
 signals:
     void documentUpdated(QString documentId);
+    void replicatorError(bool isOffline, int errorCode);
 
 private:
     struct Replication {
@@ -93,6 +94,8 @@ private:
     bool isRunning_ = false;
 
     void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
+
+    void changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode);
 
     void updateChannels();
 };

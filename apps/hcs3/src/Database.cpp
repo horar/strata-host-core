@@ -81,6 +81,20 @@ void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::R
     }
 }
 
+void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode)
+{
+    qCInfo(lcHcsDb) << "--- PROGRESS: status =" << strata::Database::DatabaseAccess::activityLevelToString(activityLevel);
+    if (errorCode != 0) {
+        qCInfo(lcHcsDb) << "--- ERROR CODE:" << errorCode;
+    }
+
+    if (activityLevel == strata::Database::DatabaseAccess::ActivityLevel::ReplicatorStopped) {
+        emit replicatorError(false, errorCode);
+    } else if (activityLevel == strata::Database::DatabaseAccess::ActivityLevel::ReplicatorOffline) {
+        emit replicatorError(true, errorCode);
+    }
+}
+
 bool Database::addReplChannel(const std::string& channel)
 {
     if (channel.empty()) {
@@ -158,8 +172,9 @@ bool Database::initReplicator(const std::string& replUrl, const std::string& use
     replication_.username = QString::fromStdString(username);
     replication_.password = QString::fromStdString(password);
 
+    auto changeListenerCallback = std::bind(&Database::changeListener, this, std::placeholders::_1, std::placeholders::_2);
     auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
-    isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
+    isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, changeListenerCallback, documentListenerCallback, true);
 
     return isRunning_;
 }
