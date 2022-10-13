@@ -20,9 +20,12 @@ public:
     explicit LogFilesCompress(QObject *parent = nullptr);
 
     Q_INVOKABLE bool logExport(QString exportPath, QStringList fileNamesToZip);
+    Q_INVOKABLE bool checkExportPath(QString exportPath);
+    Q_INVOKABLE bool createFolderForFile(const QString &filePath);
 
     int compress (QFileInfoList filesToZip, QString zipName);
 
 signals:
-    void showExportMessage(QString errorMsg, bool error);
+    void showExportMessage(QString msg, bool error);
+    void nonExistentDirectory();
 };

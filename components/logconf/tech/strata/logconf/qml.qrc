@@ -4,5 +4,6 @@
         <file>LogDetails.qml</file>
         <file>CorruptedFileDialog.qml</file>
         <file>LogExport.qml</file>
+        <file>CreateFolderDialog.qml</file>
     </qresource>
 </RCC>

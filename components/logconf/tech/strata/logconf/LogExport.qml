@@ -93,22 +93,6 @@ GridLayout {
         Layout.columnSpan: 3
 
         visible: false
-
-        Connections {
-            target: logFilesCompress
-            onShowExportMessage: {
-                if (error) {
-                    warningText.color = Theme.palette.error
-                    console.warn(Logger.lcuCategory, errorMsg)
-                } else {
-                    warningText.color = Theme.palette.success
-                    console.info(Logger.lcuCategory, errorMsg)
-                }
-
-                warningText.text = errorMsg
-                warningText.visible = true
-            }
-        }
     }
 
     SGWidgets.SGCheckBox {
@@ -128,9 +112,28 @@ GridLayout {
         }
     }
 
-    function exportLogs() {
-        logExportInProgress = true
+    Connections {
+        target: logFilesCompress
 
+        onShowExportMessage: {
+            if (error) {
+                warningText.color = Theme.palette.error
+                console.warn(Logger.lcuCategory, msg)
+            } else {
+                warningText.color = Theme.palette.success
+                console.info(Logger.lcuCategory, msg)
+            }
+
+            warningText.text = msg
+            warningText.visible = true
+        }
+
+        onNonExistentDirectory: { //export path does not exist
+            showCreateFolderDialog(exportPathField.text)
+        }
+    }
+
+    function finishExport() {
         var fileNamesToZip  = [appName]
         if (Qt.application.name === "Strata Developer Studio") {
             fileNamesToZip.push("Host Controller Service")
@@ -138,7 +141,37 @@ GridLayout {
         if (logFilesCompress.logExport(exportPathField.text, fileNamesToZip) && openFolderCheckBox.checked) {
             Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(exportPathField.text))
         }
+    }
 
+    function exportLogs() {
+        logExportInProgress = true
+        if(logFilesCompress.checkExportPath(exportPathField.text)) { //export path exists
+            finishExport()
+        }
         logExportInProgress = false
+    }
+
+    function showCreateFolderDialog(exportPath) {
+        var dialog = SGDialogJS.createDialog(
+                    parent,
+                    "qrc:/CreateFolderDialog.qml", {
+                        "filePath": exportPath
+                    })
+
+        dialog.accepted.connect(function() { //create new directory
+            logExportInProgress = true
+            if (logFilesCompress.createFolderForFile(exportPath)) {
+                console.log(Logger.lcuCategory, "Created directory " + exportPath)
+                finishExport()
+            }
+            dialog.destroy()
+            logExportInProgress = false
+        })
+
+        dialog.rejected.connect(function() { //do not create new directory
+            console.log(Logger.lcuCategory, "Directory " + exportPath + " not created")
+            dialog.destroy()
+        })
+        dialog.open()
     }
 }
