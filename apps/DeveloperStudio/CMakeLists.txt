@@ -68,6 +68,9 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/PlatformInterfaceGenerator.cpp
     source/VisualEditorUndoStack.cpp
     source/PlatformOperation.cpp
+    source/NotificationActionModel.cpp
+    source/Notification.cpp
+    source/NotificationModel.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
