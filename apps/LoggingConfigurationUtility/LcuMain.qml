@@ -34,11 +34,11 @@ Item {
     }
 
     ConfigFileModel {
-        id:configFileModel
+        id: configFileModel
     }
 
     ColumnLayout {
-        id:mainLayout
+        id: mainLayout
 
         anchors {
             fill: parent
@@ -94,6 +94,13 @@ Item {
             Layout.fillWidth: true
             fileName: iniFileComboBox.currentText
             lcuApp: true
+        }
+
+        LogExport {
+            id: logExportPane
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignRight
+            appName: iniFileComboBox.currentText
         }
     }
 }

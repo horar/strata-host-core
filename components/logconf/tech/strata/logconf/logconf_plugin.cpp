@@ -8,10 +8,11 @@
  */
 #include "logconf_plugin.h"
 #include "ConfigFileSettings.h"
-
+#include "LogFilesCompress.h"
 #include <QtQml>
 
 void LogConfPlugin::registerTypes(const char *uri){
     qmlRegisterModule(uri, 1, 0);
     qmlRegisterType<ConfigFileSettings>("tech.strata.logconf", 1, 0, "ConfigFileSettings");
+    qmlRegisterType<LogFilesCompress>("tech.strata.logconf", 1, 0, "LogFilesCompress");
 }
