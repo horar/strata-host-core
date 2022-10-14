@@ -68,14 +68,12 @@
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/web-popup/SGWebControls.qml</file>
         <file>partial-views/general/web-popup/SGWebView.qml</file>
-        <file>partial-views/notifications/NotificationDelegate.qml</file>
-        <file>partial-views/notifications/NotificationsContainer.qml</file>
-        <file>partial-views/notifications/NotificationsInbox.qml</file>
-        <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
-        <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
         <file>partial-views/BleScanDialog.qml</file>
         <file>partial-views/general/SGSettingsCheckbox.qml</file>
         <file>partial-views/SGPolicyUpdateDialog.qml</file>
+        <file>partial-views/NotificationDelegate.qml</file>
+        <file>partial-views/NotificationView.qml</file>
+        <file>partial-views/NotificationDrawer.qml</file>
     </qresource>
 </RCC>

@@ -80,7 +80,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
-    notifications/qml/tech/strata/notifications/qml.qrc
     partial-views/control-view-creator/template-views.qrc
 
     qml-dev-studio.qrc
