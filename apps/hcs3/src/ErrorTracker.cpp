@@ -19,7 +19,17 @@ ErrorTracker::~ErrorTracker()
 
 void ErrorTracker::reportError(strata::strataRPC::RpcErrorCode errorCode)
 {
-    errors_.insert(errorCode);
+    if (errors_.contains(errorCode) == false) {
+        errors_.insert(errorCode);
+        emit errorsChanged();
+    }
+}
+
+void ErrorTracker::removeError(strata::strataRPC::RpcErrorCode errorCode)
+{
+    if (errors_.remove(errorCode)) {
+        emit errorsChanged();
+    }
 }
 
 QList<strata::strataRPC::RpcErrorCode> ErrorTracker::errors() const

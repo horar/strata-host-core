@@ -22,6 +22,7 @@
 #endif // APPS_FEATURE_BLE
 #include "FirmwareUpdater.h"
 #include "PlatformOperation.h"
+#include "HcsErrorTracker.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
@@ -53,6 +54,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       platformOperation_(new PlatformOperation(strataClient_, this)),
       notificationModel_(new NotificationModel(this)),
+      hcsErrorTracker_(new HcsErrorTracker(strataClient_, coreInterface_, notificationModel_, this)),
 #ifdef APPS_FEATURE_BLE
       bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
 #endif // APPS_FEATURE_BLE
@@ -78,6 +80,7 @@ SDSModel::~SDSModel()
     delete urlConfig_;
     delete strataClient_;
     delete platformOperation_;
+    delete hcsErrorTracker_;
 }
 
 bool SDSModel::startHcs()
@@ -243,6 +246,11 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
 NotificationModel *SDSModel::notificationModel() const
 {
     return notificationModel_;
+}
+
+HcsErrorTracker *SDSModel::hcsErrorTracker() const
+{
+    return hcsErrorTracker_;
 }
 
 #ifdef APPS_FEATURE_BLE

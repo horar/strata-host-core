@@ -169,7 +169,9 @@ private slots:
             const QByteArray &clientId,
             const QString &errorMessage);
 
-    void handleReplicatorError(bool isOffline, int errorCode);
+    void handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode);
+
+    void errorTrackerChanged();
 
 private:
     enum class RpcMethodName {
@@ -193,7 +195,8 @@ private:
         PlatformDocument,
         PlatformMessage,
         PlatformNotification,
-        ConnectedPlatforms
+        ConnectedPlatforms,
+        HcsStatus
     };
     constexpr const char *rpcMethodToString(RpcMethodName method);
 
@@ -207,6 +210,8 @@ private:
             RpcMethodName method,
             const QByteArray& deviceId,
             const QByteArray& clientId);
+
+    QJsonObject createJsonErrorList() const;
 
     void processCmdHcsStatus(const strata::strataRPC::RpcRequest &request);
     void processCmdLoadDocuments(const strata::strataRPC::RpcRequest &request);

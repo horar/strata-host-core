@@ -25,6 +25,15 @@ public:
     Database(QObject *parent = nullptr);
     ~Database();
 
+    enum class ReplicatorStatus {
+        Stopped,    // The replicator is unstarted, finished, or hit a fatal error.
+        Offline,    // The replicator is offline, as the remote host is unreachable.
+        Connecting, // The replicator is connecting to the remote host.
+        Idle,       // The replicator is inactive, waiting for changes to sync.
+        Busy        // The replicator is actively transferring data.
+    };
+    Q_ENUM(ReplicatorStatus)
+
     /**
      * Opens the database
      * @param db_path
@@ -72,7 +81,7 @@ public:
 
 signals:
     void documentUpdated(QString documentId);
-    void replicatorError(bool isOffline, int errorCode);
+    void replicatorStatusChanged(ReplicatorStatus status, int errorCode);
 
 private:
     struct Replication {

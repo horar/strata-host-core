@@ -34,11 +34,11 @@ public:
 
     Q_INVOKABLE Notification* create(
             QVariantMap params,
-            QVariantList list=QVariantList());
+            QVariantList list = QVariantList());
 
     Notification* create(
             const Notification::Request &data,
-            const NotificationActionList &list);
+            const NotificationActionList &list = NotificationActionList());
 
     Q_INVOKABLE void remove(const QString &uuid);
     Q_INVOKABLE void removeAll();

@@ -115,6 +115,8 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
                 std::bind(&HostControllerService::processCmdDisconnectDevice, this, std::placeholders::_1));
 
     // connect signals
+    connect(&errorTracker_, &ErrorTracker::errorsChanged, this, &HostControllerService::errorTrackerChanged);
+
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
             &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this,
@@ -163,7 +165,7 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this,
             &HostControllerService::sendUpdateInfoMessage);
 
-    connect(&db_, &Database::replicatorError, this, &HostControllerService::handleReplicatorError);
+    connect(&db_, &Database::replicatorStatusChanged, this, &HostControllerService::handleReplicatorStatus);
 
     // create base folder
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
@@ -567,35 +569,63 @@ void HostControllerService::disconnectDeviceFinished(
     }
 }
 
-void HostControllerService::handleReplicatorError(bool isOffline, int errorCode)
+void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode)
 {
-    strataRPC::RpcErrorCode rpcError = isOffline
-                                     ? strataRPC::RpcErrorCode::ReplicatorOffline
-                                     : strataRPC::RpcErrorCode::ReplicatorStopped;
+    using strataRPC::RpcErrorCode;
+
+    RpcErrorCode rpcError = RpcErrorCode::NoError;
+
+    switch (status) {
+    case Database::ReplicatorStatus::Offline :
+        rpcError = RpcErrorCode::ReplicatorOffline;
+        break;
+    case Database::ReplicatorStatus::Stopped :
+        rpcError = RpcErrorCode::ReplicatorStopped;
+        break;
+    case Database::ReplicatorStatus::Connecting :
+    case Database::ReplicatorStatus::Idle :
+    case Database::ReplicatorStatus::Busy :
+        rpcError = RpcErrorCode::NoError;
+        break;
+    }
 
     // specific errors
     if (errorCode == 108) {
-        rpcError = strataRPC::RpcErrorCode::ReplicatorWebSocketFailed;
+        rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
     } else if (errorCode == 401) {
-        rpcError = strataRPC::RpcErrorCode::ReplicatorWrongCredentials;
+        rpcError = RpcErrorCode::ReplicatorWrongCredentials;
+    } else if (errorCode == 404) {
+        rpcError = RpcErrorCode::ReplicatorNoSuchDb;
     }
 
-    qCWarning(lcHcs) << "DB replicator is not accessible. Reporting error:" << rpcError;
+    if (rpcError != RpcErrorCode::NoError) {
+        qCWarning(lcHcs) << "DB replicator is not accessible. Reporting error:" << rpcError;
+        errorTracker_.reportError(rpcError);
+    }
+}
 
-    errorTracker_.reportError(rpcError);
+void HostControllerService::errorTrackerChanged()
+{
+    strataServer_->broadcastNotification(
+                rpcMethodToString(RpcMethodName::HcsStatus),
+                createJsonErrorList());
 }
 
 void HostControllerService::processCmdHcsStatus(const strataRPC::RpcRequest &request)
 {
+    strataServer_->sendReply(request.clientId(), request.id(), createJsonErrorList());
+}
+
+QJsonObject HostControllerService::createJsonErrorList() const
+{
     auto errors = errorTracker_.errors();
 
-    QJsonArray jsonErrorList;
+    QJsonArray jsonErrorCodeList;
     for (const auto errorCode : errors) {
-        strataRPC::RpcError error(errorCode);
-        jsonErrorList.append(error.toJsonObject());
+        jsonErrorCodeList.append(errorCode);
     }
 
-    strataServer_->sendReply(request.clientId(), request.id(), {{"error_list", jsonErrorList}});
+    return QJsonObject{{"error_code_list", jsonErrorCodeList}};
 }
 
 void HostControllerService::processCmdDynamicPlatformList(const strataRPC::RpcRequest &request)
@@ -1164,6 +1194,9 @@ constexpr const char* HostControllerService::rpcMethodToString(RpcMethodName met
         break;
     case RpcMethodName::ConnectedPlatforms:
         string = "connected_platforms";
+        break;
+    case RpcMethodName::HcsStatus:
+        string = "hcs_status";
         break;
     }
 

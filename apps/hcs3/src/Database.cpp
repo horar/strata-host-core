@@ -18,7 +18,9 @@
 using namespace strata::Database;
 
 Database::Database(QObject *parent)
-    : QObject(parent){
+    : QObject(parent)
+{
+    qRegisterMetaType<Database::ReplicatorStatus>("ReplicatorStatus");
 }
 
 Database::~Database()
@@ -88,11 +90,27 @@ void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel ac
         qCInfo(lcHcsDb) << "--- ERROR CODE:" << errorCode;
     }
 
-    if (activityLevel == strata::Database::DatabaseAccess::ActivityLevel::ReplicatorStopped) {
-        emit replicatorError(false, errorCode);
-    } else if (activityLevel == strata::Database::DatabaseAccess::ActivityLevel::ReplicatorOffline) {
-        emit replicatorError(true, errorCode);
+    ReplicatorStatus status;
+
+    switch (activityLevel) {
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorStopped :
+        status = ReplicatorStatus::Stopped;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorOffline :
+        status = ReplicatorStatus::Offline;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorConnecting :
+        status = ReplicatorStatus::Connecting;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorIdle :
+        status = ReplicatorStatus::Idle;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorBusy :
+        status = ReplicatorStatus::Busy;
+        break;
     }
+
+    emit replicatorStatusChanged(status, errorCode);
 }
 
 bool Database::addReplChannel(const std::string& channel)

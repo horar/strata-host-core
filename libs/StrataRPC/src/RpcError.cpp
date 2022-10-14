@@ -115,6 +115,7 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case ReplicatorOffline: return "database replicator offline - the remote host is unreachable";
     case ReplicatorWebSocketFailed: return "database replicator WebSocket failed to connect";
     case ReplicatorWrongCredentials: return "database replicator wrong credentials";
+    case ReplicatorNoSuchDb: return "database replicator cannot connect to database";
     case FileServerNotAccessible: return "file server is not accessible";
     case GatewaySyncNotAccessible: return "gateway synchronization is not accessible";
     default:
