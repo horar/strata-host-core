@@ -144,12 +144,12 @@ ColumnLayout {
         return Object.keys(obj).length === 0 && obj.constructor === Object
     }
 
-    Text {
+    SGText {
         text: "Software Settings:"
         Accessible.name: text
         Accessible.role: Accessible.StaticText
         font.bold: true
-        font.pixelSize: 18
+        fontSizeMultiplier: 1.5
     }
 
     Rectangle {
@@ -158,15 +158,15 @@ ColumnLayout {
         Layout.preferredHeight: 1
     }
 
-    Text {
+    SGText {
         Layout.topMargin: 10
         text: "Current software version:"
         font.bold: false
-        font.pixelSize: 18
+        fontSizeMultiplier: 1.1
         color: "#666"
     }
 
-    Text {
+    SGText {
         text: {
             if (installedVersion.version !== "") {
                 return installedVersion.version;
@@ -176,7 +176,7 @@ ColumnLayout {
         }
 
         font.bold: true
-        font.pixelSize: 18
+        fontSizeMultiplier: 1.2
     }
 
     Rectangle {
@@ -202,7 +202,7 @@ ColumnLayout {
             }
 
             SGText {
-                fontSizeMultiplier: 1.38
+                fontSizeMultiplier: 1.2
                 color: "#666"
                 text: {
                     if (installedVersion.version === "" && objectIsEmpty(latestVersion)) {
@@ -252,7 +252,7 @@ ColumnLayout {
                     }
                 }
 
-                Text {
+                SGText {
                     text: {
                         if (installedVersion.version === "") {
                             return "Latest software version will be downloaded automatically on first platform connection!"
@@ -279,10 +279,10 @@ ColumnLayout {
                         spacing: 15
                         Layout.margins: 10
 
-                        Text {
+                        SGText {
                             text: getLatestVersionText()
                             font.bold: true
-                            font.pixelSize: 18
+                            fontSizeMultiplier: 1.2
                             color: "#666"
 
                             function getLatestVersionText() {
@@ -313,7 +313,7 @@ ColumnLayout {
 
                         property bool downloadInProgress: activeDownloadUri !== ""
 
-                        Text {
+                        SGText {
                             id: progressUpdateText
                             Layout.leftMargin: 10
                             property real percent: 0.0

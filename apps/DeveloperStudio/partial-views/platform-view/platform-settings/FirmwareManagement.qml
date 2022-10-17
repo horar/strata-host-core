@@ -94,7 +94,7 @@ ColumnLayout {
         Accessible.name: text
         Accessible.editable: false
         font.bold: true
-        fontSizeMultiplier: 1.38
+        fontSizeMultiplier: 1.5
     }
 
     Rectangle {
@@ -119,7 +119,6 @@ ColumnLayout {
 
         SGText {
             text: "Connect this platform to manage its firmware"
-            fontSizeMultiplier: 1.38
             color: deviceVersion.color
         }
     }
@@ -140,7 +139,7 @@ ColumnLayout {
 
         SGText {
             text: "Error: Unable to determine platform firmware version"
-            fontSizeMultiplier: 1.38
+            fontSizeMultiplier: 1.4
             color: deviceVersion.color
         }
     }
@@ -153,14 +152,14 @@ ColumnLayout {
         SGText {
             id: deviceVersion
             text: "Device firmware version:"
-            fontSizeMultiplier: 1.38
+            fontSizeMultiplier: 1.1
             color: "#666"
         }
 
         SGText {
             text: platformStack.firmware_version
             font.bold: true
-            fontSizeMultiplier: 1.38
+            fontSizeMultiplier: 1.2
         }
     }
 
