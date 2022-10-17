@@ -327,12 +327,14 @@ Item {
             color: "#fff"
             anchors {
                 top: loadingImage.bottom
-                horizontalCenter: loading.horizontalCenter
+                left: parent.left
+                leftMargin: 12
+                right: parent.right
+                rightMargin: 12
             }
-            font {
-                pixelSize: 30
-                family:  Fonts.franklinGothicBold
-            }
+
+            fontSizeMultiplier: 2
+            font.family:  Fonts.franklinGothicBold
             text: {
                 if (classDocuments.errorString.length > 0) {
                     return "Error: " + classDocuments.errorString
@@ -345,7 +347,7 @@ Item {
                 return ""
             }
 
-            wrapMode: Text.Wrap
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             horizontalAlignment: Text.AlignHCenter
         }
 
