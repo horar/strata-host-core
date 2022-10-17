@@ -177,7 +177,7 @@ SGWidgets.SGMainWindow {
             sdsModel.notificationModel.create(
                         {
                             "title": "Host Controller Service disconnected",
-                            "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
+                            "description": "In most cases Host Controller Service will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
                             "level": Notification.Info,
                             "unique": true,
                         }
