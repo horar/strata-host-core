@@ -10,7 +10,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
-import tech.strata.notifications 1.0
+import tech.strata.notification 1.0
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -387,16 +387,12 @@ ColumnLayout {
     }
 
     function notifyFwUpdateFailed(text) {
-        Notifications.createNotification(
-                    "Flash firmware failed",
-                    Notifications.Critical,
-                    "current",
-                    platformStack,
+        sdsModel.notificationModel.create(
                     {
+                        "title": "Flash firmware failed",
                         "description": text,
-                        "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": [close],
-                        "timeout": 0
+                        "level": Notification.Error,
+                        "removeAutomatically": false,
                     }
                     )
     }

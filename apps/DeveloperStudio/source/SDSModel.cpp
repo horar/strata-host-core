@@ -16,6 +16,7 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
+#include "NotificationModel.h"
 #ifdef APPS_FEATURE_BLE
 #include "BleDeviceModel.h"
 #endif // APPS_FEATURE_BLE
@@ -51,6 +52,7 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       platformOperation_(new PlatformOperation(strataClient_, this)),
+      notificationModel_(new NotificationModel(this)),
 #ifdef APPS_FEATURE_BLE
       bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
 #endif // APPS_FEATURE_BLE
@@ -236,6 +238,11 @@ strata::sds::config::UrlConfig *SDSModel::urls() const
 strata::loggers::QtLogger *SDSModel::qtLogger() const
 {
     return std::addressof(strata::loggers::QtLogger::instance());
+}
+
+NotificationModel *SDSModel::notificationModel() const
+{
+    return notificationModel_;
 }
 
 #ifdef APPS_FEATURE_BLE

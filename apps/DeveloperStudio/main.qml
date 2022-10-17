@@ -12,7 +12,7 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.12
 import QtQml 2.12
 import Qt.labs.platform 1.1 as QtLabsPlatform
-import tech.strata.notifications 1.0 as PlatformNotifications
+import tech.strata.notification 1.0
 
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -26,13 +26,12 @@ import "qrc:/partial-views/platform-view"
 import "qrc:/partial-views/control-view-creator"
 import "qrc:/partial-views/debug-bar"
 
-import "partial-views/notifications"
+import "partial-views"
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.sgwidgets.debug 1.0 as SGDebugWidgets
 import tech.strata.logger 1.0
 import tech.strata.theme 1.0
-import tech.strata.notifications 1.0
 import tech.strata.signals 1.0
 
 SGWidgets.SGMainWindow {
@@ -49,7 +48,7 @@ SGWidgets.SGMainWindow {
     minimumWidth: defaultWidth
     title: Qt.application.displayName
 
-    property alias notificationsInbox: notificationsInbox
+    property alias notificationDrawer: notificationDrawer
     signal initialized()
 
     property bool hcsReconnecting: false
@@ -86,14 +85,12 @@ SGWidgets.SGMainWindow {
             } else {
                 mainWindow.showFullScreen()
 
-                Notifications.createNotification(
-                            qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
-                            Notifications.Info,
-                            "current",
-                            null,
+                sdsModel.notificationModel.create(
                             {
-                                "singleton": true,
-                                "timeout": 4000
+                                "title": "Full screen enabled",
+                                "description": "Press \'" + escapeFullScreenMode.sequence + "\' to exit full screen",
+                                "level": Notification.Info,
+                                "unique": true,
                             }
                             )
             }
@@ -163,27 +160,29 @@ SGWidgets.SGMainWindow {
         onHcsConnectionEstablished: {
             NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
             if (hcsReconnecting) {
-                Notifications.createNotification(`Host Controller Service reconnected`,
-                                                 Notifications.Info,
-                                                 "all",
-                                                 null,
-                                                 {
-                                                     "singleton": true,
-                                                     "timeout": 0
-                                                 })
+                sdsModel.notificationModel.create(
+                            {
+                                "title": "Host Controller Service reconnected",
+                                "description": "Connection established.",
+                                "level": Notification.Info,
+                                "unique": true,
+                            }
+                            )
+
                 hcsReconnecting = false
             }
         }
 
         onHcsConnectionLost: {
-            Notifications.createNotification(`Host Controller Service disconnected`,
-                                             Notifications.Critical,
-                                             "all",
-                                             null,
-                                             {
-                                                 "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
-                                                 "singleton": true
-                                             })
+            sdsModel.notificationModel.create(
+                        {
+                            "title": "Host Controller Service disconnected",
+                            "description": "In most cases HCS will immediately reconnect automatically. If not, close all instances of Strata and re-open.",
+                            "level": Notification.Info,
+                            "unique": true,
+                        }
+                        )
+
             hcsReconnecting = true
             PlatformFilters.clearActiveFilters()
             PlatformSelection.logout()
@@ -234,14 +233,11 @@ SGWidgets.SGMainWindow {
         }
 
         function showBleNotification(title, description) {
-            Notifications.createNotification(
-                        title,
-                        Notifications.Warning,
-                        "current",
-                        null,
+            sdsModel.notificationModel.create(
                         {
+                            "title": title,
                             "description": description,
-                            "iconSource": "qrc:/sgimages/exclamation-circle.svg",
+                            "level": Notification.Warning,
                         }
                         )
         }
@@ -301,22 +297,24 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    NotificationsInbox {
-        id: notificationsInbox
+    NotificationDrawer {
+        id: notificationDrawer
         height: mainWindow.height - statusBarLoader.Layout.preferredHeight
         width: 400
         y: statusBarLoader.Layout.preferredHeight
     }
 
-    NotificationsContainer {
+    NotificationView {
+        width: 400
         anchors {
             right: parent.right
             bottom: parent.bottom
             top: parent.top
             topMargin: statusBarLoader.Layout.preferredHeight
-            bottomMargin: 25
-            rightMargin: 20
+            margins: 20
         }
+
+        visible: notificationDrawer.visible === false
     }
 
     Connections {
@@ -353,14 +351,13 @@ SGWidgets.SGMainWindow {
         }
 
         onSessionExpired: {
-            PlatformNotifications.Notifications.createNotification(
-                        "Session Expired",
-                        PlatformNotifications.Notifications.Critical,
-                        "all",
-                        Qt.application,
+            sdsModel.notificationModel.create(
                         {
+                            "title": "Session Expired",
                             "description": "Please login again",
-                        })
+                            "level": Notification.Error,
+                        }
+                        )
 
             logout()
         }

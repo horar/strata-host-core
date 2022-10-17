@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/tech/strata/notifications">
-        <file>Notifications.qml</file>
-        <file>qmldir</file>
-        <file>plugins.qmltypes</file>
-    </qresource>
-</RCC>

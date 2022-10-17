@@ -12,7 +12,7 @@
 .import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
 .import "qrc:/js/platform_selection.js" as PlatformSelection
-.import tech.strata.notifications 1.0 as PlatformNotifications
+.import tech.strata.notification 1.0 as Notify
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.signals 1.0 as SignalsModule
@@ -661,16 +661,15 @@ function checkHcsStatus() {
             console.warn(LoggerModule.Logger.devStudioLoginCategory, "HCS status:", errorList.length, "issue(s) found:")
             for (var i = 0; i < errorList.length; ++i) {
                 console.warn(LoggerModule.Logger.devStudioLoginCategory, errorList[i].code, errorList[i].message)
-                PlatformNotifications.Notifications.createNotification(
-                            "Host Controller Service issue found",
-                            PlatformNotifications.Notifications.Warning,
-                            "all",
-                            null,
+
+                PlatformSelection.sdsModel.notificationModel.create(
                             {
+                                "title": "Host Controller Service issue found",
                                 "description": formatIssueText(errorList[i].message),
-                                "timeout": 0,
-                                "singleton": true
-                            })
+                                "level": Notify.Notification.Warning,
+                                "removeAutomatically": false,
+                            }
+                            )
             }
 
         } else {

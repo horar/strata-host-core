@@ -16,7 +16,6 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 
 import tech.strata.commoncpp 1.0
 import tech.strata.signals 1.0
-import tech.strata.notifications 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
@@ -101,7 +100,6 @@ Item {
                     var reply = sdsModel.strataClient.sendRequest("register_client", {"api_version":"2.0"});
 
                     reply.finishedSuccessfully.connect(function(result) {
-                        Notifications.currentUser = Constants.GUEST_USER_ID
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     })
 

@@ -51,6 +51,7 @@
 #endif // APPS_FEATURE_BLE
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
+#include "NotificationModel.h"
 
 #include "config/AppConfig.h"
 
@@ -223,6 +224,10 @@ int main(int argc, char *argv[])
                 1, 0,
                 "StrataRPC",
                 "You can't instantiate StrataRPC in QML");
+
+    qmlRegisterUncreatableType<NotificationActionModel>("tech.strata.notification", 1, 0, "NotificationActionModel", "You can't instantiate NotificationActionModel in QML");
+    qmlRegisterUncreatableType<NotificationModel>("tech.strata.notification", 1, 0, "NotificationModel", "You can't instantiate NotificationModel in QML");
+    qmlRegisterUncreatableType<Notification>("tech.strata.notification", 1, 0, "Notification", "You can't instantiate Notification in QML");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
