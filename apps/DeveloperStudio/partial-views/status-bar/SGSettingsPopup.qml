@@ -16,6 +16,9 @@ import "../general/"
 
 SGStrataPopup {
     id: root
+
+    property color dividerColor: "#666"
+
     modal: true
     visible: true
     headerText: "General Settings"
@@ -41,7 +44,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         SGSettingsCheckbox {
@@ -73,7 +76,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         SGSettingsCheckbox {
@@ -114,7 +117,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         SGText {
@@ -148,7 +151,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         LcuPlugin.LogExport {
