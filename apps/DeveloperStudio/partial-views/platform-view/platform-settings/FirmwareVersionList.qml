@@ -31,7 +31,7 @@ ColumnLayout {
 
         SGText {
             text: "Latest firmware available:"
-            fontSizeMultiplier: 1.38
+            fontSizeMultiplier: 1.1
             color: "#666"
         }
 
@@ -140,7 +140,7 @@ ColumnLayout {
                             id: versionText
                             Layout.preferredWidth: 60
                             text: model.version
-                            fontSizeMultiplier: 1.38
+                            fontSizeMultiplier: 1.2
                             color: "#666"
                             wrapMode: Text.Wrap
                         }
@@ -148,7 +148,7 @@ ColumnLayout {
                         SGText {
                             text: SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             Layout.fillWidth: true
-                            fontSizeMultiplier: 1.38
+                            fontSizeMultiplier: 1.2
                             color: "#666"
                         }
 
@@ -373,7 +373,7 @@ ColumnLayout {
             }
 
             SGText {
-                fontSizeMultiplier: 1.38
+                fontSizeMultiplier: 1.2
                 color: "#666"
                 text: {
                     if (firmwareListView.model.count === 0) {
