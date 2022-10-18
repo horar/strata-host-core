@@ -70,11 +70,11 @@ Item {
             text: {
 
                 if (exitStatus === 0) {
-                    return "HCS finished with exit code " + exitCode
+                    return "Host Controller Service finished with exit code " + exitCode
                 }
 
                 if (exitStatus === 1) {
-                    return "HCS crashed with exit code " + exitCode
+                    return "Host Controller Service crashed with exit code " + exitCode
                 }
 
                 return ""
