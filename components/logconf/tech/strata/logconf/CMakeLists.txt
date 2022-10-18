@@ -73,3 +73,4 @@ add_custom_command(
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")
+add_qml_import_path(PATH "${CMAKE_SOURCE_DIR}/components/logconf")
