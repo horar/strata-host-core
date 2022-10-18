@@ -21,7 +21,6 @@ SGStrataPopup {
     headerText: "General Settings"
     closePolicy: Popup.CloseOnEscape
     focus: true
-    height: 700
     x: container.width/2 - root.width/2
     y: mainWindow.height/2 - root.height/2
 

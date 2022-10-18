@@ -19,7 +19,6 @@ SGWidgets.SGDialog {
     modal: true
     focus: true
     destroyOnClose: true
-    height: 320
 
     property int innerSpacing: 10
 
