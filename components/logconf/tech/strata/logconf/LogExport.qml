@@ -25,7 +25,6 @@ GridLayout {
                                            QtLabsPlatform.StandardPaths.writableLocation(
                                                QtLabsPlatform.StandardPaths.DesktopLocation))
     property int innerSpacing: 5
-    property int maximumWidth: 300
     property bool logExportInProgress: false
 
     columns: 3
@@ -33,6 +32,7 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
     enabled: appName !== ""
+    Layout.minimumWidth: 350
 
     QtLabsSettings.Settings {
         id: settings
@@ -87,7 +87,6 @@ GridLayout {
     SGWidgets.SGText {
         id: warningText
         Layout.columnSpan: 3
-        Layout.maximumWidth: maximumWidth
 
         visible: false
         wrapMode: Text.Wrap
