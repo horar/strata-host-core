@@ -13,8 +13,29 @@ Module {
         prototype: "QObject"
         exports: ["tech.strata.logconf/LogFilesCompress 1.0"]
         exportMetaObjectRevisions: [0]
-        Method { name: "logExport" }
-        Property { name: "appName"; type: "string" }
+        Signal {
+            name: "showExportMessage"
+            Parameter { name: "msg"; type: "QString" }
+            Parameter { name: "error"; type: "bool" }
+        }
+        Signal { name: "nonExistentDirectory" }
+        Method {
+            name: "logExport"
+            type: "bool"
+            Parameter { name: "exportPath"; type: "QString" }
+            Parameter { name: "fileNamesToZip"; type: "QStringList" }
+        }
+        Method {
+            name: "checkExportPath"
+            type: "bool"
+            Parameter { name: "exportPath"; type: "QString" }
+        }
+        Method {
+            name: "createFolderForFile"
+            type: "bool"
+            Parameter { name: "filePath"; type: "QString" }
+        }
+
     }
     Component {
         name: "ConfigFileSettings"
@@ -27,11 +48,16 @@ Module {
         Property { name: "qtFilterRules"; type: "string" }
         Property { name: "qtMsgPattern"; type: "string" }
         Property { name: "spdlogMsgPattern"; type: "string" }
-        Property { name: "filePath"; type: "string" }
+        Property { name: "fileName"; type: "string" }
         Property { name: "maxSizeDefault"; type: "int"; isReadonly: true }
         Property { name: "maxCountDefault"; type: "int"; isReadonly: true }
         Property { name: "filterRulesDefault"; type: "string"; isReadonly: true }
         Property { name: "qtMsgDefault"; type: "string"; isReadonly: true }
         Property { name: "spdMsgDefault"; type: "string"; isReadonly: true }
+        Signal {
+            name: "corruptedFile"
+            Parameter { name: "param"; type: "QString" }
+            Parameter { name: "errorString"; type: "QString" }
+        }
     }
 }
