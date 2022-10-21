@@ -102,7 +102,7 @@ QString ConfigFileSettings::qtFilterRules() const
 
     if (qtFilterRules.isEmpty() == false) {
         qCDebug(lcLcu) << "Current Qt filter rules :" << qtFilterRules;
-        return qtFilterRules;
+        return qtFilterRules.replace("\n","\\n");
     } else {
         qCWarning(lcLcu) << "Parameter" << LOG_FILTERRULES_SETTING << "is set to" << qtFilterRules << ", which is not a valid value.";
         emit corruptedFile(LOG_FILTERRULES_SETTING, qtFilterRules);

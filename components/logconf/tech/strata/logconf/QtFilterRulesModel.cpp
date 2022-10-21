@@ -39,7 +39,7 @@ void QtFilterRulesModel::removeItem(int index) {
 void QtFilterRulesModel::createModel(QString qtFilterRules)
 {
     beginResetModel();
-    filterRulesList_ = qtFilterRules.split("\n");
+    filterRulesList_ = qtFilterRules.split("\\n");
     endResetModel();
 
     qCDebug(lcLcu) << filterRulesList_;
