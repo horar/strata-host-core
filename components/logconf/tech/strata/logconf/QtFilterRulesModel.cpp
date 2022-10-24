@@ -53,7 +53,6 @@ void QtFilterRulesModel::createModel(QString qtFilterRules)
 
 QString QtFilterRulesModel::joinItems()
 {
-    qCDebug(lcLcu) << "Removed " + QString::number(filterRulesList_.removeAll("")) + " items from qtFilterRules list.";
     return filterRulesList_.join("\n");
 }
 
@@ -65,7 +64,6 @@ void QtFilterRulesModel::modifyList(int index, QString newText)
     }
 
     filterRulesList_[index] = newText;
-    qCInfo(lcLcu) << filterRulesList_;
 }
 
 int QtFilterRulesModel::rowCount(const QModelIndex & parent) const

@@ -70,10 +70,8 @@ SGWidgets.SGDialog {
                     placeholderText: "Filter rule input..."
                     onTextEdited: filterRulesModel.modifyList(index, text)
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            forceActiveFocus()
+                    onActiveFocusChanged: {
+                        if (activeFocus == true) {
                             filterRulesListView.currentIndex = index
                         }
                     }
@@ -99,7 +97,6 @@ SGWidgets.SGDialog {
                 onClicked: {
                     filterRulesModel.removeItem(filterRulesListView.currentIndex)
                     filterRulesListView.currentIndex = -1
-                    console.log("Current index:", filterRulesListView.currentIndex)
                 }
             }
 
@@ -109,7 +106,6 @@ SGWidgets.SGDialog {
                 onClicked: {
                     filterRulesModel.addItem("")
                     filterRulesListView.currentIndex = filterRulesModel.count - 1
-                    console.log("Current index:", filterRulesListView.currentIndex)
                 }
             }
         }
