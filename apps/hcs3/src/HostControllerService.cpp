@@ -587,11 +587,18 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus st
 
     // specific errors
     if (errorDomain == Database::ErrorDomain::Posix) {
-        if (errorCode == 108) {
+        if (errorCode >= 106 && errorCode <= 108) {
             rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
         }
+    } else if (errorDomain == Database::ErrorDomain::Network) {
+        // these error codes are from CBLNetworkErrorCode (CBLBase.h)
+        if ((errorCode >= 7 && errorCode <= 11) || errorCode == 14 || errorCode == 15) {
+            rpcError = RpcErrorCode::ReplicatorCertificateError;
+        } else {
+            rpcError = RpcErrorCode::ReplicatorNetworkError;
+        }
     } else if (errorDomain == Database::ErrorDomain::WebSocket) {
-        if (errorCode == 401) {
+        if (errorCode == 401 || errorCode == 403) {
             rpcError = RpcErrorCode::ReplicatorWrongCredentials;
         } else if (errorCode == 404) {
             rpcError = RpcErrorCode::ReplicatorNoSuchDb;
@@ -608,6 +615,8 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus st
                 RpcErrorCode::ReplicatorOffline,
                 RpcErrorCode::ReplicatorStopped,
                 RpcErrorCode::ReplicatorWebSocketFailed,
+                RpcErrorCode::ReplicatorCertificateError,
+                RpcErrorCode::ReplicatorNetworkError,
                 RpcErrorCode::ReplicatorWrongCredentials,
                 RpcErrorCode::ReplicatorNoSuchDb
             };

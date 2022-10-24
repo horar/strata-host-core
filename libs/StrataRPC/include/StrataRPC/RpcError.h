@@ -48,6 +48,8 @@ enum RpcErrorCode : int {
     ReplicatorStopped,
     ReplicatorOffline,
     ReplicatorWebSocketFailed,
+    ReplicatorCertificateError,
+    ReplicatorNetworkError,
     ReplicatorWrongCredentials,
     ReplicatorNoSuchDb,
     FileServerNotAccessible,
