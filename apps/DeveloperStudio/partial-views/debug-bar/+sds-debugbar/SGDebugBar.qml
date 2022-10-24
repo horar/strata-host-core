@@ -20,6 +20,7 @@ import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/login_utilities.js" as LoginUtils
 
 Item {
     id: root
@@ -101,6 +102,7 @@ Item {
 
                     reply.finishedSuccessfully.connect(function(result) {
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
+                        LoginUtils.checkHcsStatus()
                     })
 
                     reply.finishedWithError.connect(function(error) {
