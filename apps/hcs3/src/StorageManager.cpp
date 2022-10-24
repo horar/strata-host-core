@@ -671,5 +671,5 @@ void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 
 void StorageManager::updatePlatformDoc(const QString& classId)
 {
-    qCInfo(lcHcsStorage()) << classId << "not implemented yet";
+    qCDebug(lcHcsStorage()) << classId << "not implemented yet";
 }
