@@ -571,7 +571,7 @@ void HostControllerService::disconnectDeviceFinished(
 
 void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode)
 {
-    using strataRPC::RpcErrorCode;
+    using strata::strataRPC::RpcErrorCode;
 
     RpcErrorCode rpcError = RpcErrorCode::NoError;
 
@@ -601,6 +601,18 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus st
     if (rpcError != RpcErrorCode::NoError) {
         qCWarning(lcHcs) << "DB replicator is not accessible. Reporting error:" << rpcError;
         errorTracker_.reportError(rpcError);
+    } else {
+        if (status == Database::ReplicatorStatus::Idle) {
+            // replicator run was OK, remove possible previous replicator errors
+            QList<RpcErrorCode> errorList = {
+                RpcErrorCode::ReplicatorOffline,
+                RpcErrorCode::ReplicatorStopped,
+                RpcErrorCode::ReplicatorWebSocketFailed,
+                RpcErrorCode::ReplicatorWrongCredentials,
+                RpcErrorCode::ReplicatorNoSuchDb
+            };
+            errorTracker_.removeErrors(errorList);
+        }
     }
 }
 

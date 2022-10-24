@@ -32,6 +32,21 @@ void ErrorTracker::removeError(strata::strataRPC::RpcErrorCode errorCode)
     }
 }
 
+void ErrorTracker::removeErrors(const QList<strata::strataRPC::RpcErrorCode>& errorCodes)
+{
+    bool removed = false;
+
+    for (const strata::strataRPC::RpcErrorCode errorCode : errorCodes) {
+        if (errors_.remove(errorCode)) {
+            removed = true;
+        }
+    }
+
+    if (removed) {
+        emit errorsChanged();
+    }
+}
+
 QList<strata::strataRPC::RpcErrorCode> ErrorTracker::errors() const
 {
     return errors_.toList();

@@ -25,6 +25,8 @@ public:
 
     void removeError(strata::strataRPC::RpcErrorCode errorCode);
 
+    void removeErrors(const QList<strata::strataRPC::RpcErrorCode>& errorCodes);
+
     QList<strata::strataRPC::RpcErrorCode> errors() const;
 
 signals:
