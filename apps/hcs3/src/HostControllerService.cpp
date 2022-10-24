@@ -216,10 +216,6 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
         errorTracker_.reportError(strataRPC::FileServerNotAccessible);
     }
 
-    if (urlAccessible(gatewaySyncUrl) == false) {
-        errorTracker_.reportError(strataRPC::GatewaySyncNotAccessible);
-    }
-
     storageManager_.setBaseUrl(fileServerUrl);
     storageManager_.setDatabase(&db_);
 

@@ -51,7 +51,6 @@ enum RpcErrorCode : int {
     ReplicatorWrongCredentials,
     ReplicatorNoSuchDb,
     FileServerNotAccessible,
-    GatewaySyncNotAccessible,
     };
 Q_ENUM_NS(RpcErrorCode)
 

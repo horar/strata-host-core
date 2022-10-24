@@ -117,7 +117,6 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case ReplicatorWrongCredentials: return "database replicator wrong credentials";
     case ReplicatorNoSuchDb: return "database replicator cannot connect to database";
     case FileServerNotAccessible: return "file server is not accessible";
-    case GatewaySyncNotAccessible: return "gateway synchronization is not accessible";
     default:
         return "error message for this error not available";
     }
