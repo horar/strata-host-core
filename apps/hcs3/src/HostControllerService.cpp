@@ -565,7 +565,7 @@ void HostControllerService::disconnectDeviceFinished(
     }
 }
 
-void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode)
+void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode, Database::ErrorDomain errorDomain)
 {
     using strata::strataRPC::RpcErrorCode;
 
@@ -586,12 +586,16 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus st
     }
 
     // specific errors
-    if (errorCode == 108) {
-        rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
-    } else if (errorCode == 401) {
-        rpcError = RpcErrorCode::ReplicatorWrongCredentials;
-    } else if (errorCode == 404) {
-        rpcError = RpcErrorCode::ReplicatorNoSuchDb;
+    if (errorDomain == Database::ErrorDomain::Posix) {
+        if (errorCode == 108) {
+            rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
+        }
+    } else if (errorDomain == Database::ErrorDomain::WebSocket) {
+        if (errorCode == 401) {
+            rpcError = RpcErrorCode::ReplicatorWrongCredentials;
+        } else if (errorCode == 404) {
+            rpcError = RpcErrorCode::ReplicatorNoSuchDb;
+        }
     }
 
     if (rpcError != RpcErrorCode::NoError) {

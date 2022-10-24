@@ -21,6 +21,7 @@ Database::Database(QObject *parent)
     : QObject(parent)
 {
     qRegisterMetaType<Database::ReplicatorStatus>("ReplicatorStatus");
+    qRegisterMetaType<Database::ErrorDomain>("ErrorDomain");
 }
 
 Database::~Database()
@@ -83,14 +84,15 @@ void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::R
     }
 }
 
-void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode)
-{
+void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode, strata::Database::DatabaseAccess::ErrorCodeDomain domain)
+{ 
     qCInfo(lcHcsDb) << "--- PROGRESS: status =" << strata::Database::DatabaseAccess::activityLevelToString(activityLevel);
     if (errorCode != 0) {
-        qCInfo(lcHcsDb) << "--- ERROR CODE:" << errorCode;
+        qCInfo(lcHcsDb) << "--- ERROR: code =" << errorCode << "domain =" << static_cast<int>(domain);
     }
 
     ReplicatorStatus status;
+    ErrorDomain errorDomain;
 
     switch (activityLevel) {
     case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorStopped :
@@ -110,7 +112,28 @@ void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel ac
         break;
     }
 
-    emit replicatorStatusChanged(status, errorCode);
+    switch (domain) {
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::CouchbaseLiteDomain :
+        errorDomain = ErrorDomain::CouchbaseLite;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::PosixDomain :
+        errorDomain = ErrorDomain::Posix;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::SQLiteDomain :
+        errorDomain = ErrorDomain::SQLite;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::FleeceDomain :
+        errorDomain = ErrorDomain::Fleece;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::NetworkDomain :
+        errorDomain = ErrorDomain::Network;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::WebSocketDomain :
+        errorDomain = ErrorDomain::WebSocket;
+        break;
+    }
+
+    emit replicatorStatusChanged(status, errorCode, errorDomain);
 }
 
 bool Database::addReplChannel(const std::string& channel)
@@ -190,7 +213,7 @@ bool Database::initReplicator(const std::string& replUrl, const std::string& use
     replication_.username = QString::fromStdString(username);
     replication_.password = QString::fromStdString(password);
 
-    auto changeListenerCallback = std::bind(&Database::changeListener, this, std::placeholders::_1, std::placeholders::_2);
+    auto changeListenerCallback = std::bind(&Database::changeListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
     isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, changeListenerCallback, documentListenerCallback, true);
 

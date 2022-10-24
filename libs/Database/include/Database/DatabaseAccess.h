@@ -85,9 +85,19 @@ public:
         ReplicatorBusy        ///< The replicator is actively transferring data.
     };
 
+    enum class ErrorCodeDomain {
+        CouchbaseLiteDomain = 1, ///< code is a Couchbase Lite error code; see CBLErrorCode
+        PosixDomain,             ///< code is a POSIX `errno`; see "errno.h"
+        SQLiteDomain,            ///< code is a SQLite error; see "sqlite3.h"
+        FleeceDomain,            ///< code is a Fleece error; see "FleeceException.h"
+        NetworkDomain,           ///< code is a network error; see CBLNetworkErrorCode
+        WebSocketDomain          ///< code is a WebSocket close code (1000...1015) or HTTP error (300..599)
+    };
+
     typedef struct {
         ActivityLevel activityLevel;
         int error;
+        ErrorCodeDomain errorCodeDomain;
     } ReplicatorStatus;
 
     typedef struct {
@@ -110,7 +120,7 @@ public:
         const QString &username = "",
         const QString &password = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(ActivityLevel status, int errorCode)> changeListener = nullptr,
+        std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener = nullptr,
         std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
         bool continuous = false);
 
@@ -129,7 +139,7 @@ public:
         const QString &token = "",
         const QString &cookieName = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
-        std::function<void(ActivityLevel status, int errorCode)> changeListener = nullptr,
+        std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener = nullptr,
         std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
         bool continuous = false);
 
@@ -150,7 +160,7 @@ private:
 
     std::vector<std::unique_ptr<CouchbaseDatabase>> database_map_;
 
-    std::function<void(ActivityLevel status, int errorCode)> change_listener_callback_ = nullptr;
+    std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> change_listener_callback_ = nullptr;
 
     std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
 

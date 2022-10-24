@@ -34,6 +34,16 @@ public:
     };
     Q_ENUM(ReplicatorStatus)
 
+    enum class ErrorDomain {
+        CouchbaseLite = 1, // code is a Couchbase Lite error code; see CBLErrorCode
+        Posix,             // code is a POSIX `errno`; see "errno.h"
+        SQLite,            // code is a SQLite error; see "sqlite3.h"
+        Fleece,            // code is a Fleece error; see "FleeceException.h"
+        Network,           // code is a network error; see CBLNetworkErrorCode
+        WebSocket          // code is a WebSocket close code (1000...1015) or HTTP error (300..599)
+    };
+    Q_ENUM(ErrorDomain)
+
     /**
      * Opens the database
      * @param db_path
@@ -81,7 +91,7 @@ public:
 
 signals:
     void documentUpdated(QString documentId);
-    void replicatorStatusChanged(ReplicatorStatus status, int errorCode);
+    void replicatorStatusChanged(ReplicatorStatus status, int errorCode, ErrorDomain errorDomain);
 
 private:
     struct Replication {
@@ -104,7 +114,7 @@ private:
 
     void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
 
-    void changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode);
+    void changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode, strata::Database::DatabaseAccess::ErrorCodeDomain domain);
 
     void updateChannels();
 };

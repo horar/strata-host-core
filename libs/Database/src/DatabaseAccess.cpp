@@ -234,7 +234,7 @@ QStringList DatabaseAccess::getAllDocumentKeys(const QString &bucket) {
 }
 
 bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const ReplicatorType &replicatorType,
-    std::function<void(ActivityLevel status, int errorCode)> changeListener,
+    std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener,
     std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
     bool continuous) {
 
@@ -270,6 +270,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
 
     auto change_listener_callback = [this] (cbl::Replicator rep, const CouchbaseDatabase::SGActivityLevel &status) -> void {
         ActivityLevel activityLevel;
+        ErrorCodeDomain errorCodeDomain;
 
         switch ((CouchbaseDatabase::SGActivityLevel)status) {
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorStopped:
@@ -289,8 +290,31 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
                 break;
         }
 
+        switch (rep.status().error.domain) {
+            case CBLErrorDomain::CBLDomain:
+                errorCodeDomain = ErrorCodeDomain::CouchbaseLiteDomain;
+                break;
+            case CBLErrorDomain::CBLPOSIXDomain:
+                errorCodeDomain = ErrorCodeDomain::PosixDomain;
+                break;
+            case CBLErrorDomain::CBLSQLiteDomain:
+                errorCodeDomain = ErrorCodeDomain::SQLiteDomain;
+                break;
+            case CBLErrorDomain::CBLFleeceDomain:
+                errorCodeDomain = ErrorCodeDomain::FleeceDomain;
+                break;
+            case CBLErrorDomain::CBLNetworkDomain:
+                errorCodeDomain = ErrorCodeDomain::NetworkDomain;
+                break;
+            case CBLErrorDomain::CBLWebSocketDomain:
+                errorCodeDomain = ErrorCodeDomain::WebSocketDomain;
+                break;
+            case CBLErrorDomain::CBLMaxErrorDomainPlus1:
+                break;
+        }
+
         if (change_listener_callback_) {
-            change_listener_callback_(activityLevel, rep.status().error.code);
+            change_listener_callback_(activityLevel, rep.status().error.code, errorCodeDomain);
         } else {
             qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status =" << activityLevelToString(activityLevel);
         }
@@ -325,7 +349,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
 }
 
 bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &token, const QString &cookieName, const ReplicatorType &replicatorType,
-    std::function<void(ActivityLevel status, int errorCode)> changeListener,
+    std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener,
     std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
     bool continuous) {
 
@@ -366,6 +390,7 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
 
     auto change_listener_callback = [this] (cbl::Replicator rep, const CouchbaseDatabase::SGActivityLevel &status) -> void {
         ActivityLevel activityLevel;
+        ErrorCodeDomain errorCodeDomain;
 
         switch ((CouchbaseDatabase::SGActivityLevel)status) {
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorStopped:
@@ -385,8 +410,31 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
                 break;
         }
 
+        switch (rep.status().error.domain) {
+            case CBLErrorDomain::CBLDomain:
+                errorCodeDomain = ErrorCodeDomain::CouchbaseLiteDomain;
+                break;
+            case CBLErrorDomain::CBLPOSIXDomain:
+                errorCodeDomain = ErrorCodeDomain::PosixDomain;
+                break;
+            case CBLErrorDomain::CBLSQLiteDomain:
+                errorCodeDomain = ErrorCodeDomain::SQLiteDomain;
+                break;
+            case CBLErrorDomain::CBLFleeceDomain:
+                errorCodeDomain = ErrorCodeDomain::FleeceDomain;
+                break;
+            case CBLErrorDomain::CBLNetworkDomain:
+                errorCodeDomain = ErrorCodeDomain::NetworkDomain;
+                break;
+            case CBLErrorDomain::CBLWebSocketDomain:
+                errorCodeDomain = ErrorCodeDomain::WebSocketDomain;
+                break;
+            case CBLErrorDomain::CBLMaxErrorDomainPlus1:
+                break;
+        }
+
         if (change_listener_callback_) {
-            change_listener_callback_(activityLevel, rep.status().error.code);
+            change_listener_callback_(activityLevel, rep.status().error.code, errorCodeDomain);
         } else {
             qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status =" << activityLevelToString(activityLevel);
         }

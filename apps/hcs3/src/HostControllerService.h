@@ -169,7 +169,7 @@ private slots:
             const QByteArray &clientId,
             const QString &errorMessage);
 
-    void handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode);
+    void handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode, Database::ErrorDomain errorDomain);
 
     void errorTrackerChanged();
 
