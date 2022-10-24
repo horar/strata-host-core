@@ -20,7 +20,7 @@ using namespace strata::Database;
 Database::Database(QObject *parent)
     : QObject(parent)
 {
-    qRegisterMetaType<Database::ReplicatorStatus>("ReplicatorStatus");
+    qRegisterMetaType<Database::ReplicatorActivity>("ReplicatorActivity");
     qRegisterMetaType<Database::ErrorDomain>("ErrorDomain");
 }
 
@@ -85,30 +85,30 @@ void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::R
 }
 
 void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode, strata::Database::DatabaseAccess::ErrorCodeDomain domain)
-{ 
+{
     qCInfo(lcHcsDb) << "--- PROGRESS: status =" << strata::Database::DatabaseAccess::activityLevelToString(activityLevel);
     if (errorCode != 0) {
         qCInfo(lcHcsDb) << "--- ERROR: code =" << errorCode << "domain =" << static_cast<int>(domain);
     }
 
-    ReplicatorStatus status;
+    ReplicatorActivity activity;
     ErrorDomain errorDomain;
 
     switch (activityLevel) {
     case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorStopped :
-        status = ReplicatorStatus::Stopped;
+        activity = ReplicatorActivity::Stopped;
         break;
     case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorOffline :
-        status = ReplicatorStatus::Offline;
+        activity = ReplicatorActivity::Offline;
         break;
     case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorConnecting :
-        status = ReplicatorStatus::Connecting;
+        activity = ReplicatorActivity::Connecting;
         break;
     case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorIdle :
-        status = ReplicatorStatus::Idle;
+        activity = ReplicatorActivity::Idle;
         break;
     case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorBusy :
-        status = ReplicatorStatus::Busy;
+        activity = ReplicatorActivity::Busy;
         break;
     }
 
@@ -133,7 +133,7 @@ void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel ac
         break;
     }
 
-    emit replicatorStatusChanged(status, errorCode, errorDomain);
+    emit replicatorStatusChanged(activity, errorCode, errorDomain);
 }
 
 bool Database::addReplChannel(const std::string& channel)

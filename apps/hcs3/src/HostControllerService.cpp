@@ -565,22 +565,22 @@ void HostControllerService::disconnectDeviceFinished(
     }
 }
 
-void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus status, int errorCode, Database::ErrorDomain errorDomain)
+void HostControllerService::handleReplicatorStatus(Database::ReplicatorActivity activity, int errorCode, Database::ErrorDomain errorDomain)
 {
     using strata::strataRPC::RpcErrorCode;
 
     RpcErrorCode rpcError = RpcErrorCode::NoError;
 
-    switch (status) {
-    case Database::ReplicatorStatus::Offline :
+    switch (activity) {
+    case Database::ReplicatorActivity::Offline :
         rpcError = RpcErrorCode::ReplicatorOffline;
         break;
-    case Database::ReplicatorStatus::Stopped :
+    case Database::ReplicatorActivity::Stopped :
         rpcError = RpcErrorCode::ReplicatorStopped;
         break;
-    case Database::ReplicatorStatus::Connecting :
-    case Database::ReplicatorStatus::Idle :
-    case Database::ReplicatorStatus::Busy :
+    case Database::ReplicatorActivity::Connecting :
+    case Database::ReplicatorActivity::Idle :
+    case Database::ReplicatorActivity::Busy :
         rpcError = RpcErrorCode::NoError;
         break;
     }
@@ -609,7 +609,7 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorStatus st
         qCWarning(lcHcs) << "DB replicator is not accessible. Reporting error:" << rpcError;
         errorTracker_.reportError(rpcError);
     } else {
-        if (status == Database::ReplicatorStatus::Idle) {
+        if (activity == Database::ReplicatorActivity::Idle) {
             // replicator run was OK, remove possible previous replicator errors
             QList<RpcErrorCode> errorList = {
                 RpcErrorCode::ReplicatorOffline,

@@ -25,14 +25,14 @@ public:
     Database(QObject *parent = nullptr);
     ~Database();
 
-    enum class ReplicatorStatus {
+    enum class ReplicatorActivity {
         Stopped,    // The replicator is unstarted, finished, or hit a fatal error.
         Offline,    // The replicator is offline, as the remote host is unreachable.
         Connecting, // The replicator is connecting to the remote host.
         Idle,       // The replicator is inactive, waiting for changes to sync.
         Busy        // The replicator is actively transferring data.
     };
-    Q_ENUM(ReplicatorStatus)
+    Q_ENUM(ReplicatorActivity)
 
     enum class ErrorDomain {
         CouchbaseLite = 1, // code is a Couchbase Lite error code; see CBLErrorCode
@@ -91,7 +91,7 @@ public:
 
 signals:
     void documentUpdated(QString documentId);
-    void replicatorStatusChanged(ReplicatorStatus status, int errorCode, ErrorDomain errorDomain);
+    void replicatorStatusChanged(ReplicatorActivity activity, int errorCode, ErrorDomain errorDomain);
 
 private:
     struct Replication {
