@@ -69,8 +69,8 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
 
 SDSModel::~SDSModel()
 {
+    // objects which are passed to another objects (like coreInterface_ and strataClient_) should be deleted last
     delete documentManager_;
-    delete coreInterface_;
     delete resourceLoader_;
     delete newControlView_;
     delete platformInterfaceGenerator_;
@@ -78,9 +78,10 @@ SDSModel::~SDSModel()
     delete remoteHcsNode_;
     delete firmwareUpdater_;
     delete urlConfig_;
-    delete strataClient_;
     delete platformOperation_;
     delete hcsErrorTracker_;
+    delete coreInterface_;
+    delete strataClient_;
 }
 
 bool SDSModel::startHcs()
