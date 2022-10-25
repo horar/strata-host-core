@@ -134,7 +134,7 @@ public:
         const std::vector<std::string> &channels = std::vector<std::string>(),
         const ReplicatorType &replicatorType = ReplicatorType::kPull,
         std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback = nullptr,
+        std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback = nullptr,
         bool continuous = false
         );
 
@@ -156,7 +156,7 @@ public:
         const std::vector<std::string> &channels = std::vector<std::string>(),
         const ReplicatorType &replicatorType = ReplicatorType::kPull,
         std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback = nullptr,
+        std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback = nullptr,
         bool continuous = false
         );
 
@@ -199,7 +199,7 @@ private:
     std::unique_ptr<cbl::Replicator::DocumentListener> dtoken_ = nullptr;
 
     std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback_;
-    std::function<void(cbl::Replicator, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback_;
+    std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback_;
 
     bool repIsStopping_ = false;
 };

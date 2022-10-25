@@ -94,7 +94,7 @@ public:
         const QStringList &channels = QStringList(),
         const QString &replicatorType = "",
         std::function<void(DatabaseAccess::ActivityLevel activity, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener = nullptr,
+        std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener = nullptr,
         bool continuous = false);
 
     void stopReplicator();
@@ -108,7 +108,7 @@ private:
 
     std::function<void(DatabaseAccess::ActivityLevel activity, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> change_listener_callback_ = nullptr;
 
-    std::function<void(cbl::Replicator, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
+    std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> document_listener_callback_ = nullptr;
 };
 
 } // namespace strata::Database

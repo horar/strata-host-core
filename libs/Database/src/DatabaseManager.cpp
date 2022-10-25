@@ -28,7 +28,7 @@ DatabaseManager::~DatabaseManager() {
 bool DatabaseManager::init(const QString &path,
                            const QString &endpointURL,
                            std::function<void(DatabaseAccess::ActivityLevel status, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
-                           std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener)
+                           std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener)
 {
     path_ = path;
     endpointURL_ = endpointURL;
@@ -51,7 +51,7 @@ bool DatabaseManager::init(const QString &path,
 DatabaseAccess* DatabaseManager::login(const QString &name,
                                        const QString &channelsRequested,
                                        std::function<void(DatabaseAccess::ActivityLevel status, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
-                                       std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener)
+                                       std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener)
 {
     if (channelsRequested.isEmpty() || channelsRequested == "*" || channelsRequested == "all") {
         return login(name, QStringList(), changeListener, documentListener);
@@ -64,7 +64,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name,
 DatabaseAccess* DatabaseManager::login(const QString &name,
                                        const QStringList &channelsRequested,
                                        std::function<void(DatabaseAccess::ActivityLevel status, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
-                                       std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener)
+                                       std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener)
 {
     if (name.isEmpty()) {
         qCCritical(lcCouchbaseDatabase) << "Error: username cannot be empty";

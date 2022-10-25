@@ -121,7 +121,7 @@ public:
         const QString &password = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
         std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener = nullptr,
-        std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
+        std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> documentListener = nullptr,
         bool continuous = false);
 
     /**
@@ -140,7 +140,7 @@ public:
         const QString &cookieName = "",
         const ReplicatorType &replicatorType = ReplicatorType::Pull,
         std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener = nullptr,
-        std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener = nullptr,
+        std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> documentListener = nullptr,
         bool continuous = false);
 
     void stopReplicator();
@@ -162,7 +162,7 @@ private:
 
     std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> change_listener_callback_ = nullptr;
 
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> document_listener_callback_ = nullptr;
+    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> document_listener_callback_ = nullptr;
 
     CouchbaseDatabase* getBucket(const QString &bucketName);
 };

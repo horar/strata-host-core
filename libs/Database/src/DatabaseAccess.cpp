@@ -235,7 +235,7 @@ QStringList DatabaseAccess::getAllDocumentKeys(const QString &bucket) {
 
 bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const ReplicatorType &replicatorType,
     std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener,
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
+    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> documentListener,
     bool continuous) {
 
     if (url.isEmpty()) {
@@ -318,7 +318,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
         }
     };
 
-    auto document_listener_callback = [this] (cbl::Replicator /*rep*/, bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> documents) {
+    auto document_listener_callback = [this] (bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> &documents) {
         if (document_listener_callback_) {
             std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> SGDocuments;
             for (const auto &doc : documents) {
@@ -348,7 +348,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
 
 bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &token, const QString &cookieName, const ReplicatorType &replicatorType,
     std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener,
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
+    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> documentListener,
     bool continuous) {
 
     if (url.isEmpty()) {
@@ -436,7 +436,7 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
         }
     };
 
-    auto document_listener_callback = [this] (cbl::Replicator /*rep*/, bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> documents) {
+    auto document_listener_callback = [this] (bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> &documents) {
         if (document_listener_callback_) {
             std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> SGDocuments;
             for (const auto &doc : documents) {

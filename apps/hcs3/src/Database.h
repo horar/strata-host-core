@@ -112,7 +112,7 @@ private:
 
     bool isRunning_ = false;
 
-    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
+    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>>& documents);
 
     void changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode, strata::Database::DatabaseAccess::ErrorCodeDomain domain);
 

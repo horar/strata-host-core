@@ -181,7 +181,7 @@ std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
 bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::string &username, const std::string &password,
     const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
     std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback,
-    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
+    std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback,
     bool continuous) {
 
     if (database_ == nullptr) {
@@ -257,7 +257,7 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
 bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std::string &token, const std::string &cookieName,
     const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
     std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback,
-    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
+    std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback,
     bool continuous) {
 
     if (database_ == nullptr) {
@@ -453,7 +453,7 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
     }
 }
 
-void CouchbaseDatabase::documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+void CouchbaseDatabase::documentStatusChanged(cbl::Replicator /*rep*/, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
     if (document_listener_callback_) {
         std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> SGDocuments;
         for (const auto &doc : documents) {
@@ -463,7 +463,7 @@ void CouchbaseDatabase::documentStatusChanged(cbl::Replicator rep, bool isPush, 
             SGDocuments.push_back(SGDocument);
         }
 
-        document_listener_callback_(rep, isPush, SGDocuments);
+        document_listener_callback_(isPush, SGDocuments);
     }
 }
 

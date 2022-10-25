@@ -63,7 +63,7 @@ QStringList DatabaseLib::getAllDocumentKeys() {
 
 bool DatabaseLib::startBasicReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels, const QString &replicatorType,
     std::function<void(DatabaseAccess::ActivityLevel activity, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
-    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener,
+    std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener,
     bool continuous) {
 
     auto _url = url.toStdString();
@@ -144,7 +144,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
         }
     };
 
-    auto document_listener_callback = [this] (cbl::Replicator rep, bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> documents) {
+    auto document_listener_callback = [this] (bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> &documents) {
         if (document_listener_callback_) {
             std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> SGDocuments;
             for (const auto &doc : documents) {
@@ -154,7 +154,7 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
                 SGDocuments.push_back(SGDocument);
             }
 
-            document_listener_callback_(rep, isPush, SGDocuments);
+            document_listener_callback_(isPush, SGDocuments);
         } else {
             qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
         }
