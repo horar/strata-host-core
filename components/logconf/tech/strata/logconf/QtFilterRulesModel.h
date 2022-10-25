@@ -28,10 +28,10 @@ public:
 
     int count() const;
 
-    Q_INVOKABLE void createModel(QString qtFilterRules);
-    Q_INVOKABLE void modifyList(int index, QString newText);
+    Q_INVOKABLE void init(QString qtFilterRules);
+    Q_INVOKABLE void setItem(int index, QString newText);
     Q_INVOKABLE QString joinItems();
-    Q_INVOKABLE void addItem(const QString newRule);
+    Q_INVOKABLE void appendItem(const QString newRule);
     Q_INVOKABLE void removeItem(int index);
 
 protected:

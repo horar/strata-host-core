@@ -14,7 +14,7 @@ QtFilterRulesModel::QtFilterRulesModel(QObject *parent)
 {
 }
 
-void QtFilterRulesModel::addItem(const QString newRule)
+void QtFilterRulesModel::appendItem(const QString newRule)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     filterRulesList_ << newRule;
@@ -36,7 +36,7 @@ void QtFilterRulesModel::removeItem(int index) {
     }
 }
 
-void QtFilterRulesModel::createModel(QString qtFilterRules)
+void QtFilterRulesModel::init(QString qtFilterRules)
 {
     beginResetModel();
     filterRulesList_ = qtFilterRules.split("\\n");
@@ -56,7 +56,7 @@ QString QtFilterRulesModel::joinItems()
     return filterRulesList_.join("\n");
 }
 
-void QtFilterRulesModel::modifyList(int index, QString newText)
+void QtFilterRulesModel::setItem(int index, QString newText)
 {
     if (index < 0 || index >= filterRulesList_.count()) {
         qCCritical(lcLcu) << "Index out of range";

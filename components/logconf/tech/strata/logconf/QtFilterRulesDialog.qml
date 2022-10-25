@@ -31,7 +31,7 @@ SGWidgets.SGDialog {
     }
 
     Component.onCompleted: {
-        filterRulesModel.createModel(filterRulesString)
+        filterRulesModel.init(filterRulesString)
     }
 
     ColumnLayout {
@@ -39,7 +39,7 @@ SGWidgets.SGDialog {
         anchors.fill: parent
 
         Rectangle {
-            id: listViewRectangle
+            id: listViewBg
             Layout.minimumWidth: 250
             Layout.minimumHeight: {
                 if (filterRulesModel.count <= 4) {
@@ -56,7 +56,7 @@ SGWidgets.SGDialog {
                 id: filterRulesListView
 
                 anchors {
-                    fill: listViewRectangle
+                    fill: listViewBg
                     margins: 5
                 }
                 clip: true
@@ -68,7 +68,7 @@ SGWidgets.SGDialog {
                     width: parent.width
                     text: filterName
                     placeholderText: "Filter rule input..."
-                    onTextEdited: filterRulesModel.modifyList(index, text)
+                    onTextEdited: filterRulesModel.setItem(index, text)
 
                     onActiveFocusChanged: {
                         if (activeFocus == true) {
@@ -104,7 +104,7 @@ SGWidgets.SGDialog {
                 icon.source: "qrc:/sgimages/plus.svg"
                 hintText: "Add new filter rule"
                 onClicked: {
-                    filterRulesModel.addItem("")
+                    filterRulesModel.appendItem("")
                     filterRulesListView.currentIndex = filterRulesModel.count - 1
                 }
             }
