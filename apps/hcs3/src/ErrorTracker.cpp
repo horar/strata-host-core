@@ -21,14 +21,14 @@ void ErrorTracker::reportError(strata::strataRPC::RpcErrorCode errorCode)
 {
     if (errors_.contains(errorCode) == false) {
         errors_.insert(errorCode);
-        emit errorsChanged();
+        emit errorsUpdated();
     }
 }
 
 void ErrorTracker::removeError(strata::strataRPC::RpcErrorCode errorCode)
 {
     if (errors_.remove(errorCode)) {
-        emit errorsChanged();
+        emit errorsUpdated();
     }
 }
 
@@ -43,7 +43,7 @@ void ErrorTracker::removeErrors(const QList<strata::strataRPC::RpcErrorCode>& er
     }
 
     if (removed) {
-        emit errorsChanged();
+        emit errorsUpdated();
     }
 }
 

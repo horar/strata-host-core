@@ -171,7 +171,7 @@ private slots:
 
     void handleReplicatorStatus(Database::ReplicatorActivity activity, int errorCode, Database::ErrorDomain errorDomain);
 
-    void errorTrackerChanged();
+    void handleErrorsUpdated();
 
 private:
     enum class RpcMethodName {

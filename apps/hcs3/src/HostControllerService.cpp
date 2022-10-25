@@ -115,7 +115,7 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
                 std::bind(&HostControllerService::processCmdDisconnectDevice, this, std::placeholders::_1));
 
     // connect signals
-    connect(&errorTracker_, &ErrorTracker::errorsChanged, this, &HostControllerService::errorTrackerChanged);
+    connect(&errorTracker_, &ErrorTracker::errorsUpdated, this, &HostControllerService::handleErrorsUpdated);
 
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
             &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
@@ -625,7 +625,7 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorActivity 
     }
 }
 
-void HostControllerService::errorTrackerChanged()
+void HostControllerService::handleErrorsUpdated()
 {
     strataServer_->broadcastNotification(
                 rpcMethodToString(RpcMethodName::HcsStatus),

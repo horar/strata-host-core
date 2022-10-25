@@ -30,7 +30,7 @@ public:
     QList<strata::strataRPC::RpcErrorCode> errors() const;
 
 signals:
-    void errorsChanged();
+    void errorsUpdated();
 
 private:
     QSet<strata::strataRPC::RpcErrorCode> errors_;
