@@ -180,7 +180,7 @@ std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
 
 bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::string &username, const std::string &password,
     const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
-    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback,
+    std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback,
     std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
     bool continuous) {
 
@@ -256,7 +256,7 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
 
 bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std::string &token, const std::string &cookieName,
     const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
-    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback,
+    std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback,
     std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
     bool continuous) {
 
@@ -423,8 +423,33 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
             break;
     }
 
+    DbErrorDomain domain;
+
+    switch (rep.status().error.domain) {
+        case CBLErrorDomain::CBLDomain:
+            domain = DbErrorDomain::CBLDomain;
+            break;
+        case CBLErrorDomain::CBLPOSIXDomain:
+            domain = DbErrorDomain::CBLPosixDomain;
+            break;
+        case CBLErrorDomain::CBLSQLiteDomain:
+            domain = DbErrorDomain::CBLSQLiteDomain;
+            break;
+        case CBLErrorDomain::CBLFleeceDomain:
+            domain = DbErrorDomain::CBLFleeceDomain;
+            break;
+        case CBLErrorDomain::CBLNetworkDomain:
+            domain = DbErrorDomain::CBLNetworkDomain;
+            break;
+        case CBLErrorDomain::CBLWebSocketDomain:
+            domain = DbErrorDomain::CBLWebSocketDomain;
+            break;
+        case CBLErrorDomain::CBLMaxErrorDomainPlus1:
+            break;
+    }
+
     if (change_listener_callback_) {
-        change_listener_callback_(rep, status_);
+        change_listener_callback_(status_, error_code_, domain);
     }
 }
 
