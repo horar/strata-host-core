@@ -651,7 +651,3 @@ function set_token (token) {
 function getNextId() {
    return Rest.getNextRequestId();
 }
-
-function checkHcsStatus() {
-    PlatformSelection.sdsModel.hcsErrorTracker.checkHcsStatus();
-}
