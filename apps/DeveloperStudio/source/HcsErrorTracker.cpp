@@ -51,6 +51,11 @@ bool HcsErrorTracker::checkHcsStatus() const
     return true;
 }
 
+void HcsErrorTracker::clearErrors()
+{
+    errorCodes_.clear();
+}
+
 void HcsErrorTracker::handleHcsStatus(QJsonObject payload)
 {
     using strata::strataRPC::RpcErrorCode;

@@ -33,6 +33,7 @@ public:
     ~HcsErrorTracker();
 
     Q_INVOKABLE bool checkHcsStatus() const;
+    Q_INVOKABLE void clearErrors();
 
 private slots:
     void handleHcsStatus(QJsonObject payload);
