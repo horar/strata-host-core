@@ -408,7 +408,6 @@ GridLayout {
 
         dialog.accepted.connect(function() {
             configFileSettings.qtFilterRules = dialog.filterRulesString
-            console.log(Logger.lcuCategory, "Filter rules edited")
             dialog.destroy()
         })
 

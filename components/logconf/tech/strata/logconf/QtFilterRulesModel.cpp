@@ -24,15 +24,15 @@ void QtFilterRulesModel::appendItem(const QString newRule)
 }
 
 void QtFilterRulesModel::removeItem(int index) {
-    if(index >= 0 && index < filterRulesList_.length()) {
+    if (index < 0 || index >= filterRulesList_.length()) {
+        qCCritical(lcLcu) << "Index out of range";
+        return;
+    } else {
         beginRemoveRows(QModelIndex(), index, index);
         filterRulesList_.removeAt(index);
         endRemoveRows();
 
         emit countChanged();
-    } else {
-        qCDebug(lcLcu) << "Item not selected or index out of range";
-        return;
     }
 }
 
@@ -43,10 +43,6 @@ void QtFilterRulesModel::init(QString qtFilterRules)
     endResetModel();
 
     qCDebug(lcLcu) << filterRulesList_;
-
-    if (filterRulesList_.empty()) {
-        qCWarning(lcLcu) << "List empty.";
-    }
 
     emit countChanged();
 }

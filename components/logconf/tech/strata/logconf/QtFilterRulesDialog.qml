@@ -77,14 +77,6 @@ SGWidgets.SGDialog {
                     }
                 }
             }
-
-            Connections {
-                target: filterRulesModel
-
-                onCountChanged: {
-                    console.log("Number of qtFilterRules:", filterRulesModel.count)
-                }
-            }
         }
 
         Row {
@@ -95,8 +87,12 @@ SGWidgets.SGDialog {
                 icon.source: "qrc:/sgimages/minus.svg"
                 hintText: "Remove selected filter rule"
                 onClicked: {
-                    filterRulesModel.removeItem(filterRulesListView.currentIndex)
-                    filterRulesListView.currentIndex = -1
+                    if (filterRulesListView.currentItem == null) {
+                        console.log("Remove failed. No filter rule was selected for removing.")
+                    } else {
+                        filterRulesModel.removeItem(filterRulesListView.currentIndex)
+                        filterRulesListView.currentIndex = -1
+                    }
                 }
             }
 
