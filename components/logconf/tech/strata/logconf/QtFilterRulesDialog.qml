@@ -17,6 +17,7 @@ SGWidgets.SGDialog {
     id: qtFilterRulesDialog
 
     property string filterRulesString
+    property int innerSpacing: 5
 
     title: "Edit qtFilterRules "
     modal: true
@@ -42,10 +43,10 @@ SGWidgets.SGDialog {
             id: listViewBg
             Layout.minimumWidth: 250
             Layout.minimumHeight: {
-                if (filterRulesModel.count <= 4) {
-                    45 * filterRulesModel.count + filterRulesListView.topMargin + filterRulesListView.bottomMargin
+                if (filterRulesListView.contentHeight < 200 ) {
+                    filterRulesListView.contentHeight + 2*innerSpacing
                 } else {
-                    200
+                    200 + 2*innerSpacing
                 }
             }
 
@@ -57,7 +58,7 @@ SGWidgets.SGDialog {
 
                 anchors {
                     fill: listViewBg
-                    margins: 5
+                    margins: innerSpacing
                 }
                 clip: true
                 ScrollBar.vertical: ScrollBar {}
