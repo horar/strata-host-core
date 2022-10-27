@@ -10,7 +10,9 @@
 
 #include <PlatformManager.h>
 #include "SciPlatformModel.h"
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include "SciMockDeviceModel.h"
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
 #include "SciBleDeviceModel.h"
 #endif // APPS_FEATURE_BLE
@@ -25,7 +27,9 @@ class SciModel : public QObject
 
     Q_PROPERTY(strata::PlatformManager* platformManager READ platformManager CONSTANT)
     Q_PROPERTY(SciPlatformModel* platformModel READ platformModel CONSTANT)
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     Q_PROPERTY(SciMockDeviceModel* mockDeviceModel READ mockDeviceModel CONSTANT)
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
     Q_PROPERTY(SciBleDeviceModel* bleDeviceModel READ bleDeviceModel CONSTANT)
 #endif // APPS_FEATURE_BLE
@@ -36,7 +40,9 @@ public:
 
     strata::PlatformManager* platformManager();
     SciPlatformModel* platformModel();
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     SciMockDeviceModel* mockDeviceModel();
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
     SciBleDeviceModel* bleDeviceModel();
 #endif // APPS_FEATURE_BLE
@@ -50,7 +56,9 @@ signals:
 private:
     strata::PlatformManager platformManager_;
     SciPlatformModel platformModel_;
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     SciMockDeviceModel mockDeviceModel_;
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
     SciBleDeviceModel bleDeviceModel_;
 #endif // APPS_FEATURE_BLE

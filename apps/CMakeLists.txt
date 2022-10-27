@@ -49,6 +49,9 @@ add_feature_info(APPS_TOOLBOX_FLASHER APPS_TOOLBOX_FLASHER "Platform flasher cli
 cmake_dependent_option(APPS_TOOLBOX_SCI "Build 'Serial Console Interface'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_SCI APPS_TOOLBOX_SCI "Serial Console Interface")
+cmake_dependent_option(APPS_TOOLBOX_SCI_MOCK_DEVICE "Build 'Mock Device' for 'Serial Console Interface'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_SCI_MOCK_DEVICE APPS_TOOLBOX_SCI_MOCK_DEVICE "Mock Device for Serial Console Interface")
 cmake_dependent_option(APPS_TOOLBOX_PRT "Build 'Platform Registration Tool'" ON
                         "APPS_TOOLBOX" OFF)
 add_feature_info(APPS_TOOLBOX_PRT APPS_TOOLBOX_PRT "Platform Registration Tool")

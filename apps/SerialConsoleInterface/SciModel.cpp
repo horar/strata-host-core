@@ -8,24 +8,32 @@
  */
 #include "SciModel.h"
 #include "logging/LoggingQtCategories.h"
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include <Mock/MockDeviceScanner.h>
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 
 SciModel::SciModel(QObject *parent)
-    : QObject(parent),
-      platformManager_(true, true, true),
-      platformModel_(&platformManager_),
-      mockDeviceModel_(&platformManager_)
+    : QObject(parent)
+      , platformManager_(true, true, true)
+      , platformModel_(&platformManager_)
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
+      , mockDeviceModel_(&platformManager_)
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
-      ,bleDeviceModel_(&platformManager_)
+      , bleDeviceModel_(&platformManager_)
 #endif // APPS_FEATURE_BLE
 {
     platformManager_.addScanner(strata::device::Device::Type::SerialDevice);
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     platformManager_.addScanner(strata::device::Device::Type::MockDevice);
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     platformManager_.addScanner(strata::device::Device::Type::TcpDevice);
 #ifdef APPS_FEATURE_BLE
     platformManager_.addScanner(strata::device::Device::Type::BLEDevice);
 #endif // APPS_FEATURE_BLE
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     mockDeviceModel_.init();
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
     bleDeviceModel_.init();
 #endif // APPS_FEATURE_BLE
@@ -45,10 +53,12 @@ SciPlatformModel *SciModel::platformModel()
     return &platformModel_;
 }
 
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
 SciMockDeviceModel *SciModel::mockDeviceModel()
 {
     return &mockDeviceModel_;
 }
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 
 void SciModel::handleQmlWarning(const QList<QQmlError> &warnings)
 {
