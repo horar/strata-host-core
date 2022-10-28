@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<strata::device::MockCommand>("MockCommand");
     qRegisterMetaType<strata::device::MockResponse>("MockResponse");
     qRegisterMetaType<strata::device::MockVersion>("MockVersion");
-#endif
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 
 #ifdef APPS_FEATURE_BLE
     qmlRegisterUncreatableType<SciBleDeviceModel>("tech.strata.sci", 1, 0, "SciBleDeviceModel", "cannot instantiate SciBleDeviceModel in qml");
