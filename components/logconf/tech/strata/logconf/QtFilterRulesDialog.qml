@@ -18,6 +18,7 @@ SGWidgets.SGDialog {
 
     property string filterRulesString
     property int innerSpacing: 5
+    property int listViewHeight: 0.6 * ApplicationWindow.window.height - addRemoveRow.height - buttonRow.height
 
     title: "Edit qtFilterRules "
     modal: true
@@ -39,46 +40,43 @@ SGWidgets.SGDialog {
         id: dialogContent
         anchors.fill: parent
 
-        Rectangle {
-            id: listViewBg
+        ListView {
+            id: filterRulesListView
+
             Layout.minimumWidth: 250
             Layout.minimumHeight: {
-                if (filterRulesListView.contentHeight < 200 ) {
+                if (filterRulesListView.contentHeight < listViewHeight ) {
                     filterRulesListView.contentHeight
                 } else {
-                    200
+                    listViewHeight
                 }
             }
+            clip: true
+            ScrollBar.vertical: ScrollBar {
+                policy: height < listViewHeight ? ScrollBar.AlwaysOff : ScrollBar.AlwaysOn
+            }
+            spacing: 2
+            model: filterRulesModel
 
-            ListView {
-                id: filterRulesListView
+            delegate: SGWidgets.SGTextField {
+                width: parent.width
+                text: filterName
+                placeholderText: "Filter rule input..."
+                onTextEdited: {
+                    filterRulesModel.setItem(index, text)
+                    applyButton.enabled = checkEdited()
+                }
 
-                anchors.fill: listViewBg
-
-                clip: true
-                ScrollBar.vertical: ScrollBar {}
-                spacing: 2
-                model: filterRulesModel
-
-                delegate: SGWidgets.SGTextField {
-                    width: parent.width
-                    text: filterName
-                    placeholderText: "Filter rule input..."
-                    onTextEdited: {
-                        filterRulesModel.setItem(index, text)
-                        applyButton.enabled = checkEdited()
-                    }
-
-                    onActiveFocusChanged: {
-                        if (activeFocus == true) {
-                            filterRulesListView.currentIndex = index
-                        }
+                onActiveFocusChanged: {
+                    if (activeFocus == true) {
+                        filterRulesListView.currentIndex = index
                     }
                 }
             }
         }
 
         Row {
+            id: addRemoveRow
             spacing: innerSpacing
             Layout.alignment: Qt.AlignHCenter
 
@@ -108,6 +106,7 @@ SGWidgets.SGDialog {
         }
 
         Row {
+            id: buttonRow
             spacing: innerSpacing
             Layout.alignment: Qt.AlignHCenter
 
