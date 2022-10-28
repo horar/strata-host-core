@@ -260,20 +260,20 @@ GridLayout {
         placeholderText: "no qt filter rules"
         enabled: text !== ""
         //disable if no.of files is out of min/max value OR if no ini files were found or selected
-        onTextEdited: configFileSettings.qtFilterRules = text.replace("\\n","\n")
+        onTextEdited: configFileSettings.qtFilterRules = text
 
         Connections {
             target: configFileSettings
             onQtFilterRulesChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace("\n","\\n")
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
             }
             onFileNameChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace("\n","\\n")
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
             }
         }
 
         Component.onCompleted: {
-            text = configFileSettings.qtFilterRules.replace("\n","\\n")
+            text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
         }
     }
 

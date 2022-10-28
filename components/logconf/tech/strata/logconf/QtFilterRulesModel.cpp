@@ -49,9 +49,9 @@ void QtFilterRulesModel::init(QString qtFilterRules)
 
 QString QtFilterRulesModel::joinItems()
 {
-    filterRulesList_.removeAll("");
-
-    return filterRulesList_.join("\n");
+    QStringList cleanedList = filterRulesList_;
+    cleanedList.removeAll("");
+    return cleanedList.join("\\n");
 }
 
 void QtFilterRulesModel::setItem(int index, QString newText)

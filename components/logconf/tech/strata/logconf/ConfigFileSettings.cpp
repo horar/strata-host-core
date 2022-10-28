@@ -98,7 +98,7 @@ QString ConfigFileSettings::qtFilterRules() const
     QString qtFilterRules = settings_->value(LOG_FILTERRULES_SETTING).toString();
 
     if (qtFilterRules.isEmpty() == false) {
-        return qtFilterRules.replace("\n","\\n");
+        return qtFilterRules;
     } else {
         qCWarning(lcLcu) << "Parameter" << LOG_FILTERRULES_SETTING << "is set to" << qtFilterRules << ", which is not a valid value.";
         emit corruptedFile(LOG_FILTERRULES_SETTING, qtFilterRules);
@@ -233,8 +233,8 @@ void ConfigFileSettings::setQtFilterRules(const QString &qtFilterRules)
     if (qtFilterRules.isEmpty()) {
         settings_->remove(LOG_FILTERRULES_SETTING);
     } else {
-        settings_->setValue(LOG_FILTERRULES_SETTING, qtFilterRules);
-        qCDebug(lcLcu) << "Qt filter rules were set to:" << qtFilterRules;
+        settings_->setValue(LOG_FILTERRULES_SETTING, QString(qtFilterRules).replace("\\n","\n"));
+        qCDebug(lcLcu) << "Qt filter rules were set to:" << this->qtFilterRules();
     }
 
     emit qtFilterRulesChanged();

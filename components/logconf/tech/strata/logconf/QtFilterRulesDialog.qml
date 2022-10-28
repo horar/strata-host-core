@@ -44,22 +44,17 @@ SGWidgets.SGDialog {
             Layout.minimumWidth: 250
             Layout.minimumHeight: {
                 if (filterRulesListView.contentHeight < 200 ) {
-                    filterRulesListView.contentHeight + 2*innerSpacing
+                    filterRulesListView.contentHeight
                 } else {
-                    200 + 2*innerSpacing
+                    200
                 }
             }
-
-            border.color: Theme.palette.gray
-            color: Theme.palette.lightGray
 
             ListView {
                 id: filterRulesListView
 
-                anchors {
-                    fill: listViewBg
-                    margins: innerSpacing
-                }
+                anchors.fill: listViewBg
+
                 clip: true
                 ScrollBar.vertical: ScrollBar {}
                 spacing: 2
@@ -69,7 +64,10 @@ SGWidgets.SGDialog {
                     width: parent.width
                     text: filterName
                     placeholderText: "Filter rule input..."
-                    onTextEdited: filterRulesModel.setItem(index, text)
+                    onTextEdited: {
+                        filterRulesModel.setItem(index, text)
+                        applyButton.enabled = checkEdited()
+                    }
 
                     onActiveFocusChanged: {
                         if (activeFocus == true) {
@@ -81,7 +79,7 @@ SGWidgets.SGDialog {
         }
 
         Row {
-            spacing: 5
+            spacing: innerSpacing
             Layout.alignment: Qt.AlignHCenter
 
             SGWidgets.SGIconButton {
@@ -93,6 +91,7 @@ SGWidgets.SGDialog {
                     } else {
                         filterRulesModel.removeItem(filterRulesListView.currentIndex)
                         filterRulesListView.currentIndex = -1
+                        applyButton.enabled = checkEdited()
                     }
                 }
             }
@@ -103,17 +102,44 @@ SGWidgets.SGDialog {
                 onClicked: {
                     filterRulesModel.appendItem("")
                     filterRulesListView.currentIndex = filterRulesModel.count - 1
+                    applyButton.enabled = checkEdited()
                 }
             }
         }
 
-        SGWidgets.SGButton {
-            text: "Apply"
+        Row {
+            spacing: innerSpacing
             Layout.alignment: Qt.AlignHCenter
-            onClicked: {
-                filterRulesString = filterRulesModel.joinItems()
-                qtFilterRulesDialog.accepted()
+
+            SGWidgets.SGButton {
+                id: applyButton
+
+                text: "Apply"
+                hintText: "Apply changes and close"
+                Layout.alignment: Qt.AlignHCenter
+                enabled: false
+                onClicked: {
+                    filterRulesString = filterRulesModel.joinItems()
+                    qtFilterRulesDialog.accepted()
+                }
             }
+
+            SGWidgets.SGButton {
+                text: "Close"
+                hintText: "Discard all changes and close"
+                Layout.alignment: Qt.AlignHCenter
+                onClicked: {
+                    qtFilterRulesDialog.accepted()
+                }
+            }
+        }
+    }
+
+    function checkEdited() {
+        if (filterRulesModel.joinItems() === filterRulesString) {
+            return false
+        } else {
+            return true
         }
     }
 }
