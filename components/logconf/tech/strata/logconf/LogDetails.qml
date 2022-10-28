@@ -401,7 +401,7 @@ GridLayout {
 
     function showQtFilterRulesDialog(string) {
         var dialog = SGDialogJS.createDialog(
-                    logDetailsGrid.parent,
+                    ApplicationWindow.window,
                     "qrc:/QtFilterRulesDialog.qml", {
                         "filterRulesString": string
                     })
@@ -416,7 +416,7 @@ GridLayout {
 
     function showCorruptedFileDialog(parameter, string) {
         var dialog = SGDialogJS.createDialog(
-                    logDetailsGrid.parent,
+                    ApplicationWindow.window,
                     "qrc:/CorruptedFileDialog.qml", {
                         "corruptedString": string,
                         "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")
