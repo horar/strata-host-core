@@ -203,7 +203,7 @@ void StrataServer::sendReply(
         const QJsonValue &id,
         const QJsonObject &result)
 {
-    QByteArray message =  buildReplyMessage(id, result);
+    QByteArray message = buildReplyMessage(id, result);
     emit sendMessage(clientId, message);
 }
 

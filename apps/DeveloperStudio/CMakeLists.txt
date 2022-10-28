@@ -71,6 +71,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/NotificationActionModel.cpp
     source/Notification.cpp
     source/NotificationModel.cpp
+    source/HcsErrorTracker.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp

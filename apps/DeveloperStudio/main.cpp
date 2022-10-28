@@ -52,6 +52,7 @@
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
 #include "NotificationModel.h"
+#include "HcsErrorTracker.h"
 
 #include "config/AppConfig.h"
 
@@ -215,6 +216,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterUncreatableType<PlatformOperation>("tech.strata.PlatformOperation", 1, 0, "PlatformOperation", "You can't instantiate PlatformOperation in QML");
+    qmlRegisterUncreatableType<HcsErrorTracker>("tech.strata.HcsErrorTracker", 1, 0, "HcsErrorTracker", "You can't instantiate HcsErrorTracker in QML");
     qmlRegisterInterface<strata::strataRPC::DeferredReply>("DeferredReply");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 

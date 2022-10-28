@@ -31,6 +31,7 @@ class BleDeviceModel;
 class VisualEditorUndoStack;
 class PlatformOperation;
 class NotificationModel;
+class HcsErrorTracker;
 
 namespace strata::strataRPC
 {
@@ -60,6 +61,7 @@ class SDSModel: public QObject
     Q_PROPERTY(PlatformOperation* platformOperation READ platformOperation CONSTANT)
     Q_PROPERTY(bool debugFeaturesEnabled READ debugFeaturesEnabled WRITE setDebugFeaturesEnabled NOTIFY debugFeaturesEnabledChanged)
     Q_PROPERTY(NotificationModel* notificationModel READ notificationModel CONSTANT)
+    Q_PROPERTY(HcsErrorTracker* hcsErrorTracker READ hcsErrorTracker CONSTANT)
 
 public:
     explicit SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QObject *parent = nullptr);
@@ -80,6 +82,7 @@ public:
     strata::sds::config::UrlConfig* urls() const;
     strata::loggers::QtLogger *qtLogger() const;
     NotificationModel* notificationModel() const;
+    HcsErrorTracker* hcsErrorTracker() const;
 #ifdef APPS_FEATURE_BLE
     BleDeviceModel *bleDeviceModel() const;
 #endif // APPS_FEATURE_BLE
@@ -124,6 +127,7 @@ private:
     PlatformOperation *platformOperation_{nullptr};
     QPointer<QProcess> hcsProcess_;
     NotificationModel *notificationModel_{nullptr};
+    HcsErrorTracker *hcsErrorTracker_{nullptr};
 #ifdef APPS_FEATURE_BLE
     BleDeviceModel *bleDeviceModel_{nullptr};
 #endif // APPS_FEATURE_BLE

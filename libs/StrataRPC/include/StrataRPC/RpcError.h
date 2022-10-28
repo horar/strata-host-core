@@ -17,7 +17,7 @@ namespace strata::strataRPC
 {
 Q_NAMESPACE
 
-enum RpcErrorCode {
+enum RpcErrorCode : int {
     NoError = 0,
 
     /* JSON-RPC pre-defined error codes, from -32000 to -32768 */
@@ -45,8 +45,14 @@ enum RpcErrorCode {
     ClientUnregistrationError,
     ClientNotRegistered,
     ReplicatorRunError,
+    ReplicatorStopped,
+    ReplicatorOffline,
+    ReplicatorWebSocketFailed,
+    ReplicatorCertificateError,
+    ReplicatorNetworkError,
+    ReplicatorWrongCredentials,
+    ReplicatorNoSuchDb,
     FileServerNotAccessible,
-    GatewaySyncNotAccessible,
     };
 Q_ENUM_NS(RpcErrorCode)
 

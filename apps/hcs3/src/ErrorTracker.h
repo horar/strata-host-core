@@ -23,7 +23,14 @@ public:
 
     void reportError(strata::strataRPC::RpcErrorCode errorCode);
 
+    void removeError(strata::strataRPC::RpcErrorCode errorCode);
+
+    void removeErrors(const QList<strata::strataRPC::RpcErrorCode>& errorCodes);
+
     QList<strata::strataRPC::RpcErrorCode> errors() const;
+
+signals:
+    void errorsUpdated();
 
 private:
     QSet<strata::strataRPC::RpcErrorCode> errors_;

@@ -79,7 +79,7 @@ signals:
     /**
      * Signal emitted when connectedPlatformList is updated.
      */
-    bool connectedPlatformListChanged();
+    void connectedPlatformListChanged();
 
     /**
      * Signal emitted when connected_platforms notification is received (regardless if connectedPlatformList_ did changed).
@@ -169,6 +169,12 @@ signals:
      */
     void disconnectDevice(const QJsonObject &payload);
 
+    /**
+     * Signal emitted when hcs_status notification is received.
+     * @param [in] payload QJsonObject of hcs_status notification payload.
+     */
+    void hcsStatus(const QJsonObject &payload);
+
 private:
     void processPlatformNotification(const QJsonObject &payload);
     void processAllPlatformsNotification(const QJsonObject &payload);
@@ -187,6 +193,7 @@ private:
 #endif // APPS_FEATURE_BLE
     void processConnectDeviceNotification(const QJsonObject &payload);
     void processDisconnectDeviceNotification(const QJsonObject &payload);
+    void processHcsStatusNotification(const QJsonObject &payload);
 
     strata::strataRPC::StrataClient *strataClient_{nullptr};
     QString platformList_{"[]"};

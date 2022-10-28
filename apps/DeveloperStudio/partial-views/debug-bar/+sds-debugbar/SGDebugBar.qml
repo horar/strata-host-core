@@ -101,6 +101,8 @@ Item {
 
                     reply.finishedSuccessfully.connect(function(result) {
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
+                        sdsModel.hcsErrorTracker.clearErrors()
+                        sdsModel.hcsErrorTracker.checkHcsStatus()
                     })
 
                     reply.finishedWithError.connect(function(error) {

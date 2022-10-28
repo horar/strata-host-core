@@ -115,6 +115,8 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
                 std::bind(&HostControllerService::processCmdDisconnectDevice, this, std::placeholders::_1));
 
     // connect signals
+    connect(&errorTracker_, &ErrorTracker::errorsUpdated, this, &HostControllerService::handleErrorsUpdated);
+
     connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this,
             &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this,
@@ -163,6 +165,8 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     connect(&componentUpdateInfo_, &ComponentUpdateInfo::requestUpdateInfoFinished, this,
             &HostControllerService::sendUpdateInfoMessage);
 
+    connect(&db_, &Database::replicatorStatusChanged, this, &HostControllerService::handleReplicatorStatus);
+
     // create base folder
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (config_.contains("stage") && config_.value("stage").isString()) {
@@ -210,10 +214,6 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
 
     if (urlAccessible(fileServerUrl) == false) {
         errorTracker_.reportError(strataRPC::FileServerNotAccessible);
-    }
-
-    if (urlAccessible(gatewaySyncUrl) == false) {
-        errorTracker_.reportError(strataRPC::GatewaySyncNotAccessible);
     }
 
     storageManager_.setBaseUrl(fileServerUrl);
@@ -565,17 +565,88 @@ void HostControllerService::disconnectDeviceFinished(
     }
 }
 
+void HostControllerService::handleReplicatorStatus(Database::ReplicatorActivity activity, int errorCode, Database::ErrorDomain errorDomain)
+{
+    using strata::strataRPC::RpcErrorCode;
+
+    RpcErrorCode rpcError = RpcErrorCode::NoError;
+
+    switch (activity) {
+    case Database::ReplicatorActivity::Offline :
+        rpcError = RpcErrorCode::ReplicatorOffline;
+        break;
+    case Database::ReplicatorActivity::Stopped :
+        rpcError = RpcErrorCode::ReplicatorStopped;
+        break;
+    case Database::ReplicatorActivity::Connecting :
+    case Database::ReplicatorActivity::Idle :
+    case Database::ReplicatorActivity::Busy :
+        rpcError = RpcErrorCode::NoError;
+        break;
+    }
+
+    // specific errors
+    if (errorDomain == Database::ErrorDomain::Posix) {
+        if (errorCode >= 106 && errorCode <= 108) {
+            rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
+        }
+    } else if (errorDomain == Database::ErrorDomain::Network) {
+        // these error codes are from CBLNetworkErrorCode (CBLBase.h)
+        if ((errorCode >= 7 && errorCode <= 11) || errorCode == 14 || errorCode == 15) {
+            rpcError = RpcErrorCode::ReplicatorCertificateError;
+        } else {
+            rpcError = RpcErrorCode::ReplicatorNetworkError;
+        }
+    } else if (errorDomain == Database::ErrorDomain::WebSocket) {
+        if (errorCode == 401 || errorCode == 403) {
+            rpcError = RpcErrorCode::ReplicatorWrongCredentials;
+        } else if (errorCode == 404) {
+            rpcError = RpcErrorCode::ReplicatorNoSuchDb;
+        }
+    }
+
+    if (rpcError != RpcErrorCode::NoError) {
+        qCWarning(lcHcs) << "DB replicator is not accessible. Reporting error:" << rpcError;
+        errorTracker_.reportError(rpcError);
+    } else {
+        if (activity == Database::ReplicatorActivity::Idle) {
+            // replicator run was OK, remove possible previous replicator errors
+            QList<RpcErrorCode> errorList = {
+                RpcErrorCode::ReplicatorOffline,
+                RpcErrorCode::ReplicatorStopped,
+                RpcErrorCode::ReplicatorWebSocketFailed,
+                RpcErrorCode::ReplicatorCertificateError,
+                RpcErrorCode::ReplicatorNetworkError,
+                RpcErrorCode::ReplicatorWrongCredentials,
+                RpcErrorCode::ReplicatorNoSuchDb
+            };
+            errorTracker_.removeErrors(errorList);
+        }
+    }
+}
+
+void HostControllerService::handleErrorsUpdated()
+{
+    strataServer_->broadcastNotification(
+                rpcMethodToString(RpcMethodName::HcsStatus),
+                createJsonErrorList());
+}
+
 void HostControllerService::processCmdHcsStatus(const strataRPC::RpcRequest &request)
+{
+    strataServer_->sendReply(request.clientId(), request.id(), createJsonErrorList());
+}
+
+QJsonObject HostControllerService::createJsonErrorList() const
 {
     auto errors = errorTracker_.errors();
 
-    QJsonArray jsonErrorList;
+    QJsonArray jsonErrorCodeList;
     for (const auto errorCode : errors) {
-        strataRPC::RpcError error(errorCode);
-        jsonErrorList.append(error.toJsonObject());
+        jsonErrorCodeList.append(errorCode);
     }
 
-    strataServer_->sendReply(request.clientId(), request.id(), {{"error_list", jsonErrorList}});
+    return QJsonObject{{"error_code_list", jsonErrorCodeList}};
 }
 
 void HostControllerService::processCmdDynamicPlatformList(const strataRPC::RpcRequest &request)
@@ -1144,6 +1215,9 @@ constexpr const char* HostControllerService::rpcMethodToString(RpcMethodName met
         break;
     case RpcMethodName::ConnectedPlatforms:
         string = "connected_platforms";
+        break;
+    case RpcMethodName::HcsStatus:
+        string = "hcs_status";
         break;
     }
 

@@ -651,38 +651,3 @@ function set_token (token) {
 function getNextId() {
    return Rest.getNextRequestId();
 }
-
-function checkHcsStatus() {
-    var reply = PlatformSelection.sdsModel.strataClient.sendRequest("hcs_status", {});
-
-    reply.finishedSuccessfully.connect(function(result) {
-        let errorList = result["error_list"]
-        if (errorList && errorList.length > 0) {
-            console.warn(LoggerModule.Logger.devStudioLoginCategory, "HCS status:", errorList.length, "issue(s) found:")
-            for (var i = 0; i < errorList.length; ++i) {
-                console.warn(LoggerModule.Logger.devStudioLoginCategory, errorList[i].code, errorList[i].message)
-
-                PlatformSelection.sdsModel.notificationModel.create(
-                            {
-                                "title": "Host Controller Service issue found",
-                                "description": formatIssueText(errorList[i].message),
-                                "level": Notify.Notification.Warning,
-                                "removeAutomatically": false,
-                            }
-                            )
-            }
-
-        } else {
-            console.info(LoggerModule.Logger.devStudioLoginCategory, "HCS status: everything ok")
-        }
-    })
-
-    reply.finishedWithError.connect(function(error) {
-        console.warn(LoggerModule.Logger.devStudioLoginCategory, "Request for HCS status failed", JSON.stringify(error))
-    })
-}
-
-function formatIssueText(text) {
-    var t = text.charAt(0).toUpperCase() + text.slice(1)
-    return t
-}
