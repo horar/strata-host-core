@@ -7,7 +7,9 @@
  * Terms and Conditions of Sale, Section 8 Software”).
  */
 #include <PlatformManager.h>
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include <Mock/MockDevice.h>
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include "SciModel.h"
 #include "HexModel.h"
 
@@ -172,18 +174,20 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciSearchScrollbackModel>("tech.strata.sci", 1, 0, "SciSearchScrollbackModel", "cannot instantiate SciSearchScrollbackModel in qml");
     qmlRegisterUncreatableType<SciMessageQueueModel>("tech.strata.sci", 1, 0, "SciMessageQueueModel", "cannot instantiate SciMessageQueueModel in qml");
     qmlRegisterUncreatableType<strata::PlatformManager>("tech.strata.sci", 1, 0, "PlatformManager", "can not instantiate PlatformManager in qml");
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     qmlRegisterUncreatableType<SciMockDeviceModel>("tech.strata.sci", 1, 0, "SciMockDeviceModel", "cannot instantiate SciMockDeviceModel in qml");
     qmlRegisterUncreatableType<SciMockCommandModel>("tech.strata.sci", 1, 0, "SciMockCommandModel", "cannot instantiate SciMockCommandModel in qml");
     qmlRegisterUncreatableType<SciMockResponseModel>("tech.strata.sci", 1, 0, "SciMockResponseModel", "cannot instantiate SciMockResponseModel in qml");
     qmlRegisterUncreatableType<SciMockVersionModel>("tech.strata.sci", 1, 0, "SciMockVersionModel", "cannot instantiate SciMockVersionModel in qml");
-#ifdef APPS_FEATURE_BLE
-    qmlRegisterUncreatableType<SciBleDeviceModel>("tech.strata.sci", 1, 0, "SciBleDeviceModel", "cannot instantiate SciBleDeviceModel in qml");
-#endif // APPS_FEATURE_BLE
-
     qmlRegisterUncreatableType<strata::device::MockDevice>("tech.strata.sci", 1, 0, "MockDevice", "cannot instantiate MockDevice in qml");
     qRegisterMetaType<strata::device::MockCommand>("MockCommand");
     qRegisterMetaType<strata::device::MockResponse>("MockResponse");
     qRegisterMetaType<strata::device::MockVersion>("MockVersion");
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
+
+#ifdef APPS_FEATURE_BLE
+    qmlRegisterUncreatableType<SciBleDeviceModel>("tech.strata.sci", 1, 0, "SciBleDeviceModel", "cannot instantiate SciBleDeviceModel in qml");
+#endif // APPS_FEATURE_BLE
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
 
@@ -219,6 +223,9 @@ int main(int argc, char *argv[])
         &ui, &strata::SGCore::AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
         Qt::QueuedConnection);
 
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
+    engine.rootContext()->setContextProperty("APPS_TOOLBOX_SCI_MOCK_DEVICE", QVariant(APPS_TOOLBOX_SCI_MOCK_DEVICE));
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #ifdef APPS_FEATURE_BLE
     engine.rootContext()->setContextProperty("APPS_FEATURE_BLE", QVariant(APPS_FEATURE_BLE));
 #endif // APPS_FEATURE_BLE

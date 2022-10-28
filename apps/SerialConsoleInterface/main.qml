@@ -70,6 +70,7 @@ SGWidgets.SGMainWindow {
 
         QtLabsPlatform.Menu {
             title: qsTr("&Mock")
+            visible: (typeof APPS_TOOLBOX_SCI_MOCK_DEVICE !== "undefined") && APPS_TOOLBOX_SCI_MOCK_DEVICE
 
             QtLabsPlatform.MenuItem {
                 text: qsTr("&Connect Device...")

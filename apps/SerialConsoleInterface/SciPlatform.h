@@ -12,7 +12,9 @@
 #include "SciCommandHistoryModel.h"
 #include "SciFilterSuggestionModel.h"
 #include "SciPlatformSettings.h"
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include "SciMockDevice.h"
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include "SciFilterScrollbackModel.h"
 #include "SciSearchScrollbackModel.h"
 #include "SciMessageQueueModel.h"
@@ -21,7 +23,9 @@
 
 #include <PlatformManager.h>
 #include <FlasherConnector.h>
+#ifdef  APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include <Mock/MockDevice.h>
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include <QObject>
 #include <QPointer>
 #include <QJsonParseError>
@@ -40,7 +44,9 @@ class SciPlatform: public QObject {
     Q_PROPERTY(QString bootloaderVersion READ bootloaderVersion NOTIFY bootloaderVersionChanged)
     Q_PROPERTY(QString deviceName READ deviceName NOTIFY deviceNameChanged)
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     Q_PROPERTY(SciMockDevice* mockDevice READ mockDevice CONSTANT)
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciFilterScrollbackModel* filterScrollbackModel READ filterScrollbackModel CONSTANT)
     Q_PROPERTY(SciSearchScrollbackModel* searchScrollbackModel READ searchScrollbackModel CONSTANT)
@@ -95,7 +101,9 @@ public:
     void setBootloaderVersion(const QString &bootloaderVersion);
     SciPlatform::PlatformStatus status() const;
     void setStatus(SciPlatform::PlatformStatus status);
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     SciMockDevice* mockDevice() const;
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     SciScrollbackModel* scrollbackModel() const;
     SciCommandHistoryModel* commandHistoryModel() const;
     SciFilterSuggestionModel* filterSuggestionModel() const;
@@ -136,7 +144,9 @@ signals:
     void errorStringChanged();
     void programInProgressChanged();
     void deviceNameChanged();
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     void mockDeviceChanged();
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     void flasherProgramProgress(int chunk, int total);
     void flasherBackupProgress(int chunk, int total);
     void flasherRestoreProgress(int chunk, int total);
@@ -187,7 +197,9 @@ private:
     QString errorString_;
     bool programInProgress_ = false;
     QString deviceName_;
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     SciMockDevice* mockDevice_;
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;

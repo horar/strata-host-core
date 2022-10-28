@@ -14,6 +14,16 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
+if(APPS_TOOLBOX_SCI_MOCK_DEVICE)
+    add_compile_definitions(APPS_TOOLBOX_SCI_MOCK_DEVICE=true)
+    set(MOCK_DEVICE_SOURCES
+        SciMockDevice.cpp
+        SciMockDeviceModel.cpp
+        SciMockCommandModel.cpp
+        SciMockResponseModel.cpp
+        SciMockVersionModel.cpp
+    )
+endif()
 if(APPS_FEATURE_BLE)
     string(CONCAT PROJECT_BUNDLE_ADDON
         "<key>NSBluetoothAlwaysUsageDescription</key>"
@@ -42,11 +52,6 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     SciCommandHistoryModel.cpp
     SciFilterSuggestionModel.cpp
     SciPlatformSettings.cpp
-    SciMockDevice.cpp
-    SciMockDeviceModel.cpp
-    SciMockCommandModel.cpp
-    SciMockResponseModel.cpp
-    SciMockVersionModel.cpp
     HexModel.cpp
     SciFilterScrollbackModel.cpp
     SciSearchScrollbackModel.cpp
@@ -60,6 +65,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
 
+    ${MOCK_DEVICE_SOURCES}
     ${BLUETOOTH_SOURCES}
 )
 
