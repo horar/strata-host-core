@@ -21,6 +21,7 @@ find_package(Qt5 ${VERSION_QT5}
 add_library(${PROJECT_NAME} MODULE
     ConfigFileSettings.cpp
     LogFilesCompress.cpp
+    QtFilterRulesModel.cpp
     logconf_plugin.cpp
     qml.qrc
 

@@ -153,7 +153,7 @@ GridLayout {
 
     function showCreateFolderDialog(exportPath) {
         var dialog = SGDialogJS.createDialog(
-                    parent,
+                    ApplicationWindow.window,
                     "qrc:/CreateFolderDialog.qml", {
                         "filePath": exportPath
                     })

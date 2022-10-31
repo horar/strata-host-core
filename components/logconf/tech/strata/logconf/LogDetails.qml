@@ -243,7 +243,14 @@ GridLayout {
     SGWidgets.SGText {
         id: qtFilterRulesText
         text: "Qt filter rules"
-        Layout.columnSpan: 2
+    }
+
+    SGWidgets.SGIconButton {
+        icon.source: "qrc:/sgimages/edit.svg"
+        icon.width: infoButtonSize
+        icon.height: infoButtonSize
+        hintText: "Open dialog for editing qtFilterRules"
+        onClicked: showQtFilterRulesDialog(qtFilterRulesTextField.text)
     }
 
     SGWidgets.SGTextField {
@@ -258,15 +265,15 @@ GridLayout {
         Connections {
             target: configFileSettings
             onQtFilterRulesChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
             }
             onFileNameChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
             }
         }
 
         Component.onCompleted: {
-            text = configFileSettings.qtFilterRules
+            text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
         }
     }
 
@@ -392,9 +399,24 @@ GridLayout {
         }
     }
 
+    function showQtFilterRulesDialog(string) {
+        var dialog = SGDialogJS.createDialog(
+                    ApplicationWindow.window,
+                    "qrc:/QtFilterRulesDialog.qml", {
+                        "filterRulesString": string
+                    })
+
+        dialog.accepted.connect(function() {
+            configFileSettings.qtFilterRules = dialog.filterRulesString
+            dialog.destroy()
+        })
+
+        dialog.open()
+    }
+
     function showCorruptedFileDialog(parameter, string) {
         var dialog = SGDialogJS.createDialog(
-                    logDetailsGrid,
+                    ApplicationWindow.window,
                     "qrc:/CorruptedFileDialog.qml", {
                         "corruptedString": string,
                         "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")
