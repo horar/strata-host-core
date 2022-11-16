@@ -16,12 +16,14 @@ import "../general/"
 
 SGStrataPopup {
     id: root
+
+    property color dividerColor: "#666"
+
     modal: true
     visible: true
     headerText: "General Settings"
     closePolicy: Popup.CloseOnEscape
     focus: true
-    width: 400
     x: container.width/2 - root.width/2
     y: mainWindow.height/2 - root.height/2
 
@@ -42,7 +44,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         SGSettingsCheckbox {
@@ -74,7 +76,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         SGSettingsCheckbox {
@@ -115,7 +117,7 @@ SGStrataPopup {
             // divider
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: "#666"
+            color: dividerColor
         }
 
         SGText {
@@ -138,6 +140,24 @@ SGStrataPopup {
             id: logLevelHCS
             Layout.fillWidth: true
             fileName: "Host Controller Service"
+        }
+
+        SGText {
+            text: "Export log files"
+            fontSizeMultiplier: 1.3
+        }
+
+        Rectangle {
+            // divider
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: dividerColor
+        }
+
+        LcuPlugin.LogExport {
+            id: logExportPane
+            Layout.fillWidth: true
+            appName: Qt.application.name
         }
     }
 }

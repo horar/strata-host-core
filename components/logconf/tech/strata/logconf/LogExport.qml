@@ -32,6 +32,7 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
     enabled: appName !== ""
+    Layout.minimumWidth: 350
 
     QtLabsSettings.Settings {
         id: settings
@@ -43,11 +44,6 @@ GridLayout {
 
     LogFilesCompress {
         id: logFilesCompress
-    }
-
-    SGWidgets.SGText {
-        text: "Export log files"
-        Layout.columnSpan: 3
     }
 
     SGWidgets.SGTextField {
@@ -88,11 +84,19 @@ GridLayout {
         }
     }
 
-    SGWidgets.SGText {
-        id: warningText
+    Item {
         Layout.columnSpan: 3
+        Layout.minimumHeight: 15
 
-        visible: false
+        SGWidgets.SGText {
+            id: warningText
+            anchors.verticalCenter: parent.verticalCenter
+
+            visible: false
+            wrapMode: Text.Wrap
+            maximumLineCount: 2
+            elide: Text.ElideRight
+        }
     }
 
     SGWidgets.SGCheckBox {

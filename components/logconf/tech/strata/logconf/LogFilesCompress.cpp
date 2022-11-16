@@ -52,7 +52,7 @@ bool LogFilesCompress::logExport(QString exportPath, QStringList fileNamesToZip)
     if ( zipError == 0) {
         qCDebug(lcLcu) << "Compressing succesfully completed ";
         QFileInfo zipFile(zipName);
-        emit showExportMessage("Logs exported successfully as: " + zipFile.fileName(), false);
+        emit showExportMessage("Logs exported as: " + zipFile.fileName(), false);
         return true;
     } else {
         emit showExportMessage("Log export failed.  ERROR: " + QString::number(zipError), true);
