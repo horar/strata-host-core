@@ -69,19 +69,25 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
 
 SDSModel::~SDSModel()
 {
-    // objects which are passed to another objects (like coreInterface_ and strataClient_) should be deleted last
-    delete documentManager_;
-    delete resourceLoader_;
-    delete newControlView_;
-    delete platformInterfaceGenerator_;
-    delete visualEditorUndoStack_;
-    delete remoteHcsNode_;
-    delete firmwareUpdater_;
-    delete urlConfig_;
-    delete platformOperation_;
+    // objects should be deleted in reverse order as they were created
+    // objects which are passed to another objects (like coreInterface_ and strataClient_) should be deleted last 
+#ifdef APPS_FEATURE_BLE
+    delete bleDeviceModel_;
+#endif // APPS_FEATURE_BLE
     delete hcsErrorTracker_;
-    delete coreInterface_;
-    delete strataClient_;
+    delete notificationModel_;  // passed to hcsErrorTracker_, it should be deleted after it
+    delete platformOperation_;
+    delete urlConfig_;
+    delete remoteHcsNode_;
+    delete visualEditorUndoStack_;
+    delete platformInterfaceGenerator_;
+    delete firmwareUpdater_;
+    delete newControlView_;
+    delete fileDownloader_;
+    delete resourceLoader_;
+    delete documentManager_;
+    delete coreInterface_;  // passed to previously deleted objects, it should be deleted after them
+    delete strataClient_;  // passed to previously deleted objects (including coreInterface_), it should be deleted after them
 }
 
 bool SDSModel::startHcs()
