@@ -286,6 +286,7 @@ FocusScope {
 
             text: "Back"
             icon.source: "qrc:/sgimages/chevron-left.svg"
+            enabled: platformTestModel.isRunning === false
             onClicked: {
                 closeView()
             }
