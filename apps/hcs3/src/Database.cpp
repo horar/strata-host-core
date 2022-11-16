@@ -136,28 +136,28 @@ void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel ac
     emit replicatorStatusChanged(activity, errorCode, errorDomain);
 }
 
-bool Database::addReplChannel(const std::string& channel)
+bool Database::addReplChannel(const QString& channel)
 {
-    if (channel.empty()) {
+    if (channel.isEmpty()) {
         return false;
     }
 
-    if (databaseChannels_.contains(QString::fromStdString(channel)) == false) {
-        databaseChannels_ << QString::fromStdString(channel);
+    if (databaseChannels_.contains(channel) == false) {
+        databaseChannels_ << channel;
         updateChannels();
     }
 
     return true;
 }
 
-bool Database::remReplChannel(const std::string& channel)
+bool Database::remReplChannel(const QString& channel)
 {
-    if (channel.empty()) {
+    if (channel.isEmpty()) {
         return false;
     }
 
-    if (databaseChannels_.contains(QString::fromStdString(channel))) {
-        databaseChannels_.removeAll(QString::fromStdString(channel));
+    if (databaseChannels_.contains(channel)) {
+        databaseChannels_.removeAll(channel);
         updateChannels();
     }
 
@@ -183,14 +183,13 @@ void Database::updateChannels()
     }
 }
 
-bool Database::getDocument(const std::string& doc_id, std::string& result)
+bool Database::getDocument(const QString& doc_id, QString& result)
 {
     if (DB_ == nullptr) {
         return false;
     }
 
-    QString myQStr = DB_->getDocumentAsStr(QString::fromStdString(doc_id), DB_->getDatabaseName());
-    result = myQStr.toStdString();
+    result = DB_->getDocumentAsStr(doc_id, DB_->getDatabaseName());
 
     return true;
 }
@@ -207,11 +206,11 @@ void Database::stop()
     isRunning_ = false;
 }
 
-bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
+bool Database::initReplicator(const QString& replUrl, const QString& username, const QString& password)
 {
-    replication_.url = QString::fromStdString(replUrl);
-    replication_.username = QString::fromStdString(username);
-    replication_.password = QString::fromStdString(password);
+    replication_.url = replUrl;
+    replication_.username = username;
+    replication_.password = password;
 
     auto changeListenerCallback = std::bind(&Database::changeListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
