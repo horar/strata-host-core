@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <string>
+#include <QString>
 #include <set>
 #include <QObject>
 
@@ -58,21 +58,21 @@ public:
      * @param replUrl replicator URL to connect to
      * @return returns true when succeeded otherwise false
      */
-    bool initReplicator(const std::string& replUrl, const std::string& username, const std::string& password);
+    bool initReplicator(const QString& replUrl, const QString& username, const QString& password);
 
     /**
      * Adds a channel to the replication
      * @param channel channel name
      * @return returns true when succeeded, otherwise false
      */
-    bool addReplChannel(const std::string& channel);
+    bool addReplChannel(const QString& channel);
 
     /**
      * Removes a channel from the replication
      * @param channel channel name
      * @return returns true when succeeded, otherwise false
      */
-    bool remReplChannel(const std::string& channel);
+    bool remReplChannel(const QString& channel);
 
     /**
      * Returns a document by given ID and root element name
@@ -82,7 +82,7 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: we need also a revision
      */
-    bool getDocument(const std::string& doc_id, std::string& result);
+    bool getDocument(const QString& doc_id, QString& result);
 
     /**
      * Stop the replication operations and close the database

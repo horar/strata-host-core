@@ -326,13 +326,13 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 {
     PlatformDocument* platDoc = documents_.value(classId, nullptr);
     if (platDoc == nullptr) {
-        std::string dbDoc;
-        if (db_->getDocument(classId.toStdString(), dbDoc) == false) {
+        QString dbDoc;
+        if (db_->getDocument(classId, dbDoc) == false) {
             qCCritical(lcHcsStorage).noquote().nospace()
                 << "Platform document not found (class ID " << classId << ").";
             return nullptr;
         }
-        QByteArray document(QByteArray::fromStdString(dbDoc));
+        QByteArray document(dbDoc.toUtf8());
 
         platDoc = new PlatformDocument(classId);
 
@@ -355,7 +355,7 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 
 void StorageManager::requestPlatformList(const QByteArray &clientId)
 {
-    std::string platform_list_body;
+    QString platform_list_body;
     if (db_->getDocument("platform_list", platform_list_body) == false) {
         qCCritical(lcHcsStorage) << "platform_list document not found";
         handlePlatformListResponse(clientId, QJsonArray());
@@ -363,7 +363,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     }
 
     QJsonParseError parseError;
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(QByteArray::fromStdString(platform_list_body), &parseError);
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(platform_list_body.toUtf8(), &parseError);
     if (parseError.error != QJsonParseError::NoError ) {
         qCCritical(lcHcsStorage) << "Parse error" << parseError.errorString();
         handlePlatformListResponse(clientId, QJsonArray());

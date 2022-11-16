@@ -220,9 +220,9 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     storageManager_.setDatabase(&db_);
 
     bool replicatorInitResult = db_.initReplicator(
-                gatewaySyncUrl.toString().toStdString(),
-                std::string(ReplicatorCredentials::replicator_username),
-                std::string(ReplicatorCredentials::replicator_password));
+                gatewaySyncUrl.toString(),
+                QString::fromUtf8(ReplicatorCredentials::replicator_username.data(), ReplicatorCredentials::replicator_username.size()),
+                QString::fromUtf8(ReplicatorCredentials::replicator_password.data(), ReplicatorCredentials::replicator_password.size()));
 
     if (replicatorInitResult == false) {
         qCCritical(lcHcs) << "Database replicator not initialized";
