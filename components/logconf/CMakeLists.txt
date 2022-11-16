@@ -7,4 +7,3 @@
 ## Terms and Conditions of Sale, Section 8 Software”).
 ##
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/tech/strata/logconf)
-add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

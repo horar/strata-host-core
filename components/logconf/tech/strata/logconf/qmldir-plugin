@@ -9,6 +9,5 @@
 
 module tech.strata.logconf
 
-LogLevel 1.0 LogLevel.qml
-LogDetails 1.0 LogDetails.qml
-LogExport 1.0 LogExport.qml
+plugin lcuPlugin
+typeinfo plugins.qmltypes
