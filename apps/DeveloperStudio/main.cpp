@@ -95,7 +95,7 @@ void addImportPaths(QQmlApplicationEngine *engine)
 
 void addSupportedPlugins(QQmlFileSelector *selector)
 {
-    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    QStringList supportedPlugins(QString::fromUtf8(AppInfo::supportedPlugins_.data(), AppInfo::supportedPlugins_.size()).split(QChar(':')));
     supportedPlugins.removeAll(QString(""));
 
     if (supportedPlugins.empty() == false) {

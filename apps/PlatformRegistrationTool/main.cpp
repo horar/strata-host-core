@@ -98,7 +98,7 @@ void addImportPaths(QQmlApplicationEngine *engine) {
 
 void addSupportedPlugins(QQmlFileSelector *selector)
 {
-    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    QStringList supportedPlugins(QString::fromUtf8(AppInfo::supportedPlugins_.data(), AppInfo::supportedPlugins_.size()).split(QChar(':')));
     supportedPlugins.removeAll(QString(""));
 
     if (supportedPlugins.empty() == false) {
@@ -117,7 +117,7 @@ void addSupportedPlugins(QQmlFileSelector *selector)
                 QStringLiteral("%1/plugins/%2.rcc").arg(applicationDir.path(), pluginName));
 
             if (QFile::exists(resourceFile) == false) {
-                qCWarning(lcPrt) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName); 
+                qCWarning(lcPrt) << QStringLiteral("Resource file for '%1' plugin does not exist.").arg(pluginName);
                 continue;
             }
             qCDebug(lcPrt) << QStringLiteral("Loading '%1: %2'").arg(resourceFile, QResource::registerResource(resourceFile));
