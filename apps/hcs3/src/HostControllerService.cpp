@@ -198,9 +198,10 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     // db_.addReplChannel("platform_list");
 
     const QUrl fileServerUrl(databaseConfig.value("file_server").toString());
-    const QUrl gatewaySyncUrl(databaseConfig.value("gateway_sync").toString());
+    const QString gatewaySyncUrl(databaseConfig.value("gateway_sync").toString());
 
     qCInfo(lcHcs) << "file_server url:" << fileServerUrl.toString();
+    qCInfo(lcHcs) << "gateway_sync url:" << gatewaySyncUrl;
 
     if (fileServerUrl.isValid() == false) {
         qCCritical(lcHcs) << "Provided file_server url is not valid";
@@ -212,15 +213,11 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
         return FailureFileServerUrlNoScheme;
     }
 
-    if (urlAccessible(fileServerUrl) == false) {
-        errorTracker_.reportError(strataRPC::FileServerNotAccessible);
-    }
-
     storageManager_.setBaseUrl(fileServerUrl);
     storageManager_.setDatabase(&db_);
 
     bool replicatorInitResult = db_.initReplicator(
-                gatewaySyncUrl.toString(),
+                gatewaySyncUrl,
                 QString::fromUtf8(ReplicatorCredentials::replicator_username.data(), ReplicatorCredentials::replicator_username.size()),
                 QString::fromUtf8(ReplicatorCredentials::replicator_password.data(), ReplicatorCredentials::replicator_password.size()));
 
@@ -234,33 +231,6 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     updateController_.initialize(&platformController_, &downloadManager_);
 
     return Success;
-}
-
-bool HostControllerService::urlAccessible(const QUrl& url) const
-{
-    constexpr int timeoutMsec(10000);
-    QTcpSocket socket;
-
-    socket.connectToHost(url.host(), 80);
-    if (socket.waitForConnected(timeoutMsec)) {
-        socket.write("HEAD " + url.path().toUtf8() + " HTTP/1.1\r\nHost: " + url.host().toUtf8() + "\r\n\r\n");
-        if (socket.waitForReadyRead(timeoutMsec)) {
-            // read first line from reply - this line contains status code
-            QByteArray replyLine = socket.readLine();
-            if (replyLine.contains("301") ||  // Moved Permanently
-                replyLine.contains("200") ||  // OK
-                replyLine.contains("302"))    // Found
-            {
-                return true;
-            } else {
-                qCWarning(lcHcs) << "URL" << url.toString() << "is not accesible. Reply begins with:" << replyLine;
-                return false;
-            }
-        }
-    }
-
-    qCWarning(lcHcs) << "Cannot connect to" << url.toString();
-    return false;
 }
 
 void HostControllerService::start()

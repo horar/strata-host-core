@@ -232,8 +232,6 @@ private:
 
     bool parseConfig(const QString& config);
 
-    bool urlAccessible(const QUrl& url) const;
-
     PlatformController platformController_;
     Database db_;
     QNetworkAccessManager networkManager_;
