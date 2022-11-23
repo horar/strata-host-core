@@ -6,6 +6,5 @@
         <file>LogExport.qml</file>
         <file>CreateFolderDialog.qml</file>
         <file>QtFilterRulesDialog.qml</file>
-        <file>qmldir</file>
     </qresource>
 </RCC>

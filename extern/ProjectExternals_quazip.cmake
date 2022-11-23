@@ -30,7 +30,6 @@ if(NOT LIB_INSTALLED)
                 -DBUILD_SHARED_LIBS=OFF
                 -DQT_VERSION_MAJOR=5
                 -DZLIB_ROOT=${ZLIB_ROOT}
-                -DZLIB_USE_STATIC_LIBS=ON
         )
     else()
         ExternalProject_Add(QuaZip
