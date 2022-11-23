@@ -28,7 +28,6 @@ add_library(${PROJECT_NAME} MODULE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/pluginLogger/qml.qrc
     qmldir
-    qmldir-plugin
     plugins.qmltypes
 )
 
@@ -64,8 +63,8 @@ add_custom_command(
     POST_BUILD
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_LIST_DIR}/qmldir-plugin
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/qmldir
+        ${CMAKE_CURRENT_LIST_DIR}/qmldir
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_LIST_DIR}/plugins.qmltypes
@@ -74,3 +73,4 @@ add_custom_command(
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")
+add_qml_import_path(PATH "${CMAKE_SOURCE_DIR}/components/logconf")
