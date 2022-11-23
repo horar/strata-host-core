@@ -201,6 +201,7 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     const QUrl gatewaySyncUrl(databaseConfig.value("gateway_sync").toString());
 
     qCInfo(lcHcs) << "file_server url:" << fileServerUrl.toString();
+    qCInfo(lcHcs) << "gateway_sync url:" << gatewaySyncUrl.toString();
 
     if (fileServerUrl.isValid() == false) {
         qCCritical(lcHcs) << "Provided file_server url is not valid";
@@ -210,10 +211,6 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     if (fileServerUrl.scheme().isEmpty()) {
         qCCritical(lcHcs) << "file_server url does not have scheme";
         return FailureFileServerUrlNoScheme;
-    }
-
-    if (urlAccessible(fileServerUrl) == false) {
-        errorTracker_.reportError(strataRPC::FileServerNotAccessible);
     }
 
     storageManager_.setBaseUrl(fileServerUrl);
@@ -234,33 +231,6 @@ HostControllerService::InitializeErrorCode HostControllerService::initialize(con
     updateController_.initialize(&platformController_, &downloadManager_);
 
     return Success;
-}
-
-bool HostControllerService::urlAccessible(const QUrl& url) const
-{
-    constexpr int timeoutMsec(10000);
-    QTcpSocket socket;
-
-    socket.connectToHost(url.host(), 80);
-    if (socket.waitForConnected(timeoutMsec)) {
-        socket.write("HEAD " + url.path().toUtf8() + " HTTP/1.1\r\nHost: " + url.host().toUtf8() + "\r\n\r\n");
-        if (socket.waitForReadyRead(timeoutMsec)) {
-            // read first line from reply - this line contains status code
-            QByteArray replyLine = socket.readLine();
-            if (replyLine.contains("301") ||  // Moved Permanently
-                replyLine.contains("200") ||  // OK
-                replyLine.contains("302"))    // Found
-            {
-                return true;
-            } else {
-                qCWarning(lcHcs) << "URL" << url.toString() << "is not accesible. Reply begins with:" << replyLine;
-                return false;
-            }
-        }
-    }
-
-    qCWarning(lcHcs) << "Cannot connect to" << url.toString();
-    return false;
 }
 
 void HostControllerService::start()
@@ -586,22 +556,24 @@ void HostControllerService::handleReplicatorStatus(Database::ReplicatorActivity 
     }
 
     // specific errors
-    if (errorDomain == Database::ErrorDomain::Posix) {
-        if (errorCode >= 106 && errorCode <= 108) {
-            rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
-        }
-    } else if (errorDomain == Database::ErrorDomain::Network) {
-        // these error codes are from CBLNetworkErrorCode (CBLBase.h)
-        if ((errorCode >= 7 && errorCode <= 11) || errorCode == 14 || errorCode == 15) {
-            rpcError = RpcErrorCode::ReplicatorCertificateError;
-        } else {
-            rpcError = RpcErrorCode::ReplicatorNetworkError;
-        }
-    } else if (errorDomain == Database::ErrorDomain::WebSocket) {
-        if (errorCode == 401 || errorCode == 403) {
-            rpcError = RpcErrorCode::ReplicatorWrongCredentials;
-        } else if (errorCode == 404) {
-            rpcError = RpcErrorCode::ReplicatorNoSuchDb;
+    if (errorCode != 0) {  // 0 means there is no error
+        if (errorDomain == Database::ErrorDomain::Posix) {
+            if (errorCode >= 106 && errorCode <= 108) {
+                rpcError = RpcErrorCode::ReplicatorWebSocketFailed;
+            }
+        } else if (errorDomain == Database::ErrorDomain::Network) {
+            // these error codes are from CBLNetworkErrorCode (CBLBase.h)
+            if ((errorCode >= 7 && errorCode <= 11) || errorCode == 14 || errorCode == 15) {
+                rpcError = RpcErrorCode::ReplicatorCertificateError;
+            } else {
+                rpcError = RpcErrorCode::ReplicatorNetworkError;
+            }
+        } else if (errorDomain == Database::ErrorDomain::WebSocket) {
+            if (errorCode == 401 || errorCode == 403) {
+                rpcError = RpcErrorCode::ReplicatorWrongCredentials;
+            } else if (errorCode == 404) {
+                rpcError = RpcErrorCode::ReplicatorNoSuchDb;
+            }
         }
     }
 

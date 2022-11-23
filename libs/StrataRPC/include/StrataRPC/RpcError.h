@@ -52,7 +52,6 @@ enum RpcErrorCode : int {
     ReplicatorNetworkError,
     ReplicatorWrongCredentials,
     ReplicatorNoSuchDb,
-    FileServerNotAccessible,
     };
 Q_ENUM_NS(RpcErrorCode)
 

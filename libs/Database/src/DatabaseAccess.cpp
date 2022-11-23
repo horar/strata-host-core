@@ -291,6 +291,9 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
         }
 
         switch (domain) {
+            case CouchbaseDatabase::DbErrorDomain::NoDomain:
+                errorCodeDomain = ErrorCodeDomain::NoDomain;
+                break;
             case CouchbaseDatabase::DbErrorDomain::CBLDomain:
                 errorCodeDomain = ErrorCodeDomain::CouchbaseLiteDomain;
                 break;
@@ -409,6 +412,9 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
         }
 
         switch (domain) {
+            case CouchbaseDatabase::DbErrorDomain::NoDomain:
+                errorCodeDomain = ErrorCodeDomain::NoDomain;
+                break;
             case CouchbaseDatabase::DbErrorDomain::CBLDomain:
                 errorCodeDomain = ErrorCodeDomain::CouchbaseLiteDomain;
                 break;

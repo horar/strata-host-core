@@ -35,6 +35,7 @@ public:
     Q_ENUM(ReplicatorActivity)
 
     enum class ErrorDomain {
+        NoDomain = 0,      // value for a case if there is no error - there is no error domain either
         CouchbaseLite = 1, // code is a Couchbase Lite error code; see CBLErrorCode
         Posix,             // code is a POSIX `errno`; see "errno.h"
         SQLite,            // code is a SQLite error; see "sqlite3.h"

@@ -406,7 +406,6 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
             if (repIsStopping_) {
                 freeReplicator();
             }
-
             status_ = SGActivityLevel::CBLReplicatorStopped;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorOffline:
@@ -423,29 +422,31 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
             break;
     }
 
-    DbErrorDomain domain = DbErrorDomain::CBLDomain;
+    DbErrorDomain domain = DbErrorDomain::NoDomain;
 
-    switch (rep.status().error.domain) {
-        case CBLErrorDomain::CBLDomain:
-            domain = DbErrorDomain::CBLDomain;
-            break;
-        case CBLErrorDomain::CBLPOSIXDomain:
-            domain = DbErrorDomain::CBLPosixDomain;
-            break;
-        case CBLErrorDomain::CBLSQLiteDomain:
-            domain = DbErrorDomain::CBLSQLiteDomain;
-            break;
-        case CBLErrorDomain::CBLFleeceDomain:
-            domain = DbErrorDomain::CBLFleeceDomain;
-            break;
-        case CBLErrorDomain::CBLNetworkDomain:
-            domain = DbErrorDomain::CBLNetworkDomain;
-            break;
-        case CBLErrorDomain::CBLWebSocketDomain:
-            domain = DbErrorDomain::CBLWebSocketDomain;
-            break;
-        case CBLErrorDomain::CBLMaxErrorDomainPlus1:
-            break;
+    if (error_code_ != 0) {
+        switch (rep.status().error.domain) {
+            case CBLErrorDomain::CBLDomain:
+                domain = DbErrorDomain::CBLDomain;
+                break;
+            case CBLErrorDomain::CBLPOSIXDomain:
+                domain = DbErrorDomain::CBLPosixDomain;
+                break;
+            case CBLErrorDomain::CBLSQLiteDomain:
+                domain = DbErrorDomain::CBLSQLiteDomain;
+                break;
+            case CBLErrorDomain::CBLFleeceDomain:
+                domain = DbErrorDomain::CBLFleeceDomain;
+                break;
+            case CBLErrorDomain::CBLNetworkDomain:
+                domain = DbErrorDomain::CBLNetworkDomain;
+                break;
+            case CBLErrorDomain::CBLWebSocketDomain:
+                domain = DbErrorDomain::CBLWebSocketDomain;
+                break;
+            case CBLErrorDomain::CBLMaxErrorDomainPlus1:
+                break;
+        }
     }
 
     if (change_listener_callback_) {

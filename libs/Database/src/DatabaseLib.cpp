@@ -117,6 +117,9 @@ bool DatabaseLib::startBasicReplicator(const QString &url, const QString &userna
         }
 
         switch (domain) {
+            case CouchbaseDatabase::DbErrorDomain::NoDomain:
+                errorCodeDomain = DatabaseAccess::ErrorCodeDomain::NoDomain;
+                break;
             case CouchbaseDatabase::DbErrorDomain::CBLDomain:
                 errorCodeDomain = DatabaseAccess::ErrorCodeDomain::CouchbaseLiteDomain;
                 break;
