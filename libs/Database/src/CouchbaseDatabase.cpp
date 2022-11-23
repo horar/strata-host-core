@@ -423,7 +423,7 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
             break;
     }
 
-    DbErrorDomain domain;
+    DbErrorDomain domain = DbErrorDomain::CBLDomain;
 
     switch (rep.status().error.domain) {
         case CBLErrorDomain::CBLDomain:

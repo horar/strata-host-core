@@ -101,7 +101,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name,
         return nullptr;
     }
 
-    for (const auto& bucket : channelAccess) {
+    for (const auto& bucket : qAsConst(channelAccess)) {
         auto db = std::make_unique<CouchbaseDatabase>(bucket.toStdString(), userDir.toStdString());
         dbAccess_->database_map_.push_back(std::move(db));
 
