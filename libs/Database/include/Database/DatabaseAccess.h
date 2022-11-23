@@ -86,6 +86,7 @@ public:
     };
 
     enum class ErrorCodeDomain {
+        NoDomain = 0,            ///< value for a case if there is no error - there is no error domain either
         CouchbaseLiteDomain = 1, ///< code is a Couchbase Lite error code; see CBLErrorCode
         PosixDomain,             ///< code is a POSIX `errno`; see "errno.h"
         SQLiteDomain,            ///< code is a SQLite error; see "sqlite3.h"

@@ -97,6 +97,7 @@ public:
     };
 
     enum class DbErrorDomain {
+        NoDomain = 0,       ///< value for a case if there is no error - there is no error domain either
         CBLDomain = 1,      ///< code is a Couchbase Lite error code; see CBLErrorCode
         CBLPosixDomain,     ///< code is a POSIX `errno`; see "errno.h"
         CBLSQLiteDomain,    ///< code is a SQLite error; see "sqlite3.h"

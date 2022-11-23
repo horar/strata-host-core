@@ -113,6 +113,9 @@ void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel ac
     }
 
     switch (domain) {
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::NoDomain :
+        errorDomain = ErrorDomain::NoDomain;
+        break;
     case strata::Database::DatabaseAccess::ErrorCodeDomain::CouchbaseLiteDomain :
         errorDomain = ErrorDomain::CouchbaseLite;
         break;
