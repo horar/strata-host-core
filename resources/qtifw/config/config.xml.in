@@ -22,7 +22,7 @@
     <WizardMinimumWidth>840</WizardMinimumWidth>
     <WizardMinimumHeight>480</WizardMinimumHeight>
     <StartMenuDir>onsemi</StartMenuDir>
-    <TargetDir>@ApplicationsDirX64@/onsemi/Strata</TargetDir>
+    <TargetDir>@ApplicationsDirUser@/onsemi/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
