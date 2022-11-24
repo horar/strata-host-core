@@ -31,9 +31,9 @@
     <StyleSheet>style.qss</StyleSheet>
     @STRATA_OTA_REPOSITORIES@
     <ProductImages>
-        <Image>onsemi-banner-1.png</Image>
-        <Image>onsemi-banner-2.png</Image>
-        <Image>onsemi-banner-3.png</Image>
-        <Image>onsemi-banner-4.png</Image>
+        <ProductImage><Image>onsemi-banner-1.png</Image></ProductImage>
+        <ProductImage><Image>onsemi-banner-2.png</Image></ProductImage>
+        <ProductImage><Image>onsemi-banner-3.png</Image></ProductImage>
+        <ProductImage><Image>onsemi-banner-4.png</Image></ProductImage>
     </ProductImages>
 </Installer>
