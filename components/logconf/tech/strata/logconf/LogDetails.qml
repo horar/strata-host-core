@@ -42,7 +42,7 @@ GridLayout {
 
     SGWidgets.SGText {
         id: maxFileSizeText
-        text: "Max file size"
+        text: "Max file size (B)"
         Layout.columnSpan: 2
         Layout.fillWidth: true
     }
