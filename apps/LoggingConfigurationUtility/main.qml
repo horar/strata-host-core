@@ -14,9 +14,9 @@ import Qt.labs.platform 1.1 as QtLabsPlatform
 SGWidgets.SGMainWindow {
     id: root
     width: 550
-    height: 480
+    height: 500
     minimumWidth: 550
-    minimumHeight: 480
+    minimumHeight: 500
 
     visible: true
     title: qsTr("Logging Configuration Utility")
