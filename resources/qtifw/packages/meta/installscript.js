@@ -632,8 +632,8 @@ function executePowershell(powershell64Location, powerShellCommand)
 
 function executeFind()
 {
-    console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirX64"));
-    let findOutput = installer.execute("find", [installer.value("ApplicationsDirX64"), "-name", installer.value("MaintenanceToolName") + ".app"]);
+    console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirUser"));
+    let findOutput = installer.execute("find", [installer.value("ApplicationsDirUser"), "-name", installer.value("MaintenanceToolName") + ".app"]);
 
     return validateCommandOutput(findOutput);
 }
