@@ -691,14 +691,7 @@ Item {
             currentIndex = currentIndex - 1
         } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
-        }
-        else if (event.key === Qt.Key_Left) {
-            contentX = contentX - logListView.width
-        }
-        else if (event.key === Qt.Key_Right) {
-            contentX = contentX + logListView.width
-        }
-        else if (event.key === Qt.Key_PageDown) {
+        } else if (event.key === Qt.Key_PageDown) {
             contentY = contentY + logListView.height
 
             if (currentIndex < indexOfVisibleItem) {
@@ -706,8 +699,7 @@ Item {
             } else {
                 currentIndex = logListView.count - 1
             }
-        }
-        else if (event.key === Qt.Key_PageUp) {
+        } else if (event.key === Qt.Key_PageUp) {
             contentY = contentY - logListView.height
 
             if ((currentIndex > indexOfVisibleItem) && (indexOfVisibleItem > 0)) {
@@ -715,14 +707,11 @@ Item {
             } else {
                 currentIndex = 0
             }
-        }
-        else if (event.key === Qt.Key_Home) {
+        } else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()
-        }
-        else if (event.key === Qt.Key_End) {
+        } else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
-        }
-        else if (event.key === Qt.Key_M) {
+        } else if (event.key === Qt.Key_M) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
             if (sourceIndex < 0) {
                 console.error(Logger.logviewerCategory, "index out of range")
