@@ -56,7 +56,7 @@
   background-color: #E97D2E; /*onsemiOrange*/
 }
 
-.textLayer ::-moz-selection { background: #3880F6; } /*onsemiBlue*/
+.textLayer ::-moz-selection { background: #3880F6; }
 
 .textLayer ::selection { background: #3880F6; } /*onsemiBlue*/
 
@@ -71,13 +71,13 @@
   cursor: default;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
 }
 
 .textLayer .endOfContent.active {
   top: 0px;
 }
+
 
 .annotationLayer section {
   position: absolute;
@@ -379,10 +379,6 @@
   margin-right: auto;
 }
 
-.pdfPresentationMode:-ms-fullscreen .pdfViewer .page {
-  margin-bottom: 100% !important;
-}
-
 .pdfPresentationMode:-webkit-full-screen .pdfViewer .page {
   margin-bottom: 100%;
   border: 0;
@@ -417,7 +413,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  background-color: white;
+  background-color: #404040;
   background-image: url(images/texture.png);
 }
 
@@ -434,15 +430,6 @@ select {
 }
 [hidden] {
   display: none !important;
-}
-
-#viewerContainer.pdfPresentationMode:-ms-fullscreen {
-  top: 0px !important;
-  overflow: hidden !important;
-}
-
-#viewerContainer.pdfPresentationMode:-ms-fullscreen::-ms-backdrop {
-  background-color: white;
 }
 
 #viewerContainer.pdfPresentationMode:-webkit-full-screen {
@@ -469,18 +456,6 @@ select {
        user-select: none;
 }
 
-#viewerContainer.pdfPresentationMode:-ms-fullscreen {
-  top: 0px;
-  border-top: 2px solid transparent;
-  background-color: white;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  cursor: none;
-  -ms-user-select: none;
-      user-select: none;
-}
-
 #viewerContainer.pdfPresentationMode:fullscreen {
   top: 0px;
   border-top: 2px solid transparent;
@@ -491,7 +466,6 @@ select {
   cursor: none;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
 }
 
@@ -500,10 +474,6 @@ select {
 }
 
 .pdfPresentationMode:-moz-full-screen a:not(.internalLink) {
-  display: none;
-}
-
-.pdfPresentationMode:-ms-fullscreen a:not(.internalLink) {
   display: none;
 }
 
@@ -516,10 +486,6 @@ select {
 }
 
 .pdfPresentationMode:-moz-full-screen .textLayer > span {
-  cursor: none;
-}
-
-.pdfPresentationMode:-ms-fullscreen .textLayer > span {
   cursor: none;
 }
 
@@ -573,7 +539,6 @@ html[dir='rtl'] #sidebarContainer {
   /* Prevent e.g. the thumbnails being selected when the sidebar is resized. */
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
 }
 
@@ -614,6 +579,7 @@ html[dir='rtl'] #sidebarContent {
   right: 0;
   box-shadow: inset 2px 0 0 #E97D2E; /*onsemi orange*/
 }
+
 #viewerContainer {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -701,7 +667,7 @@ html[dir='rtl'] #sidebarResizer {
 #toolbarContainer, .findbar, .secondaryToolbar {
   position: relative;
   height: 32px;
-  background-color: white; /* fallback */
+  background-color: #474747; /* fallback */
   background-image: url(images/texture.png),
                     linear-gradient(#a7a9ac, #66686A);
 }
@@ -727,7 +693,7 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
   width: 100%;
   height: 4px;
   background-color: #E97D2E; /*onsemi Orange*/
-  border-bottom: 1px solid #E97D2E;
+  border-bottom: 1px solid #E97D2E; /*onsemi Orange*/
 }
 
 #loadingBar .progress {
@@ -739,11 +705,6 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
   background-color: #66686A; /*onsemiSecondaryLightBlue*/
   overflow: hidden;
   transition: width 200ms;
-}
-
-@-webkit-keyframes progressIndeterminate {
-  0% { left: -142px; }
-  100% { left: 0; }
 }
 
 @keyframes progressIndeterminate {
@@ -768,9 +729,7 @@ html[dir='rtl'] #toolbarContainer, .findbar, .secondaryToolbar {
                                         #999 45px, #E97D2E 55px,
                                         #E97D2E 95px, #bbb 100px);
 
-  -webkit-animation: progressIndeterminate 950ms linear infinite;
-
-          animation: progressIndeterminate 950ms linear infinite;
+  animation: progressIndeterminate 950ms linear infinite;
 }
 
 .findbar, .secondaryToolbar {
@@ -810,7 +769,6 @@ html[dir='rtl'] .findbar {
 .findbar label {
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
 }
 
@@ -820,20 +778,10 @@ html[dir='rtl'] .findbar {
   color: #66686A; /*dark gray*/
 }
 #findInput::-webkit-input-placeholder {
-  color: /*hsl(0, 0%, 75%)*/black;
+  color: black;
   background-color: white;
 }
 #findInput::-moz-placeholder {
-  font-style: italic;
-  color: black;
-  background-color: white;
-}
-#findInput:-ms-input-placeholder {
-  font-style: italic;
-  color: black;
-  background-color: white;
-}
-#findInput::-ms-input-placeholder {
   font-style: italic;
   color: black;
   background-color: white;
@@ -1112,7 +1060,6 @@ html[dir='rtl'] .splitToolbarButtonSeparator {
   line-height: 14px;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
   /* Opera does not support user-select, use <... unselectable="on"> instead */
   cursor: default;
@@ -1601,7 +1548,6 @@ html[dir='rtl'] .verticalToolbarSeparator {
   text-align: left;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
   cursor: default;
 }
@@ -1699,7 +1645,6 @@ a:focus > .thumbnail > .thumbnailSelectionRing,
   -webkit-overflow-scrolling: touch;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
 }
 
@@ -1735,10 +1680,8 @@ html[dir='rtl'] .outlineItem > .outlineItems {
   line-height: 15px;
   -webkit-user-select: none;
      -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
   white-space: normal;
-  color: black;
 }
 
 .attachmentsItem > button {
@@ -1774,15 +1717,14 @@ html[dir='rtl'] .attachmentsItem > button {
   content: url(images/treeitem-expanded.png);
   display: inline-block;
   position: absolute;
-  filter: brightness(0);
+  -webkit-filter: brightness(0);
+          filter: brightness(0);
 }
 html[dir='ltr'] .outlineItemToggler.outlineItemsHidden::before {
   content: url(images/treeitem-collapsed.png);
-
 }
 html[dir='rtl'] .outlineItemToggler.outlineItemsHidden::before {
   content: url(images/treeitem-collapsed-rtl.png);
-
 }
 .outlineItemToggler.outlineItemsHidden ~ .outlineItems {
   display: none;

@@ -189,7 +189,8 @@ index 04f7f938a..d4170bf94 100644
 +  background-color: white;
  }
  #findInput[data-status="pending"] {
-   background-image: url(images/loading-small.png);
+-  background-image: url(images/loading-small.png);
++  background-image: url(images/loading-small.png),
 +                    linear-gradient(#d3d4d6, #a7a9ac);
    background-repeat: no-repeat;
    background-position: right;
@@ -276,7 +277,7 @@ index 04f7f938a..d4170bf94 100644
  .toolbarField:focus {
    background-color: hsla(0,0%,100%,.15);
 -  border-color: hsla(204,100%,65%,.8) hsla(204,100%,65%,.85) hsla(204,100%,65%,.9);
-+  border-color: border-color: #E97D2E; /*onsemi Orange*/
++  border-color: #E97D2E; /*onsemi Orange*/
  }
  
  .toolbarLabel {
