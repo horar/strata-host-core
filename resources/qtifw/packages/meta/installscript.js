@@ -145,14 +145,19 @@ Component.prototype.createOperations = function()
 Component.prototype.onInstallationStarted = function()
 {
     if (component.updateRequested() || component.installationRequested()) {
+        let target_dir = installer.value("TargetDir");
+        let updateResourceFilePath = "";
         if (systemInfo.productType == "windows") {
-            let target_dir = installer.value("TargetDir").split("/").join("\\");
+            target_dir = target_dir.split("/").join("\\");
+            updateResourceFilePath = target_dir + "\\update.rcc";
             component.installerbaseBinaryPath = target_dir + "\\installerbase.exe";
-            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
         } else if (systemInfo.productType == "osx") {
-            component.installerbaseBinaryPath = installer.value("TargetDir") + "/installerbase";
-            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+            component.installerbaseBinaryPath = target_dir + "/installerbase";
+            updateResourceFilePath = target_dir + "/update.rcc";
         }
+
+        installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        installer.setValue("DefaultResourceReplacement", updateResourceFilePath);
     }
 
     if (installer.isInstaller()) {

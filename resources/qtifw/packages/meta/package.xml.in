@@ -12,6 +12,7 @@
     <Description>The Strata package installs components required to access Strata platforms documentation and platforms control</Description>
     <Version>@MODULE_VERSION@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <Essential>true</Essential>
     <ForcedInstallation>true</ForcedInstallation>
     <Dependencies>@PROJECT_DEPENDENCIES@</Dependencies>
     <Script>installscript.js</Script>
