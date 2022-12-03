@@ -70,8 +70,7 @@ signals:
 
     /**
      * Emitted when an error has occurred.
-     * @param [in] errorType error category description.
-     * @param [in] errorMessage QString of the actual error.
+     * @param [in] code Strata RPC error code.
      */
     void errorOccurred(strata::strataRPC::RpcErrorCode code);
 

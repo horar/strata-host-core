@@ -56,13 +56,13 @@ private:
 
     /**
      * Emits finishedSuccessfully signal.
-     * @param [in] jsonPayload QJsonObject of the payload.
+     * @param [in] result QJsonObject of the payload.
      */
     void callSuccessCallback(const QJsonObject &result);
 
     /**
      * Emits finishedWithError signal.
-     * @param [in] jsonPayload QJsonObject of the payload.
+     * @param [in] error QJsonObject of the payload.
      */
     void callErrorCallback(const QJsonObject &error);
 
