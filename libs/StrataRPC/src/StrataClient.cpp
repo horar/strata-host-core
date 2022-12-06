@@ -332,7 +332,7 @@ void StrataClient::removeExpiredReplies()
         iter.next();
         qint64 duration = currentTime - iter.value()->timestamp();
         if (duration > replyExpirationTime_.count()) {
-            qCInfo(lcStrataClient) << "reply timeout expired, id=" << iter.value()->id();
+            qCInfo(lcStrataClient) << "reply timeout expired, id =" << iter.value()->id();
             RpcError error(RpcErrorCode::ReplyTimeoutError);
             processError(iter.value()->id(), error.toJsonObject());
         }

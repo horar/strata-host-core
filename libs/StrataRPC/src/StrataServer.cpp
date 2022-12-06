@@ -65,6 +65,12 @@ StrataServer::StrataServer(
         emit initialized();
     });
 
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::errorOccurred,
+                this,
+                &StrataServer::errorOccurred);
+
     connectorThread_->start();
 }
 

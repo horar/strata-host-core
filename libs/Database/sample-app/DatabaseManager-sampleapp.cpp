@@ -24,12 +24,12 @@ const QString endpointUsername = "user_public";
 
 int main() {
     // Open database manager
-    auto changeListener = [](const DatabaseAccess::ActivityLevel) {
+    auto changeListener = [](DatabaseAccess::ActivityLevel, int, DatabaseAccess::ErrorCodeDomain) {
         qDebug() << "DatabaseManager-sampleapp changeListener -> replication status changed!";
     };
 
     auto databaseManager = std::make_unique<DatabaseManager>();
-    if (databaseManager->init("", endpointURL, changeListener) == false) {
+    if (databaseManager->init("", endpointURL, changeListener, nullptr) == false) {
         qDebug() << "Error with initialization of database manager. Verify endpoint URL" << endpointURL << "is valid.";
         return -1;
     }
