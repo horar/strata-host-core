@@ -51,9 +51,21 @@ Item {
         property real tickMarkStepRange: 10
         property real tickmarkStepSize: (maximumValue - minimumValue)/tickMarkStepRange
         property int decimalPlacesFromStepSize: {
-                return (Math.floor(gauge.tickmarkStepSize) === gauge.tickmarkStepSize) ?  0 :
-                        gauge.tickmarkStepSize.toString().split(".")[1].length || 0
-                }
+            if (Math.floor(gauge.tickmarkStepSize) === gauge.tickmarkStepSize) {
+                return 0;
+            } else if (gauge.tickmarkStepSize !== (gauge.maximumValue - gauge.minimumValue)/gauge.tickMarkStepRange) {
+                // in case we have setup custom value, use that
+                return gauge.tickmarkStepSize.toString().split(".")[1].length || 0
+            } else {
+                // tickmarkStepSize can have very large number of decimals due to float number issues, limit them
+                let maximumValueString = gauge.maximumValue.toString()
+                let minimumValueString = gauge.minimumValue.toString()
+                let decimalsX = maximumValueString.includes('.') ? maximumValueString.split(".")[1].length : 0
+                let decimalsY = minimumValueString.includes('.') ? minimumValueString.split(".")[1].length : 0
+                let maxDecimals = Math.max(decimalsX, decimalsY) + 1 // always dividing by 10, so +1 decimal place
+                return Math.min(gauge.tickmarkStepSize.toString().split(".")[1].length || 0, maxDecimals)
+            }
+        }
 
         style : CircularGaugeStyle {
             id: gaugeStyle
