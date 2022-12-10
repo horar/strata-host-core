@@ -49,22 +49,16 @@ Item {
         }
 
         property real tickMarkStepRange: 10
+        property real tickmarMaxDecimalPlaces: 10
         property real tickmarkStepSize: (maximumValue - minimumValue)/tickMarkStepRange
         property int decimalPlacesFromStepSize: {
-            if (Math.floor(gauge.tickmarkStepSize) === gauge.tickmarkStepSize) {
-                return 0;
-            } else if (gauge.tickmarkStepSize !== (gauge.maximumValue - gauge.minimumValue)/gauge.tickMarkStepRange) {
-                // in case we have setup custom value, use that
-                return gauge.tickmarkStepSize.toString().split(".")[1].length || 0
-            } else {
-                // tickmarkStepSize can have very large number of decimals due to float number issues, limit them
-                let maximumValueString = gauge.maximumValue.toString()
-                let minimumValueString = gauge.minimumValue.toString()
-                let decimalsX = maximumValueString.includes('.') ? maximumValueString.split(".")[1].length : 0
-                let decimalsY = minimumValueString.includes('.') ? minimumValueString.split(".")[1].length : 0
-                let maxDecimals = Math.max(decimalsX, decimalsY) + 1 // always dividing by 10, so +1 decimal place
-                return Math.min(gauge.tickmarkStepSize.toString().split(".")[1].length || 0, maxDecimals)
-            }
+            let maximumValueString = gauge.maximumValue.toFixed(gauge.tickmarMaxDecimalPlaces).replace(/\.0*$|(\.\d*[1-9])0+$/, '$1')
+            let minimumValueString = gauge.minimumValue.toFixed(gauge.tickmarMaxDecimalPlaces).replace(/\.0*$|(\.\d*[1-9])0+$/, '$1')
+            let stepValueString = gauge.tickmarkStepSize.toFixed(gauge.tickmarMaxDecimalPlaces).replace(/\.0*$|(\.\d*[1-9])0+$/, '$1')
+            let decimalsMaximum = maximumValueString.includes('.') ? maximumValueString.split(".")[1].length : 0
+            let decimalsMinimum = minimumValueString.includes('.') ? minimumValueString.split(".")[1].length : 0
+            let decimalsStep = stepValueString.includes('.') ? stepValueString.split(".")[1].length : 0
+            return Math.max(decimalsStep, Math.max(decimalsMaximum, decimalsMinimum))
         }
 
         style : CircularGaugeStyle {
