@@ -32,7 +32,7 @@ Item {
             alertMessage.hideInstantly()
         } else {
             if (fileOutput.text === "") {
-                fileOutput.text = openProjectContainer.fileDialogFolder()
+                fileOutput.text = SGUtilsCpp.urlToLocalFile(openProjectContainer.fileDialogFolder())
             }
         }
     }
@@ -280,7 +280,7 @@ Item {
                             result += (result === "" ? "" : "<br>")
                             result += "Project name is not valid"
                         }
-                        if (fileOutput.text == "" || fileOutput.text == fileOutput.defaultText) {
+                        if (fileOutput.text === "" || fileOutput.text === fileOutput.defaultText) {
                             result += (result === "" ? "" : "<br>")
                             result += "Project directory is not valid"
                         }
@@ -304,12 +304,12 @@ Item {
         folder: fileDialog.shortcuts.home
 
         onAccepted: {
-            fileOutput.text = fileDialog.fileUrl
+            fileOutput.text = SGUtilsCpp.urlToLocalFile(fileDialog.fileUrl)
         }
     }
 
     function createControlView() {
-        let path = fileOutput.text.trim()
+        let path = SGUtilsCpp.pathToUrl(fileOutput.text).toString().trim()
         if (!SGUtilsCpp.isFile(path)) {
             path = SGUtilsCpp.urlToLocalFile(path)
         }

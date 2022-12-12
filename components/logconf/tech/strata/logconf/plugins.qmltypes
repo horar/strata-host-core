@@ -7,19 +7,46 @@ import QtQuick.tooling 1.2
 // 'qmlplugindump tech.strata.logconf 1.0 ./lcuPlugin -qapp -nonrelocatable'
 
 Module {
-    dependencies: ["QtQuick 2.12"]
+    dependencies: [
+        "QtQuick 2.12",
+        "QtQuick.Controls 2.12",
+        "QtQuick.Layouts 1.12",
+        "Qt.labs.settings 1.1",
+        "Qt.labs.platform 1.1",
+        "tech.strata.sgwidgets 1.0",
+        "tech.strata.commoncpp 1.0",
+        "tech.strata.theme 1.0",
+        "tech.strata.logconf 1.0",
+        "tech.strata.pluginLogger 1.0"
+    ]
     Component {
-        name: "ConfigFileModel"
-        prototype: "QAbstractListModel"
-        exports: ["tech.strata.logconf/ConfigFileModel 1.0"]
+        name: "LogFilesCompress"
+        prototype: "QObject"
+        exports: ["tech.strata.logconf/LogFilesCompress 1.0"]
         exportMetaObjectRevisions: [0]
-        Property { name: "count"; type: "int"; isReadonly: true }
-        Method { name: "reload" }
-        Method {
-            name: "get"
-            type: "QVariantMap"
-            Parameter { name: "index"; type: "int" }
+        Signal {
+            name: "showExportMessage"
+            Parameter { name: "msg"; type: "QString" }
+            Parameter { name: "error"; type: "bool" }
         }
+        Signal { name: "nonExistentDirectory" }
+        Method {
+            name: "logExport"
+            type: "bool"
+            Parameter { name: "exportPath"; type: "QString" }
+            Parameter { name: "fileNamesToZip"; type: "QStringList" }
+        }
+        Method {
+            name: "checkExportPath"
+            type: "bool"
+            Parameter { name: "exportPath"; type: "QString" }
+        }
+        Method {
+            name: "createFolderForFile"
+            type: "bool"
+            Parameter { name: "filePath"; type: "QString" }
+        }
+
     }
     Component {
         name: "ConfigFileSettings"
@@ -32,11 +59,16 @@ Module {
         Property { name: "qtFilterRules"; type: "string" }
         Property { name: "qtMsgPattern"; type: "string" }
         Property { name: "spdlogMsgPattern"; type: "string" }
-        Property { name: "filePath"; type: "string" }
+        Property { name: "fileName"; type: "string" }
         Property { name: "maxSizeDefault"; type: "int"; isReadonly: true }
         Property { name: "maxCountDefault"; type: "int"; isReadonly: true }
         Property { name: "filterRulesDefault"; type: "string"; isReadonly: true }
         Property { name: "qtMsgDefault"; type: "string"; isReadonly: true }
         Property { name: "spdMsgDefault"; type: "string"; isReadonly: true }
+        Signal {
+            name: "corruptedFile"
+            Parameter { name: "param"; type: "QString" }
+            Parameter { name: "errorString"; type: "QString" }
+        }
     }
 }

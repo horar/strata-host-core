@@ -10,7 +10,8 @@ import QtQuick 2.9
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.12
 
-import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
+import tech.strata.theme 1.0
 
 Item {
     id: root
@@ -89,13 +90,12 @@ Item {
                     height: textItem.contentHeight + 8
                     spacing: 0
 
-                    SGWidgets.SGText {
+                    SGWidgets2.SGText {
                         id: textItem
                         Layout.leftMargin: 6
                         Layout.rightMargin: 2
                         Layout.fillWidth: true
                         font.bold: delegate.checked
-                        alternativeColorEnabled: delegate.checked === false
                         wrapMode: Text.Wrap
                         textFormat: Text.PlainText
                         maximumLineCount: 3
@@ -117,7 +117,7 @@ Item {
                         Layout.rightMargin: 2
                     }
 
-                    SGWidgets.SGIcon {
+                    SGWidgets2.SGIcon {
                         id: chevronImage
                         height: 12
                         width: height

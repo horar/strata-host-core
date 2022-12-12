@@ -96,9 +96,20 @@ public:
         CBLReplicatorBusy        ///< The replicator is actively transferring data.
     };
 
+    enum class DbErrorDomain {
+        NoDomain = 0,       ///< value for a case if there is no error - there is no error domain either
+        CBLDomain = 1,      ///< code is a Couchbase Lite error code; see CBLErrorCode
+        CBLPosixDomain,     ///< code is a POSIX `errno`; see "errno.h"
+        CBLSQLiteDomain,    ///< code is a SQLite error; see "sqlite3.h"
+        CBLFleeceDomain,    ///< code is a Fleece error; see "FleeceException.h"
+        CBLNetworkDomain,   ///< code is a network error; see CBLNetworkErrorCode
+        CBLWebSocketDomain  ///< code is a WebSocket close code (1000...1015) or HTTP error (300..599)
+    };
+
     typedef struct {
         SGActivityLevel activityLevel;
         int error;
+        DbErrorDomain errorDomain;
     } SGReplicatorStatus;
 
     typedef struct {
@@ -123,8 +134,8 @@ public:
         const std::string &password = "",
         const std::vector<std::string> &channels = std::vector<std::string>(),
         const ReplicatorType &replicatorType = ReplicatorType::kPull,
-        std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback = nullptr,
+        std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback = nullptr,
+        std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback = nullptr,
         bool continuous = false
         );
 
@@ -145,8 +156,8 @@ public:
         const std::string &cookieName = "",
         const std::vector<std::string> &channels = std::vector<std::string>(),
         const ReplicatorType &replicatorType = ReplicatorType::kPull,
-        std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback = nullptr,
-        std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback = nullptr,
+        std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback = nullptr,
+        std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback = nullptr,
         bool continuous = false
         );
 
@@ -188,8 +199,8 @@ private:
     std::unique_ptr<cbl::Replicator::ChangeListener> ctoken_ = nullptr;
     std::unique_ptr<cbl::Replicator::DocumentListener> dtoken_ = nullptr;
 
-    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback_;
-    std::function<void(cbl::Replicator, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback_;
+    std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback_;
+    std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback_;
 
     bool repIsStopping_ = false;
 };

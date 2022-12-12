@@ -22,3 +22,4 @@ add_dependencies(zeromq::cppzmq DEPENDS zeromq::libzmq)
 
 file(COPY "${SOURCE_DIR_EXTERN}/cppzmq/zmq.hpp" DESTINATION "${EXTERN_INSTALL_DIR_PATH}/cppzmq-${GIT_HASH}/include")
 file(COPY "${SOURCE_DIR_EXTERN}/cppzmq/zmq_addon.hpp" DESTINATION "${EXTERN_INSTALL_DIR_PATH}/cppzmq-${GIT_HASH}/include")
+

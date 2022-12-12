@@ -9,7 +9,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.commoncpp 1.0
-import tech.strata.sgwidgets 0.9 as SGWidgets0
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.sgwidgets 1.0
 
 Rectangle {
@@ -22,7 +22,7 @@ Rectangle {
     ColumnLayout {
         anchors.centerIn: root
 
-        SGIcon{
+        SGWidgets2.SGIcon{
             Layout.alignment: Qt.AlignHCenter
             source: "qrc:/sgimages/exclamation-triangle.svg"
             width: 80
@@ -31,7 +31,7 @@ Rectangle {
             visible: hasDownloads === false
         }
 
-        SGText {
+        SGWidgets2.SGText {
             id: errText
             Layout.alignment: Qt.AlignHCenter
             text: hasDownloads ? "No PDF documents found for this platform" : "No PDF documents or downloadable<br>files found for this platform"

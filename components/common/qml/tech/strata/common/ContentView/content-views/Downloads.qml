@@ -12,6 +12,7 @@ import QtQuick.Controls 2.3
 import Qt.labs.settings 1.0 as QtLabsSettings
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.DownloadDocumentListModel 1.0
 import tech.strata.theme 1.0
@@ -39,7 +40,7 @@ Item {
     ButtonGroup {
         id: downloadButtonGroup
         exclusive: false
-        checkState: selectAllRadioButton.checkState
+        checkState: selectAllCheckBox.checkState
     }
 
     Column {
@@ -50,16 +51,16 @@ Item {
             topMargin: 10
             horizontalCenter: parent.horizontalCenter
         }
+        spacing: 10
 
-        SGWidgets.SGText {
+        SGWidgets2.SGText {
             text: "Select files for download:"
             font.bold: true
             fontSizeMultiplier: 1.2
-            alternativeColorEnabled: true
         }
 
-        DocumentCheckBox {
-            id: selectAllRadioButton
+        SGWidgets2.SGCheckBox {
+            id: selectAllCheckBox
             text: "Select All"
             checkState: downloadButtonGroup.checkState
             enabled: repeater.model.downloadInProgress === false
@@ -123,21 +124,38 @@ Item {
                                 bottom: parent.bottom
                             }
 
-                            DocumentCheckBox {
+                            SGWidgets2.SGCheckBox {
                                 id: checkbox
                                 anchors.centerIn: parent
 
-                                fakeEnabled: delegate.pressable
-                                enabled: false
+                                enabled: delegate.pressable
                                 padding: 0
                                 onCheckedChanged: {
                                     delegate.checked = checked
+                                }
+                                onHoveredChanged: {
+                                    delegate.hovered = hovered
                                 }
 
                                 Binding {
                                     target: checkbox
                                     property: "checked"
                                     value: delegate.checked
+                                }
+
+                                MouseArea {
+                                    id: mouseArea
+                                    anchors.fill: checkbox
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+
+                                    onClicked: {
+                                        if (checkbox.checked) {
+                                            checkbox.checked = false
+                                        } else {
+                                            checkbox.checked = true
+                                        }
+                                    }
                                 }
 
                                 ButtonGroup.group: downloadButtonGroup
@@ -164,7 +182,7 @@ Item {
                                   || model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
-                        SGWidgets.SGText {
+                        SGWidgets2.SGText {
                             id: textItem
 
                             anchors {
@@ -192,7 +210,6 @@ Item {
 
                                 return model.downloadFilename.replace(htmlTags, "");
                             }
-                            alternativeColorEnabled: true
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             elide: Text.ElideNone
@@ -233,7 +250,7 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                color: TangoTheme.palette.chameleon2
+                                color: Theme.palette.onsemiOrange
                             }
                         }
 
@@ -248,11 +265,11 @@ Item {
                             height: infoItem.contentHeight + 2
 
                             radius: 2
-                            color: TangoTheme.palette.error
+                            color: Theme.palette.error
                             visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
-                        SGWidgets.SGText {
+                        SGWidgets2.SGText {
                             id: infoItem
                             anchors {
                                 top: model.status === DownloadDocumentListModel.FinishedWithError ? textItem.bottom : progressBar.bottom
@@ -263,7 +280,6 @@ Item {
 
                             opacity: model.status === DownloadDocumentListModel.FinishedWithError ? 1 : 0.8
                             elide: Text.ElideRight
-                            alternativeColorEnabled: true
                             font.family: "Monospace"
                             text: {
                                 if (model.status === DownloadDocumentListModel.Waiting) {
@@ -297,37 +313,27 @@ Item {
 
         Item {
             width: 1
-            height: 20
+            height: 10
         }
 
-        Item {
+        Column {
             id: savePathWrapper
-            width: parent.width
-            height: savePathField.y + savePathField.height
 
+            spacing: 5
+            width: parent.width
             enabled: repeater.model.downloadInProgress === false
 
-            SGWidgets.SGText {
+            SGWidgets2.SGText {
                 id: savePathLabel
-                anchors {
-                    top: parent.top
-                }
 
                 text: "Save folder"
-                color: "white"
             }
 
             SGWidgets.SGTextField {
                 id: savePathField
-                anchors {
-                    top: savePathLabel.bottom
-                    left: parent.left
-                    right: savePathButton.left
-                    rightMargin: 4
-                }
 
+                width: savePathWrapper.width
                 contextMenuEnabled: true
-                darkMode: true
                 text: savePath
                 onTextChanged: {
                     savePath = text
@@ -341,86 +347,45 @@ Item {
                 }
             }
 
-            Button {
-                id: savePathButton
-                height: savePathField.height - 2
-                width: height
-                anchors {
-                    verticalCenter: savePathField.verticalCenter
-                    right: parent.right
+            Row {
+                spacing: 5
+
+                SGWidgets2.SGButton {
+                    id: savePathButton
+                    text: "Select"
+
+                     onClicked: {
+                        if (savePath.length === 0) {
+                            fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(defaultSavePath)
+                        } else {
+                            fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
+                        }
+
+                        fileDialog.open()
+                     }
                 }
 
-                icon.source: "qrc:/sgimages/folder-open.svg"
-                onClicked: {
-                    if (savePath.length === 0) {
-                        fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(defaultSavePath)
-                    } else {
-                        fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
+                SGWidgets2.SGButton {
+                    enabled: savePath !== ""
+                    text: "Open"
+
+                    onClicked: {
+                        if(!fileDialog.visible) {
+                            Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(savePath))
+                        }
                     }
-
-                    fileDialog.open()
-                }
-
-                MouseArea {
-                    id: buttonCursor
-                    anchors.fill: parent
-                    onPressed:  mouse.accepted = false
-                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }
 
-        Item {
+       Item {
             width: 1
-            height: 10
+            height: 20
         }
 
-        Button {
-            width: Math.min(implicitWidth, parent.width)
+        SGWidgets2.SGButton {
             anchors.horizontalCenter: wrapper.horizontalCenter
-            opacity: enabled ? 1 : 0.4
-            enabled: savePath !== ""
-            text: "Open Save Folder"
 
-            contentItem: SGWidgets.SGText {
-                text: parent.text
-                font: parent.font
-                color: enabled ? "black" : "white"
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            background: Rectangle {
-                implicitWidth: 200
-                implicitHeight: 40
-                color: TangoTheme.palette.aluminium2
-            }
-
-            onClicked: {
-                if(!fileDialog.visible){
-                   Qt.openUrlExternally(CommonCpp.SGUtilsCpp.pathToUrl(savePath))
-                }
-            }
-
-            MouseArea {
-                id: buttonCursor2
-                anchors.fill: parent
-                onPressed:  mouse.accepted = false
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
-
-        Item {
-            width: 1
-            height: 10
-        }
-
-        Button {
-            anchors {
-                horizontalCenter: wrapper.horizontalCenter
-            }
-
-            opacity: enabled ? 1 : 0.4
             enabled: {
                 if (downloadButtonGroup.checkState === Qt.Unchecked
                         || repeater.model.downloadInProgress
@@ -431,30 +396,13 @@ Item {
 
                 return true
             }
-
-            contentItem: SGWidgets.SGText {
-                text: "Download"
-                alternativeColorEnabled: true
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            background: Rectangle {
-                color: Theme.palette.onsemiOrange
-                implicitWidth: 100
-                implicitHeight: 40
-            }
+            text: "Download"
+            buttonSize: SGWidgets2.SGButton.Large
+            icon.source: "qrc:/sgimages/download.svg"
 
             onClicked: {
                 var url = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
                 repeater.model.downloadSelectedFiles(url)
-            }
-
-            MouseArea {
-                id: buttonCursor1
-                anchors.fill: parent
-                onPressed:  mouse.accepted = false
-                cursorShape: Qt.PointingHandCursor
             }
         }
     }

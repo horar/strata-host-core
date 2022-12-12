@@ -73,6 +73,7 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
     src/ComponentUpdateInfo.cpp
+    src/ErrorTracker.cpp
 
     src/RunGuard.cpp
 

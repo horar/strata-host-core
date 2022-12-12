@@ -20,6 +20,8 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME} MODULE
     ConfigFileSettings.cpp
+    LogFilesCompress.cpp
+    QtFilterRulesModel.cpp
     logconf_plugin.cpp
     qml.qrc
 
@@ -35,6 +37,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Qml
 
     strata::QtLogger
+    QuaZip::QuaZip
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -70,3 +73,4 @@ add_custom_command(
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")
+add_qml_import_path(PATH "${CMAKE_SOURCE_DIR}/components/logconf")

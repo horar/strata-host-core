@@ -12,9 +12,11 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 0.9
-import tech.strata.sgwidgets 1.0 as SGWidgets1
+import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.theme 1.0
 
 import "qrc:/js/help_layout_manager.js" as Help
 
@@ -152,7 +154,7 @@ Item {
         }
     }
 
-    SGWidgets1.SGSplitView {
+    SGWidgets.SGSplitView {
         id: contentContainer
         anchors {
             fill: parent
@@ -160,7 +162,7 @@ Item {
 
         Rectangle {
             id: navigationSidebar
-            color: Qt.darker("#666")
+            color: "#F1F2F2"
             Layout.fillHeight: true
             Layout.minimumWidth: 100
             implicitWidth: 300
@@ -171,10 +173,9 @@ Item {
                 anchors {
                     fill: parent
                 }
-
-                contentsColor: Qt.darker("#555")
-                textClosedColor: "#ccc"
-                headerClosedColor: "#484848"
+                contentsColor: "#F1F2F2"
+                headerOpenColor: Theme.palette.darkGray
+                headerClosedColor: Theme.palette.lightGray
                 dividerColor: contentsColor
                 exclusive: false
 
@@ -321,17 +322,19 @@ Item {
             width: 200
         }
 
-        Text {
+        SGWidgets2.SGText {
             id: loadingText
             color: "#fff"
             anchors {
                 top: loadingImage.bottom
-                horizontalCenter: loading.horizontalCenter
+                left: parent.left
+                leftMargin: 12
+                right: parent.right
+                rightMargin: 12
             }
-            font {
-                pixelSize: 30
-                family:  Fonts.franklinGothicBold
-            }
+
+            fontSizeMultiplier: 2
+            font.family:  Fonts.franklinGothicBold
             text: {
                 if (classDocuments.errorString.length > 0) {
                     return "Error: " + classDocuments.errorString
@@ -344,8 +347,7 @@ Item {
                 return ""
             }
 
-            width: 500
-            wrapMode: Text.Wrap
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             horizontalAlignment: Text.AlignHCenter
         }
 

@@ -34,70 +34,92 @@ Item {
     }
 
     ConfigFileModel {
-        id:configFileModel
+        id: configFileModel
     }
 
     ColumnLayout {
-        id:mainLayout
+        id: mainLayout
 
         anchors {
             fill: parent
-            leftMargin: outerSpacing
-            rightMargin: outerSpacing
+            margins: outerSpacing
         }
+        spacing: outerSpacing
 
-        SGWidgets.SGText {
-            id: title
-            text: "Configuration files"
-        }
+        ColumnLayout {
+            spacing: innerSpacing
 
-        RowLayout {
-            SGWidgets.SGComboBox {
-                id: iniFileComboBox
+            SGWidgets.SGText {
+                id: title
+                text: "Configuration files"
                 Layout.fillWidth: true
-                model: configFileModel
-                textRole: "fileName"
-                enabled: count !== 0
-                placeholderText: count == 0 ? "No configuration files found" : "Please select config file"
-                onActivated: {
-                    console.log(Logger.lcuCategory, "Selected INI file changed to:", iniFileComboBox.currentText)
-                }
-                popupHeight: mainLayout.height
+            }
 
-                Connections {
-                    target: configFileModel
-                    onCountChanged: { //is called always when list of INI files is loaded/reloaded
-                        iniFileComboBox.currentIndex = -1
+            RowLayout {
+
+                SGWidgets.SGComboBox {
+                    id: iniFileComboBox
+                    Layout.fillWidth: true
+                    model: configFileModel
+                    textRole: "fileName"
+                    enabled: count !== 0
+                    placeholderText: count == 0 ? "No configuration files found" : "Please select config file"
+                    onActivated: {
+                        console.log(Logger.lcuCategory, "Selected INI file changed to:", iniFileComboBox.currentText)
+                    }
+                    popupHeight: mainLayout.height
+
+                    Connections {
+                        target: configFileModel
+                        onCountChanged: { //is called always when list of INI files is loaded/reloaded
+                            iniFileComboBox.currentIndex = -1
+                        }
+                    }
+                }
+
+                SGWidgets.SGButton {
+                    id: reloadButton
+                    Layout.preferredWidth: height
+                    Layout.alignment: Qt.AlignRight
+                    icon.source: "qrc:/sgimages/redo.svg"
+                    onClicked: {
+                        configFileModel.reload()
+                        iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
                     }
                 }
             }
-            SGWidgets.SGButton {
-                id: reloadButton
-                Layout.preferredWidth: height
-                Layout.alignment: Qt.AlignRight
-                icon.source: "qrc:/sgimages/redo.svg"
-                onClicked: {
-                    configFileModel.reload()
-                    iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
-                }
+        }
+
+        ColumnLayout {
+            spacing: innerSpacing
+
+            LogLevel {
+                id: logLevelPane
+                Layout.fillWidth: true
+                fileName: iniFileComboBox.currentText
+            }
+
+            LogDetails {
+                id : logDetailsPane
+                Layout.fillWidth: true
+                fileName: iniFileComboBox.currentText
+                lcuApp: true
             }
         }
 
-        LogLevel {
-            id: logLevelPane
-            Layout.fillWidth: true
-            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
-        }
+        ColumnLayout {
+            spacing: innerSpacing
 
-        LogDetails {
-            id : logDetailsPane
-            Layout.fillWidth: true
-            fileName: configFileModel.get(iniFileComboBox.currentIndex).filePath
-            lcuApp: true
+            SGWidgets.SGText {
+                id: exportText
+                text: "Export log files"
+            }
 
-            Component.onCompleted: {
-                configFileModel.reload()
-                iniFileComboBox.currentIndex = iniFileComboBox.find(settings.value("selectedFileName",""))
+            LogExport {
+                id: logExportPane
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignRight
+                appName: iniFileComboBox.currentText
             }
         }
     }

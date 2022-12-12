@@ -16,5 +16,6 @@ Q_LOGGING_CATEGORY(lcDevStudioConfig, "strata.devstudio.config")
 Q_LOGGING_CATEGORY(lcResourceLoader, "strata.devstudio.resourceloader")
 Q_LOGGING_CATEGORY(lcFileDownloader, "strata.devstudio.fileDownloader")
 Q_LOGGING_CATEGORY(lcControlViewCreator, "strata.devstudio.controlViewCreator")
+Q_LOGGING_CATEGORY(lcNotification, "strata.devstudio.notification")
 
 Q_LOGGING_CATEGORY(lcDevStudioHcs, "strata.devstudio.hcs")

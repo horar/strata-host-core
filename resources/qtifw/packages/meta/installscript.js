@@ -10,6 +10,7 @@ var isSilent = false;
 var performCleanup = false;
 var restart_is_required = false;
 var is_command_line_instance = false;
+const essentialUpdated = 6; // there is no QInstaller.EssentialUpdated
 
 function isValueSet(val)
 {
@@ -145,14 +146,19 @@ Component.prototype.createOperations = function()
 Component.prototype.onInstallationStarted = function()
 {
     if (component.updateRequested() || component.installationRequested()) {
+        let target_dir = installer.value("TargetDir");
+        let updateResourceFilePath = "";
         if (systemInfo.productType == "windows") {
-            let target_dir = installer.value("TargetDir").split("/").join("\\");
+            target_dir = target_dir.split("/").join("\\");
+            updateResourceFilePath = target_dir + "\\update.rcc";
             component.installerbaseBinaryPath = target_dir + "\\installerbase.exe";
-            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
         } else if (systemInfo.productType == "osx") {
-            component.installerbaseBinaryPath = installer.value("TargetDir") + "/installerbase";
-            installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+            component.installerbaseBinaryPath = target_dir + "/installerbase";
+            updateResourceFilePath = target_dir + "/update.rcc";
         }
+
+        installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        installer.setValue("DefaultResourceReplacement", updateResourceFilePath);
     }
 
     if (installer.isInstaller()) {
@@ -244,6 +250,17 @@ Component.prototype.onLicenseAgreementPageEntered = function ()
     }
 }
 
+function cleanupAfterUpdate()
+{
+    // after update, we can do cleanup if available
+    let componentsToClean = acquireCleanupOperations();
+    if (componentsToClean.length > 0) {
+        // when it restarts, it retains all variables
+        installer.setValue("restartMaintenanceTool", "true");
+        installer.setValue("performCleanup_internal","true");   // set this since the Controller() is not called
+    }
+}
+
 Component.prototype.onFinishedPageEntered = function ()
 {
     console.log("onFinishedPageEntered");
@@ -252,7 +269,9 @@ Component.prototype.onFinishedPageEntered = function ()
     if (widget != null) {
         let runItCheckBox = widget.findChild("RunItCheckBox");
         if (runItCheckBox != null) {
-            if ((installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success) && isSilent && isComponentInstalled("com.onsemi.strata.devstudio")) {
+            if ((installer.isUpdater() || installer.isPackageManager()) &&
+                ((installer.status == QInstaller.Success) || (installer.status == essentialUpdated)) &&
+                isSilent && isComponentInstalled("com.onsemi.strata.devstudio")) {
                 runItCheckBox.setChecked(true);
             } else {
                 runItCheckBox.setChecked(false);
@@ -267,16 +286,27 @@ Component.prototype.onFinishedPageEntered = function ()
     } else {
         console.log("Error: unable to locate default page 'InstallationFinished'");
     }
-
-    if (isSilent) {
-        if (installer.isUpdater() && (installer.status == QInstaller.Success) && (performCleanup == false)) {
-            // after update, we can do cleanup if available
-            let componentsToClean = acquireCleanupOperations();
-            if (componentsToClean.length > 0) {
-                // when it restarts, it retains all variables
-                installer.setValue("restartMaintenanceTool", "true");
-                installer.setValue("performCleanup_internal","true");   // set this since the Controller() is not called
+    
+    if (isSilent && installer.isUpdater()) {
+        if (installer.status == essentialUpdated) {
+            // check if there are any disabled components
+            let component_list = installer.components();
+            let restart_maintenance_tool = false;
+            for (let i = 0; i < component_list.length; i++) {
+                if (component_list[i].enabled == false &&
+                    component_list[i].installationRequested() == false) {
+                    restart_maintenance_tool = true;
+                    break;
+                }
             }
+            if (restart_maintenance_tool) {
+                installer.setValue("restartMaintenanceTool", "true");
+            } else if (performCleanup == false) {
+                cleanupAfterUpdate();
+            }
+        }
+        if ((installer.status == QInstaller.Success) && (performCleanup == false)) {
+            cleanupAfterUpdate();
         }
     }
 }
@@ -378,7 +408,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
         // erase StrataUtils folder
         let strataUtilsFolder = target_dir + "\\StrataUtils";
         if (installer.fileExists(strataUtilsFolder)) {
-            if (installer.status == QInstaller.Success) {
+            if ((installer.status == QInstaller.Success) || (installer.status == essentialUpdated)) {
                 isRestartRequired(strataUtilsFolder);   // call BEFORE erasing StrataUtils folder
             }
             console.log("erasing StrataUtils folder: " + strataUtilsFolder);
@@ -388,7 +418,7 @@ Component.prototype.onInstallationOrUpdateFinished = function()
             }
         }
 
-        if (installer.status == QInstaller.Success) {
+        if ((installer.status == QInstaller.Success) || (installer.status == essentialUpdated)) {
             console.log("fixing permissions for .dat files which are missing inheritance due to the way QTIFW creates them");
             let script_file = target_dir + "\\" + "update_permissions.vbs";
             let installer_dat = target_dir + "\\" + "installer.dat";
@@ -632,8 +662,8 @@ function executePowershell(powershell64Location, powerShellCommand)
 
 function executeFind()
 {
-    console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirX64"));
-    let findOutput = installer.execute("find", [installer.value("ApplicationsDirX64"), "-name", installer.value("MaintenanceToolName") + ".app"]);
+    console.log("checking if '" + installer.value("MaintenanceToolName") + ".app' exists in " + installer.value("ApplicationsDirUser"));
+    let findOutput = installer.execute("find", [installer.value("ApplicationsDirUser"), "-name", installer.value("MaintenanceToolName") + ".app"]);
 
     return validateCommandOutput(findOutput);
 }
@@ -771,7 +801,6 @@ function acquireCleanupOperations()
         return [];
     }
 
-    let cleanupAvailable = false;
     let lines = content.split('\n');
     let componentsToClean = [];
     for (let i = 0; i < lines.length; i++) {
@@ -780,7 +809,6 @@ function acquireCleanupOperations()
             continue;
         }
         if (isComponentInstalled(line)) {
-            cleanupAvailable = true;
             componentsToClean.push(line)
         }
     }

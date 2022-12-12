@@ -20,42 +20,41 @@ SGWidgets.SGDialog {
     focus: true
     destroyOnClose: true
 
-    property int innerSpacing: 5
+    property int innerSpacing: 10
 
     ColumnLayout {
         id: prtSettings
         anchors.fill: parent
-        spacing: innerSpacing
 
         SGWidgets.SGText {
             text: "Logging Configuration"
             fontSizeMultiplier: 1.3
             font.bold: true
-            Layout.alignment: Qt.AlignVCenter
-            Layout.minimumHeight: logLevel.height
         }
 
         LcuPlugin.LogLevel {
             id: logLevel
             Layout.fillWidth: true
-            fileName: ""
+            fileName: Qt.application.name
+        }
+
+        SGWidgets.SGText {
+            text: "Export log files"
+            fontSizeMultiplier: 1.3
+            font.bold: true
+        }
+
+        LcuPlugin.LogExport {
+            id: logExportPane
+            Layout.fillWidth: true
+            appName: Qt.application.name
         }
 
         SGWidgets.SGButton {
             id: closeButton
-
             text: "Close"
-            fontSizeMultiplier: 1.3
-            font.bold: true
             Layout.alignment: Qt.AlignCenter
-            Layout.minimumHeight: logLevel.height
-            Layout.minimumWidth: 2*height
             onClicked: prtSettingsDialog.accepted()
-            background: Rectangle {
-                anchors.fill: parent
-                radius: innerSpacing
-                color: parent.hovered ? headerBgColor : closeButton.implicitColor
-            }
         }
     }
 }

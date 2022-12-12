@@ -32,7 +32,7 @@ import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.theme 1.0
-import tech.strata.notifications 1.0
+import tech.strata.notification 1.0
 import tech.strata.signals 1.0
 
 Rectangle {
@@ -78,12 +78,12 @@ Rectangle {
 
     SGSortFilterProxyModel {
         id: criticalNotifications
-        sourceModel: Notifications.model
+        sourceModel: sdsModel.notificationModel
         sortEnabled: false
         invokeCustomFilter: true
 
         function filterAcceptsRow(index) {
-            return sourceModel.get(index).level === Notifications.Level.Critical
+            return sourceModel.get(index).level === Notification.Error
         }
     }
 
@@ -640,12 +640,12 @@ Rectangle {
                 }
 
                 SGMenuItem {
-                    text: qsTr("Notifications (" + Notifications.model.count + ")")
+                    text: qsTr("Notifications (" + sdsModel.notificationModel.count + ")")
                     iconSource: hasNotifications ? "qrc:/sgimages/exclamation-circle.svg" : ""
                     width: profileMenu.width
                     onClicked: {
                         profileMenu.close()
-                        mainWindow.notificationsInbox.open()
+                        mainWindow.notificationDrawer.open()
                     }
                 }
 
@@ -692,16 +692,14 @@ Rectangle {
                             } else {
                                 mainWindow.showFullScreen()
 
-                                Notifications.createNotification(
-                                qsTr("Press '%1' to exit full screen").arg(escapeFullScreenMode.sequence),
-                                Notifications.Info,
-                                "current",
-                                null,
-                                {
-                                    "singleton": true,
-                                    "timeout": 4000
-                                }
-                                )
+                                sdsModel.notificationModel.create(
+                                            {
+                                                "title": "Full screen enabled",
+                                                "description": "Press \'" + escapeFullScreenMode.sequence + "\' to exit full screen",
+                                                "level": Notification.Info,
+                                                "unique": true,
+                                            }
+                                            )
                             }
                             profileMenu.close()
                         }

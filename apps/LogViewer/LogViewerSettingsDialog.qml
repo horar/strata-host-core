@@ -38,32 +38,22 @@ SGWidgets.SGDialog {
         LcuPlugin.LogLevel {
             id: logLevel
             Layout.fillWidth: true
-            fileName: ""
+            fileName: Qt.application.name
         }
 
 
         LcuPlugin.LogDetails {
             id: logDetails
             Layout.fillWidth: true
-            fileName: ""
+            fileName: Qt.application.name
             lcuApp: false
         }
 
         SGWidgets.SGButton {
             id: closeButton
-
             text: "Close"
-            fontSizeMultiplier: 1.3
-            font.bold: true
             Layout.alignment: Qt.AlignCenter
-            Layout.minimumHeight: logLevel.height
-            Layout.minimumWidth: 2*height
             onClicked: lvSettingsDialog.accepted()
-            background: Rectangle {
-                anchors.fill: parent
-                radius: innerSpacing
-                color: parent.hovered ? headerBgColor : closeButton.implicitColor
-            }
         }
     }
 }

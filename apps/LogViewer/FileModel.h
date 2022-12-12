@@ -10,7 +10,9 @@
 #define FILEMODEL_H
 
 #include <QAbstractListModel>
+#include <QDateTime>
 
+#include "LogLevel.h"
 
 class FileModel : public QAbstractListModel
 {
@@ -20,21 +22,41 @@ class FileModel : public QAbstractListModel
 
 public:
     explicit FileModel(QObject *parent = nullptr);
-    virtual ~FileModel() override;
+    ~FileModel();
 
     enum {
         FileNameRole = Qt::UserRole,
         FilePathRole,
     };
 
-    void append(const QString &path);
+    struct FileMetadata {
+        FileMetadata()
+            : lastPosition(0),
+              lastTimestamp(),
+              lastLogLevel(LogLevel::Value::LevelUnknown)
+        { }
+        qint64 lastPosition;         // last read position in file
+        QByteArray lastPartialLine;  // last read line which is not ended by new line character
+        QDateTime lastTimestamp;
+        QByteArray lastPid;
+        QByteArray lastTid;
+        LogLevel::Value lastLogLevel;
+    };
+
+    int append(const QString &path);
     int remove(const QString &path); /*returns index at which the file was removed*/
     void clear();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QString getFilePathAt(const int &pos) const;
-    Q_INVOKABLE bool containsFilePath(const QString &path);
+    QString getFilePathAt(int index) const;
+    FileMetadata getFileMetadataAt(int index) const;
+    void setFileMetadataAt(int index, const FileMetadata &metadata);
+    qint64 getLastPositionAt(int index) const;
+    void setLastPositionAt(int index, qint64 filePosition);
+    Q_INVOKABLE bool containsFilePath(const QString &path) const;
+    int getFileIndex(const QString &path) const;
+    void copyFileMetadata(int fromIndex, int toIndex);
 
 signals:
     void countChanged();
@@ -43,7 +65,16 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QStringList data_;
+    struct FileData {
+        explicit FileData(const QString &path)
+            : path(path)
+        { }
+        QString path;
+        FileMetadata metadata;
+    };
+    QList<FileData> data_;
+
+    int getDataIndex(const QString &path) const;  // returns -1 if nothing was found
 };
 
 #endif

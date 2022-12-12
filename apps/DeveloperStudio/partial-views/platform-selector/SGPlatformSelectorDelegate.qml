@@ -363,6 +363,7 @@ Item {
                             "name": model.verbose_name,
                             "index": sourceIndex,
                             "available": model.available,
+                            "bootloader_version": model.bootloader_version,
                             "firmware_version": model.firmware_version,
                             "view": view,
                             "connected": model.connected

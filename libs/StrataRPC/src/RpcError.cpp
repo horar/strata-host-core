@@ -73,6 +73,19 @@ void RpcError::setData(const QJsonObject &data) {
     sharedDataPtr_->data = data;
 }
 
+QJsonObject RpcError::toJsonObject() const
+{
+    QJsonObject errorObject;
+    errorObject.insert("code", code());
+    errorObject.insert("message", message());
+
+    if (data().isEmpty() == false) {
+        errorObject.insert("data", data());
+    }
+
+    return errorObject;
+}
+
 QString RpcError::defaultMessage(RpcErrorCode code)
 {
     switch(code) {
@@ -97,6 +110,14 @@ QString RpcError::defaultMessage(RpcErrorCode code)
     case ClientAlreadyRegisteredError: return "client already registered";
     case ClientUnregistrationError: return "client unregistration error";
     case ClientNotRegistered: return "client not registered error";
+    case ReplicatorRunError: return "database replicator not running";
+    case ReplicatorStopped: return "database replicator error";
+    case ReplicatorOffline: return "database replicator offline - the remote host is unreachable";
+    case ReplicatorWebSocketFailed: return "database replicator WebSocket failed to connect";
+    case ReplicatorCertificateError: return "database replicator certificate error";
+    case ReplicatorNetworkError: return "database replicator network error";
+    case ReplicatorWrongCredentials: return "database replicator wrong credentials";
+    case ReplicatorNoSuchDb: return "database replicator cannot connect to database";
     default:
         return "error message for this error not available";
     }

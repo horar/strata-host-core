@@ -118,9 +118,8 @@ signals:
     void disconnected();
 
     /**
-     * Emitted when an error has occurred. For testing purposes only.
-     * @param [in] errorType error category description.
-     * @param [in] errorMessage QString of the actual error.
+     * Emitted when an error has occurred.
+     * @param [in] code Strata RPC error code
      */
     void errorOccurred(const strata::strataRPC::RpcErrorCode code);
 
@@ -151,8 +150,6 @@ private:
     QByteArray buildNotificationMessage(
             const QString &method,
             const QJsonObject &params);
-
-    QJsonObject buildErrorPayload(const RpcError &error);
 
     void processResult(int id, const QJsonObject &result);
     void processError(int id, const QJsonObject &error);

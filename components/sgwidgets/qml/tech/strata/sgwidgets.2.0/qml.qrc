@@ -4,5 +4,7 @@
         <file>SGButton.qml</file>
         <file>SGSettings.qml</file>
         <file>SGText.qml</file>
+        <file>SGIcon.qml</file>
+        <file>SGCheckBox.qml</file>
     </qresource>
 </RCC>

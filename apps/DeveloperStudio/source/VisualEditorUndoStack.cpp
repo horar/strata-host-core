@@ -35,6 +35,12 @@ void VisualEditorUndoStack::undo(const QString &file) {
         case CommandType::itemResized:
             emit undoItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.undoX, poppedCmd.undoY, poppedCmd.x, poppedCmd.y);
             break;
+        case CommandType::itemMovedFront:
+            emit undoItemMovedFront(poppedCmd.file, poppedCmd.objectList);
+            break;
+        case CommandType::itemMovedBack:
+            emit undoItemMovedBack(poppedCmd.file, poppedCmd.objectList);
+            break;
     }
 
     emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
@@ -63,6 +69,12 @@ void VisualEditorUndoStack::redo(const QString &file) {
             break;
         case CommandType::itemResized:
             emit undoItemResized(poppedCmd.file, poppedCmd.uuid, poppedCmd.x, poppedCmd.y, poppedCmd.undoX, poppedCmd.undoY);
+            break;
+        case CommandType::itemMovedFront:
+            emit undoItemMovedFront(poppedCmd.file, QList<QString>{poppedCmd.uuid});
+            break;
+        case CommandType::itemMovedBack:
+            emit undoItemMovedBack(poppedCmd.file, QList<QString>{poppedCmd.uuid});
             break;
     }
 
@@ -120,6 +132,54 @@ void VisualEditorUndoStack::removeItem(const QString &file, const QString &uuid,
     cmd.uuid = uuid;
     cmd.objectString = objectString;
     cmd.commandType = CommandType::itemDeleted;
+
+    addToHashTable(file, cmd);
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
+}
+
+void VisualEditorUndoStack::moveItemFront(const QString &file, const QString &uuid, const QList<QString> &objectList) {
+    UndoCommand cmd;
+    cmd.file = file;
+    cmd.uuid = uuid;
+    cmd.commandType = CommandType::itemMovedFront;
+
+    // preprocess the objects that need to be moved
+    bool found = false;
+    QList<QString> undoObjectList;
+    for (auto uuidIter = objectList.begin(); uuidIter != objectList.end(); ++uuidIter) {
+        if ((*uuidIter) != uuid) {
+            if (found) {
+                undoObjectList.push_back((*uuidIter));
+            }
+        } else {
+            found = true;
+        }
+    }
+    cmd.objectList = undoObjectList;
+
+    addToHashTable(file, cmd);
+    emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));
+}
+
+void VisualEditorUndoStack::moveItemBack(const QString &file, const QString &uuid, const QList<QString> &objectList) {
+    UndoCommand cmd;
+    cmd.file = file;
+    cmd.uuid = uuid;
+    cmd.commandType = CommandType::itemMovedBack;
+
+    // preprocess the objects that need to be moved
+    bool found = false;
+    QList<QString> undoObjectList;
+    for (auto uuidIter = objectList.rbegin(); uuidIter != objectList.rend(); ++uuidIter) {
+        if ((*uuidIter) != uuid) {
+            if (found) {
+                undoObjectList.push_back((*uuidIter));
+            }
+        } else {
+            found = true;
+        }
+    }
+    cmd.objectList = undoObjectList;
 
     addToHashTable(file, cmd);
     emit undoRedoState(file, isUndoPossible(file), isRedoPossible(file));

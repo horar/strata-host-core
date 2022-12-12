@@ -17,7 +17,7 @@ namespace strata::strataRPC
 {
 Q_NAMESPACE
 
-enum RpcErrorCode {
+enum RpcErrorCode : int {
     NoError = 0,
 
     /* JSON-RPC pre-defined error codes, from -32000 to -32768 */
@@ -44,6 +44,14 @@ enum RpcErrorCode {
     ClientAlreadyRegisteredError,
     ClientUnregistrationError,
     ClientNotRegistered,
+    ReplicatorRunError,
+    ReplicatorStopped,
+    ReplicatorOffline,
+    ReplicatorWebSocketFailed,
+    ReplicatorCertificateError,
+    ReplicatorNetworkError,
+    ReplicatorWrongCredentials,
+    ReplicatorNoSuchDb,
     };
 Q_ENUM_NS(RpcErrorCode)
 
@@ -68,6 +76,8 @@ public:
 
     QJsonObject data() const;
     void setData(const QJsonObject &data);
+
+    QJsonObject toJsonObject() const;
 
     static QString defaultMessage(RpcErrorCode code);
 

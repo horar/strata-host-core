@@ -20,7 +20,6 @@ Item {
 
     property alias model: logListView.model
     property alias currentIndex: logListView.currentIndex
-    property int cellWidthSpacer: 6
     property int cellHeightSpacer: 6
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
@@ -44,9 +43,10 @@ Item {
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
     property int indexOfVisibleItem: logListView.indexAt(contentX, contentY) //Returns the index of the visible item containing the point x, y in content coordinates.
-    property bool markIconVisible
     property bool showMarks: false
     property bool searchingMode: false
+    property int contentRightMargin: 12
+    property int contentLeftMargin: 8
 
     signal delegateSelected(int index)
 
@@ -66,31 +66,31 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 +UTC99:99"
+        text: "9999-99-99 99:99.99.999 +UTC99:99x"
     }
 
     TextMetrics {
         id: textMetricsTsSimpleTime
         font: timestampHeaderText.font
-        text: "99:99.99.999"
+        text: "99:99.99.999x"
     }
 
     TextMetrics {
         id: textMetricsPid
         font: timestampHeaderText.font
-        text: "9999999999"
+        text: "1234567890"
     }
 
     TextMetrics {
         id: textMetricsTid
         font: timestampHeaderText.font
-        text: "9999999999"
+        text: "1234567890"
     }
 
     TextMetrics {
         id: textMetricsLevelTag
         font: timestampHeaderText.font
-        text: "DEBUG"
+        text: "DEBUGx"
     }
 
     TextMetrics {
@@ -126,25 +126,14 @@ Item {
     TextMetrics {
         id: textMetricsMark
         font: timestampHeaderText.font
-        text: " W "
-    }
-
-    TextMetrics {
-        id: textMetricsIndex
-        font: timestampHeaderText.font
-        text: "Index"
+        text: "W"
     }
 
     Item {
         id: header
         anchors.top: parent.top
-        width: if (logListView.contentWidth > root.width) {
-                   return logListView.contentWidth
-               } else {
-                   return root.width
-               }
+        width: parent.width
         height: headerContent.height + 8
-        x: -logViewWrapper.contentX
 
         MouseArea {
             anchors.fill: parent
@@ -161,38 +150,43 @@ Item {
 
         RowLayout {
             id: headerContent
+
             height: messageHeaderText.contentHeight
+            anchors {
+                left: parent.left
+                right: parent.right
+                rightMargin: contentRightMargin
+            }
+
             spacing: 8
 
             Item {
                 id: markHeader
                 height: textMetricsMark.boundingRect.height
                 width: textMetricsMark.boundingRect.width
-                visible: markIconVisible
+                Layout.leftMargin: contentLeftMargin
             }
 
             Divider {
-                visible: markIconVisible
                 color: "transparent"
             }
 
             Item {
                 id: tsHeader
+
+                property int preferredWidth: {
+                    if (timestampSimpleFormat) {
+                        return textMetricsTsSimpleTime.boundingRect.width
+                    }
+
+                    return textMetricsTs.boundingRect.width
+                }
+
                 Layout.preferredHeight: timestampHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: timestampSimpleFormat ? textMetricsTsSimpleTime.boundingRect.width + cellWidthSpacer : textMetricsTs.boundingRect.width + cellWidthSpacer
+                Layout.preferredWidth: preferredWidth
                 Layout.minimumWidth: textMetricsTsMinimum.boundingRect.width
                 Layout.maximumWidth: logListView.width/2
-                Layout.leftMargin: handleSpacer
-                Layout.fillWidth: true
-
                 visible: timestampColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (tsDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
 
                 SGWidgets.SGText {
                     id: timestampHeaderText
@@ -210,29 +204,21 @@ Item {
                 id: tsDivider
                 Layout.fillHeight: true
                 visible: timestampColumnVisible
-                clickable: true
 
-                mouseArea.onMouseXChanged: {
-                    tsHeader.width = tsHeader.width + mouseX
+                onMouseXChanged: {
+                    tsHeader.preferredWidth = tsHeader.width + mouseX
                 }
             }
 
             Item {
                 id: pidHeader
+                property int preferredWidth: textMetricsPid.boundingRect.width
+
                 Layout.preferredHeight: pidHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: textMetricsPid.boundingRect.width + cellWidthSpacer
+                Layout.preferredWidth: preferredWidth
                 Layout.minimumWidth: textMetricsPidMinimum.boundingRect.width
                 Layout.maximumWidth: logListView.width/4
-                Layout.fillWidth: true
-
                 visible: pidColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (pidDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
 
                 SGWidgets.SGText {
                     id: pidHeaderText
@@ -250,29 +236,22 @@ Item {
                 id: pidDivider
                 Layout.fillHeight: true
                 visible: pidColumnVisible
-                clickable: true
 
-                mouseArea.onMouseXChanged: {
-                    pidHeader.width = pidHeader.width + mouseX
+                onMouseXChanged: {
+                    pidHeader.preferredWidth = pidHeader.width + mouseX
                 }
             }
 
             Item {
                 id: tidHeader
+
+                property int preferredWidth: textMetricsTid.boundingRect.width
+
                 Layout.preferredHeight: tidHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: textMetricsTid.boundingRect.width + cellWidthSpacer
+                Layout.preferredWidth: preferredWidth
                 Layout.minimumWidth: textMetricsTidMinimum.boundingRect.width
                 Layout.maximumWidth: logListView.width/4
-                Layout.fillWidth: true
-
                 visible: tidColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (tidDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
 
                 SGWidgets.SGText {
                     id: tidHeaderText
@@ -290,29 +269,22 @@ Item {
                 id: tidDivider
                 Layout.fillHeight: true
                 visible: tidColumnVisible
-                clickable: true
 
-                mouseArea.onMouseXChanged: {
-                    tidHeader.width = tidHeader.width + mouseX
+                onMouseXChanged: {
+                    tidHeader.preferredWidth = tidHeader.width + mouseX
                 }
             }
 
             Item {
                 id: levelHeader
+
+                property int preferredWidth: textMetricsLevelTag.boundingRect.width
+
                 Layout.preferredHeight: levelHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: textMetricsLevelTag.boundingRect.width + cellWidthSpacer
+                Layout.preferredWidth: preferredWidth
                 Layout.minimumWidth: textMetricsLevelMinimum.boundingRect.width
                 Layout.maximumWidth: logListView.width/4
-                Layout.fillWidth: true
-
                 visible: levelColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (levelDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
 
                 SGWidgets.SGText {
                     id: levelHeaderText
@@ -329,28 +301,19 @@ Item {
                 id: levelDivider
                 Layout.fillHeight: true
                 visible: levelColumnVisible
-                clickable: true
 
-                mouseArea.onMouseXChanged: {
-                    levelHeader.width = levelHeader.width + mouseX
+                onMouseXChanged: {
+                    levelHeader.preferredWidth = levelHeader.width + mouseX
                 }
             }
 
             Item {
                 id: msgHeader
+
                 Layout.preferredHeight: messageHeaderText.contentHeight + cellHeightSpacer
-                Layout.preferredWidth: root.width
                 Layout.minimumWidth: textMetricsMsgMinimum.boundingRect.width
                 Layout.fillWidth: true
-
                 visible: messageColumnVisible
-                clip: true
-
-                onWidthChanged: {
-                    if (msgDivider.mouseArea.onPressed) {
-                        Layout.preferredWidth = width
-                    }
-                }
 
                 SGWidgets.SGText {
                     id: messageHeaderText
@@ -364,17 +327,6 @@ Item {
                     onFontInfoChanged: {
                         logViewWrapper.contentX = 0
                     }
-                }
-            }
-
-            Divider {
-                id: msgDivider
-                Layout.fillHeight: true
-                visible: messageColumnVisible
-                clickable: true
-
-                mouseArea.onMouseXChanged: {
-                    msgHeader.width = msgHeader.width + mouseX
                 }
             }
         }
@@ -408,13 +360,10 @@ Item {
         id: logListView
         anchors.top: header.bottom
         anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottomMargin: horizontalScrollbar.visible ? horizontalScrollbar.height : 0
-        anchors.rightMargin: verticalScrollbar.visible ? verticalScrollbar.width : 0
-        flickableDirection: Flickable.HorizontalAndVerticalFlick
+        anchors.left: header.left
+        anchors.right: header.right
+
         boundsMovement: Flickable.StopAtBounds
-        boundsBehavior: Flickable.DragAndOvershootBounds
         highlightMoveDuration: 0
         highlightMoveVelocity: -1
         clip: true
@@ -427,29 +376,14 @@ Item {
             parent: logListView.parent
             anchors {
                 top: logListView.top
-                left: logListView.right
+                right: logListView.right
                 bottom: logListView.bottom
             }
-            width: 8
+            width: 10
 
             policy: ScrollBar.AlwaysOn
             minimumSize: 0.1
             visible: logListView.height < logListView.contentHeight
-        }
-
-        ScrollBar.horizontal: ScrollBar {
-            id: horizontalScrollbar
-            parent: logListView.parent
-            anchors {
-                top: logListView.bottom
-                left: logListView.left
-                right: logListView.right
-            }
-            height: 8
-
-            policy: ScrollBar.AlwaysOn
-            minimumSize: 0.1
-            visible: logListView.width < logListView.contentWidth
         }
 
         onContentYChanged: {
@@ -462,14 +396,10 @@ Item {
 
         delegate: FocusScope {
             id: delegate
-            width: row.width
-            height: row.height
+            width: msg.x + msg.width + contentRightMargin
+            height: msg.contentHeight
 
             property bool isHovered: cellMouseArea.containsMouse
-
-            onWidthChanged: {
-                logListView.contentWidth = delegate.width + 10
-            }
 
             ListView.onCurrentItemChanged: {
                 if (ListView.isCurrentItem && startAnimation) {
@@ -485,14 +415,14 @@ Item {
                 running: false
                 SequentialAnimation {
                     ColorAnimation {
-                        target: cell
+                        target: delegateBg
                         property: "color"
                         from: "white"
                         to: highlightColor
                         duration: animationDuration
                     }
                     ColorAnimation {
-                        target: cell
+                        target: delegateBg
                         property: "color"
                         from: highlightColor
                         to: "darkgray"
@@ -521,13 +451,9 @@ Item {
             }
 
             Rectangle {
-                id: cell
-                height: parent.height
-                width: if (logListView.contentWidth > root.width) {
-                           return logListView.contentWidth
-                       } else {
-                           return root.width
-                       }
+                id: delegateBg
+                anchors.fill: parent
+
                 color: {
                     if (delegate.ListView.isCurrentItem) {
                         if (logViewWrapper.activeFocus) {
@@ -552,211 +478,210 @@ Item {
                         return "white"
                     }
                 }
+            }
 
-                SGWidgets.SGAbstractContextMenu {
-                    id: contextMenuMarkPopup
+            SGWidgets.SGAbstractContextMenu {
+                id: contextMenuMarkPopup
 
-                    Action {
-                        id: copyAction
-                        text: qsTr("Copy")
-                        onTriggered: {
-                            let line = []
-                            let delimiter = " , "
+                Action {
+                    id: copyAction
+                    text: qsTr("Copy")
+                    onTriggered: {
+                        let line = []
+                        let delimiter = " , "
 
-                            if (ts.text) {
-                                line.push(ts.text)
-                            }
-                            if (pid.text) {
-                                line.push(pid.text)
-                            }
-                            if (tid.text) {
-                                line.push(tid.text)
-                            }
-                            if (level.text) {
-                                line.push(level.text)
-                            }
-                            if (msg.text) {
-                                line.push(msg.text.trim())
-                            }
-                            copyToClipboard(line.join(delimiter))
+                        if (ts.text) {
+                            line.push(ts.text)
                         }
-                    }
-
-                    onClosed: {
-                        logViewWrapper.forceActiveFocus()
+                        if (pid.text) {
+                            line.push(pid.text)
+                        }
+                        if (tid.text) {
+                            line.push(tid.text)
+                        }
+                        if (level.text) {
+                            line.push(level.text)
+                        }
+                        if (msg.text) {
+                            line.push(msg.text.trim())
+                        }
+                        copyToClipboard(line.join(delimiter))
                     }
                 }
 
-                MouseArea {
-                    id: cellMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClosed: {
+                    logViewWrapper.forceActiveFocus()
+                }
+            }
 
-                    onPressed: {
-                        logViewWrapper.forceActiveFocus()
-                        currentIndex = index
-                        delegateSelected(index)
-                    }
+            MouseArea {
+                id: cellMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-                    onReleased: {
-                        if (containsMouse && (mouse.button === Qt.RightButton)) {
-                            contextMenuMarkPopup.popup(null)
-                        }
+                onPressed: {
+                    logViewWrapper.forceActiveFocus()
+                    currentIndex = index
+                    delegateSelected(index)
+                }
+
+                onReleased: {
+                    if (containsMouse && (mouse.button === Qt.RightButton)) {
+                        contextMenuMarkPopup.popup(null)
                     }
                 }
             }
 
-            Row {
-                id: row
-                leftPadding: handleSpacer
-                spacing: 18
-
-                SGWidgets.SGIcon {
-                    id: markIconWithMouseArea
-                    width: textMetricsMark.boundingRect.width
-                    height: textMetricsMark.boundingRect.height - 2
-                    anchors {
-                        top: parent.top
-                        topMargin: 1
-                    }
-
-                    source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
-                    iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : cell.color
-                    visible: markIconVisible
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked: {
-                            logViewWrapper.forceActiveFocus()
-                            var sourceIndex = logSortFilterModel.mapIndexToSource(index)
-                            if (sourceIndex < 0) {
-                                console.error(Logger.logviewerCategory, "index out of range")
-                                return
-                            }
-                            delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
-                        }
-                    }
+            SGWidgets.SGIcon {
+                id: markIconWithMouseArea
+                width: textMetricsMark.boundingRect.width
+                height: textMetricsMark.boundingRect.height - 2
+                x: markHeader.x
+                anchors {
+                    top: parent.top
+                    topMargin: 1
                 }
 
-                SGWidgets.SGText {
-                    id: ts
-                    width: tsHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    text: {
-                        if (visible) {
-                            if (timestampSimpleFormat) {
-                                return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
-                            } else {
-                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
-                            }
+                source: model.isMarked ? "qrc:/sgimages/bookmark.svg" : "qrc:/sgimages/bookmark-blank.svg"
+                iconColor: delegate.ListView.isCurrentItem || delegate.isHovered || model.isMarked ? markColor : delegateBg.color
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: {
+                        logViewWrapper.forceActiveFocus()
+                        var sourceIndex = logSortFilterModel.mapIndexToSource(index)
+                        if (sourceIndex < 0) {
+                            console.error(Logger.logviewerCategory, "index out of range")
+                            return
+                        }
+                        delegate.isHovered ? logModel.toggleIsMarked(sourceIndex) : logModel.toggleIsMarked(currentIndex)
+                    }
+                }
+            }
+
+            SGWidgets.SGText {
+                id: ts
+                x: tsHeader.x
+                width: tsHeader.width
+                color: delegate.ListView.isCurrentItem ? "white" : "black"
+                font.family: "monospace"
+                text: {
+                    if (visible) {
+                        if (timestampSimpleFormat) {
+                            return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
                         } else {
-                            return ""
+                            return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                         }
+                    } else {
+                        return ""
                     }
-                    visible: timestampColumnVisible
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                }
+                visible: timestampColumnVisible
+                elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+            }
+
+            SGWidgets.SGText {
+                id: pid
+                x: pidHeader.x
+                width: pidHeader.width
+                color: delegate.ListView.isCurrentItem ? "white" : "black"
+                font.family: "monospace"
+                text: visible ? model.pid : ""
+                visible: pidColumnVisible
+                elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+            }
+
+            SGWidgets.SGText {
+                id: tid
+                x: tidHeader.x
+                width: tidHeader.width
+                color: delegate.ListView.isCurrentItem ? "white" : "black"
+                font.family: "monospace"
+                text: visible ? model.tid : ""
+                visible: tidColumnVisible
+                elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+            }
+
+            SGWidgets.SGText {
+                id: level
+                x: levelHeader.x
+                width: levelHeader.width
+                leftPadding: 2
+                elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                visible: levelColumnVisible
+                color: {
+                    if (delegate.ListView.isCurrentItem
+                            || (model.level === LogViewModels.LogLevel.LevelWarning
+                                || model.level === LogViewModels.LogLevel.LevelError)) {
+                        return "white"
+                    } else {
+                        return "black"
+                    }
+                }
+                font.family: "monospace"
+                text: {
+                    if (visible) {
+                        switch (model.level) {
+                        case LogViewModels.LogLevel.LevelDebug:
+                            return "DEBUG"
+                        case LogViewModels.LogLevel.LevelInfo:
+                            return "INFO"
+                        case LogViewModels.LogLevel.LevelWarning:
+                            return "WARN"
+                        case LogViewModels.LogLevel.LevelError:
+                            return "ERROR"
+                        }
+                        return ""
+                    } else {
+                        return ""
+                    }
                 }
 
-                SGWidgets.SGText {
-                    id: pid
-                    width: pidHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    text: visible ? model.pid : ""
-                    visible: pidColumnVisible
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
+                TextMetrics {
+                    id: textMetricsLevel
+                    font: level.font
+                    text: level.text
                 }
 
-                SGWidgets.SGText {
-                    id: tid
-                    width: tidHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    text: visible ? model.tid : ""
-                    visible: tidColumnVisible
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                }
-
-                SGWidgets.SGText {
-                    id: level
-                    width: levelHeader.width
-                    leftPadding: 2
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                    visible: levelColumnVisible
+                Rectangle {
+                    id: levelTag
+                    anchors.top: parent.top
+                    anchors.topMargin: 1
+                    height: level.height - 2
+                    width: levelHeader.width < textMetricsLevel.boundingRect.width + 5 ? parent.width : textMetricsLevel.boundingRect.width + 5
+                    radius: 4
+                    z: -1
                     color: {
-                        if (delegate.ListView.isCurrentItem
-                                || (model.level === LogViewModels.LogModel.LevelWarning
-                                    || model.level === LogViewModels.LogModel.LevelError)) {
-                            return "white"
+                        if (model.level === LogViewModels.LogLevel.LevelWarning) {
+                            return TangoTheme.palette.warning
+                        }
+                        if (model.level === LogViewModels.LogLevel.LevelError) {
+                            return TangoTheme.palette.error
                         } else {
-                            return "black"
+                            return delegateBg.color
                         }
                     }
-                    font.family: "monospace"
-                    text: {
-                        if (visible) {
-                            switch (model.level) {
-                            case LogViewModels.LogModel.LevelDebug:
-                                return "DEBUG"
-                            case LogViewModels.LogModel.LevelInfo:
-                                return "INFO"
-                            case LogViewModels.LogModel.LevelWarning:
-                                return "WARN"
-                            case LogViewModels.LogModel.LevelError:
-                                return "ERROR"
-                            }
-                            return ""
-                        } else {
-                            return ""
-                        }
-                    }
-
-                    TextMetrics {
-                        id: textMetricsLevel
-                        font: level.font
-                        text: level.text
-                    }
-
-                    Rectangle {
-                        id: levelTag
-                        anchors.top: parent.top
-                        anchors.topMargin: 1
-                        height: level.height - 2
-                        width: levelHeader.width < textMetricsLevel.boundingRect.width + 5 ? parent.width : textMetricsLevel.boundingRect.width + 5
-                        radius: 4
-                        z: -1
-                        color: {
-                            if (model.level === LogViewModels.LogModel.LevelWarning) {
-                                return TangoTheme.palette.warning
-                            }
-                            if (model.level === LogViewModels.LogModel.LevelError) {
-                                return TangoTheme.palette.error
-                            } else {
-                                return cell.color
-                            }
-                        }
-                        clip: true
-                    }
+                    clip: true
                 }
+            }
 
-                SGWidgets.SGText {
-                    id: msg
-                    width: msgHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    text: visible ? model.message : ""
-                    visible: messageColumnVisible
-                    elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
-                    wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
-                }
+            SGWidgets.SGText {
+                id: msg
+                x: msgHeader.x
+                width: msgHeader.width
+                color: delegate.ListView.isCurrentItem ? "white" : "black"
+                font.family: "monospace"
+                text: visible ? model.message : ""
+                visible: messageColumnVisible
+                elide: messageWrapEnabled ? Text.Normal : Text.ElideRight
+                wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
             }
         }
     }
@@ -766,14 +691,7 @@ Item {
             currentIndex = currentIndex - 1
         } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
-        }
-        else if (event.key === Qt.Key_Left) {
-            contentX = contentX - logListView.width
-        }
-        else if (event.key === Qt.Key_Right) {
-            contentX = contentX + logListView.width
-        }
-        else if (event.key === Qt.Key_PageDown) {
+        } else if (event.key === Qt.Key_PageDown) {
             contentY = contentY + logListView.height
 
             if (currentIndex < indexOfVisibleItem) {
@@ -781,8 +699,7 @@ Item {
             } else {
                 currentIndex = logListView.count - 1
             }
-        }
-        else if (event.key === Qt.Key_PageUp) {
+        } else if (event.key === Qt.Key_PageUp) {
             contentY = contentY - logListView.height
 
             if ((currentIndex > indexOfVisibleItem) && (indexOfVisibleItem > 0)) {
@@ -790,14 +707,11 @@ Item {
             } else {
                 currentIndex = 0
             }
-        }
-        else if (event.key === Qt.Key_Home) {
+        } else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()
-        }
-        else if (event.key === Qt.Key_End) {
+        } else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
-        }
-        else if ((event.key === Qt.Key_M) && markIconVisible) {
+        } else if (event.key === Qt.Key_M) {
             var sourceIndex = logSortFilterModel.mapIndexToSource(currentIndex)
             if (sourceIndex < 0) {
                 console.error(Logger.logviewerCategory, "index out of range")

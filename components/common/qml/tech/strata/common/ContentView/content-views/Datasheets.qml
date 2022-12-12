@@ -9,7 +9,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.commoncpp 1.0
-import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.sgwidgets 2.0 as SGWidgets2
+import tech.strata.theme 1.0
 
 Item {
     id: datasheet
@@ -96,7 +97,7 @@ Item {
                 contentSourceComponent: Item {
                     height: textItem.contentHeight + 8
 
-                    SGWidgets.SGText {
+                    SGWidgets2.SGText {
                         id: textItem
                         anchors {
                             verticalCenter: parent.verticalCenter
@@ -105,7 +106,6 @@ Item {
                             right: chevronImage.left
                         }
                         font.bold: delegate.checked
-                        alternativeColorEnabled: delegate.checked === false
                         wrapMode: Text.Wrap
                         textFormat: Text.PlainText
                         maximumLineCount: 3
@@ -122,7 +122,7 @@ Item {
                         }
                     }
 
-                    SGWidgets.SGIcon {
+                    SGWidgets2.SGIcon {
                         id: chevronImage
                         height: 12
                         width: height

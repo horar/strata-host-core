@@ -271,9 +271,11 @@ RowLayout {
     function fetchValues() {
         if (visualEditor.loader.item && visualEditor.loader.item.rowCount !== undefined) {
             rowSpin.value = visualEditor.loader.item.rowCount
+            rowSpin.from = 1
         }
         if (visualEditor.loader.item && visualEditor.loader.item.columnCount !== undefined) {
             colSpin.value = visualEditor.loader.item.columnCount
+            colSpin.from = 1
         }
     }
 }

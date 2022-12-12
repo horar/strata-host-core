@@ -55,6 +55,7 @@ ActionGroup {
 
         }
     }
+
     Action {
         text: "Set TickmarkStepSize"
         
@@ -69,6 +70,25 @@ ActionGroup {
             menuLoader.item.isString = false
             menuLoader.item.mustNotBeEmpty = true
             menuLoader.item.label = "Enter the tickmarkStepSize value of the gauge. Must be a positive whole or decimal number."
+            menuLoader.item.open()
+            contextMenu.close()
+        }
+    }
+
+    Action {
+        text: "Set Decimal Places"
+
+        onTriggered: {
+            menuLoader.setSource("qrc:/partial-views/control-view-creator/editor/visual-editor/layout-overlay/layout-popup-context/TextPopup.qml")
+            menuLoader.active = true
+            menuLoader.item.intValidator.bottom = 0
+            menuLoader.item.intValidator.top = 10
+            menuLoader.item.validator = menuLoader.item.intValidator
+            menuLoader.item.text = layoutOverlayRoot.sourceItem.tickmarkDecimalPlaces
+            menuLoader.item.sourceProperty = "tickmarkDecimalPlaces"
+            menuLoader.item.isString = false
+            menuLoader.item.mustNotBeEmpty = true
+            menuLoader.item.label = "Enter the tickmarkDecimalPlaces value of the gauge. Must be a positive whole number."
             menuLoader.item.open()
             contextMenu.close()
         }

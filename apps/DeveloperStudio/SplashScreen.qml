@@ -17,6 +17,9 @@ Item {
         fill: parent
     }
 
+    property int exitStatus: -1
+    property int exitCode: -1
+
     Image {
         id: backgroundImage
         anchors.fill: parent
@@ -60,6 +63,24 @@ Item {
             radius: 12
             verticalPadding: 6
             horizontalPadding: 10
+        }
+
+        SGWidgets.SGText {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: {
+
+                if (exitStatus === 0) {
+                    return "Host Controller Service finished with exit code " + exitCode
+                }
+
+                if (exitStatus === 1) {
+                    return "Host Controller Service crashed with exit code " + exitCode
+                }
+
+                return ""
+            }
+            fontSizeMultiplier: 1.2
+            visible: exitStatus >= 0 && exitCode >= 0
         }
     }
 }

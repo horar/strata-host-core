@@ -70,6 +70,10 @@ CoreInterface::CoreInterface(strata::strataRPC::StrataClient *strataClient, QObj
         "disconnect_device",
         std::bind(&CoreInterface::processDisconnectDeviceNotification, this,
                   std::placeholders::_1));
+    strataClient_->registerHandler(
+        "hcs_status",
+        std::bind(&CoreInterface::processHcsStatusNotification, this,
+                  std::placeholders::_1));
 }
 
 CoreInterface::~CoreInterface()
@@ -189,4 +193,9 @@ void CoreInterface::processConnectDeviceNotification(const QJsonObject &payload)
 void CoreInterface::processDisconnectDeviceNotification(const QJsonObject &payload)
 {
     emit disconnectDevice(payload);
+}
+
+void CoreInterface::processHcsStatusNotification(const QJsonObject &payload)
+{
+    emit hcsStatus(payload);
 }

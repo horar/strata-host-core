@@ -180,8 +180,8 @@ std::vector<std::string> CouchbaseDatabase::getAllDocumentKeys() {
 
 bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::string &username, const std::string &password,
     const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
-    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback,
-    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
+    std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback,
+    std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback,
     bool continuous) {
 
     if (database_ == nullptr) {
@@ -256,8 +256,8 @@ bool CouchbaseDatabase::startBasicReplicator(const std::string &url, const std::
 
 bool CouchbaseDatabase::startSessionReplicator(const std::string &url, const std::string &token, const std::string &cookieName,
     const std::vector<std::string> &channels, const ReplicatorType &replicatorType,
-    std::function<void(cbl::Replicator rep, const SGActivityLevel &status)> change_listener_callback,
-    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> documents)> document_listener_callback,
+    std::function<void(SGActivityLevel activity, int errorCode, DbErrorDomain domain)> change_listener_callback,
+    std::function<void(bool isPush, const std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> &documents)> document_listener_callback,
     bool continuous) {
 
     if (database_ == nullptr) {
@@ -406,7 +406,6 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
             if (repIsStopping_) {
                 freeReplicator();
             }
-
             status_ = SGActivityLevel::CBLReplicatorStopped;
             break;
         case CBLReplicatorActivityLevel::kCBLReplicatorOffline:
@@ -423,12 +422,39 @@ void CouchbaseDatabase::replicatorStatusChanged(cbl::Replicator rep, const CBLRe
             break;
     }
 
+    DbErrorDomain domain = DbErrorDomain::NoDomain;
+
+    if (error_code_ != 0) {
+        switch (rep.status().error.domain) {
+            case CBLErrorDomain::CBLDomain:
+                domain = DbErrorDomain::CBLDomain;
+                break;
+            case CBLErrorDomain::CBLPOSIXDomain:
+                domain = DbErrorDomain::CBLPosixDomain;
+                break;
+            case CBLErrorDomain::CBLSQLiteDomain:
+                domain = DbErrorDomain::CBLSQLiteDomain;
+                break;
+            case CBLErrorDomain::CBLFleeceDomain:
+                domain = DbErrorDomain::CBLFleeceDomain;
+                break;
+            case CBLErrorDomain::CBLNetworkDomain:
+                domain = DbErrorDomain::CBLNetworkDomain;
+                break;
+            case CBLErrorDomain::CBLWebSocketDomain:
+                domain = DbErrorDomain::CBLWebSocketDomain;
+                break;
+            case CBLErrorDomain::CBLMaxErrorDomainPlus1:
+                break;
+        }
+    }
+
     if (change_listener_callback_) {
-        change_listener_callback_(rep, status_);
+        change_listener_callback_(status_, error_code_, domain);
     }
 }
 
-void CouchbaseDatabase::documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+void CouchbaseDatabase::documentStatusChanged(cbl::Replicator /*rep*/, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
     if (document_listener_callback_) {
         std::vector<SGReplicatedDocument, std::allocator<SGReplicatedDocument>> SGDocuments;
         for (const auto &doc : documents) {
@@ -438,7 +464,7 @@ void CouchbaseDatabase::documentStatusChanged(cbl::Replicator rep, bool isPush, 
             SGDocuments.push_back(SGDocument);
         }
 
-        document_listener_callback_(rep, isPush, SGDocuments);
+        document_listener_callback_(isPush, SGDocuments);
     }
 }
 

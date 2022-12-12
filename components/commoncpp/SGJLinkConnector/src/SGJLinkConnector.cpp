@@ -10,14 +10,25 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <SGUtilsCpp.h>
-#include <QRegularExpression>
 #include <QTextStream>
 #include <QDir>
 
 SGJLinkConnector::SGJLinkConnector(QObject *parent)
     : QObject(parent),
       process_(nullptr),
-      configFile_(nullptr)
+      configFile_(nullptr),
+      referenceVoltageRegEx_(
+          "(?<=^VTref=)[0-9]*.?[0-9]*(?=V)",
+          QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption),
+      libraryVersionRegEx_(
+          "(?<version>(?<=^dll version )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s",
+          QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption),
+      commanderVersionRegEx_(
+          "(?<version>(?<=^segger j-link commander )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s",
+          QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption),
+      emulatorFwVersionRegEx_(
+          "(?<version>(?<=^firmware: ).*)[^a-z]compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s",
+          QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption)
 {
 }
 
@@ -347,9 +358,7 @@ void SGJLinkConnector::parseOutput(SGJLinkConnector::ProcessType type)
 
 bool SGJLinkConnector::parseReferenceVoltage(const QString &output, float &voltage)
 {
-    QRegularExpression re("(?<=^VTref=)[0-9]*.?[0-9]*(?=V)");
-    re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
-    QRegularExpressionMatch match = re.match(output);
+    QRegularExpressionMatch match = referenceVoltageRegEx_.match(output);
 
     if (match.hasMatch() == false) {
         qCWarning(lcJLink()) << "reference voltage could not be determined";
@@ -362,9 +371,7 @@ bool SGJLinkConnector::parseReferenceVoltage(const QString &output, float &volta
 
 bool SGJLinkConnector::parseLibraryVersion(const QString &output, QString &version, QString &date)
 {
-    QRegularExpression re("(?<version>(?<=^dll version )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s");
-    re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
-    QRegularExpressionMatch match = re.match(output);
+    QRegularExpressionMatch match = libraryVersionRegEx_.match(output);
 
     if (match.hasMatch() == false) {
         qCWarning(lcJLink()) << "library version could not be determined";
@@ -378,9 +385,7 @@ bool SGJLinkConnector::parseLibraryVersion(const QString &output, QString &versi
 
 bool SGJLinkConnector::parseCommanderVersion(const QString &output, QString &version, QString &date)
 {
-    QRegularExpression re("(?<version>(?<=^segger j-link commander )[a-z\\.\\d_]+)[^a-z]+compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s");
-    re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
-    QRegularExpressionMatch match = re.match(output);
+    QRegularExpressionMatch match = commanderVersionRegEx_.match(output);
 
     if (match.hasMatch() == false) {
         qCWarning(lcJLink()) << "commander version could not be determined";
@@ -394,9 +399,7 @@ bool SGJLinkConnector::parseCommanderVersion(const QString &output, QString &ver
 
 bool SGJLinkConnector::parseEmulatorFwVersion(const QString &output, QString &version, QString &date)
 {
-    QRegularExpression re("(?<version>(?<=^firmware: ).*)[^a-z]compiled (?<date>[a-z]{3}\\s+\\d{1,2}\\s+\\d\\d\\d\\d)\\s");
-    re.setPatternOptions(QRegularExpression::MultilineOption | QRegularExpression::CaseInsensitiveOption);
-    QRegularExpressionMatch match = re.match(output);
+    QRegularExpressionMatch match = emulatorFwVersionRegEx_.match(output);
 
     if (match.hasMatch() == false) {
         qCWarning(lcJLink()) << "emulator fw version could not be determined";

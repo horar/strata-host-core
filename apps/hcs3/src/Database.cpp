@@ -18,7 +18,10 @@
 using namespace strata::Database;
 
 Database::Database(QObject *parent)
-    : QObject(parent){
+    : QObject(parent)
+{
+    qRegisterMetaType<Database::ReplicatorActivity>("ReplicatorActivity");
+    qRegisterMetaType<Database::ErrorDomain>("ErrorDomain");
 }
 
 Database::~Database()
@@ -73,36 +76,91 @@ bool Database::open(const QString& db_path, const QString& db_name)
     return true;
 }
 
-void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)
+void Database::documentListener(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>& documents)
 {
-    qCCritical(lcHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
+    qCInfo(lcHcsDb) << "---" << documents.size() << "docs" << (isPush ? "pushed" : "pulled");
     for (unsigned i = 0; i < documents.size(); ++i) {
         emit documentUpdated(documents[i].id);
     }
 }
 
-bool Database::addReplChannel(const std::string& channel)
+void Database::changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode, strata::Database::DatabaseAccess::ErrorCodeDomain domain)
 {
-    if (channel.empty()) {
+    qCInfo(lcHcsDb) << "--- PROGRESS: status =" << strata::Database::DatabaseAccess::activityLevelToString(activityLevel);
+    if (errorCode != 0) {
+        qCInfo(lcHcsDb) << "--- ERROR: code =" << errorCode << "domain =" << static_cast<int>(domain);
+    }
+
+    ReplicatorActivity activity;
+    ErrorDomain errorDomain;
+
+    switch (activityLevel) {
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorStopped :
+        activity = ReplicatorActivity::Stopped;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorOffline :
+        activity = ReplicatorActivity::Offline;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorConnecting :
+        activity = ReplicatorActivity::Connecting;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorIdle :
+        activity = ReplicatorActivity::Idle;
+        break;
+    case strata::Database::DatabaseAccess::ActivityLevel::ReplicatorBusy :
+        activity = ReplicatorActivity::Busy;
+        break;
+    }
+
+    switch (domain) {
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::NoDomain :
+        errorDomain = ErrorDomain::NoDomain;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::CouchbaseLiteDomain :
+        errorDomain = ErrorDomain::CouchbaseLite;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::PosixDomain :
+        errorDomain = ErrorDomain::Posix;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::SQLiteDomain :
+        errorDomain = ErrorDomain::SQLite;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::FleeceDomain :
+        errorDomain = ErrorDomain::Fleece;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::NetworkDomain :
+        errorDomain = ErrorDomain::Network;
+        break;
+    case strata::Database::DatabaseAccess::ErrorCodeDomain::WebSocketDomain :
+        errorDomain = ErrorDomain::WebSocket;
+        break;
+    }
+
+    emit replicatorStatusChanged(activity, errorCode, errorDomain);
+}
+
+bool Database::addReplChannel(const QString& channel)
+{
+    if (channel.isEmpty()) {
         return false;
     }
 
-    if (databaseChannels_.contains(QString::fromStdString(channel)) == false) {
-        databaseChannels_ << QString::fromStdString(channel);
+    if (databaseChannels_.contains(channel) == false) {
+        databaseChannels_ << channel;
         updateChannels();
     }
 
     return true;
 }
 
-bool Database::remReplChannel(const std::string& channel)
+bool Database::remReplChannel(const QString& channel)
 {
-    if (channel.empty()) {
+    if (channel.isEmpty()) {
         return false;
     }
 
-    if (databaseChannels_.contains(QString::fromStdString(channel))) {
-        databaseChannels_.removeAll(QString::fromStdString(channel));
+    if (databaseChannels_.contains(channel)) {
+        databaseChannels_.removeAll(channel);
         updateChannels();
     }
 
@@ -128,14 +186,13 @@ void Database::updateChannels()
     }
 }
 
-bool Database::getDocument(const std::string& doc_id, std::string& result)
+bool Database::getDocument(const QString& doc_id, QString& result)
 {
     if (DB_ == nullptr) {
         return false;
     }
 
-    QString myQStr = DB_->getDocumentAsStr(QString::fromStdString(doc_id), DB_->getDatabaseName());
-    result = myQStr.toStdString();
+    result = DB_->getDocumentAsStr(doc_id, DB_->getDatabaseName());
 
     return true;
 }
@@ -152,14 +209,15 @@ void Database::stop()
     isRunning_ = false;
 }
 
-bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
+bool Database::initReplicator(const QString& replUrl, const QString& username, const QString& password)
 {
-    replication_.url = QString::fromStdString(replUrl);
-    replication_.username = QString::fromStdString(username);
-    replication_.password = QString::fromStdString(password);
+    replication_.url = replUrl;
+    replication_.username = username;
+    replication_.password = password;
 
+    auto changeListenerCallback = std::bind(&Database::changeListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     auto documentListenerCallback = std::bind(&Database::documentListener, this, std::placeholders::_1, std::placeholders::_2);
-    isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, nullptr, documentListenerCallback, true);
+    isRunning_ = DB_->startBasicReplicator(replication_.url, replication_.username, replication_.password, DatabaseAccess::ReplicatorType::Pull, changeListenerCallback, documentListenerCallback, true);
 
     return isRunning_;
 }

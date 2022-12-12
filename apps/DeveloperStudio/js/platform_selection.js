@@ -13,7 +13,7 @@
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
-.import tech.strata.notifications 1.0 as PlatformNotifications
+.import tech.strata.notification 1.0 as Notif
 
 var isInitialized = false
 var sdsModel
@@ -27,18 +27,8 @@ var platformSelectorModel
 var classMap = {} // contains metadata for platformSelectorModel for faster lookups
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
-var notificationActions = []
 var localPlatformList = []
 
-function createPlatformActions() {
-    for(var i = 0; i < 2; i++){
-        notificationActions[i] = Qt.createQmlObject("import QtQuick.Controls 2.12; Action {}",Qt.application, `PlatformNotifications${i}`)
-    }
-    notificationActions[0].text = "Ok"
-    notificationActions[0].triggered.connect(function(){})
-    notificationActions[1].text = "Disable platform notifications"
-    notificationActions[1].triggered.connect(function(){disablePlatformNotifications()})
-}
 
 function initialize (newSdsModel) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
@@ -47,7 +37,6 @@ function initialize (newSdsModel) {
     strataClient = newSdsModel.strataClient
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
-    createPlatformActions()
 }
 
 function disablePlatformNotifications(){
@@ -176,6 +165,7 @@ function createPlatformSelectorModelItem(base_data) {
     platform.device_id = Constants.NULL_DEVICE_ID
     platform.visible = true
     platform.view_open = false
+    platform.bootloader_version = ""
     platform.firmware_version = ""
     platform.program_controller = false
     platform.program_controller_progress = 0.0
@@ -451,6 +441,7 @@ function connectListing(platform) {
 
     selector_listing = platformSelectorModel.get(selector_index)
     selector_listing.connected = true
+    selector_listing.bootloader_version = platform.bootloader_version
     selector_listing.firmware_version = platform.firmware_version
     selector_listing.device_id = platform.device_id
     selector_listing.visible = true
@@ -471,6 +462,7 @@ function connectListing(platform) {
                 "available": selector_listing.available,
                 "class_id": selector_listing.class_id,
                 "device_id": selector_listing.device_id,
+                "bootloader_version": selector_listing.bootloader_version,
                 "firmware_version": selector_listing.firmware_version,
                 "index": selector_index,
                 "view": "control",
@@ -497,12 +489,13 @@ function openPlatformView(platform) {
         "view": platform.view,
         "connected": platform.connected,
         "available": platform.available,
+        "bootloader_version": platform.bootloader_version,
         "firmware_version": platform.firmware_version,
         "controller_class_id": platform.controller_class_id,
         "is_assisted": platform.is_assisted
     }
 
-    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
+    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT, data)
 }
 
 /*
@@ -713,6 +706,7 @@ function generateErrorListing (platform, listing_data) {
         "visible": true,
         "view_open": false,
         "parts_list": [],
+        "bootloader_version": platform.bootloader_version,
         "firmware_version": platform.firmware_version,
         "program_controller": false,
         "program_controller_progress": 0.0,
@@ -812,23 +806,34 @@ function setPlatformSelectorModelPropertyRev(deviceId, propertyName, value) {
 function notifyConnectedState(connected, platformName){
     if(NavigationControl.userSettings.notifyOnPlatformConnections){
         if (connected){
-            PlatformNotifications.Notifications.createNotification(`${platformName} is connected`,
-                                                                   PlatformNotifications.Notifications.Info,
-                                                                   "all",
-                                                                   Qt.application,
-                                                                   {
-                                                                       "timeout": 4000,
-                                                                       "actions": [notificationActions[0],notificationActions[1]]
-                                                                   })
+            var notificationTitle = "Platform connected"
         } else {
-            PlatformNotifications.Notifications.createNotification(`${platformName} is disconnected`,
-                                                                   PlatformNotifications.Notifications.Info,
-                                                                   "all",
-                                                                   Qt.application,
-                                                                   {
-                                                                       "timeout": 4000,
-                                                                       "actions": [notificationActions[0],notificationActions[1]]
-                                                                   })
+            notificationTitle = "Platform disconnected"
         }
+
+
+        var notification = sdsModel.notificationModel.create(
+                     {
+                         "title": notificationTitle,
+                         "description": platformName,
+                        "level": Notif.Notification.Info,
+                     },
+                     [
+                         {
+                             "id": "disable_notification",
+                             "text": "Disable this notification"
+                         }
+                     ]
+                     )
+
+         if (notification === null) {
+             return
+         }
+
+         notification.actionTriggered.connect(function(actionId){
+             if (actionId === "disable_notification") {
+                 disablePlatformNotifications()
+             }
+         })
     }
 }

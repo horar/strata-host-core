@@ -10,8 +10,6 @@
 #include "SGUtilsCpp.h"
 #include "logging/LoggingQtCategories.h"
 
-#include <QRegularExpression>
-
 SGNewControlView::SGNewControlView(QObject *parent) : QObject(parent)
 {
 }
@@ -121,13 +119,9 @@ void SGNewControlView::replaceProjectNameInCMakeListsFile(const QString &cmakeLi
         return;
     }
 
-    // This regular expression will be found in the input file (CMakeLists.txt file)
-    QRegularExpression re("template");
-
-    // Replace regular expressions with projectName_
-    QString replacementText(projectName_);
+    // The string "template" will be found in the input file (CMakeLists.txt file) and replaced with projectName_
     QString cmakeText = cmakeInFile.readAll();
-    cmakeText.replace(re, replacementText);
+    cmakeText.replace("template", projectName_);
 
     // Save new CMakeLists.txt file in same path
     QFile cmakeOutFile(cmakeListsFilePath);

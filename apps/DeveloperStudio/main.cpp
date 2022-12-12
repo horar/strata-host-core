@@ -51,6 +51,8 @@
 #endif // APPS_FEATURE_BLE
 #include "VisualEditorUndoStack.h"
 #include "PlatformOperation.h"
+#include "NotificationModel.h"
+#include "HcsErrorTracker.h"
 
 #include "config/AppConfig.h"
 
@@ -93,7 +95,7 @@ void addImportPaths(QQmlApplicationEngine *engine)
 
 void addSupportedPlugins(QQmlFileSelector *selector)
 {
-    QStringList supportedPlugins{QString(std::string(AppInfo::supportedPlugins_).c_str()).split(QChar(':'))};
+    QStringList supportedPlugins(QString::fromUtf8(AppInfo::supportedPlugins_.data(), AppInfo::supportedPlugins_.size()).split(QChar(':')));
     supportedPlugins.removeAll(QString(""));
 
     if (supportedPlugins.empty() == false) {
@@ -214,6 +216,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<FirmwareUpdater>("tech.strata.FirmwareUpdater", 1, 0, "FirmwareUpdater", "You can't instantiate FirmwareUpdater in QML");
     qmlRegisterUncreatableType<strata::strataRPC::StrataClient>("tech.strata.StrataClient", 1, 0, "StrataClient", QStringLiteral("You can't instantiate StrataClient in QML"));
     qmlRegisterUncreatableType<PlatformOperation>("tech.strata.PlatformOperation", 1, 0, "PlatformOperation", "You can't instantiate PlatformOperation in QML");
+    qmlRegisterUncreatableType<HcsErrorTracker>("tech.strata.HcsErrorTracker", 1, 0, "HcsErrorTracker", "You can't instantiate HcsErrorTracker in QML");
     qmlRegisterInterface<strata::strataRPC::DeferredReply>("DeferredReply");
     qmlRegisterSingletonType("tech.strata.AppInfo", 1, 0, "AppInfo", appVersionSingletonProvider);
 
@@ -223,6 +226,10 @@ int main(int argc, char *argv[])
                 1, 0,
                 "StrataRPC",
                 "You can't instantiate StrataRPC in QML");
+
+    qmlRegisterUncreatableType<NotificationActionModel>("tech.strata.notification", 1, 0, "NotificationActionModel", "You can't instantiate NotificationActionModel in QML");
+    qmlRegisterUncreatableType<NotificationModel>("tech.strata.notification", 1, 0, "NotificationModel", "You can't instantiate NotificationModel in QML");
+    qmlRegisterUncreatableType<Notification>("tech.strata.notification", 1, 0, "Notification", "You can't instantiate Notification in QML");
 
     std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 

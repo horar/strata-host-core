@@ -130,6 +130,12 @@ signals:
     void initialized();
 
     /**
+     * Emitted when an error has occurred.
+     * @param [in] code Strata RPC error code
+     */
+    void errorOccurred(strata::strataRPC::RpcErrorCode code);
+
+    /**
      * Signal to send a message to a client.
      * @param [in] clientId QByteArray of the client id.
      * @param [in] message QByteArray of the message.

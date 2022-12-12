@@ -18,8 +18,6 @@
         <file>partial-views/help-tour/images/top-fade.png</file>
         <file>partial-views/platform-selector/SGPlatformSelectorDelegate.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorListView.qml</file>
-        <file>partial-views/platform-selector/images/platform-images/notFound.png</file>
-        <file>partial-views/platform-selector/images/whiteFadeMask.svg</file>
         <file>partial-views/about-popup/DevStudioAboutWindow.qml</file>
         <file>js/login_utilities.js</file>
         <file>js/login_storage.js</file>
@@ -37,35 +35,13 @@
         <file>partial-views/login/SelectionButton.qml</file>
         <file>partial-views/login/SGSessionControls.qml</file>
         <file>partial-views/platform-selector/SGPlatformSelectorStatus.qml</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/connectivity.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/led.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/load_switches.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/logic_gates.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/sensors.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/usb.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/offline_controllers.svg</file>
-        <file>partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg</file>
-        <file>partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg</file>
-        <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
         <file>js/platform_filters.js</file>
-        <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/interfaces.svg</file>
         <file>partial-views/SGLoadError.qml</file>
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
         <file>js/core_update.js</file>
         <file>partial-views/core-update/SGCoreUpdate.qml</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg</file>
         <file>partial-views/profile-popup/SGProfilePopup.qml</file>
         <file>partial-views/SGConfirmationPopup.qml</file>
         <file>partial-views/profile-popup/SGTextValidationSwitch.qml</file>
@@ -92,14 +68,12 @@
         <file>partial-views/platform-selector/PlatformImage.qml</file>
         <file>partial-views/general/web-popup/SGWebControls.qml</file>
         <file>partial-views/general/web-popup/SGWebView.qml</file>
-        <file>partial-views/notifications/NotificationDelegate.qml</file>
-        <file>partial-views/notifications/NotificationsContainer.qml</file>
-        <file>partial-views/notifications/NotificationsInbox.qml</file>
-        <file>partial-views/notifications/NotificationsInboxDelegate.qml</file>
-        <file>partial-views/notifications/NotificationContent.qml</file>
         <file>partial-views/control-view-creator/CVCLoader.qml</file>
         <file>partial-views/BleScanDialog.qml</file>
         <file>partial-views/general/SGSettingsCheckbox.qml</file>
         <file>partial-views/SGPolicyUpdateDialog.qml</file>
+        <file>partial-views/NotificationDelegate.qml</file>
+        <file>partial-views/NotificationView.qml</file>
+        <file>partial-views/NotificationDrawer.qml</file>
     </qresource>
 </RCC>

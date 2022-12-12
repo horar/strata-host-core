@@ -12,6 +12,7 @@
 #include <QQuickItem>
 #include <QProcess>
 #include <QMultiHash>
+#include <QRegularExpression>
 
 struct ResourceItem {
     ResourceItem(
@@ -190,6 +191,8 @@ private:
     QString lastCompiledRccResource_ = "";
 
     QString rccCompilerPath_ = "";
+
+    const QRegularExpression projectNameRegEx_;
 
     void clearLastLoggedError();
 

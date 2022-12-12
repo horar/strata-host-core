@@ -15,7 +15,7 @@ Rectangle {
     width: historyText.implicitWidth + height
     height: 14
     radius: height/2
-    color: "green"
+    color: Theme.palette.onsemiOrange
     visible: model.historyState !== "seen"
 
     property alias text: historyText.text

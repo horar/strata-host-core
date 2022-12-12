@@ -79,6 +79,15 @@ Menu {
     }
 
     Action {
+        text: multipleItemsSelected ? "Send Selected To Back" : "Send To Back"
+
+        onTriggered: {
+            visualEditor.functions.sendToBackSelected()
+            contextMenu.close()
+        }
+    }
+
+    Action {
         text: multipleItemsSelected ? "Delete Selected" : "Delete"
 
         onTriggered: {

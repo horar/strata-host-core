@@ -65,6 +65,12 @@ StrataServer::StrataServer(
         emit initialized();
     });
 
+    QObject::connect(
+                connector_.get(),
+                &ServerConnector::errorOccurred,
+                this,
+                &StrataServer::errorOccurred);
+
     connectorThread_->start();
 }
 
@@ -203,7 +209,7 @@ void StrataServer::sendReply(
         const QJsonValue &id,
         const QJsonObject &result)
 {
-    QByteArray message =  buildReplyMessage(id, result);
+    QByteArray message = buildReplyMessage(id, result);
     emit sendMessage(clientId, message);
 }
 
@@ -322,16 +328,9 @@ QByteArray StrataServer::buildErrorMessage(
         const QJsonValue &id,
         const RpcError &error)
 {
-    QJsonObject errorObject;
-    errorObject.insert("code", error.code());
-    errorObject.insert("message", error.message());
-    if (error.data().isEmpty() == false) {
-        errorObject.insert("data", error.data());
-    }
-
     QJsonObject jsonObject;
     jsonObject.insert("jsonrpc", "2.0");
-    jsonObject.insert("error", errorObject);
+    jsonObject.insert("error", error.toJsonObject());
     jsonObject.insert("id", id);
 
     return QJsonDocument(jsonObject).toJson(QJsonDocument::JsonFormat::Compact);

@@ -254,15 +254,15 @@ FocusScope {
         function filterAcceptsRow(row) {
             var logLevelMsg = logModel.data(row, "level")
 
-            if (checkBoxInfo.checked && logLevelMsg === LogViewModels.LogModel.LevelInfo) {
+            if (checkBoxInfo.checked && logLevelMsg === LogViewModels.LogLevel.LevelInfo) {
                 return true
-            } else if (checkBoxWarning.checked && logLevelMsg === LogViewModels.LogModel.LevelWarning) {
+            } else if (checkBoxWarning.checked && logLevelMsg === LogViewModels.LogLevel.LevelWarning) {
                 return true
-            } else if (checkBoxError.checked && logLevelMsg === LogViewModels.LogModel.LevelError) {
+            } else if (checkBoxError.checked && logLevelMsg === LogViewModels.LogLevel.LevelError) {
                 return true
-            } else if (checkBoxDebug.checked && logLevelMsg === LogViewModels.LogModel.LevelDebug) {
+            } else if (checkBoxDebug.checked && logLevelMsg === LogViewModels.LogLevel.LevelDebug) {
                 return true
-            } else if (checkBoxUnknown.checked && logLevelMsg === LogViewModels.LogModel.LevelUnknown) {
+            } else if (checkBoxUnknown.checked && logLevelMsg === LogViewModels.LogLevel.LevelUnknown) {
                 return true
             } else {
                 return false
@@ -1088,7 +1088,6 @@ FocusScope {
                     startAnimation: secondaryLogView.activeFocus
                     timestampSimpleFormat: logViewerMain.timestampSimpleFormat
                     automaticScroll: logViewerMain.automaticScroll
-                    markIconVisible: true
                     markColor: logViewerMain.markColor
 
                     KeyNavigation.tab: searchInput
@@ -1096,21 +1095,18 @@ FocusScope {
                     KeyNavigation.priority: KeyNavigation.BeforeItem
                 }
 
-                Rectangle {
-                    height: parent.height - primaryLogView.height
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    Layout.minimumHeight: parent.height/4
-                    border.color: TangoTheme.palette.butter1
-                    border.width: 2
-                    visible: searchingMode || showMarks
 
                     LogListView {
                         id: secondaryLogView
-                        anchors.fill: parent
-                        anchors.margins: 2
-                        model: searchResultModel
+                        height: parent.height - primaryLogView.height
+                        anchors {
+                            left: primaryLogView.left
+                            right: primaryLogView.right
+                        }
 
+                        model: searchResultModel
+                        Layout.minimumHeight: parent.height/4
+                        visible: searchingMode || showMarks
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked
@@ -1124,7 +1120,6 @@ FocusScope {
                         markColor: logViewerMain.markColor
                         timestampSimpleFormat: timestampSimpleFormatButton.checked
                         automaticScroll: logViewerMain.automaticScroll
-                        markIconVisible: false
                         showMarks: logViewerMain.showMarks
                         searchingMode: logViewerMain.searchingMode
 
@@ -1142,8 +1137,18 @@ FocusScope {
                         KeyNavigation.tab: primaryLogView
                         KeyNavigation.backtab: searchInput
                         KeyNavigation.priority: KeyNavigation.BeforeItem
+
+                        Rectangle {
+                            anchors.fill: parent
+
+                            border.color: TangoTheme.palette.butter1
+                            border.width: 2
+                            color: "transparent"
+
+
+                        }
                     }
-                }
+
             }
         }
     }

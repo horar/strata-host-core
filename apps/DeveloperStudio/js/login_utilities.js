@@ -11,6 +11,8 @@
 .import "restclient.js" as Rest
 .import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
+.import "qrc:/js/platform_selection.js" as PlatformSelection
+.import tech.strata.notification 1.0 as Notify
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.signals 1.0 as SignalsModule

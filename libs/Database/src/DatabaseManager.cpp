@@ -25,7 +25,11 @@ DatabaseManager::~DatabaseManager() {
     delete userAccessDb_;
 }
 
-bool DatabaseManager::init(const QString &path, const QString &endpointURL, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
+bool DatabaseManager::init(const QString &path,
+                           const QString &endpointURL,
+                           std::function<void(DatabaseAccess::ActivityLevel status, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
+                           std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener)
+{
     path_ = path;
     endpointURL_ = endpointURL;
     userAccessDb_ = getUserAccessMap();
@@ -44,7 +48,11 @@ bool DatabaseManager::init(const QString &path, const QString &endpointURL, std:
     return true;
 }
 
-DatabaseAccess* DatabaseManager::login(const QString &name, const QString &channelsRequested, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
+DatabaseAccess* DatabaseManager::login(const QString &name,
+                                       const QString &channelsRequested,
+                                       std::function<void(DatabaseAccess::ActivityLevel status, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
+                                       std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener)
+{
     if (channelsRequested.isEmpty() || channelsRequested == "*" || channelsRequested == "all") {
         return login(name, QStringList(), changeListener, documentListener);
     } else {
@@ -53,7 +61,11 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QString &chann
     }
 }
 
-DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &channelsRequested, std::function<void(const DatabaseAccess::ActivityLevel &status)> changeListener, std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> documents)> documentListener) {
+DatabaseAccess* DatabaseManager::login(const QString &name,
+                                       const QStringList &channelsRequested,
+                                       std::function<void(DatabaseAccess::ActivityLevel status, int errorCode, DatabaseAccess::ErrorCodeDomain domain)> changeListener,
+                                       std::function<void(bool isPush, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>> &documents)> documentListener)
+{
     if (name.isEmpty()) {
         qCCritical(lcCouchbaseDatabase) << "Error: username cannot be empty";
         return nullptr;
@@ -89,7 +101,7 @@ DatabaseAccess* DatabaseManager::login(const QString &name, const QStringList &c
         return nullptr;
     }
 
-    for (const auto& bucket : channelAccess) {
+    for (const auto& bucket : qAsConst(channelAccess)) {
         auto db = std::make_unique<CouchbaseDatabase>(bucket.toStdString(), userDir.toStdString());
         dbAccess_->database_map_.push_back(std::move(db));
 

@@ -5,7 +5,6 @@
         <file>content-views/Datasheets.qml</file>
         <file>content-views/Downloads.qml</file>
         <file>content-views/Documents.qml</file>
-        <file>content-views/DocumentCheckBox.qml</file>
         <file>content-views/BaseDocDelegate.qml</file>
         <file>content-views/SectionDelegate.qml</file>
         <file>images/docLoading.gif</file>

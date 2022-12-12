@@ -234,8 +234,8 @@ QStringList DatabaseAccess::getAllDocumentKeys(const QString &bucket) {
 }
 
 bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &username, const QString &password, const ReplicatorType &replicatorType,
-    std::function<void(const ActivityLevel &status)> changeListener,
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
+    std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener,
+    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> documentListener,
     bool continuous) {
 
     if (url.isEmpty()) {
@@ -268,41 +268,60 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
         document_listener_callback_ = documentListener;
     }
 
-    auto change_listener_callback = [this] (cbl::Replicator /*rep*/, const CouchbaseDatabase::SGActivityLevel &status) -> void {
+    auto change_listener_callback = [this] (CouchbaseDatabase::SGActivityLevel activity, int errorCode, CouchbaseDatabase::DbErrorDomain domain) -> void {
         ActivityLevel activityLevel;
-        QString activityLevelStr;
+        ErrorCodeDomain errorCodeDomain;
 
-        switch ((CouchbaseDatabase::SGActivityLevel)status) {
+        switch (activity) {
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorStopped:
-                activityLevelStr = "Stopped";
                 activityLevel = ActivityLevel::ReplicatorStopped;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorOffline:
-                activityLevelStr = "Offline";
                 activityLevel = ActivityLevel::ReplicatorOffline;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorConnecting:
-                activityLevelStr = "Connecting";
                 activityLevel = ActivityLevel::ReplicatorConnecting;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorIdle:
-                activityLevelStr = "Idle";
                 activityLevel = ActivityLevel::ReplicatorIdle;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorBusy:
-                activityLevelStr = "Busy";
                 activityLevel = ActivityLevel::ReplicatorBusy;
                 break;
         }
 
+        switch (domain) {
+            case CouchbaseDatabase::DbErrorDomain::NoDomain:
+                errorCodeDomain = ErrorCodeDomain::NoDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLDomain:
+                errorCodeDomain = ErrorCodeDomain::CouchbaseLiteDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLPosixDomain:
+                errorCodeDomain = ErrorCodeDomain::PosixDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLSQLiteDomain:
+                errorCodeDomain = ErrorCodeDomain::SQLiteDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLFleeceDomain:
+                errorCodeDomain = ErrorCodeDomain::FleeceDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLNetworkDomain:
+                errorCodeDomain = ErrorCodeDomain::NetworkDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLWebSocketDomain:
+                errorCodeDomain = ErrorCodeDomain::WebSocketDomain;
+                break;
+        }
+
         if (change_listener_callback_) {
-            change_listener_callback_(activityLevel);
+            change_listener_callback_(activityLevel, errorCode, errorCodeDomain);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
+            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status =" << activityLevelToString(activityLevel);
         }
     };
 
-    auto document_listener_callback = [this] (cbl::Replicator /*rep*/, bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> documents) {
+    auto document_listener_callback = [this] (bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> &documents) {
         if (document_listener_callback_) {
             std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> SGDocuments;
             for (const auto &doc : documents) {
@@ -313,7 +332,7 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
             }
             document_listener_callback_(isPush, SGDocuments);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
+            qCInfo(lcCouchbaseDatabase) << "---" << documents.size() << "docs" << (isPush ? "pushed." : "pulled.");
         }
     };
 
@@ -331,8 +350,8 @@ bool DatabaseAccess::startBasicReplicator(const QString &url, const QString &use
 }
 
 bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &token, const QString &cookieName, const ReplicatorType &replicatorType,
-    std::function<void(const ActivityLevel &status)> changeListener,
-    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> documents)> documentListener,
+    std::function<void(ActivityLevel status, int errorCode, ErrorCodeDomain domain)> changeListener,
+    std::function<void(bool isPush, const std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> &documents)> documentListener,
     bool continuous) {
 
     if (url.isEmpty()) {
@@ -370,41 +389,60 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
         document_listener_callback_ = documentListener;
     }
 
-    auto change_listener_callback = [this] (cbl::Replicator /*rep*/, const CouchbaseDatabase::SGActivityLevel &status) -> void {
+    auto change_listener_callback = [this] (CouchbaseDatabase::SGActivityLevel activity, int errorCode, CouchbaseDatabase::DbErrorDomain domain) -> void {
         ActivityLevel activityLevel;
-        QString activityLevelStr;
+        ErrorCodeDomain errorCodeDomain;
 
-        switch ((CouchbaseDatabase::SGActivityLevel)status) {
+        switch (activity) {
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorStopped:
-                activityLevelStr = "Stopped";
                 activityLevel = ActivityLevel::ReplicatorStopped;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorOffline:
-                activityLevelStr = "Offline";
                 activityLevel = ActivityLevel::ReplicatorOffline;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorConnecting:
-                activityLevelStr = "Connecting";
                 activityLevel = ActivityLevel::ReplicatorConnecting;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorIdle:
-                activityLevelStr = "Idle";
                 activityLevel = ActivityLevel::ReplicatorIdle;
                 break;
             case CouchbaseDatabase::SGActivityLevel::CBLReplicatorBusy:
-                activityLevelStr = "Busy";
                 activityLevel = ActivityLevel::ReplicatorBusy;
                 break;
         }
 
+        switch (domain) {
+            case CouchbaseDatabase::DbErrorDomain::NoDomain:
+                errorCodeDomain = ErrorCodeDomain::NoDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLDomain:
+                errorCodeDomain = ErrorCodeDomain::CouchbaseLiteDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLPosixDomain:
+                errorCodeDomain = ErrorCodeDomain::PosixDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLSQLiteDomain:
+                errorCodeDomain = ErrorCodeDomain::SQLiteDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLFleeceDomain:
+                errorCodeDomain = ErrorCodeDomain::FleeceDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLNetworkDomain:
+                errorCodeDomain = ErrorCodeDomain::NetworkDomain;
+                break;
+            case CouchbaseDatabase::DbErrorDomain::CBLWebSocketDomain:
+                errorCodeDomain = ErrorCodeDomain::WebSocketDomain;
+                break;
+        }
+
         if (change_listener_callback_) {
-            change_listener_callback_(activityLevel);
+            change_listener_callback_(activityLevel, errorCode, errorCodeDomain);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status=" << activityLevelStr;
+            qCInfo(lcCouchbaseDatabase) << "--- PROGRESS: status =" << activityLevelToString(activityLevel);
         }
     };
 
-    auto document_listener_callback = [this] (cbl::Replicator /*rep*/, bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> documents) {
+    auto document_listener_callback = [this] (bool isPush, const std::vector<CouchbaseDatabase::SGReplicatedDocument, std::allocator<CouchbaseDatabase::SGReplicatedDocument>> &documents) {
         if (document_listener_callback_) {
             std::vector<ReplicatedDocument, std::allocator<ReplicatedDocument>> SGDocuments;
             for (const auto &doc : documents) {
@@ -415,7 +453,7 @@ bool DatabaseAccess::startSessionReplicator(const QString &url, const QString &t
             }
             document_listener_callback_(isPush, SGDocuments);
         } else {
-            qCInfo(lcCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed." : "pulled.");
+            qCInfo(lcCouchbaseDatabase) << "---" << documents.size() << "docs" << (isPush ? "pushed." : "pulled.");
         }
     };
 
@@ -550,4 +588,21 @@ QString DatabaseAccess::getDatabaseName() {
 
 QString DatabaseAccess::getDatabasePath() {
     return user_directory_;
+}
+
+QString DatabaseAccess::activityLevelToString(ActivityLevel activitylevel)
+{
+    switch (activitylevel) {
+    case ActivityLevel::ReplicatorStopped :
+        return "Stopped";
+    case ActivityLevel::ReplicatorOffline :
+        return "Offline";
+    case ActivityLevel::ReplicatorConnecting :
+        return "Connecting";
+    case ActivityLevel::ReplicatorIdle :
+        return "Idle";
+    case ActivityLevel::ReplicatorBusy :
+        return "Busy";
+    }
+    return "";
 }

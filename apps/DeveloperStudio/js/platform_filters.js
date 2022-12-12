@@ -16,85 +16,89 @@ var rawData = [
             {
                 "filterId": "segment-automotive",
                 "name": "Automotive",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg",
+                "iconSource": "qrc:/images/segment-automotive.svg",
             },
             {
                 "filterId": "segment-industrial-cloud-power",
                 "name": "Industrial & Cloud Power",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/segment-icons/segment-industrial-cloud-power.svg",
+                "iconSource": "qrc:/images/segment-cloud.svg",
             },
             {
                 "filterId": "segment-iot",
                 "name": "Internet of Things (IoT)",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg",
+                "iconSource": "qrc:/images/segment-internet-of-things.svg",
             },
 
             //categories
             {
                 "filterId": "category-amplifier-comparator",
                 "name": "Amplifiers & Comparators",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg",
-
+                "iconSource": "qrc:/images/category-amplifier-and-comparator.svg",
             },
             {
                 "filterId": "category-audio-video",
                 "name": "Audio/Video ASSP",
+                "iconSource": "qrc:/images/category-audio-video.svg",
             },
             {
                 "filterId": "category-connectivity",
                 "name": "Connectivity",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/connectivity.svg",
+                "iconSource": "qrc:/images/category-connectivity.svg",
             },
             {
                 "filterId": "category-sensor",
                 "name": "Sensors",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/sensors.svg",
+                "iconSource": "qrc:/images/category-sensor.svg",
             },
             {
                 "filterId": "category-iso-protection",
                 "name": "Isolation & Protection Devices",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg",
+                "iconSource": "qrc:/images/category-isolation-and-protection.svg",
             },
             {
                 "filterId": "category-power-management",
                 "name": "Power Management",
+                "iconSource": "qrc:/images/category-power-management.svg",
             },
             {
                 "filterId": "category-power-module",
                 "name": "Power Modules",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
+                "iconSource": "qrc:/images/category-power-module.svg",
             },
             {
                 "filterId": "category-interface",
                 "name": "Interfaces",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/interfaces.svg",
+                "iconSource": "qrc:/images/category-interface.svg",
             },
             {
                 "filterId": "category-clock-timing",
                 "name": "Clock & Timing",
+                "iconSource": "qrc:/images/category-clock-and-timing.svg",
             },
             {
                 "filterId": "category-discrete-driver",
                 "name": "Discretes & Drivers",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg",
+                "iconSource": "qrc:/images/category-discrete-and-driver.svg",
             },
             {
                 "filterId": "category-memory",
                 "name": "Memory",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/memory.svg",
+                "iconSource": "qrc:/images/category-memory.svg",
             },
             {
                 "filterId": "category-optoelectronic",
                 "name": "Optoelectronics",
+                "iconSource": "qrc:/images/category-optoelectronic.svg",
             },
             {
                 "filterId": "category-microcontroller",
                 "name": "Microcontrollers",
+                "iconSource": "qrc:/images/category-microcontroller.svg",
             },
             {
                 "filterId": "category-standard-logic",
                 "name": "Standard Logic",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/logic_gates.svg",
+                "iconSource": "qrc:/images/category-standard-logic.svg"
             },
             //subcategories
             {
@@ -178,7 +182,7 @@ var rawData = [
                 "parentCategory": "category-sensor"
             },
             {
-                "filterId": "subcategory-sensor-light",
+                "filterId": "subcategory-sensor-image",
                 "name": "Image Sensors & Processors",
                 "parentCategory": "category-sensor"
             },
@@ -225,39 +229,31 @@ var rawData = [
             {
                 "filterId": "subcategory-powerman-acdc",
                 "name": "AC-DC Controllers & Regulators",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg",
-
                 "parentCategory": "category-power-management"
             },
             {
                 "filterId": "subcategory-powerman-battery",
                 "name": "Battery Management",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
                 "parentCategory": "category-power-management"
-
             },
             {
                 "filterId": "subcategory-powerman-load-switch",
                 "name": "Load Switches",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/load_switches.svg",
                 "parentCategory": "category-power-management"
             },
             {
                 "filterId": "subcategory-powerman-dcdc",
                 "name": "DC-DC Controllers, Converters, & Regulators",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg",
                 "parentCategory": "category-power-management"
             },
             {
                 "filterId": "subcategory-powerman-led",
                 "name": "LED Drivers",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
                 "parentCategory": "category-power-management"
             },
             {
                 "filterId": "subcategory-powerman-motor-drive",
                 "name": "Motor Drivers",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg",
                 "parentCategory": "category-power-management"
             },
             {
@@ -313,7 +309,6 @@ var rawData = [
             {
                 "filterId": "subcategory-interface-usbc",
                 "name": "USB Type-C",
-                "iconSource": "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg",
                 "parentCategory": "category-interface"
             },
             {
@@ -609,7 +604,7 @@ function initialize () {
         var mappingItem = JSON.parse(JSON.stringify(rawData[i]))
 
         if (mappingItem.hasOwnProperty("iconSource") == false) {
-            mappingItem["iconSource"] = "qrc:/partial-views/platform-selector/images/icons/placeholder.svg"
+            mappingItem["iconSource"] = "qrc:/images/placeholder.svg"
         }
 
         if (mappingItem.hasOwnProperty("parentCategory") == false) {

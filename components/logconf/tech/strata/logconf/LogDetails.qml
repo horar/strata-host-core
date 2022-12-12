@@ -18,7 +18,7 @@ import tech.strata.pluginLogger 1.0
 GridLayout {
     id: logDetailsGrid
 
-    property alias fileName: configFileSettings.filePath
+    property alias fileName: configFileSettings.fileName
     property alias lcuApp: item.enabled
     property int innerSpacing: 5
     property int shortEdit: 180
@@ -31,14 +31,6 @@ GridLayout {
     columnSpacing: innerSpacing
     rowSpacing: innerSpacing
 
-    Component.onCompleted: {
-        if (lcuApp == false) {
-            configFileSettings.filePath = ""
-        } else {
-
-        }
-    }
-
     ConfigFileSettings {
         id: configFileSettings
     }
@@ -50,7 +42,7 @@ GridLayout {
 
     SGWidgets.SGText {
         id: maxFileSizeText
-        text: "Max file size"
+        text: "Max file size (B)"
         Layout.columnSpan: 2
         Layout.fillWidth: true
     }
@@ -110,7 +102,7 @@ GridLayout {
                 maxFileSizeSpinBox.value = configFileSettings.maxFileSize
                 textInputFileSize.text = maxFileSizeSpinBox.value
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 if (configFileSettings.maxFileSize == -1) {
                     maxFileSizeEnabled = false
                 } else {
@@ -120,13 +112,23 @@ GridLayout {
                 }
             }
         }
+
+        Component.onCompleted: {
+            if (configFileSettings.maxFileSize == -1) {
+                maxFileSizeEnabled = false
+            } else {
+                maxFileSizeSpinBox.value = configFileSettings.maxFileSize
+                maxFileSizeEnabled = true
+                textInputFileSize.text = maxFileSizeSpinBox.value
+            }
+        }
     }
 
     SGWidgets.SGButton {
         id: maxFileSizeButton
         Layout.maximumWidth: height
         text: maxFileSizeSpinBox.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== ""
+        enabled: configFileSettings.fileName !== ""
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.maxFileSize = 0
@@ -200,7 +202,7 @@ GridLayout {
                 maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
                 textInputNoFiles.text = maxNoFilesSpinBox.value
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 if (configFileSettings.maxNoFiles == -1) {
                     maxNoFilesEnabled = false
                 } else {
@@ -210,13 +212,23 @@ GridLayout {
                 }
             }
         }
+
+        Component.onCompleted: {
+            if (configFileSettings.maxNoFiles == -1) {
+                maxNoFilesEnabled = false
+            } else {
+                maxNoFilesSpinBox.value = configFileSettings.maxNoFiles
+                maxNoFilesEnabled = true
+                textInputNoFiles.text = maxNoFilesSpinBox.value
+            }
+        }
     }
 
     SGWidgets.SGButton {
         id: maxNoFilesButton
         Layout.maximumWidth: height
         text: maxNoFilesSpinBox.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== "" //disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== "" //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.maxNoFiles = 0
@@ -231,7 +243,14 @@ GridLayout {
     SGWidgets.SGText {
         id: qtFilterRulesText
         text: "Qt filter rules"
-        Layout.columnSpan: 2
+    }
+
+    SGWidgets.SGIconButton {
+        icon.source: "qrc:/sgimages/edit.svg"
+        icon.width: infoButtonSize
+        icon.height: infoButtonSize
+        hintText: "Open dialog for editing qtFilterRules"
+        onClicked: showQtFilterRulesDialog(qtFilterRulesTextField.text)
     }
 
     SGWidgets.SGTextField {
@@ -246,11 +265,15 @@ GridLayout {
         Connections {
             target: configFileSettings
             onQtFilterRulesChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
             }
-            onFilePathChanged: {
-                qtFilterRulesTextField.text = configFileSettings.qtFilterRules
+            onFileNameChanged: {
+                qtFilterRulesTextField.text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
             }
+        }
+
+        Component.onCompleted: {
+            text = configFileSettings.qtFilterRules.replace(/\n/g,"\\n")
         }
     }
 
@@ -258,7 +281,7 @@ GridLayout {
         id: qtFilterRulesButton
         Layout.maximumWidth: height
         text: qtFilterRulesTextField.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== "" //disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== "" //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.qtFilterRules = ""
@@ -295,9 +318,13 @@ GridLayout {
             onQtMsgPatternChanged: {
                 qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
             }
-            onFilePathChanged: {
+            onFileNameChanged: {
                 qtMsgPatternTextField.text = configFileSettings.qtMsgPattern
             }
+        }
+
+        Component.onCompleted: {
+            text = configFileSettings.qtMsgPattern
         }
     }
 
@@ -305,7 +332,7 @@ GridLayout {
         id: qtMsgPatternButton
         Layout.maximumWidth: height
         text: qtMsgPatternTextField.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== ""//disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== ""//disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.qtMsgPattern = ""
@@ -342,16 +369,20 @@ GridLayout {
              onSpdlogMsgPatternChanged: {
                  spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
              }
-             onFilePathChanged: {
+             onFileNameChanged: {
                  spdlogMsgPatternTextField.text = configFileSettings.spdlogMsgPattern
              }
+         }
+
+         Component.onCompleted: {
+             text = configFileSettings.spdlogMsgPattern
          }
     }
     SGWidgets.SGButton {
         id: spdlogMsgPatternButton
         Layout.maximumWidth: height
         text: spdlogMsgPatternTextField.enabled ? "Unset" : "Set"
-        enabled: configFileSettings.filePath !== "" //disable if no ini files were found or selected
+        enabled: configFileSettings.fileName !== "" //disable if no ini files were found or selected
         onClicked: {
             if (text === "Unset") {
                 configFileSettings.spdlogMsgPattern = ""
@@ -368,9 +399,24 @@ GridLayout {
         }
     }
 
+    function showQtFilterRulesDialog(string) {
+        var dialog = SGDialogJS.createDialog(
+                    ApplicationWindow.window,
+                    "qrc:/QtFilterRulesDialog.qml", {
+                        "filterRulesString": string
+                    })
+
+        dialog.accepted.connect(function() {
+            configFileSettings.qtFilterRules = dialog.filterRulesString
+            dialog.destroy()
+        })
+
+        dialog.open()
+    }
+
     function showCorruptedFileDialog(parameter, string) {
         var dialog = SGDialogJS.createDialog(
-                    logDetailsGrid,
+                    ApplicationWindow.window,
                     "qrc:/CorruptedFileDialog.qml", {
                         "corruptedString": string,
                         "corruptedParam": string === "" ? ("<i>" + parameter + "</i> setting does not contain any value.") : ("Parameter <i>" + parameter + "</i> is currently set to:")

@@ -11,7 +11,7 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
-import tech.strata.notifications 1.0
+import tech.strata.notification 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 
@@ -33,6 +33,7 @@ StackLayout {
 
     property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
     property string class_id: model.class_id
+    property string bootloader_version: model.bootloader_version
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
     property string name: model.name
@@ -124,27 +125,9 @@ StackLayout {
             is_assisted: model.is_assisted
         }
 
-        Action {
-            id: documentsHistoryShowDocumentsView
-            text: "View documents"
-            onTriggered: {
-                openDocuments()
-            }
-        }
-
-        Action {
-            id: doNotNotifyOnCollateralDocumentUpdate
-            text: "Don't show this message again"
-            onTriggered: {
-                NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
-                NavigationControl.userSettings.saveSettings()
-            }
-        }
-
-        Action {
-            id: ok
-            text: "Ok"
-            onTriggered: {}
+        function disableNotificationForDocumentUpdate() {
+            NavigationControl.userSettings.notifyOnCollateralDocumentUpdate = false
+            NavigationControl.userSettings.saveSettings()
         }
 
         function launchDocumentsHistoryNotification(unseenPdfItems, unseenDownloadItems) {
@@ -165,20 +148,41 @@ StackLayout {
             if (platformStack.currentIndex !== 1 || platformStack.visible === false) { // check if collateral is already not displayed
                 if (documentNotificationUUID !== "") {
                     // remove previous notification
-                    Notifications.destroyNotification(documentNotificationUUID)
+                    sdsModel.notificationModel.remove(documentNotificationUUID)
                 }
-                documentNotificationUUID = Notifications.createNotification(
-                    "Document updates for this platform",
-                    Notifications.Info,
-                    "current",
-                    platformStack,
-                    {
-                        "description": description,
-                        "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": [documentsHistoryShowDocumentsView, ok, doNotNotifyOnCollateralDocumentUpdate],
-                        "timeout": 0
+
+                var notification = sdsModel.notificationModel.create(
+                            {
+                                "title": "Document updates for this platform",
+                                "description": description,
+                                "level": Notification.Info,
+                                "removeAutomatically": false,
+                            },
+                            [
+                                {
+                                    "id": "view_documents",
+                                    "text": "View documents"
+                                },
+                                {
+                                    "id": "disable_notification",
+                                    "text": "Disable this notification"
+                                },
+                            ]
+                            )
+
+                if (notification === null) {
+                    return
+                }
+
+                documentNotificationUUID = notification.uuid
+
+                notification.actionTriggered.connect(function(actionId){
+                    if (actionId === "view_documents") {
+                        openDocuments()
+                    } else if(actionId === "disable_notification") {
+                        disableNotificationForDocumentUpdate()
                     }
-                )
+                })
             }
         }
     }
@@ -195,27 +199,9 @@ StackLayout {
         }
     }
 
-    Action {
-        id: close
-        text: "Ok"
-        onTriggered: {}
-    }
-
-    Action {
-        id: disableNotifyOnFirmwareUpdate
-        text: "Disable notifications for platform updates"
-        onTriggered: {
-            NavigationControl.userSettings.notifyOnFirmwareUpdate = false
-            NavigationControl.userSettings.saveSettings()
-        }
-    }
-
-    Action {
-        id: goToSettings
-        text: "Go to settings"
-        onTriggered: {
-            openSettings()
-        }
+    function disableNotificationForPlatformUpdate() {
+        NavigationControl.userSettings.notifyOnFirmwareUpdate = false
+        NavigationControl.userSettings.saveSettings()
     }
 
     // We need this helper function - it takes values of 'controlViewIsOutOfDate' and 'firmwareIsOutOfDate' at time when it is executed,
@@ -237,19 +223,41 @@ StackLayout {
 
             if (updateNotificationUUID !== "") {
                 // remove previous notification
-                Notifications.destroyNotification(updateNotificationUUID)
+                sdsModel.notificationModel.remove(documentNotificationUUID)
             }
-            updateNotificationUUID = Notifications.createNotification("Update available",
-                                                Notifications.Info,
-                                                "current",
-                                                platformStack,
-                                                {
-                                                    "description": description,
-                                                    "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                                                    "actions": [close, goToSettings, disableNotifyOnFirmwareUpdate],
-                                                    "timeout": 0
-                                                }
-                                             )
+
+            var notification = sdsModel.notificationModel.create(
+                        {
+                            "title": "Update available",
+                            "description": description,
+                            "level": Notification.Info,
+                            "removeAutomatically": false,
+                        },
+                        [
+                            {
+                                "id": "goto_settings",
+                                "text": "Go to settings"
+                            },
+                            {
+                                "id": "disable_notification",
+                                "text": "Disable this notification"
+                            },
+                        ]
+                        )
+
+            if (notification === null) {
+                return
+            }
+
+            documentNotificationUUID = notification.uuid
+
+            notification.actionTriggered.connect(function(actionId){
+                if (actionId === "goto_settings") {
+                    openSettings()
+                } else if(actionId === "disable_notification") {
+                    disableNotificationForPlatformUpdate()
+                }
+            })
         }
     }
 

@@ -161,11 +161,11 @@ int main() {
     }
 
     // Start replicator on DB 3 with all non-default options
-    auto changeListener = [](cbl::Replicator, const DatabaseAccess::ActivityLevel) {
+    auto changeListener = [](DatabaseAccess::ActivityLevel, int, DatabaseAccess::ErrorCodeDomain) {
         qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!\n";
     };
 
-    auto documentListener = [](cbl::Replicator, bool, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>) {
+    auto documentListener = [](bool, const std::vector<DatabaseAccess::ReplicatedDocument, std::allocator<DatabaseAccess::ReplicatedDocument>>&) {
         qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!\n";
     };
 

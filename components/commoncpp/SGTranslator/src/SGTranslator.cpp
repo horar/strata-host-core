@@ -15,6 +15,16 @@ SGTranslator::SGTranslator (QQuickItem* parent) : QQuickItem(parent)
 
 bool SGTranslator::loadLanguageFile(const QString languageFileName)
 {
+    // Calling of this method causes reevaluation of all bindings within application.
+    // See CS-3546
+    // Make this method void, so calling it inside CVs has no effect.
+
+    Q_UNUSED(languageFileName)
+
+    qCritical() << "This this experimental feature. Do not use.";
+    return false;
+
+/*
     QCoreApplication* app = QCoreApplication::instance();
     QQmlEngine* engine = qmlEngine(parentItem());
 
@@ -39,4 +49,5 @@ bool SGTranslator::loadLanguageFile(const QString languageFileName)
         qCritical () << "Engine or app not initialized";
         return false;
     }
+*/
 }

@@ -237,6 +237,7 @@ Item {
                             enabled: model.platform.programInProgress === false
                                      && model.platform.status !== Sci.SciPlatform.Connected
                                      && model.platform.acquirePortInProgress === false
+                                     && model.platform.platformTestModel.isRunning === false
 
                             icon.source: defaultIconSource
                             hintText: {
@@ -262,6 +263,7 @@ Item {
                             id: deleteButton
 
                             enabled: model.platform.programInProgress === false
+                                     && model.platform.platformTestModel.isRunning === false
                             icon.source: "qrc:/sgimages/times.svg"
                             hintText: "Close tab"
                             onClicked: {

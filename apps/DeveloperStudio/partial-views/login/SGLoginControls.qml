@@ -317,10 +317,12 @@ Item {
                                     "last_name": resultObject.last_name
                                 }
                                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                                sdsModel.hcsErrorTracker.clearErrors()
+                                sdsModel.hcsErrorTracker.checkHcsStatus()
                             },
                             function(error) {
                                 console.log("Registration with server failed", JSON.stringify(error))
-                                showLoginError("Registration with HCS failed.")
+                                showLoginError("Registration with Host Controller Service failed.")
                             })
             } else {
                 if (resultObject.response === "No Connection") {

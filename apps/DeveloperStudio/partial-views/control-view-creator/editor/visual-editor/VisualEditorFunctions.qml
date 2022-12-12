@@ -153,9 +153,43 @@ QtObject {
             return
         }
         fileContents = fileContents.replace(endOfFile, "\n" + text + "\n" + endOfFile)
+        fileContents = fileContents.replace(/(?:\n\n\n\n*)/g, "\n\n") // sanitize empty space
 
         if (save) {
             saveFile()
+        }
+    }
+
+    function insertTextAtStartOfFile(text, save = true) {
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+            // we need to find first object if any
+            if (loader.children[0].children.length > 0) {
+                let done = false
+                for (let i = 0; i < loader.children[0].children.length; i++) {
+                    if (loader.children[0].children[i].hasOwnProperty("layoutInfo")) {
+                        let regex = new RegExp(startOfObjectRegexString(loader.children[0].children[i].layoutInfo.uuid)) // insert text before first object start
+                        let startOfFile = fileContents.match(regex)
+                        if (startOfFile === null) {
+                            continue
+                        }
+                        fileContents = fileContents.replace(startOfFile, text + "\n\n" + startOfFile)
+                        fileContents = fileContents.replace(/(?:\n\n\n\n*)/g, "\n\n") // sanitize empty space
+
+                        if (save) {
+                            saveFile()
+                        }
+                        done = true
+                        break
+                    }
+                }
+                if (done === false) {
+                    insertTextAtEndOfFile(text, save)
+                }
+            } else {
+                insertTextAtEndOfFile(text, save)
+            }
+        } else {
+            insertTextAtEndOfFile(text, save)
         }
     }
 
@@ -250,19 +284,88 @@ QtObject {
         saveFile()
     }
 
-    function bringToFront(uuid, save = true) {
+    function acquireObjectList() {
+        let objectList = []
+        if (loader.children[0] && loader.children[0].objectName === "UIBase") {
+            for (let i = 0; i < loader.children[0].children.length; i++) {
+                if (loader.children[0].children[i].hasOwnProperty("layoutInfo")) {
+                    objectList.push(loader.children[0].children[i].layoutInfo.uuid)
+                }
+            }
+        }
+        return objectList
+    }
+
+    function bringToFront(uuid, addToUndoCommandStack = true, save = true) {
         let copy = getObjectFromString(uuid)
         if (copy === null) {
             return
         }
+
+        let objectList = acquireObjectList()
+        if (objectList.length === 0) {
+            return
+        }
+
+        if (objectList[objectList.length - 1] === uuid) {
+            // already at front
+            return
+        }
+
+        // undo/redo
+        if (addToUndoCommandStack) {
+            sdsModel.visualEditorUndoStack.moveItemFront(file, uuid, objectList)
+        }
+
         fileContents = fileContents.replace(copy, "\n")
         insertTextAtEndOfFile(copy, save)
     }
 
     function bringToFrontSelected() {
-        for (let i = 0; i < visualEditor.selectedMultiObjectsUuid.length; ++i) {
-            const selectedUuid = visualEditor.selectedMultiObjectsUuid[i]
-            bringToFront(selectedUuid, false)
+        bringToFrontMultiple(visualEditor.selectedMultiObjectsUuid, true)
+    }
+
+    function bringToFrontMultiple(objectList, addToUndoCommandStack = true) {
+        for (let i = 0; i < objectList.length; ++i) {
+            const selectedUuid = objectList[i]
+            bringToFront(selectedUuid, addToUndoCommandStack, false)
+        }
+        saveFile()
+    }
+
+    function sendToBack(uuid, addToUndoCommandStack = true, save = true) {
+        let copy = getObjectFromString(uuid)
+        if (copy === null) {
+            return
+        }
+
+        let objectList = acquireObjectList()
+        if (objectList.length === 0) {
+            return
+        }
+
+        if (objectList[0] === uuid) {
+            // already at back
+            return
+        }
+
+        // undo/redo
+        if (addToUndoCommandStack) {
+            sdsModel.visualEditorUndoStack.moveItemBack(file, uuid, objectList)
+        }
+
+        fileContents = fileContents.replace(copy, "\n")
+        insertTextAtStartOfFile(copy, save)
+    }
+
+    function sendToBackSelected() {
+        sendToBackMultiple(visualEditor.selectedMultiObjectsUuid, true)
+    }
+
+    function sendToBackMultiple(objectList, addToUndoCommandStack = true) {
+        for (let i = 0; i < objectList.length; ++i) {
+            const selectedUuid = objectList[i]
+            sendToBack(selectedUuid, addToUndoCommandStack, false)
         }
         saveFile()
     }
@@ -625,5 +728,40 @@ QtObject {
         }
 
         return [maxX, minX, maxY, minY]
+    }
+
+    function selectObjectsUnderRect(startColumn, startRow, endColumn, endRow, originalSelectedMultiObjectsUuid) {
+        // restore original selected list and select objects anew
+        visualEditor.selectedMultiObjectsUuid = [...originalSelectedMultiObjectsUuid]
+
+        for (let i = 0; i < visualEditor.overlayObjects.length; ++i) {
+            const obj = visualEditor.overlayObjects[i]
+            obj.isSelected = isUuidSelected(obj.layoutInfo.uuid)
+
+            // find if the two rectangles overlap
+            // if one rectangle is on left / right side of other, ignore
+            if (startColumn > (obj.layoutInfo.xColumns + obj.layoutInfo.columnsWide - 1) || obj.layoutInfo.xColumns > endColumn) {
+                continue
+            }
+
+            // If one rectangle is above / below other, ignore
+            if (startRow > (obj.layoutInfo.yRows + obj.layoutInfo.rowsTall - 1) || obj.layoutInfo.yRows > endRow) {
+                continue
+            }
+
+            if (originalSelectedMultiObjectsUuid.includes(obj.layoutInfo.uuid)) {
+                // inverse selection
+                if (isUuidSelected(obj.layoutInfo.uuid)) {
+                    obj.isSelected = false
+                    removeUuidFromMultiObjectSelection(obj.layoutInfo.uuid)
+                }
+            } else {
+                // if not yet selected, select
+                if (isUuidSelected(obj.layoutInfo.uuid) === false) {
+                    obj.isSelected = true
+                    addUuidToMultiObjectSelection(obj.layoutInfo.uuid)
+                }
+            }
+        }
     }
 }

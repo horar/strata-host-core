@@ -3,5 +3,8 @@
         <file>LogLevel.qml</file>
         <file>LogDetails.qml</file>
         <file>CorruptedFileDialog.qml</file>
+        <file>LogExport.qml</file>
+        <file>CreateFolderDialog.qml</file>
+        <file>QtFilterRulesDialog.qml</file>
     </qresource>
 </RCC>

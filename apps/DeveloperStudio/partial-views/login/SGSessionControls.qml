@@ -22,7 +22,7 @@ import tech.strata.signals 1.0
 import tech.strata.sgwidgets 1.0
 
 Item {
-    id: root
+    id: sessionControls
     Layout.preferredHeight: connectionStatus.implicitHeight
     Layout.preferredWidth: connectionStatus.implicitWidth
     Layout.alignment: Qt.AlignHCenter
@@ -52,7 +52,7 @@ Item {
 
     function showLogin() {
         loginControls.visible = true
-        root.visible = false
+        sessionControls.visible = false
     }
 
     function loginSuccess (resultObject) {
@@ -89,11 +89,13 @@ Item {
                                     "last_name": LoginUtils.settings.last_name
                                 }
                                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
+                                sdsModel.hcsErrorTracker.clearErrors()
+                                sdsModel.hcsErrorTracker.checkHcsStatus()
                             },
                             function(error) {
                                 console.info(LoggerModule.Logger.devStudioLoginCategory, "Registration with server failed", JSON.stringify(JSON.stringify(error)))
                                 LoginUtils.settings.clear()
-                                root.showLogin()
+                                sessionControls.showLogin()
                             })
 
                 return
@@ -108,7 +110,7 @@ Item {
                 console.info(LoggerModule.Logger.devStudioLoginCategory, "Error while validating token")
             }
             LoginUtils.settings.clear()
-            root.showLogin()
+            sessionControls.showLogin()
         }
     }
 }

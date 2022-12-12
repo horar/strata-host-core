@@ -9,7 +9,9 @@
 #include "SciPlatform.h"
 #include "logging/LoggingQtCategories.h"
 
+#ifdef  APPS_TOOLBOX_SCI_MOCK_DEVICE
 #include <Mock/MockDeviceScanner.h>
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 
 #include <SGUtilsCpp.h>
 #include <SGJsonFormatter.h>
@@ -30,7 +32,9 @@ SciPlatform::SciPlatform(
     status_ = PlatformStatus::Disconnected;
     platformManager_ = platformManager;
 
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     mockDevice_ = new SciMockDevice(platformManager_);
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     scrollbackModel_ = new SciScrollbackModel(this);
     commandHistoryModel_ = new SciCommandHistoryModel(this);
     filterSuggestionModel_ = new SciFilterSuggestionModel(this);
@@ -51,7 +55,9 @@ SciPlatform::SciPlatform(
 
 SciPlatform::~SciPlatform()
 {
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
     mockDevice_->deleteLater();
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
     scrollbackModel_->deleteLater();
     commandHistoryModel_->deleteLater();
     filterSuggestionModel_->deleteLater();
@@ -92,16 +98,21 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
         //do not disconnect from deviceError, so error for port reconnection can be handled
 
         platform_.reset();
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
         mockDevice_->setMockDevice(nullptr);
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
         setStatus(PlatformStatus::Disconnected);
     } else {
         setAcquirePortInProgress(false);
         platform_ = platform;
         deviceId_ = platform_->deviceId();
         setDeviceType(platform_->deviceType());
+#ifdef  APPS_TOOLBOX_SCI_MOCK_DEVICE
         mockDevice_->mockSetDeviceId(deviceId_);
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
         if (platform_->deviceType() == strata::device::Device::Type::MockDevice) {
             auto scanner = platformManager_->getScanner(strata::device::Device::Type::MockDevice);
+#ifdef  APPS_TOOLBOX_SCI_MOCK_DEVICE
             auto mockScanner = std::dynamic_pointer_cast<strata::device::scanner::MockDeviceScanner>(scanner);
             if (mockScanner == nullptr) {
                 qCCritical(lcSci) << "cannot get scanner for mock devices";
@@ -109,6 +120,7 @@ void SciPlatform::setPlatform(const strata::platform::PlatformPtr& platform)
             }
             strata::device::DevicePtr device = mockScanner->getMockDevice(deviceId_);
             mockDevice_->setMockDevice(std::dynamic_pointer_cast<strata::device::MockDevice>(device));
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
         }
 
         connect(platform_.get(), &strata::platform::Platform::messageReceived, this, &SciPlatform::messageFromDeviceHandler);
@@ -171,10 +183,12 @@ void SciPlatform::setStatus(SciPlatform::PlatformStatus status)
     }
 }
 
+#ifdef APPS_TOOLBOX_SCI_MOCK_DEVICE
 SciMockDevice* SciPlatform::mockDevice() const
 {
     return mockDevice_;
 }
+#endif // APPS_TOOLBOX_SCI_MOCK_DEVICE
 
 SciScrollbackModel *SciPlatform::scrollbackModel() const
 {

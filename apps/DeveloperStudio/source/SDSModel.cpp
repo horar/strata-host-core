@@ -16,11 +16,13 @@
 #include "PlatformInterfaceGenerator.h"
 #include "VisualEditorUndoStack.h"
 #include "logging/LoggingQtCategories.h"
+#include "NotificationModel.h"
 #ifdef APPS_FEATURE_BLE
 #include "BleDeviceModel.h"
 #endif // APPS_FEATURE_BLE
 #include "FirmwareUpdater.h"
 #include "PlatformOperation.h"
+#include "HcsErrorTracker.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
 #include <StrataRPC/StrataClient.h>
@@ -51,6 +53,8 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
       remoteHcsNode_(new HcsNode(this)),
       urlConfig_(new strata::sds::config::UrlConfig(configFilePath, this)),
       platformOperation_(new PlatformOperation(strataClient_, this)),
+      notificationModel_(new NotificationModel(this)),
+      hcsErrorTracker_(new HcsErrorTracker(strataClient_, coreInterface_, notificationModel_, this)),
 #ifdef APPS_FEATURE_BLE
       bleDeviceModel_(new BleDeviceModel(strataClient_, coreInterface_, this)),
 #endif // APPS_FEATURE_BLE
@@ -65,17 +69,25 @@ SDSModel::SDSModel(const QUrl &dealerAddress, const QString &configFilePath, QOb
 
 SDSModel::~SDSModel()
 {
-    delete documentManager_;
-    delete coreInterface_;
-    delete resourceLoader_;
-    delete newControlView_;
-    delete platformInterfaceGenerator_;
-    delete visualEditorUndoStack_;
-    delete remoteHcsNode_;
-    delete firmwareUpdater_;
-    delete urlConfig_;
-    delete strataClient_;
+    // objects should be deleted in reverse order as they were created
+    // objects which are passed to another objects (like coreInterface_ and strataClient_) should be deleted last 
+#ifdef APPS_FEATURE_BLE
+    delete bleDeviceModel_;
+#endif // APPS_FEATURE_BLE
+    delete hcsErrorTracker_;
+    delete notificationModel_;  // passed to hcsErrorTracker_, it should be deleted after it
     delete platformOperation_;
+    delete urlConfig_;
+    delete remoteHcsNode_;
+    delete visualEditorUndoStack_;
+    delete platformInterfaceGenerator_;
+    delete firmwareUpdater_;
+    delete newControlView_;
+    delete fileDownloader_;
+    delete resourceLoader_;
+    delete documentManager_;
+    delete coreInterface_;  // passed to previously deleted objects, it should be deleted after them
+    delete strataClient_;  // passed to previously deleted objects (including coreInterface_), it should be deleted after them
 }
 
 bool SDSModel::startHcs()
@@ -238,6 +250,16 @@ strata::loggers::QtLogger *SDSModel::qtLogger() const
     return std::addressof(strata::loggers::QtLogger::instance());
 }
 
+NotificationModel *SDSModel::notificationModel() const
+{
+    return notificationModel_;
+}
+
+HcsErrorTracker *SDSModel::hcsErrorTracker() const
+{
+    return hcsErrorTracker_;
+}
+
 #ifdef APPS_FEATURE_BLE
 BleDeviceModel *SDSModel::bleDeviceModel() const
 {
@@ -278,31 +300,33 @@ void SDSModel::startedProcess()
     qCInfo(lcDevStudio) << "HCS started";
 
     setHcsConnected(true);
+    emit hcsConnectionEstablished();
 }
 
 void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qCDebug(lcDevStudio)
+    qCInfo(lcDevStudio)
         << "exitStatus=" << exitStatus
-        << "exitCode=" << exitCode;
+        << ", exitCode=" << exitCode;
 
     hcsProcess_->deleteLater();
     hcsProcess_.clear();
 
     if (exitStatus == QProcess::NormalExit && exitCode == (EXIT_FAILURE + 1)) {
         // LC: todo; there was another HCS instance; new one is going down
-        qCDebug(lcDevStudio) << "Quitting - another HCS instance was running";
+        qCInfo(lcDevStudio) << "New HCS instance finished. Another HCS instance is running";
         return;
     }
 
     if (killHcsSilently == false) {
         setHcsConnected(false);
+        emit hcsConnectionLost(exitStatus, exitCode);
     }
 }
 
 void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 {
-    qCDebug(lcDevStudio) << error << hcsProcess_->errorString();
+    qCCritical(lcDevStudio) << error << hcsProcess_->errorString();
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)

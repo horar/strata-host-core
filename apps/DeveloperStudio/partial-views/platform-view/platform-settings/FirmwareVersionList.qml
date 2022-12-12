@@ -10,7 +10,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
-import tech.strata.notifications 1.0
+import tech.strata.notification 1.0
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -31,7 +31,7 @@ ColumnLayout {
 
         SGText {
             text: "Latest firmware available:"
-            fontSizeMultiplier: 1.38
+            fontSizeMultiplier: 1.1
             color: "#666"
         }
 
@@ -88,6 +88,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: contentHeight
+            enabled: platformStack.bootloader_version.length !== 0
 
             ScrollBar.vertical: ScrollBar {
                 id: firmwareScrollbar
@@ -105,6 +106,7 @@ ColumnLayout {
                 id: firmwareRow
                 width: firmwareHeader.width
                 height: firmwareDataColumn.height
+                color: firmwareListView.enabled ? "white" : "#eee"
 
                 property bool flashingFirmwareInProgress: false // this particular firmware is being flashed to device
 
@@ -138,7 +140,7 @@ ColumnLayout {
                             id: versionText
                             Layout.preferredWidth: 60
                             text: model.version
-                            fontSizeMultiplier: 1.38
+                            fontSizeMultiplier: 1.2
                             color: "#666"
                             wrapMode: Text.Wrap
                         }
@@ -146,7 +148,7 @@ ColumnLayout {
                         SGText {
                             text: SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             Layout.fillWidth: true
-                            fontSizeMultiplier: 1.38
+                            fontSizeMultiplier: 1.2
                             color: "#666"
                         }
 
@@ -155,6 +157,7 @@ ColumnLayout {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignRight
                             color: "#666"
+                            visible: firmwareListView.enabled
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignRight
                             text: currentStatus !== "" ? currentStatus : (installMouse.enabled ? "Download and flash firmware" : "")
@@ -192,7 +195,7 @@ ColumnLayout {
                                         return "#666" // enabled - dark grey
                                     }
                                 }
-                                visible: firmwareRow.flashingFirmwareInProgress === false
+                                visible: firmwareListView.enabled && firmwareRow.flashingFirmwareInProgress === false
 
                                 MouseArea {
                                     id: installMouse
@@ -202,7 +205,7 @@ ColumnLayout {
                                     enabled: model.installed === false && !firmwareListView.flashingDeviceInProgress && platformStack.connected
 
                                     onClicked: {
-                                        if (platformStack.firmware_version !== "") {
+                                        if (platformStack.firmware_version.length !== 0) {
                                             if (SGVersionUtils.greaterThan(model.version, platformStack.firmware_version)) {
                                                 flashStatus.startFlash(false)
                                                 return
@@ -227,7 +230,7 @@ ColumnLayout {
                                     fill: parent
                                 }
                                 source: "qrc:/images/loading.gif"
-                                visible: !installIcon.visible
+                                visible: firmwareListView.enabled && !installIcon.visible
 
                                 onVisibleChanged: {
                                     if (visible) {
@@ -370,7 +373,7 @@ ColumnLayout {
             }
 
             SGText {
-                fontSizeMultiplier: 1.38
+                fontSizeMultiplier: 1.2
                 color: "#666"
                 text: {
                     if (firmwareListView.model.count === 0) {
@@ -384,16 +387,12 @@ ColumnLayout {
     }
 
     function notifyFwUpdateFailed(text) {
-        Notifications.createNotification(
-                    "Flash firmware failed",
-                    Notifications.Critical,
-                    "current",
-                    platformStack,
+        sdsModel.notificationModel.create(
                     {
+                        "title": "Flash firmware failed",
                         "description": text,
-                        "iconSource": "qrc:/sgimages/exclamation-circle.svg",
-                        "actions": [close],
-                        "timeout": 0
+                        "level": Notification.Error,
+                        "removeAutomatically": false,
                     }
                     )
     }

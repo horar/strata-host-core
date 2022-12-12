@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <string>
+#include <QString>
 #include <set>
 #include <QObject>
 
@@ -25,6 +25,26 @@ public:
     Database(QObject *parent = nullptr);
     ~Database();
 
+    enum class ReplicatorActivity {
+        Stopped,    // The replicator is unstarted, finished, or hit a fatal error.
+        Offline,    // The replicator is offline, as the remote host is unreachable.
+        Connecting, // The replicator is connecting to the remote host.
+        Idle,       // The replicator is inactive, waiting for changes to sync.
+        Busy        // The replicator is actively transferring data.
+    };
+    Q_ENUM(ReplicatorActivity)
+
+    enum class ErrorDomain {
+        NoDomain = 0,      // value for a case if there is no error - there is no error domain either
+        CouchbaseLite = 1, // code is a Couchbase Lite error code; see CBLErrorCode
+        Posix,             // code is a POSIX `errno`; see "errno.h"
+        SQLite,            // code is a SQLite error; see "sqlite3.h"
+        Fleece,            // code is a Fleece error; see "FleeceException.h"
+        Network,           // code is a network error; see CBLNetworkErrorCode
+        WebSocket          // code is a WebSocket close code (1000...1015) or HTTP error (300..599)
+    };
+    Q_ENUM(ErrorDomain)
+
     /**
      * Opens the database
      * @param db_path
@@ -39,21 +59,21 @@ public:
      * @param replUrl replicator URL to connect to
      * @return returns true when succeeded otherwise false
      */
-    bool initReplicator(const std::string& replUrl, const std::string& username, const std::string& password);
+    bool initReplicator(const QString& replUrl, const QString& username, const QString& password);
 
     /**
      * Adds a channel to the replication
      * @param channel channel name
      * @return returns true when succeeded, otherwise false
      */
-    bool addReplChannel(const std::string& channel);
+    bool addReplChannel(const QString& channel);
 
     /**
      * Removes a channel from the replication
      * @param channel channel name
      * @return returns true when succeeded, otherwise false
      */
-    bool remReplChannel(const std::string& channel);
+    bool remReplChannel(const QString& channel);
 
     /**
      * Returns a document by given ID and root element name
@@ -63,7 +83,7 @@ public:
      * @return returns true when succeeded, otherwise false
      * NOTE: we need also a revision
      */
-    bool getDocument(const std::string& doc_id, std::string& result);
+    bool getDocument(const QString& doc_id, QString& result);
 
     /**
      * Stop the replication operations and close the database
@@ -72,6 +92,7 @@ public:
 
 signals:
     void documentUpdated(QString documentId);
+    void replicatorStatusChanged(ReplicatorActivity activity, int errorCode, ErrorDomain errorDomain);
 
 private:
     struct Replication {
@@ -92,7 +113,9 @@ private:
 
     bool isRunning_ = false;
 
-    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>> documents);
+    void documentListener(bool isPush, const std::vector<strata::Database::DatabaseAccess::ReplicatedDocument, std::allocator<strata::Database::DatabaseAccess::ReplicatedDocument>>& documents);
+
+    void changeListener(strata::Database::DatabaseAccess::ActivityLevel activityLevel, int errorCode, strata::Database::DatabaseAccess::ErrorCodeDomain domain);
 
     void updateChannels();
 };

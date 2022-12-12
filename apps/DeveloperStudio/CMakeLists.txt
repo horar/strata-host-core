@@ -68,6 +68,10 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/PlatformInterfaceGenerator.cpp
     source/VisualEditorUndoStack.cpp
     source/PlatformOperation.cpp
+    source/NotificationActionModel.cpp
+    source/Notification.cpp
+    source/NotificationModel.cpp
+    source/HcsErrorTracker.cpp
 
     source/config/Url.cpp
     source/config/ConfigFile.cpp
@@ -77,11 +81,11 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
-    notifications/qml/tech/strata/notifications/qml.qrc
     partial-views/control-view-creator/template-views.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-resources.qrc
+    qml-dev-studio-images.qrc
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}

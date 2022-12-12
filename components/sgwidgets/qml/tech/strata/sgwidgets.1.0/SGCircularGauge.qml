@@ -49,11 +49,17 @@ Item {
         }
 
         property real tickMarkStepRange: 10
+        property real tickmarMaxDecimalPlaces: 10
         property real tickmarkStepSize: (maximumValue - minimumValue)/tickMarkStepRange
         property int decimalPlacesFromStepSize: {
-                return (Math.floor(gauge.tickmarkStepSize) === gauge.tickmarkStepSize) ?  0 :
-                        gauge.tickmarkStepSize.toString().split(".")[1].length || 0
-                }
+            let maximumValueString = gauge.maximumValue.toFixed(gauge.tickmarMaxDecimalPlaces).replace(/\.0*$|(\.\d*[1-9])0+$/, '$1')
+            let minimumValueString = gauge.minimumValue.toFixed(gauge.tickmarMaxDecimalPlaces).replace(/\.0*$|(\.\d*[1-9])0+$/, '$1')
+            let stepValueString = gauge.tickmarkStepSize.toFixed(gauge.tickmarMaxDecimalPlaces).replace(/\.0*$|(\.\d*[1-9])0+$/, '$1')
+            let decimalsMaximum = maximumValueString.includes('.') ? maximumValueString.split(".")[1].length : 0
+            let decimalsMinimum = minimumValueString.includes('.') ? minimumValueString.split(".")[1].length : 0
+            let decimalsStep = stepValueString.includes('.') ? stepValueString.split(".")[1].length : 0
+            return Math.max(decimalsStep, Math.max(decimalsMaximum, decimalsMinimum))
+        }
 
         style : CircularGaugeStyle {
             id: gaugeStyle
